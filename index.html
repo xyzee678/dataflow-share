@@ -172,21 +172,55 @@
 
         .header-actions {
             display: flex;
-            gap: 6px;
+            gap: 4px;
             align-items: center;
         }
 
+        /* ===== FLOATING BUTTON - TOP RIGHT ===== */
+        .floating-btn {
+            z-index: 100;
+            background: #4f46e5;
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 36px;
+            height: 36px;
+            font-size: 16px;
+            cursor: pointer;
+            box-shadow: 0 4px 16px rgba(79, 70, 229, 0.3);
+            transition: all 0.3s ease;
+            -webkit-tap-highlight-color: transparent;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 4px;
+        }
+
+        .floating-btn:active {
+            transform: scale(0.92);
+        }
+
+        .floating-btn.open {
+            background: #ef4444;
+            box-shadow: 0 4px 16px rgba(239, 68, 68, 0.3);
+        }
+
+        .floating-btn.open .btn-icon {
+            transform: rotate(45deg);
+        }
+
+        /* ===== LOCK BUTTON ===== */
         .lock-btn {
-            padding: 4px 12px;
+            padding: 4px 10px;
             background: #e5e7eb;
             border: none;
             border-radius: 16px;
-            font-size: 11px;
+            font-size: 10px;
             font-weight: 600;
             cursor: pointer;
             display: flex;
             align-items: center;
-            gap: 4px;
+            gap: 3px;
             font-family: inherit;
             color: #1a202c;
             z-index: 1001;
@@ -201,41 +235,6 @@
         .lock-btn.locked {
             background: #ef4444;
             color: white;
-        }
-
-        /* ===== FLOATING BUTTON - TOP RIGHT ===== */
-        .floating-btn {
-            position: absolute;
-            top: 12px;
-            right: 12px;
-            z-index: 100;
-            background: #4f46e5;
-            color: white;
-            border: none;
-            border-radius: 50%;
-            width: 40px;
-            height: 40px;
-            font-size: 18px;
-            cursor: pointer;
-            box-shadow: 0 4px 16px rgba(79, 70, 229, 0.3);
-            transition: all 0.3s ease;
-            -webkit-tap-highlight-color: transparent;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .floating-btn:active {
-            transform: scale(0.92);
-        }
-
-        .floating-btn.open {
-            background: #ef4444;
-            box-shadow: 0 4px 16px rgba(239, 68, 68, 0.3);
-        }
-
-        .floating-btn.open .btn-icon {
-            transform: rotate(45deg);
         }
 
         /* ===== TOP TABS ===== */
@@ -405,6 +404,129 @@
             color: white !important;
         }
 
+        /* ===== 3 BATTERIES ===== */
+        .batteries-container {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            padding: 8px 0;
+            background: white;
+            border-radius: 10px;
+            border: 1px solid #f0f0f0;
+            margin-bottom: 8px;
+            flex-wrap: wrap;
+        }
+
+        .battery-small {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            width: 60px;
+        }
+
+        .battery-small .label {
+            font-size: 8px;
+            color: #9ca3af;
+            margin-bottom: 2px;
+        }
+
+        .battery-small .wrapper {
+            position: relative;
+            width: 40px;
+            height: 80px;
+            background: #f3f4f6;
+            border-radius: 8px;
+            border: 3px solid #1a202c;
+            overflow: hidden;
+        }
+
+        .battery-small .wrapper .cap {
+            position: absolute;
+            top: -6px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 14px;
+            height: 6px;
+            background: #1a202c;
+            border-radius: 2px 2px 0 0;
+        }
+
+        .battery-small .wrapper .fill {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 0%;
+            transition: height 1s ease;
+            border-radius: 0 0 4px 4px;
+        }
+
+        .battery-small .wrapper .fill.red {
+            background: linear-gradient(180deg, #f87171, #dc2626);
+        }
+        .battery-small .wrapper .fill.yellow {
+            background: linear-gradient(180deg, #fbbf24, #d97706);
+        }
+        .battery-small .wrapper .fill.green {
+            background: linear-gradient(180deg, #34d399, #059669);
+        }
+        .battery-small .wrapper .fill.stars {
+            background: linear-gradient(180deg, #fcd34d, #f59e0b);
+            animation: glow 1.5s infinite alternate;
+        }
+
+        @keyframes glow {
+            0% {
+                box-shadow: inset 0 0 10px rgba(251, 191, 36, 0.3);
+            }
+            100% {
+                box-shadow: inset 0 0 20px rgba(251, 191, 36, 0.6);
+            }
+        }
+
+        .battery-small .percent {
+            font-size: 10px;
+            font-weight: 700;
+            color: #1a202c;
+            margin-top: 2px;
+        }
+
+        .battery-center {
+            width: 80px;
+        }
+
+        .battery-center .wrapper {
+            width: 60px;
+            height: 120px;
+        }
+
+        .battery-center .wrapper .cap {
+            width: 20px;
+            height: 8px;
+            top: -8px;
+        }
+
+        .battery-center .percent {
+            font-size: 14px;
+        }
+
+        .date-note-input {
+            width: 80px;
+            padding: 3px 6px;
+            border: 1px solid #e5e7eb;
+            border-radius: 4px;
+            font-size: 9px;
+            font-family: inherit;
+            outline: none;
+            background: white;
+            margin-top: 2px;
+        }
+
+        .date-note-input:focus {
+            border-color: #4f46e5;
+        }
+
         /* ===== FOCUS DASHBOARD ===== */
         .focus-dashboard-section {
             margin-bottom: 8px;
@@ -510,211 +632,6 @@
             color: #dc2626;
         }
 
-        /* ===== BIG BATTERY ===== */
-        .battery-container {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            padding: 6px 0 10px;
-            background: white;
-            border-radius: 10px;
-            border: 1px solid #f0f0f0;
-            margin-bottom: 8px;
-        }
-
-        .battery-wrapper {
-            position: relative;
-            width: 80px;
-            height: 180px;
-            background: #f3f4f6;
-            border-radius: 12px;
-            border: 4px solid #1a202c;
-            overflow: hidden;
-            margin-bottom: 8px;
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
-        }
-
-        .battery-cap {
-            position: absolute;
-            top: -8px;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 24px;
-            height: 8px;
-            background: #1a202c;
-            border-radius: 3px 3px 0 0;
-        }
-
-        .battery-fill {
-            position: absolute;
-            bottom: 0;
-            left: 0;
-            right: 0;
-            height: 0%;
-            transition: height 1.2s cubic-bezier(0.4, 0, 0.2, 1), background 0.6s ease;
-            border-radius: 0 0 8px 8px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .battery-fill.red {
-            background: linear-gradient(180deg, #f87171, #dc2626);
-        }
-        .battery-fill.yellow {
-            background: linear-gradient(180deg, #fbbf24, #d97706);
-        }
-        .battery-fill.green {
-            background: linear-gradient(180deg, #34d399, #059669);
-        }
-        .battery-fill.stars {
-            background: linear-gradient(180deg, #fcd34d, #f59e0b, #fbbf24);
-            animation: starGlow 1.5s ease-in-out infinite alternate;
-        }
-
-        @keyframes starGlow {
-            0% {
-                box-shadow: inset 0 0 20px rgba(251, 191, 36, 0.3);
-            }
-            100% {
-                box-shadow: inset 0 0 40px rgba(251, 191, 36, 0.6), 0 0 30px rgba(251, 191, 36, 0.2);
-            }
-        }
-
-        .stars-emoji {
-            font-size: 22px;
-            animation: spin 4s linear infinite;
-        }
-
-        @keyframes spin {
-            from {
-                transform: rotate(0deg);
-            }
-            to {
-                transform: rotate(360deg);
-            }
-        }
-
-        .battery-percentage {
-            font-size: 30px;
-            font-weight: 800;
-            color: #1a202c;
-            margin-bottom: 2px;
-        }
-
-        .percent-sign {
-            font-size: 16px;
-            color: #6b7280;
-        }
-
-        .battery-label {
-            font-size: 13px;
-            font-weight: 600;
-            color: #1a202c;
-            margin-bottom: 1px;
-            text-align: center;
-            padding: 0 10px;
-        }
-
-        .battery-sub {
-            font-size: 11px;
-            color: #6b7280;
-            text-align: center;
-        }
-
-        .battery-status-text {
-            font-size: 12px;
-            font-weight: 600;
-            margin-top: 4px;
-            padding: 3px 14px;
-            border-radius: 14px;
-            text-align: center;
-        }
-
-        .battery-status-text.red {
-            color: #dc2626;
-            background: #fef2f2;
-        }
-        .battery-status-text.yellow {
-            color: #d97706;
-            background: #fffbeb;
-        }
-        .battery-status-text.green {
-            color: #059669;
-            background: #ecfdf5;
-        }
-        .battery-status-text.stars {
-            color: #d97706;
-            background: #fffbeb;
-            font-size: 14px;
-        }
-
-        .battery-sheet-selector {
-            width: 100%;
-            max-width: 200px;
-            margin: 0 auto 6px;
-        }
-
-        .battery-sheet-selector select {
-            width: 100%;
-            padding: 6px 10px;
-            border: 2px solid #e5e7eb;
-            border-radius: 6px;
-            font-size: 12px;
-            font-weight: 500;
-            background: white;
-            outline: none;
-            font-family: inherit;
-            -webkit-appearance: none;
-            appearance: none;
-            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%236b7280' d='M6 8L1 3h10z'/%3E%3C/svg%3E");
-            background-repeat: no-repeat;
-            background-position: right 10px center;
-            cursor: pointer;
-        }
-
-        .battery-sheet-selector select:focus {
-            border-color: #4f46e5;
-        }
-
-        .github-status {
-            font-size: 10px;
-            color: #6b7280;
-            margin-top: 4px;
-            display: flex;
-            align-items: center;
-            gap: 4px;
-            justify-content: center;
-        }
-
-        .github-status .dot {
-            width: 5px;
-            height: 5px;
-            border-radius: 50%;
-            display: inline-block;
-        }
-
-        .github-status .dot.online {
-            background: #059669;
-        }
-        .github-status .dot.offline {
-            background: #dc2626;
-        }
-        .github-status .dot.syncing {
-            background: #f59e0b;
-            animation: blink 0.8s infinite;
-        }
-
-        @keyframes blink {
-            0%,
-            100% {
-                opacity: 1;
-            }
-            50% {
-                opacity: 0.3;
-            }
-        }
-
         /* ===== TODAY'S TASKS ===== */
         .focus-tasks-section {
             background: white;
@@ -746,7 +663,7 @@
             color: #1a202c;
         }
 
-        .task-total {
+        .day-total {
             font-size: 10px;
             color: #6b7280;
             padding: 3px 6px;
@@ -755,7 +672,7 @@
             margin-top: 3px;
         }
 
-        .task-total strong {
+        .day-total strong {
             color: #1a202c;
         }
 
@@ -849,7 +766,6 @@
         .focus-task-item.completed {
             background: #ecfdf5;
             border-color: #059669;
-            opacity: 0.8;
         }
 
         .focus-task-item.completed .task-ref {
@@ -857,14 +773,14 @@
             color: #9ca3af;
         }
 
+        .focus-task-item.incomplete {
+            background: #fef2f2;
+            border-color: #fecaca;
+        }
+
         .focus-task-item.backlog {
             background: #fef3c7;
             border-color: #f59e0b;
-        }
-
-        .focus-task-item.pending {
-            background: #fef2f2;
-            border-color: #fecaca;
         }
 
         .focus-task-item.future {
@@ -892,12 +808,12 @@
             color: white;
         }
 
-        .focus-task-item.backlog .focus-task-checkbox {
-            border-color: #f59e0b;
+        .focus-task-item.incomplete .focus-task-checkbox {
+            border-color: #dc2626;
         }
 
-        .focus-task-item.pending .focus-task-checkbox {
-            border-color: #dc2626;
+        .focus-task-item.backlog .focus-task-checkbox {
+            border-color: #f59e0b;
         }
 
         .focus-task-item.future .focus-task-checkbox {
@@ -937,14 +853,14 @@
             color: #065f46;
         }
 
+        .focus-task-item .task-status-label.incomplete-label {
+            background: #fef2f2;
+            color: #dc2626;
+        }
+
         .focus-task-item .task-status-label.backlog-label {
             background: #fef3c7;
             color: #92400e;
-        }
-
-        .focus-task-item .task-status-label.pending-label {
-            background: #fef2f2;
-            color: #dc2626;
         }
 
         .focus-task-item .task-status-label.future-label {
@@ -1219,6 +1135,16 @@
             cursor: pointer;
             font-size: 12px;
             padding: 0 3px;
+        }
+
+        .history-day-total {
+            font-size: 10px;
+            font-weight: 600;
+            color: #4f46e5;
+            background: #dbeafe;
+            padding: 2px 8px;
+            border-radius: 4px;
+            margin-left: 4px;
         }
 
         /* ===== RESULTS ===== */
@@ -2081,28 +2007,37 @@
             }
             .lock-btn {
                 padding: 3px 8px;
-                font-size: 10px;
+                font-size: 9px;
             }
             .top-tab {
                 padding: 6px 8px;
                 font-size: 10px;
             }
-            .battery-wrapper {
-                width: 60px;
-                height: 140px;
+            .floating-btn {
+                width: 32px;
+                height: 32px;
+                font-size: 14px;
             }
-            .battery-percentage {
-                font-size: 24px;
+            .battery-small {
+                width: 40px;
             }
-            .battery-label {
+            .battery-small .wrapper {
+                width: 30px;
+                height: 60px;
+            }
+            .battery-center .wrapper {
+                width: 44px;
+                height: 80px;
+            }
+            .battery-center .percent {
                 font-size: 12px;
             }
-            .floating-btn {
-                width: 36px;
-                height: 36px;
-                font-size: 16px;
-                top: 8px;
-                right: 8px;
+            .battery-small .percent {
+                font-size: 8px;
+            }
+            .date-note-input {
+                width: 60px;
+                font-size: 8px;
             }
             .form-row {
                 grid-template-columns: 1fr;
@@ -2166,7 +2101,7 @@
                 padding: 3px 8px;
                 font-size: 11px;
             }
-            .task-total {
+            .day-total {
                 font-size: 9px;
             }
             .results-summary-top .summary-item {
@@ -2188,6 +2123,10 @@
             .date-navigation .date-display .status-dot {
                 width: 8px;
                 height: 8px;
+            }
+            .batteries-container {
+                gap: 6px;
+                padding: 4px 0;
             }
         }
 
@@ -2230,7 +2169,6 @@
                 <div class="subtitle" id="headerSubtitle">Focus</div>
             </div>
             <div class="header-actions">
-                <!-- Floating button moved to top-right -->
                 <button class="floating-btn" id="floatingBtn" onclick="toggleAppView()">
                     <span class="btn-icon">⚡</span>
                 </button>
@@ -2262,28 +2200,33 @@
                     <div class="focus-dashboard-grid" id="focusDashboardGrid"></div>
                 </div>
 
-                <div class="battery-container">
-                    <div class="battery-sheet-selector">
-                        <select id="focusSheetSelect" onchange="updateFocusBattery()">
-                            <option value="">-- Select a Goal --</option>
-                        </select>
-                    </div>
-                    <div class="battery-wrapper">
-                        <div class="battery-cap"></div>
-                        <div class="battery-fill" id="focusBatteryFill">
-                            <span class="stars-emoji" id="starsEmoji" style="display:none;">⭐</span>
+                <!-- ===== 3 BATTERIES ===== -->
+                <div class="batteries-container">
+                    <div class="battery-small" id="batteryYesterday">
+                        <div class="label">Yesterday</div>
+                        <div class="wrapper">
+                            <div class="cap"></div>
+                            <div class="fill red" id="yesterdayFill" style="height:0%;"></div>
                         </div>
+                        <div class="percent" id="yesterdayPercent">0%</div>
                     </div>
-                    <div class="battery-percentage">
-                        <span id="focusPercent">0</span><span class="percent-sign">%</span>
-                    </div>
-                    <div class="battery-label" id="focusLabel">No Goal Selected</div>
-                    <div class="battery-sub" id="focusSub">Select a goal to track your progress</div>
-                    <div class="battery-status-text" id="focusStatus" style="display:none;"></div>
 
-                    <div class="github-status" id="githubStatus">
-                        <span class="dot offline" id="githubDot"></span>
-                        <span id="githubStatusText">GitHub: Offline</span>
+                    <div class="battery-small battery-center" id="batteryToday">
+                        <div class="label">Today</div>
+                        <div class="wrapper">
+                            <div class="cap"></div>
+                            <div class="fill red" id="todayFill" style="height:0%;"></div>
+                        </div>
+                        <div class="percent" id="todayPercent">0%</div>
+                    </div>
+
+                    <div class="battery-small" id="batteryTomorrow">
+                        <div class="label">Tomorrow</div>
+                        <div class="wrapper">
+                            <div class="cap"></div>
+                            <div class="fill red" id="tomorrowFill" style="height:0%;"></div>
+                        </div>
+                        <div class="percent" id="tomorrowPercent">0%</div>
                     </div>
                 </div>
 
@@ -2297,6 +2240,7 @@
                     </span>
                     <button onclick="changeDate(1)">▶</button>
                     <button class="btn-today" onclick="goToday()">Today</button>
+                    <input type="text" class="date-note-input" id="dateNoteInput" placeholder="Note..." />
                 </div>
 
                 <div class="focus-tasks-section" id="focusTasksSection">
@@ -2304,11 +2248,11 @@
                         <h3>📋 <span id="focusTasksViewLabel">Today's</span> Tasks</h3>
                         <span class="task-summary" id="focusTaskSummary">0/0 completed</span>
                     </div>
+                    <div class="day-total" id="dayTotalDisplay">
+                        📊 Day Total: <strong id="dayTotalMinutes">0</strong> mins (<span id="dayTotalHours">0.00</span> hrs)
+                    </div>
                     <div class="backlog-info" id="backlogInfo">
                         ⚠️ Backlog: <span id="backlogDuration">0</span> mins
-                    </div>
-                    <div class="task-total" id="taskTotalDisplay">
-                        📊 Total: <strong id="taskTotalMinutes">0</strong> mins
                     </div>
                     <div class="focus-task-actions">
                         <button class="btn-focus-select-all" onclick="focusSelectAll()">✅ Select All</button>
@@ -2548,6 +2492,7 @@
             history: [],
             lastSync: null,
             dateSpeedOverrides: {},
+            dateNotes: {},
             sampleDataAdded: false,
             hasChanges: false
         };
@@ -2583,7 +2528,6 @@
             minutes = String(minutes).padStart(2, '0');
             document.getElementById('currentTime').textContent = `${hours}:${minutes} ${ampm}`;
 
-            // Auto-execute at 12pm and 6pm
             if ((hours === 12 || hours === 6) && minutes === 0) {
                 autoExecute();
             }
@@ -2614,8 +2558,20 @@
                 updateFocusDashboard();
                 updateFocusBattery();
                 updateHistory();
+                updateBatteries();
                 console.log(`✅ Auto-executed ${totalExecuted} tasks at ${new Date().toLocaleString()}`);
             }
+        }
+
+        // ============================================================
+        // FORMAT TIME
+        // ============================================================
+        function formatTime(minutes) {
+            if (minutes >= 60) {
+                const hrs = (minutes / 60).toFixed(2);
+                return `${hrs} hrs`;
+            }
+            return `${minutes} mins`;
         }
 
         // ============================================================
@@ -2641,9 +2597,18 @@
                 badge.style.display = 'none';
             }
 
-            // Update status dot
+            // Load note for this date
+            const dateStr = selectedDate.toISOString().split('T')[0];
+            const noteInput = document.getElementById('dateNoteInput');
+            noteInput.value = appData.dateNotes[dateStr] || '';
+            noteInput.onchange = function() {
+                appData.dateNotes[dateStr] = this.value;
+                saveData();
+            };
+
             updateStatusDot();
             updateFocusTasks();
+            updateBatteries();
         }
 
         function changeDate(days) {
@@ -2659,7 +2624,7 @@
         }
 
         // ============================================================
-        // STATUS DOT - Red/Green/Yellow
+        // STATUS DOT
         // ============================================================
         function updateStatusDot() {
             const dot = document.getElementById('statusDot');
@@ -2670,9 +2635,6 @@
             }
 
             const dateStr = selectedDate.toISOString().split('T')[0];
-            const todayStr = new Date().toISOString().split('T')[0];
-
-            // Get tasks for this date
             const tasksForDate = getTasksForDate(sheet, dateStr);
             const completedForDate = appData.history.filter(h =>
                 h.sheetName === sheet.name &&
@@ -2683,44 +2645,25 @@
             const totalTasks = tasksForDate.length;
             const completedTasks = completedForDate.length;
 
-            // Get backlog from previous day
-            const prevDate = new Date(selectedDate);
-            prevDate.setDate(prevDate.getDate() - 1);
-            const prevDateStr = prevDate.toISOString().split('T')[0];
-            const backlogTasks = appData.history.filter(h =>
-                h.sheetName === sheet.name &&
-                h.date === prevDateStr &&
-                h.permanent !== true
-            );
+            if (totalTasks === 0) {
+                dot.className = 'status-dot gray';
+                return;
+            }
 
-            // Get advance work (tasks completed ahead of schedule)
-            const advanceTasks = appData.history.filter(h =>
-                h.sheetName === sheet.name &&
-                h.date < dateStr &&
-                h.permanent === true
-            );
-
-            // Determine status
-            if (backlogTasks.length > 0) {
-                dot.className = 'status-dot red';
-                dot.title = '🔴 Backlog from previous day';
-            } else if (advanceTasks.length > 0 && completedTasks > 0) {
-                dot.className = 'status-dot green';
-                dot.title = '🟢 Ahead of schedule';
-            } else if (completedTasks === totalTasks && totalTasks > 0) {
+            if (completedTasks === totalTasks) {
                 dot.className = 'status-dot green';
                 dot.title = '🟢 All tasks completed';
             } else if (completedTasks > 0) {
                 dot.className = 'status-dot yellow';
                 dot.title = '🟡 In progress';
             } else {
-                dot.className = 'status-dot gray';
-                dot.title = '⚪ No activity';
+                dot.className = 'status-dot red';
+                dot.title = '🔴 Pending';
             }
         }
 
         // ============================================================
-        // GET TASKS FOR A SPECIFIC DATE (No duplicates across dates)
+        // GET TASKS FOR A SPECIFIC DATE (No duplicates)
         // ============================================================
         function getTasksForDate(sheet, dateStr) {
             if (!sheet) return [];
@@ -2728,15 +2671,6 @@
             const startDate = sheet.startDate || new Date().toISOString().split('T')[0];
             if (dateStr < startDate) return [];
 
-            const defaultSpeedMinutes = (sheet.speed || appData.defaultSpeed) * 60;
-            const speed = appData.dateSpeedOverrides[dateStr] || defaultSpeedMinutes;
-
-            const permanentlyCompleted = appData.history.filter(h =>
-                h.sheetName === sheet.name &&
-                h.permanent === true
-            ).map(h => h.taskIndex);
-
-            // Get all tasks assigned to this date (from groups)
             const groups = getTaskGroups(sheet, dateStr);
             let taskIndices = [];
             groups.forEach(group => {
@@ -2746,9 +2680,6 @@
                     }
                 });
             });
-
-            // Filter out permanently completed
-            taskIndices = taskIndices.filter(idx => !permanentlyCompleted.includes(idx));
 
             return taskIndices.map(idx => ({ ...sheet.data[idx], index: idx }));
         }
@@ -2861,6 +2792,59 @@
         }
 
         // ============================================================
+        // UPDATE 3 BATTERIES
+        // ============================================================
+        function updateBatteries() {
+            const sheet = getSelectedSheet();
+            if (!sheet) {
+                ['yesterday', 'today', 'tomorrow'].forEach(id => {
+                    document.getElementById(id + 'Fill').style.height = '0%';
+                    document.getElementById(id + 'Percent').textContent = '0%';
+                });
+                return;
+            }
+
+            const today = new Date();
+            const yesterday = new Date(today);
+            yesterday.setDate(yesterday.getDate() - 1);
+            const tomorrow = new Date(today);
+            tomorrow.setDate(tomorrow.getDate() + 1);
+
+            const dates = [
+                { id: 'yesterday', date: yesterday },
+                { id: 'today', date: today },
+                { id: 'tomorrow', date: tomorrow }
+            ];
+
+            dates.forEach(({ id, date }) => {
+                const dateStr = date.toISOString().split('T')[0];
+                const tasks = getTasksForDate(sheet, dateStr);
+                const completed = appData.history.filter(h =>
+                    h.sheetName === sheet.name &&
+                    h.date === dateStr &&
+                    h.permanent === true
+                );
+
+                const total = tasks.length;
+                const done = completed.length;
+                const percent = total > 0 ? Math.round((done / total) * 100) : 0;
+
+                const fill = document.getElementById(id + 'Fill');
+                const percentEl = document.getElementById(id + 'Percent');
+
+                fill.style.height = percent + '%';
+                percentEl.textContent = percent + '%';
+
+                let colorClass = 'red';
+                if (percent === 100) colorClass = 'stars';
+                else if (percent >= 70) colorClass = 'green';
+                else if (percent >= 30) colorClass = 'yellow';
+
+                fill.className = 'fill ' + colorClass;
+            });
+        }
+
+        // ============================================================
         // SPEED EDIT
         // ============================================================
         function openSpeedEdit() {
@@ -2894,6 +2878,7 @@
             updateFocusBattery();
             updateResults();
             updateStatusDot();
+            updateBatteries();
             alert(`✅ Speed set to ${speedHours.toFixed(2)} hrs/day for ${dateStr}`);
         }
 
@@ -2953,6 +2938,7 @@
             updateFocusTasks();
             updateFocusBattery();
             updateResults();
+            updateBatteries();
             alert(`✅ Applied ${speed.toFixed(2)} hrs/day to ${count} dates`);
         }
 
@@ -2993,7 +2979,6 @@
             renderSpreadsheet();
             updateFocusBattery();
 
-            // Start with Focus page visible
             document.getElementById('topTabs').classList.add('hidden');
             document.getElementById('appContent').classList.add('hidden');
 
@@ -3016,6 +3001,7 @@
             updateHistory();
             updateExecuteButton();
             updateStatusDot();
+            updateBatteries();
             checkDailySync();
         }
 
@@ -3128,6 +3114,7 @@
             updateFocusBattery();
             updateFocusTasks();
             updateHistory();
+            updateBatteries();
 
             alert('✅ Sample data added! Two sheets created with example tasks.');
         }
@@ -3227,6 +3214,7 @@
                 updateFocusTasks();
                 updateDateDisplay();
                 updateStatusDot();
+                updateBatteries();
             }
             if (pageName === 'history') updateHistory();
             if (pageName === 'results') updateResults();
@@ -3342,6 +3330,7 @@
             updateResults();
             updateTracker();
             updateStatusDot();
+            updateBatteries();
             saveData();
         }
 
@@ -3444,8 +3433,9 @@
             const summary = document.getElementById('focusTaskSummary');
             const backlogInfo = document.getElementById('backlogInfo');
             const backlogDuration = document.getElementById('backlogDuration');
-            const totalDisplay = document.getElementById('taskTotalDisplay');
-            const totalMinutes = document.getElementById('taskTotalMinutes');
+            const dayTotalDisplay = document.getElementById('dayTotalDisplay');
+            const dayTotalMinutes = document.getElementById('dayTotalMinutes');
+            const dayTotalHours = document.getElementById('dayTotalHours');
 
             if (!sheet) {
                 container.innerHTML = `
@@ -3456,7 +3446,7 @@
                     `;
                 summary.textContent = '0/0 completed';
                 backlogInfo.classList.remove('show');
-                totalDisplay.style.display = 'none';
+                dayTotalDisplay.style.display = 'none';
                 return;
             }
 
@@ -3472,64 +3462,36 @@
                     `;
                 summary.textContent = '0/0 completed';
                 backlogInfo.classList.remove('show');
-                totalDisplay.style.display = 'none';
+                dayTotalDisplay.style.display = 'none';
                 return;
             }
 
-            // Get tasks for this date (no duplicates across dates)
             const tasksForDate = getTasksForDate(sheet, dateStr);
-
-            // Get permanently completed
             const permanentlyCompleted = appData.history.filter(h =>
                 h.sheetName === sheet.name &&
                 h.permanent === true
             ).map(h => h.taskIndex);
 
-            // Get temp completed for this date
             const tempCompleted = appData.history.filter(h =>
                 h.sheetName === sheet.name &&
                 h.date === dateStr &&
                 h.permanent !== true
             ).map(h => h.taskIndex);
 
-            // Get backlog from previous day only
-            const previousDate = new Date(selectedDate);
-            previousDate.setDate(previousDate.getDate() - 1);
-            const prevDateStr = previousDate.toISOString().split('T')[0];
-
-            const backlogFromPrev = appData.history.filter(h =>
-                h.date === prevDateStr &&
-                h.sheetName === sheet.name &&
-                h.permanent !== true
-            );
-            const backlogTaskIndices = new Set(backlogFromPrev.map(h => h.taskIndex));
-
-            // Calculate backlog duration
-            let backlogDurationTotal = 0;
-            backlogTaskIndices.forEach(idx => {
-                if (sheet.data[idx]) {
-                    backlogDurationTotal += parseInt(sheet.data[idx].duration) || 0;
-                }
-            });
-
-            // Build task list - only tasks for this date
-            let tasksToShow = [];
-            let totalTaskDuration = 0;
-
-            // Add backlog tasks first
-            backlogTaskIndices.forEach(idx => {
-                if (!permanentlyCompleted.includes(idx) && sheet.data[idx]) {
-                    tasksToShow.push({ ...sheet.data[idx], index: idx, isBacklog: true });
-                    totalTaskDuration += parseInt(sheet.data[idx].duration) || 0;
-                }
-            });
-
-            // Add today's tasks
+            // Calculate day total
+            let dayTotal = 0;
             tasksForDate.forEach(task => {
-                if (!permanentlyCompleted.includes(task.index) && !backlogTaskIndices.has(task.index)) {
-                    tasksToShow.push({ ...task, isBacklog: false });
-                    totalTaskDuration += parseInt(task.duration) || 0;
-                }
+                dayTotal += parseInt(task.duration) || 0;
+            });
+
+            dayTotalDisplay.style.display = 'block';
+            dayTotalMinutes.textContent = dayTotal;
+            dayTotalHours.textContent = (dayTotal / 60).toFixed(2);
+
+            // Build task list
+            let tasksToShow = [];
+            tasksForDate.forEach(task => {
+                tasksToShow.push({ ...task, isBacklog: false });
             });
 
             if (tasksToShow.length === 0) {
@@ -3542,8 +3504,6 @@
                     `;
                 summary.textContent = `${permanentlyCompleted.length}/${sheet.data.length} completed`;
                 backlogInfo.classList.remove('show');
-                totalDisplay.style.display = 'block';
-                totalMinutes.textContent = '0';
                 return;
             }
 
@@ -3555,15 +3515,6 @@
             });
 
             summary.textContent = `${permanentlyCompleted.length}/${sheet.data.length} completed`;
-            totalDisplay.style.display = 'block';
-            totalMinutes.textContent = totalTaskDuration;
-
-            if (backlogDurationTotal > 0) {
-                backlogInfo.classList.add('show');
-                backlogDuration.textContent = backlogDurationTotal;
-            } else {
-                backlogInfo.classList.remove('show');
-            }
 
             document.getElementById('focusTasksViewLabel').textContent = focusShowAllTasks ? 'All' : "Today's";
             document.getElementById('focusViewToggleLabel').textContent = focusShowAllTasks ? 'Today' : 'All';
@@ -3572,29 +3523,20 @@
             tasksToShow.forEach(task => {
                 const isPermanent = permanentlyCompleted.includes(task.index);
                 const isTemp = tempCompleted.includes(task.index);
-                const isBacklog = task.isBacklog || false;
                 const isCompleted = isPermanent || isTemp;
 
                 let statusClass = '';
                 let statusLabel = '';
                 let labelClass = '';
 
-                if (isPermanent) {
+                if (isPermanent || isTemp) {
                     statusClass = 'completed';
                     statusLabel = '✅ Done';
                     labelClass = 'done';
-                } else if (isTemp) {
-                    statusClass = 'completed';
-                    statusLabel = '⏳ Pending Execute';
-                    labelClass = 'done';
-                } else if (isBacklog) {
-                    statusClass = 'backlog';
-                    statusLabel = '📌 Backlog';
-                    labelClass = 'backlog-label';
                 } else {
-                    statusClass = 'pending';
-                    statusLabel = '⏳ Pending';
-                    labelClass = 'pending-label';
+                    statusClass = 'incomplete';
+                    statusLabel = '❌ Pending';
+                    labelClass = 'incomplete-label';
                 }
 
                 // Check if this is a future date
@@ -3620,6 +3562,7 @@
 
             container.innerHTML = html;
             updateStatusDot();
+            updateBatteries();
         }
 
         function focusToggleTask(sheetIndex, taskIndex) {
@@ -3671,6 +3614,7 @@
             updateFocusBattery();
             updateHistory();
             updateStatusDot();
+            updateBatteries();
         }
 
         function focusExecute() {
@@ -3710,6 +3654,7 @@
             updateHistory();
             updateResults();
             updateStatusDot();
+            updateBatteries();
             alert(`✅ Executed ${tempCompletions.length} tasks permanently!`);
         }
 
@@ -3776,6 +3721,7 @@
             updateFocusBattery();
             updateHistory();
             updateStatusDot();
+            updateBatteries();
             alert(`✅ Selected ${added} tasks for execution`);
         }
 
@@ -3814,6 +3760,7 @@
             updateFocusBattery();
             updateHistory();
             updateStatusDot();
+            updateBatteries();
             alert(`❌ Deselected ${removed} tasks`);
         }
 
@@ -3855,6 +3802,13 @@
             Object.keys(grouped).forEach(sheetName => {
                 const entries = grouped[sheetName].sort((a, b) => a.taskIndex - b.taskIndex);
 
+                // Calculate day totals
+                const dayTotals = {};
+                entries.forEach(entry => {
+                    if (!dayTotals[entry.date]) dayTotals[entry.date] = 0;
+                    dayTotals[entry.date] += parseInt(entry.taskDuration) || 0;
+                });
+
                 const totalTasks = entries.length;
                 const totalDuration = entries.reduce((sum, e) => sum + (parseInt(e.taskDuration) || 0), 0);
 
@@ -3862,7 +3816,7 @@
                         <div style="margin-top:6px;padding:6px;background:#f8fafc;border-radius:6px;">
                             <div style="display:flex;justify-content:space-between;margin-bottom:3px;font-size:11px;font-weight:600;color:#1a202c;">
                                 <span>📋 ${sheetName}</span>
-                                <span>${totalTasks} tasks · ${totalDuration} mins</span>
+                                <span>${totalTasks} tasks · ${formatTime(totalDuration)}</span>
                             </div>
                     `;
 
@@ -3877,13 +3831,15 @@
                         month: 'short',
                         day: 'numeric'
                     }) : '-';
+                    const dayTotal = dayTotals[entry.date] || 0;
 
                     html += `
                             <div class="history-item">
                                 <span class="date">${dateLabel}</span>
                                 <span class="task-info">#${entry.taskIndex + 1} ${entry.taskRef || 'Task'}</span>
                                 <span class="completed-on">✅ Done: ${completedLabel}</span>
-                                <span class="progress completed">${entry.taskDuration || 0}m</span>
+                                <span class="progress completed">${formatTime(entry.taskDuration || 0)}</span>
+                                <span class="history-day-total">📊 ${formatTime(dayTotal)}</span>
                             </div>
                         `;
                 });
@@ -3927,36 +3883,19 @@
 
             const delayedInfo = calculateDelayedDate(sheet);
 
-            // Last 3 and coming 3 days
-            const today = new Date();
-            const last3 = [];
-            const coming3 = [];
-
-            for (let i = 3; i >= 1; i--) {
-                const d = new Date(today);
-                d.setDate(d.getDate() - i);
-                last3.push(d);
-            }
-
-            for (let i = 1; i <= 3; i++) {
-                const d = new Date(today);
-                d.setDate(d.getDate() + i);
-                coming3.push(d);
-            }
-
             let html = `
                     <div class="results-summary-top">
                         <div class="summary-item">
                             <span class="label">Total Duration</span>
-                            <span class="value">${totalDuration.toFixed(2)} mins (${(totalDuration/60).toFixed(2)} hrs)</span>
+                            <span class="value">${formatTime(totalDuration)}</span>
                         </div>
                         <div class="summary-item">
                             <span class="label">Completed</span>
-                            <span class="value success">${completedDuration.toFixed(2)} mins</span>
+                            <span class="value success">${formatTime(completedDuration)}</span>
                         </div>
                         <div class="summary-item">
                             <span class="label">Remaining</span>
-                            <span class="value warning">${remainingDuration.toFixed(2)} mins</span>
+                            <span class="value warning">${formatTime(remainingDuration)}</span>
                         </div>
                         <div class="summary-item">
                             <span class="label">Days to Complete</span>
@@ -3980,39 +3919,6 @@
                             <span class="label">Task Groups</span>
                             <span class="value">${groups.length}</span>
                         </div>
-                    </div>
-
-                    <div style="margin-bottom:10px;padding:6px;background:#f3f4f6;border-radius:4px;">
-                        <div style="font-size:10px;font-weight:600;color:#6b7280;margin-bottom:4px;">📅 Speed per Day</div>
-                        <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:4px;font-size:10px;">
-                            <div style="text-align:center;color:#9ca3af;">Last 3 Days</div>
-                            <div style="text-align:center;color:#4f46e5;font-weight:600;">Today</div>
-                            <div style="text-align:center;color:#9ca3af;">Next 3 Days</div>
-                        </div>
-                        <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:4px;font-size:10px;text-align:center;">
-                            <div>
-                                ${last3.map(d => {
-                                    const ds = d.toISOString().split('T')[0];
-                                    const spd = appData.dateSpeedOverrides[ds] || (sheet.speed || appData.defaultSpeed) * 60;
-                                    return `<div style="padding:2px;background:white;border-radius:3px;margin-bottom:2px;">${d.toLocaleDateString('en-US',{month:'short',day:'numeric'})}: ${(spd/60).toFixed(2)}h</div>`;
-                                }).join('')}
-                            </div>
-                            <div style="background:#dbeafe;border-radius:4px;padding:2px;">
-                                ${(() => {
-                                    const ds = today.toISOString().split('T')[0];
-                                    const spd = appData.dateSpeedOverrides[ds] || (sheet.speed || appData.defaultSpeed) * 60;
-                                    return `<div style="padding:2px;font-weight:600;">${today.toLocaleDateString('en-US',{month:'short',day:'numeric'})}: ${(spd/60).toFixed(2)}h</div>`;
-                                })()}
-                            </div>
-                            <div>
-                                ${coming3.map(d => {
-                                    const ds = d.toISOString().split('T')[0];
-                                    const spd = appData.dateSpeedOverrides[ds] || (sheet.speed || appData.defaultSpeed) * 60;
-                                    return `<div style="padding:2px;background:white;border-radius:3px;margin-bottom:2px;">${d.toLocaleDateString('en-US',{month:'short',day:'numeric'})}: ${(spd/60).toFixed(2)}h</div>`;
-                                }).join('')}
-                            </div>
-                        </div>
-                        <div style="font-size:9px;color:#9ca3af;margin-top:4px;text-align:center;">✏️ Click date in Focus tab to edit speed</div>
                     </div>
                     <table class="results-table">
                         <thead>
@@ -4062,6 +3968,7 @@
                 updateFocusTasks();
                 updateFocusBattery();
                 updateStatusDot();
+                updateBatteries();
             }
         }
 
@@ -4121,15 +4028,15 @@
                     <div class="tracker-summary-top">
                         <div class="summary-item">
                             <span class="label">Total Duration</span>
-                            <span class="value">${totalDuration.toFixed(2)} mins (${(totalDuration/60).toFixed(2)} hrs)</span>
+                            <span class="value">${formatTime(totalDuration)}</span>
                         </div>
                         <div class="summary-item">
                             <span class="label">Completed</span>
-                            <span class="value success">${completedDuration.toFixed(2)} mins</span>
+                            <span class="value success">${formatTime(completedDuration)}</span>
                         </div>
                         <div class="summary-item">
                             <span class="label">Remaining</span>
-                            <span class="value warning">${remainingDuration.toFixed(2)} mins</span>
+                            <span class="value warning">${formatTime(remainingDuration)}</span>
                         </div>
                         ${delayedInfo ? `
                         <div class="summary-item">
@@ -4202,6 +4109,7 @@
             updateFocusTasks();
             updateResults();
             updateStatusDot();
+            updateBatteries();
         }
 
         function saveTrackerDates(sheetIndex) {
@@ -4310,6 +4218,7 @@
                 updateFocusTasks();
                 updateHistory();
                 updateResults();
+                updateBatteries();
             });
 
             document.getElementById('modalConfirmBtn').className = 'btn-danger';
@@ -4421,6 +4330,7 @@
                 updateHistory();
                 updateResults();
                 updateStatusDot();
+                updateBatteries();
             }
         }
 
@@ -4490,6 +4400,7 @@
             updateSheetTabs();
             updateResults();
             updateStatusDot();
+            updateBatteries();
 
             const removed = originalLength - sheet.data.length;
             alert(`✅ Saved ${sheet.data.length} rows${removed > 0 ? ` (${removed} empty rows removed)` : ''}`);
@@ -4685,6 +4596,7 @@
                         document.getElementById('defaultSpeedInput').value = appData.defaultSpeed;
                         updateExecuteButton();
                         updateStatusDot();
+                        updateBatteries();
                         alert('📂 Data imported successfully!');
                     });
                 } catch (err) {
@@ -4768,6 +4680,7 @@
                         history: historyData,
                         defaultSpeed: appData.defaultSpeed,
                         dateSpeedOverrides: appData.dateSpeedOverrides || {},
+                        dateNotes: appData.dateNotes || {},
                         lastUpdated: new Date().toISOString()
                     }
                 }
