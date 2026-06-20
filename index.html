@@ -395,6 +395,9 @@
         .date-navigation .date-display .status-dot.gray {
             background: #9ca3af;
         }
+        .date-navigation .date-display .status-dot.blue {
+            background: #3b82f6;
+        }
 
         .date-navigation .date-display .edit-speed {
             font-size: 9px;
@@ -629,13 +632,12 @@
             text-align: center;
         }
 
-        /* Center battery is bigger */
         .battery-item.center-battery .battery-small {
             width: 60px;
             height: 120px;
         }
 
-        /* ===== NOTE TEXT BOX ===== */
+        /* ===== NOTE BOX ===== */
         .note-box-container {
             margin-top: 8px;
             width: 100%;
@@ -799,13 +801,12 @@
             background: #f3f4f6;
         }
 
-        .focus-task-item.completed {
+        .focus-task-item.done {
             background: #ecfdf5;
             border-color: #059669;
-            opacity: 1;
         }
 
-        .focus-task-item.completed .task-ref {
+        .focus-task-item.done .task-ref {
             text-decoration: line-through;
             color: #9ca3af;
         }
@@ -816,9 +817,18 @@
         }
 
         .focus-task-item.future {
-            background: #f3f4f6;
-            border-color: #e5e7eb;
-            opacity: 0.6;
+            background: #dbeafe;
+            border-color: #93c5fd;
+        }
+
+        .focus-task-item.advance {
+            background: #d1fae5;
+            border-color: #34d399;
+            border-width: 2px;
+        }
+
+        .focus-task-item.advance .task-ref {
+            color: #065f46;
         }
 
         .focus-task-checkbox {
@@ -834,7 +844,7 @@
             transition: all 0.2s;
         }
 
-        .focus-task-item.completed .focus-task-checkbox {
+        .focus-task-item.done .focus-task-checkbox {
             background: #059669;
             border-color: #059669;
             color: white;
@@ -845,7 +855,11 @@
         }
 
         .focus-task-item.future .focus-task-checkbox {
-            border-color: #d1d5db;
+            border-color: #3b82f6;
+        }
+
+        .focus-task-item.advance .focus-task-checkbox {
+            border-color: #059669;
         }
 
         .focus-task-sr {
@@ -881,14 +895,19 @@
             color: #065f46;
         }
 
-        .focus-task-item .task-status-label.pending-label {
+        .focus-task-item .task-status-label.pending {
             background: #fef2f2;
             color: #dc2626;
         }
 
-        .focus-task-item .task-status-label.future-label {
-            background: #e5e7eb;
-            color: #6b7280;
+        .focus-task-item .task-status-label.future {
+            background: #dbeafe;
+            color: #1e40af;
+        }
+
+        .focus-task-item .task-status-label.advance {
+            background: #d1fae5;
+            color: #065f46;
         }
 
         .focus-no-tasks {
@@ -902,6 +921,24 @@
             font-size: 18px;
             display: block;
             margin-bottom: 3px;
+        }
+
+        .focus-task-date {
+            font-size: 8px;
+            color: #6b7280;
+            background: #f3f4f6;
+            padding: 1px 4px;
+            border-radius: 3px;
+            margin-left: 2px;
+        }
+
+        .focus-task-done-date {
+            font-size: 8px;
+            color: #059669;
+            background: #ecfdf5;
+            padding: 1px 4px;
+            border-radius: 3px;
+            margin-left: 2px;
         }
 
         /* ===== SPEED EDIT MODAL ===== */
@@ -1140,6 +1177,7 @@
             background: #ecfdf5;
             padding: 1px 6px;
             border-radius: 8px;
+            cursor: pointer;
         }
 
         .history-item .progress {
@@ -2196,6 +2234,12 @@
                 width: 8px;
                 height: 8px;
             }
+            .focus-task-date {
+                font-size: 7px;
+            }
+            .focus-task-done-date {
+                font-size: 7px;
+            }
         }
 
         /* ===== SCROLLBAR ===== */
@@ -2270,7 +2314,6 @@
 
                 <!-- ===== THREE BATTERIES ===== -->
                 <div class="batteries-container">
-                    <!-- Yesterday -->
                     <div class="battery-item">
                         <span class="battery-label">⬅️ Yesterday</span>
                         <div class="battery-small">
@@ -2285,7 +2328,6 @@
                         <div class="battery-sub-small" id="yesterdaySub">-</div>
                     </div>
 
-                    <!-- Today (Center - Bigger) -->
                     <div class="battery-item center-battery">
                         <span class="battery-label">📌 Today</span>
                         <div class="battery-small">
@@ -2300,7 +2342,6 @@
                         <div class="battery-sub-small" id="todaySub">-</div>
                     </div>
 
-                    <!-- Tomorrow -->
                     <div class="battery-item">
                         <span class="battery-label">➡️ Tomorrow</span>
                         <div class="battery-small">
@@ -2586,6 +2627,7 @@
             lastSync: null,
             dateSpeedOverrides: {},
             dateNotes: {},
+            taskAllocations: {}, // { sheetName: { taskIndex: dateStr } }
             sampleDataAdded: false,
             hasChanges: false
         };
@@ -2678,7 +2720,6 @@
                 badge.style.display = 'none';
             }
 
-            // Load note
             const dateStr = selectedDate.toISOString().split('T')[0];
             document.getElementById('dateNote').value = appData.dateNotes[dateStr] || '';
 
@@ -2759,7 +2800,6 @@
                 fill.style.height = percent + '%';
                 percentEl.textContent = percent;
 
-                // Color
                 fill.classList.remove('red', 'yellow', 'green', 'stars');
                 if (percent === 100) {
                     fill.classList.add('stars');
@@ -2779,7 +2819,6 @@
                     subEl.textContent = '📚 Start';
                 }
 
-                // Show total minutes in hours if >60
                 const totalMins = tasksForDate.reduce((sum, t) => sum + (parseFloat(t.duration) || 0), 0);
                 if (totalMins >= 60) {
                     subEl.textContent += ` (${(totalMins/60).toFixed(1)}h)`;
@@ -2840,10 +2879,107 @@
             } else if (completedTasks > 0) {
                 dot.className = 'status-dot yellow';
                 dot.title = '🟡 In progress';
+            } else if (totalTasks > 0) {
+                dot.className = 'status-dot blue';
+                dot.title = '🔵 Future tasks';
             } else {
                 dot.className = 'status-dot gray';
                 dot.title = '⚪ No activity';
             }
+        }
+
+        // ============================================================
+        // CORE LOGIC: ALLOCATE TASKS TO DATES
+        // ============================================================
+        function allocateTasksToDates(sheet) {
+            if (!sheet) return {};
+
+            const startDateStr = sheet.startDate || new Date().toISOString().split('T')[0];
+            const startDate = new Date(startDateStr);
+
+            const speedMinutes = (sheet.speed || appData.defaultSpeed) * 60;
+            const totalDuration = sheet.data.reduce((sum, row) => sum + (parseFloat(row.duration) || 0), 0);
+
+            if (totalDuration === 0 || speedMinutes === 0) return {};
+
+            // Calculate days needed
+            const daysNeeded = Math.ceil(totalDuration / speedMinutes);
+
+            // Group rows into balanced groups
+            const groups = [];
+            let currentGroup = [];
+            let currentDuration = 0;
+            const targetPerDay = totalDuration / daysNeeded;
+
+            // Sort rows by duration (optional, but helps balance)
+            const sortedRows = sheet.data.map((row, idx) => ({ ...row, index: idx }))
+                .sort((a, b) => (parseFloat(b.duration) || 0) - (parseFloat(a.duration) || 0));
+
+            // Use first-fit decreasing for better balance
+            const allocated = new Array(sheet.data.length).fill(false);
+
+            for (let day = 0; day < daysNeeded; day++) {
+                let dayDuration = 0;
+                let dayRows = [];
+
+                // Try to fill this day
+                for (let i = 0; i < sortedRows.length; i++) {
+                    if (allocated[sortedRows[i].index]) continue;
+                    const dur = parseFloat(sortedRows[i].duration) || 0;
+                    if (dayDuration + dur <= targetPerDay + 0.01) {
+                        dayRows.push(sortedRows[i].index);
+                        dayDuration += dur;
+                        allocated[sortedRows[i].index] = true;
+                    }
+                }
+
+                // If no rows could fit, add the smallest remaining
+                if (dayRows.length === 0) {
+                    for (let i = 0; i < sortedRows.length; i++) {
+                        if (!allocated[sortedRows[i].index]) {
+                            dayRows.push(sortedRows[i].index);
+                            dayDuration += parseFloat(sortedRows[i].duration) || 0;
+                            allocated[sortedRows[i].index] = true;
+                            break;
+                        }
+                    }
+                }
+
+                if (dayRows.length > 0) {
+                    groups.push({ rows: dayRows, duration: dayDuration });
+                }
+            }
+
+            // Handle any remaining rows
+            for (let i = 0; i < sortedRows.length; i++) {
+                if (!allocated[sortedRows[i].index]) {
+                    if (groups.length === 0) {
+                        groups.push({ rows: [], duration: 0 });
+                    }
+                    groups[groups.length - 1].rows.push(sortedRows[i].index);
+                    groups[groups.length - 1].duration += parseFloat(sortedRows[i].duration) || 0;
+                }
+            }
+
+            // Map to dates
+            const allocations = {};
+            const today = new Date();
+
+            groups.forEach((group, index) => {
+                const date = new Date(startDate);
+                date.setDate(date.getDate() + index);
+                const dateStr = date.toISOString().split('T')[0];
+
+                // Don't allocate to dates before start date
+                if (date < startDate) return;
+
+                group.rows.forEach(rowIndex => {
+                    allocations[rowIndex] = dateStr;
+                });
+            });
+
+            // If no allocations (empty sheet), return empty
+            return allocations;
         }
 
         // ============================================================
@@ -2852,148 +2988,80 @@
         function getTasksForDate(sheet, dateStr) {
             if (!sheet) return [];
 
-            const startDate = sheet.startDate || new Date().toISOString().split('T')[0];
-            if (dateStr < startDate) return [];
+            const allocations = appData.taskAllocations[sheet.name] || {};
 
-            const defaultSpeedMinutes = (sheet.speed || appData.defaultSpeed) * 60;
-            const speed = appData.dateSpeedOverrides[dateStr] || defaultSpeedMinutes;
-
-            const groups = getTaskGroups(sheet, dateStr);
-            let taskIndices = [];
-            let groupIndex = 0;
-
-            // Find which group belongs to this date
-            const startDateObj = new Date(startDate);
-            const currentDateObj = new Date(dateStr);
-            const daysDiff = Math.floor((currentDateObj - startDateObj) / (1000 * 60 * 60 * 24));
-
-            if (daysDiff >= 0 && daysDiff < groups.length) {
-                groupIndex = daysDiff;
+            // If no allocations, create them
+            if (Object.keys(allocations).length === 0 && sheet.data.length > 0) {
+                const newAllocations = allocateTasksToDates(sheet);
+                appData.taskAllocations[sheet.name] = newAllocations;
+                saveData();
+                return getTasksForDate(sheet, dateStr);
             }
 
-            if (groups[groupIndex]) {
-                taskIndices = groups[groupIndex].rows;
-            }
+            const taskIndices = Object.keys(allocations).filter(idx =>
+                allocations[idx] === dateStr
+            ).map(Number);
 
-            // Also include any tasks that were manually assigned to this date
-            const manualAssignments = appData.history.filter(h =>
-                h.sheetName === sheet.name &&
-                h.date === dateStr &&
-                h.permanent === false
-            ).map(h => h.taskIndex);
+            const result = taskIndices.map(idx => ({ ...sheet.data[idx], index: idx }))
+                .filter(t => t !== undefined);
 
-            // Merge unique indices
-            const allIndices = new Set([...taskIndices, ...manualAssignments]);
+            // Sort by serial number
+            result.sort((a, b) => (a.sr || a.index + 1) - (b.sr || b.index + 1));
 
-            return Array.from(allIndices).map(idx => ({ ...sheet.data[idx], index: idx }));
+            return result;
         }
 
         // ============================================================
-        // SMART TASK SPLITTING
+        // GET TASK STATUS
         // ============================================================
-        function getTaskGroups(sheet, dateStr) {
-            if (!sheet) return [];
+        function getTaskStatus(sheet, taskIndex, dateStr) {
+            const today = new Date().toISOString().split('T')[0];
 
-            const defaultSpeedMinutes = (sheet.speed || appData.defaultSpeed) * 60;
-            const speed = appData.dateSpeedOverrides[dateStr] || defaultSpeedMinutes;
-
-            const groups = [];
-            let currentGroup = [];
-            let currentDuration = 0;
-
-            const permanentlyCompleted = appData.history.filter(h =>
+            // Check if permanently done
+            const isPermanent = appData.history.some(h =>
                 h.sheetName === sheet.name &&
-                h.permanent === true
-            ).map(h => h.taskIndex);
-
-            const availableRows = sheet.data
-                .map((row, idx) => ({ row, idx }))
-                .filter(({ idx }) => !permanentlyCompleted.includes(idx));
-
-            const totalAvailableDuration = availableRows.reduce((sum, { row }) => sum + (parseFloat(row.duration) || 0), 0);
-            const totalDays = Math.ceil(totalAvailableDuration / speed);
-
-            if (totalDays <= 0) return [];
-
-            // Target per day - balanced
-            const targetPerDay = totalAvailableDuration / totalDays;
-
-            let currentDayDuration = 0;
-            let currentDayRows = [];
-
-            availableRows.forEach(({ row, idx }) => {
-                const duration = parseFloat(row.duration) || 0;
-                if (currentDayDuration + duration <= targetPerDay + 0.01) { // Allow small tolerance
-                    currentDayRows.push(idx);
-                    currentDayDuration += duration;
-                } else {
-                    if (currentDayRows.length > 0) {
-                        groups.push({ rows: currentDayRows, duration: parseFloat(currentDayDuration.toFixed(2)) });
-                    }
-                    currentDayRows = [idx];
-                    currentDayDuration = duration;
-                }
-            });
-
-            if (currentDayRows.length > 0) {
-                groups.push({ rows: currentDayRows, duration: parseFloat(currentDayDuration.toFixed(2)) });
-            }
-
-            return groups;
-        }
-
-        // ============================================================
-        // CALCULATE DELAYED COMPLETION DATE
-        // ============================================================
-        function calculateDelayedDate(sheet) {
-            if (!sheet) return null;
-
-            const totalDuration = sheet.data.reduce((sum, row) => sum + (parseFloat(row.duration) || 0), 0);
-            const permanentlyCompleted = appData.history.filter(h =>
-                h.sheetName === sheet.name &&
+                h.taskIndex === taskIndex &&
                 h.permanent === true
             );
-            const completedDuration = permanentlyCompleted.reduce((sum, h) => sum + (parseInt(h.taskDuration) || 0), 0);
-            const remainingDuration = totalDuration - completedDuration;
-            const speed = (sheet.speed || appData.defaultSpeed) * 60;
 
-            if (remainingDuration <= 0 || speed <= 0) return null;
+            if (isPermanent) {
+                // Check if done in advance (before allocated date)
+                const doneDate = appData.history.find(h =>
+                    h.sheetName === sheet.name &&
+                    h.taskIndex === taskIndex &&
+                    h.permanent === true
+                )?.date || dateStr;
 
-            const daysNeeded = Math.ceil(remainingDuration / speed);
-            const startDate = new Date(sheet.startDate || new Date().toISOString().split('T')[0]);
-            const completionDate = new Date(startDate);
-            completionDate.setDate(completionDate.getDate() + daysNeeded);
-
-            const dailyProgress = {};
-            appData.history.filter(h => h.sheetName === sheet.name && h.permanent === true).forEach(h => {
-                if (!dailyProgress[h.date]) dailyProgress[h.date] = 0;
-                dailyProgress[h.date] += parseInt(h.taskDuration) || 0;
-            });
-
-            let adjustedDays = daysNeeded;
-            const today = new Date();
-            const daysPassed = Math.floor((today - startDate) / (1000 * 60 * 60 * 24));
-
-            if (daysPassed > 0) {
-                const totalDone = Object.values(dailyProgress).reduce((a, b) => a + b, 0);
-                const avgDaily = totalDone / Math.max(1, daysPassed);
-                if (avgDaily > 0) {
-                    const newDaysNeeded = Math.ceil(remainingDuration / avgDaily);
-                    adjustedDays = Math.max(1, newDaysNeeded);
+                if (doneDate < dateStr) {
+                    return { status: 'advance', label: '✅ Done (Advance)', color: 'advance' };
                 }
+                return { status: 'done', label: '✅ Done', color: 'done' };
             }
 
-            const adjustedDate = new Date(startDate);
-            adjustedDate.setDate(adjustedDate.getDate() + adjustedDays);
+            // Check if temp done
+            const isTemp = appData.history.some(h =>
+                h.sheetName === sheet.name &&
+                h.taskIndex === taskIndex &&
+                h.date === dateStr &&
+                h.permanent !== true
+            );
 
-            return {
-                daysNeeded: parseFloat(adjustedDays.toFixed(2)),
-                completionDate: adjustedDate,
-                remainingDuration: parseFloat(remainingDuration.toFixed(2)),
-                speed: parseFloat(speed.toFixed(2)),
-                dailyProgress: dailyProgress,
-                startDate: startDate
-            };
+            if (isTemp) {
+                return { status: 'pending', label: '⏳ Pending (Temp)', color: 'pending' };
+            }
+
+            // Check if future date
+            if (dateStr > today) {
+                return { status: 'future', label: '🔮 Future', color: 'future' };
+            }
+
+            // Check if backlog (past due)
+            if (dateStr < today) {
+                return { status: 'pending', label: '📌 Backlog', color: 'pending' };
+            }
+
+            // Today, not done yet
+            return { status: 'pending', label: '⏳ Pending', color: 'pending' };
         }
 
         // ============================================================
@@ -3022,6 +3090,13 @@
             const dateStr = selectedDate.toISOString().split('T')[0];
             const speedHours = parseFloat(document.getElementById('speedEditInput').value) || appData.defaultSpeed;
             appData.dateSpeedOverrides[dateStr] = speedHours * 60;
+
+            // Re-allocate tasks
+            const sheet = getSelectedSheet();
+            if (sheet) {
+                appData.taskAllocations[sheet.name] = allocateTasksToDates(sheet);
+            }
+
             appData.hasChanges = true;
             updateExecuteButton();
             saveData();
@@ -3082,6 +3157,9 @@
                 count++;
                 current.setDate(current.getDate() + 1);
             }
+
+            // Re-allocate tasks
+            appData.taskAllocations[sheet.name] = allocateTasksToDates(sheet);
 
             appData.hasChanges = true;
             updateExecuteButton();
@@ -3257,6 +3335,11 @@
             appData.currentSheetIndex = 0;
             appData.focusSheetIndex = 0;
             appData.sampleDataAdded = true;
+
+            // Allocate tasks
+            appData.sheets.forEach(sheet => {
+                appData.taskAllocations[sheet.name] = allocateTasksToDates(sheet);
+            });
 
             saveData();
             updateAllSelectors();
@@ -3601,6 +3684,12 @@
                 return;
             }
 
+            // Ensure allocations exist
+            if (!appData.taskAllocations[sheet.name]) {
+                appData.taskAllocations[sheet.name] = allocateTasksToDates(sheet);
+                saveData();
+            }
+
             const dateStr = selectedDate.toISOString().split('T')[0];
             const startDate = sheet.startDate || new Date().toISOString().split('T')[0];
 
@@ -3633,52 +3722,22 @@
                 h.permanent !== true
             ).map(h => h.taskIndex);
 
-            // Get backlog from previous day only
-            const previousDate = new Date(selectedDate);
-            previousDate.setDate(previousDate.getDate() - 1);
-            const prevDateStr = previousDate.toISOString().split('T')[0];
-
-            const backlogFromPrev = appData.history.filter(h =>
-                h.date === prevDateStr &&
-                h.sheetName === sheet.name &&
-                h.permanent !== true
-            );
-            const backlogTaskIndices = new Set(backlogFromPrev.map(h => h.taskIndex));
-
-            // Calculate backlog duration
-            let backlogDurationTotal = 0;
-            backlogTaskIndices.forEach(idx => {
-                if (sheet.data[idx]) {
-                    backlogDurationTotal += parseInt(sheet.data[idx].duration) || 0;
-                }
-            });
-
-            // Build task list - only tasks for this date
+            // Build task list
             let tasksToShow = [];
             let totalTaskDuration = 0;
+            const today = new Date().toISOString().split('T')[0];
 
-            // Add backlog tasks first
-            backlogTaskIndices.forEach(idx => {
-                if (!permanentlyCompleted.includes(idx) && sheet.data[idx]) {
-                    tasksToShow.push({ ...sheet.data[idx], index: idx, isBacklog: true });
-                    totalTaskDuration += parseInt(sheet.data[idx].duration) || 0;
-                }
-            });
-
-            // Add today's tasks
             tasksForDate.forEach(task => {
-                if (!permanentlyCompleted.includes(task.index) && !backlogTaskIndices.has(task.index)) {
-                    tasksToShow.push({ ...task, isBacklog: false });
-                    totalTaskDuration += parseInt(task.duration) || 0;
-                }
+                const status = getTaskStatus(sheet, task.index, dateStr);
+                tasksToShow.push({ ...task, status: status });
+                totalTaskDuration += parseFloat(task.duration) || 0;
             });
 
             if (tasksToShow.length === 0) {
-                const allDone = sheet.data.every((_, idx) => permanentlyCompleted.includes(idx));
                 container.innerHTML = `
                         <div class="focus-no-tasks">
-                            <span class="emoji">${allDone ? '🎉' : '📭'}</span>
-                            ${allDone ? 'All tasks completed! Great job!' : 'No tasks for today'}
+                            <span class="emoji">📭</span>
+                            No tasks for this date
                         </div>
                     `;
                 summary.textContent = `${permanentlyCompleted.length}/${sheet.data.length} completed`;
@@ -3688,33 +3747,20 @@
                 return;
             }
 
+            // Count completed
             let completedCount = 0;
             tasksToShow.forEach(task => {
-                if (permanentlyCompleted.includes(task.index) || tempCompleted.includes(task.index)) {
+                if (task.status.status === 'done' || task.status.status === 'advance') {
                     completedCount++;
                 }
             });
 
             summary.textContent = `${permanentlyCompleted.length}/${sheet.data.length} completed`;
             totalDisplay.style.display = 'block';
-            totalMinutes.textContent = totalTaskDuration;
-
-            // Show in hours if >60 mins
             if (totalTaskDuration >= 60) {
                 totalMinutes.textContent = (totalTaskDuration / 60).toFixed(1) + ' hrs';
             } else {
                 totalMinutes.textContent = totalTaskDuration + ' mins';
-            }
-
-            if (backlogDurationTotal > 0) {
-                backlogInfo.classList.add('show');
-                if (backlogDurationTotal >= 60) {
-                    backlogDuration.textContent = (backlogDurationTotal / 60).toFixed(1) + ' hrs';
-                } else {
-                    backlogDuration.textContent = backlogDurationTotal + ' mins';
-                }
-            } else {
-                backlogInfo.classList.remove('show');
             }
 
             document.getElementById('focusTasksViewLabel').textContent = focusShowAllTasks ? 'All' : "Today's";
@@ -3722,53 +3768,35 @@
 
             let html = '';
             tasksToShow.forEach(task => {
-                const isPermanent = permanentlyCompleted.includes(task.index);
-                const isTemp = tempCompleted.includes(task.index);
-                const isBacklog = task.isBacklog || false;
-                const isCompleted = isPermanent || isTemp;
-
-                let statusClass = '';
-                let statusLabel = '';
-                let labelClass = '';
-
-                if (isPermanent) {
-                    statusClass = 'completed';
-                    statusLabel = '✅ Done';
-                    labelClass = 'done';
-                } else if (isTemp) {
-                    statusClass = 'pending';
-                    statusLabel = '⏳ Pending';
-                    labelClass = 'pending-label';
-                } else if (isBacklog) {
-                    statusClass = 'pending';
-                    statusLabel = '📌 Backlog';
-                    labelClass = 'pending-label';
-                } else {
-                    statusClass = 'pending';
-                    statusLabel = '⏳ Pending';
-                    labelClass = 'pending-label';
-                }
-
-                // Check if this is a future date
-                const today = new Date();
-                const isFuture = selectedDate > today && !isPermanent;
-
-                if (isFuture) {
-                    statusClass = 'future';
-                    statusLabel = '🔮 Future';
-                    labelClass = 'future-label';
-                }
+                const status = task.status;
+                const isCompleted = status.status === 'done' || status.status === 'advance';
+                const colorClass = status.color;
 
                 const durationDisplay = task.duration >= 60 ? (task.duration / 60).toFixed(1) + 'h' : (task.duration || 0) +
                     'm';
 
+                // Get done date if completed
+                let doneDate = '';
+                if (isCompleted) {
+                    const historyEntry = appData.history.find(h =>
+                        h.sheetName === sheet.name &&
+                        h.taskIndex === task.index &&
+                        h.permanent === true
+                    );
+                    if (historyEntry) {
+                        const d = new Date(historyEntry.date + 'T00:00:00');
+                        doneDate = d.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+                    }
+                }
+
                 html += `
-                        <div class="focus-task-item ${statusClass}" onclick="focusToggleTask(${appData.focusSheetIndex}, ${task.index})">
+                        <div class="focus-task-item ${colorClass}" onclick="focusToggleTask(${appData.focusSheetIndex}, ${task.index})">
                             <div class="focus-task-checkbox">${isCompleted ? '✓' : ''}</div>
                             <span class="focus-task-sr">#${task.sr || task.index + 1}</span>
                             <span class="focus-task-ref">${task.reference || '-'}</span>
                             <span class="focus-task-duration">${durationDisplay}</span>
-                            <span class="task-status-label ${labelClass}">${statusLabel}</span>
+                            ${doneDate ? `<span class="focus-task-done-date">✅ ${doneDate}</span>` : ''}
+                            <span class="task-status-label ${colorClass}">${status.label}</span>
                         </div>
                     `;
             });
@@ -4026,7 +4054,6 @@
                     day: 'numeric'
                 });
 
-                // Show total in hours if >60
                 let totalDisplay = totalDuration + ' mins';
                 if (totalDuration >= 60) {
                     totalDisplay = (totalDuration / 60).toFixed(1) + ' hrs';
@@ -4040,7 +4067,6 @@
                             </div>
                     `;
 
-                // Sort by serial number
                 entries.sort((a, b) => a.taskIndex - b.taskIndex);
 
                 entries.forEach(entry => {
@@ -4097,7 +4123,6 @@
             const remainingDuration = totalDuration - completedDuration;
             const speed = (sheet.speed || appData.defaultSpeed) * 60;
             const daysRequired = Math.ceil(remainingDuration / speed);
-            const groups = getTaskGroups(sheet, new Date().toISOString().split('T')[0]);
 
             const delayedInfo = calculateDelayedDate(sheet);
 
@@ -4152,7 +4177,7 @@
                         ` : ''}
                         <div class="summary-item">
                             <span class="label">Task Groups</span>
-                            <span class="value">${groups.length}</span>
+                            <span class="value">${Math.ceil(totalDuration / speed)} groups</span>
                         </div>
                     </div>
 
@@ -4195,23 +4220,26 @@
                                 <th>Reference</th>
                                 <th>Mins</th>
                                 <th>Status</th>
-                                <th>Speed</th>
+                                <th>Allocated Date</th>
                             </tr>
                         </thead>
                         <tbody>
                     `;
 
+            const allocations = appData.taskAllocations[sheet.name] || {};
+
             sheet.data.forEach((row, i) => {
                 const isCompleted = permanentlyCompleted.some(h => h.taskIndex === i);
-                const taskSpeed = (row.duration || 0) > 0 ? ((row.duration || 0) / 60).toFixed(2) : '0.00';
+                const allocatedDate = allocations[i] || '-';
+                const displayDate = allocatedDate !== '-' ? new Date(allocatedDate + 'T00:00:00').toLocaleDateString(
+                    'en-US', { month: 'short', day: 'numeric' }) : '-';
                 html += `
                         <tr>
                             <td>${row.sr || i + 1}</td>
                             <td>${row.reference || '-'}</td>
                             <td>${row.duration || 0}</td>
                             <td>${isCompleted ? '✅' : '⏳'}</td>
-                            <td><input type="text" value="${taskSpeed}" size="4" 
-                                      onchange="updateTaskSpeed(${selectedIndex}, ${i}, this.value)" /></td>
+                            <td>${displayDate}</td>
                         </tr>
                     `;
             });
@@ -4222,22 +4250,6 @@
                 `;
 
             container.innerHTML = html;
-        }
-
-        function updateTaskSpeed(sheetIndex, taskIndex, value) {
-            const speed = parseFloat(value) * 60;
-            if (!isNaN(speed) && speed > 0) {
-                const sheet = appData.sheets[sheetIndex];
-                const dateStr = selectedDate.toISOString().split('T')[0];
-                appData.dateSpeedOverrides[dateStr] = speed;
-                appData.hasChanges = true;
-                updateExecuteButton();
-                saveData();
-                updateFocusTasks();
-                updateFocusBattery();
-                updateStatusDot();
-                updateThreeBatteries();
-            }
         }
 
         // ============================================================
@@ -4290,8 +4302,6 @@
                 }
             }
 
-            const groups = getTaskGroups(sheet, new Date().toISOString().split('T')[0]);
-
             // Calculate required speed based on completion till current time
             const today = new Date();
             const todayStr = today.toISOString().split('T')[0];
@@ -4315,6 +4325,8 @@
                     }
                 }
             }
+
+            const groups = Math.ceil(totalDuration / speed);
 
             container.innerHTML = `
                     <div class="tracker-summary-top">
@@ -4347,6 +4359,10 @@
                         <div class="summary-item">
                             <span class="label">⚡ Required Speed (till now)</span>
                             <span class="value highlight">${requiredSpeedTillToday.toFixed(2)} hrs/day</span>
+                        </div>
+                        <div class="summary-item">
+                            <span class="label">Task Groups</span>
+                            <span class="value">${groups}</span>
                         </div>
                     </div>
                     <div class="tracker-form">
@@ -4387,7 +4403,7 @@
                         ` : ''}
                         <div class="tracker-result-item">
                             <span class="label">Task Groups</span>
-                            <span class="value highlight">${groups.length}</span>
+                            <span class="value highlight">${groups}</span>
                         </div>
                     </div>
                 `;
@@ -4396,6 +4412,11 @@
         function saveTrackerSpeed(sheetIndex) {
             const speed = parseFloat(document.getElementById('trackerSpeed').value) || appData.defaultSpeed;
             appData.sheets[sheetIndex].speed = speed;
+
+            // Re-allocate tasks
+            const sheet = appData.sheets[sheetIndex];
+            appData.taskAllocations[sheet.name] = allocateTasksToDates(sheet);
+
             appData.hasChanges = true;
             updateExecuteButton();
             saveData();
@@ -4411,10 +4432,69 @@
         function saveTrackerDates(sheetIndex) {
             appData.sheets[sheetIndex].startDate = document.getElementById('trackerStartDate').value;
             appData.sheets[sheetIndex].targetDate = document.getElementById('trackerTargetDate').value;
+
+            // Re-allocate tasks
+            const sheet = appData.sheets[sheetIndex];
+            appData.taskAllocations[sheet.name] = allocateTasksToDates(sheet);
+
             saveData();
             updateTracker();
             updateFocusTasks();
             updateFocusBattery();
+        }
+
+        // ============================================================
+        // CALCULATE DELAYED COMPLETION DATE
+        // ============================================================
+        function calculateDelayedDate(sheet) {
+            if (!sheet) return null;
+
+            const totalDuration = sheet.data.reduce((sum, row) => sum + (parseFloat(row.duration) || 0), 0);
+            const permanentlyCompleted = appData.history.filter(h =>
+                h.sheetName === sheet.name &&
+                h.permanent === true
+            );
+            const completedDuration = permanentlyCompleted.reduce((sum, h) => sum + (parseInt(h.taskDuration) || 0), 0);
+            const remainingDuration = totalDuration - completedDuration;
+            const speed = (sheet.speed || appData.defaultSpeed) * 60;
+
+            if (remainingDuration <= 0 || speed <= 0) return null;
+
+            const daysNeeded = Math.ceil(remainingDuration / speed);
+            const startDate = new Date(sheet.startDate || new Date().toISOString().split('T')[0]);
+            const completionDate = new Date(startDate);
+            completionDate.setDate(completionDate.getDate() + daysNeeded);
+
+            const dailyProgress = {};
+            appData.history.filter(h => h.sheetName === sheet.name && h.permanent === true).forEach(h => {
+                if (!dailyProgress[h.date]) dailyProgress[h.date] = 0;
+                dailyProgress[h.date] += parseInt(h.taskDuration) || 0;
+            });
+
+            let adjustedDays = daysNeeded;
+            const today = new Date();
+            const daysPassed = Math.floor((today - startDate) / (1000 * 60 * 60 * 24));
+
+            if (daysPassed > 0) {
+                const totalDone = Object.values(dailyProgress).reduce((a, b) => a + b, 0);
+                const avgDaily = totalDone / Math.max(1, daysPassed);
+                if (avgDaily > 0) {
+                    const newDaysNeeded = Math.ceil(remainingDuration / avgDaily);
+                    adjustedDays = Math.max(1, newDaysNeeded);
+                }
+            }
+
+            const adjustedDate = new Date(startDate);
+            adjustedDate.setDate(adjustedDate.getDate() + adjustedDays);
+
+            return {
+                daysNeeded: parseFloat(adjustedDays.toFixed(2)),
+                completionDate: adjustedDate,
+                remainingDuration: parseFloat(remainingDuration.toFixed(2)),
+                speed: parseFloat(speed.toFixed(2)),
+                dailyProgress: dailyProgress,
+                startDate: startDate
+            };
         }
 
         // ============================================================
@@ -4457,6 +4537,9 @@
                 if (name && name.trim()) {
                     appData.sheets.push(createNewSheet(name.trim()));
                     appData.currentSheetIndex = appData.sheets.length - 1;
+                    // Allocate tasks
+                    const sheet = appData.sheets[appData.currentSheetIndex];
+                    appData.taskAllocations[sheet.name] = allocateTasksToDates(sheet);
                     saveData();
                     updateSheetTabs();
                     renderSpreadsheet();
@@ -4474,7 +4557,13 @@
             const sheet = appData.sheets[appData.currentSheetIndex];
             showModal('Rename Sheet', 'Enter a new name:', true, (name) => {
                 if (name && name.trim()) {
+                    const oldName = sheet.name;
                     sheet.name = name.trim();
+                    // Update task allocations key
+                    if (appData.taskAllocations[oldName]) {
+                        appData.taskAllocations[name.trim()] = appData.taskAllocations[oldName];
+                        delete appData.taskAllocations[oldName];
+                    }
                     saveData();
                     updateSheetTabs();
                     updateAllSelectors();
@@ -4498,6 +4587,7 @@
             const sheet = appData.sheets[appData.currentSheetIndex];
             showModal('Delete Sheet', `Are you sure you want to delete "${sheet.name}"? This cannot be undone.`, false, () => {
                 appData.history = appData.history.filter(h => h.sheetName !== sheet.name);
+                delete appData.taskAllocations[sheet.name];
                 appData.sheets.splice(appData.currentSheetIndex, 1);
                 if (appData.currentSheetIndex >= appData.sheets.length) {
                     appData.currentSheetIndex = appData.sheets.length - 1;
@@ -4589,6 +4679,8 @@
             while (sheet.completed.length < sheet.data.length) {
                 sheet.completed.push(false);
             }
+            // Re-allocate tasks
+            appData.taskAllocations[sheet.name] = allocateTasksToDates(sheet);
             appData.hasChanges = true;
             updateExecuteButton();
             saveData();
@@ -4615,6 +4707,9 @@
                     }
                 });
 
+                // Re-allocate tasks
+                appData.taskAllocations[sheet.name] = allocateTasksToDates(sheet);
+
                 appData.hasChanges = true;
                 updateExecuteButton();
                 saveData();
@@ -4638,6 +4733,8 @@
             const sheet = appData.sheets[appData.currentSheetIndex];
             sheet.data.push({ sr: sheet.data.length + 1, reference: '', duration: '' });
             sheet.completed.push(false);
+            // Re-allocate tasks
+            appData.taskAllocations[sheet.name] = allocateTasksToDates(sheet);
             appData.hasChanges = true;
             updateExecuteButton();
             saveData();
@@ -4661,6 +4758,7 @@
                     { sr: 5, reference: '', duration: '' }
                 ];
                 sheet.completed = sheet.data.map(() => false);
+                appData.taskAllocations[sheet.name] = allocateTasksToDates(sheet);
                 appData.hasChanges = true;
                 updateExecuteButton();
                 saveData();
@@ -4685,6 +4783,8 @@
                 sheet.completed.push(false);
             }
             sheet.completed = sheet.completed.slice(0, sheet.data.length);
+
+            appData.taskAllocations[sheet.name] = allocateTasksToDates(sheet);
 
             appData.hasChanges = true;
             updateExecuteButton();
@@ -4747,6 +4847,7 @@
                 sheet.completed.push(false);
             });
 
+            appData.taskAllocations[sheet.name] = allocateTasksToDates(sheet);
             appData.hasChanges = true;
             updateExecuteButton();
             saveData();
@@ -4807,6 +4908,7 @@
                 rowCount++;
             });
 
+            appData.taskAllocations[sheet.name] = allocateTasksToDates(sheet);
             appData.hasChanges = true;
             updateExecuteButton();
             saveData();
@@ -4879,6 +4981,10 @@
                     const imported = JSON.parse(e.target.result);
                     showModal('Import Data', 'This will replace all current data. Continue?', false, () => {
                         appData = { ...appData, ...imported };
+                        // Re-allocate tasks for all sheets
+                        appData.sheets.forEach(sheet => {
+                            appData.taskAllocations[sheet.name] = allocateTasksToDates(sheet);
+                        });
                         saveData();
                         updateAllSelectors();
                         updateFocusDashboard();
@@ -4948,6 +5054,7 @@
                     h.permanent === true
                 ).length;
                 const percent = totalItems > 0 ? Math.round((permanentlyCompleted / totalItems) * 100) : 0;
+                const allocations = appData.taskAllocations[sheet.name] || {};
 
                 return {
                     sheetName: sheet.name,
@@ -4955,6 +5062,9 @@
                     totalItems: totalItems,
                     completedItems: permanentlyCompleted,
                     speed: sheet.speed || appData.defaultSpeed,
+                    startDate: sheet.startDate || new Date().toISOString().split('T')[0],
+                    targetDate: sheet.targetDate || '',
+                    allocations: allocations,
                     lastUpdated: new Date().toISOString()
                 };
             });
@@ -4977,6 +5087,7 @@
                         defaultSpeed: appData.defaultSpeed,
                         dateSpeedOverrides: appData.dateSpeedOverrides || {},
                         dateNotes: appData.dateNotes || {},
+                        taskAllocations: appData.taskAllocations || {},
                         lastUpdated: new Date().toISOString()
                     }
                 }
