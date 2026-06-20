@@ -143,6 +143,7 @@
             display: flex;
             align-items: center;
             gap: 8px;
+            flex-wrap: wrap;
         }
 
         .app-header h1 {
@@ -786,6 +787,21 @@
         .btn-focus-execute {
             background: #217346;
             color: white;
+            transition: all 0.3s;
+        }
+        .btn-focus-execute.has-changes {
+            background: #dc2626;
+            animation: pulse-btn 1.5s ease-in-out infinite;
+        }
+
+        @keyframes pulse-btn {
+            0%,
+            100% {
+                box-shadow: 0 0 0 0 rgba(220, 38, 38, 0.4);
+            }
+            50% {
+                box-shadow: 0 0 0 8px rgba(220, 38, 38, 0);
+            }
         }
 
         .focus-task-item {
@@ -809,7 +825,7 @@
         .focus-task-item.completed {
             background: #ecfdf5;
             border-color: #059669;
-            opacity: 0.7;
+            opacity: 0.8;
         }
 
         .focus-task-item.completed .task-ref {
@@ -825,6 +841,12 @@
         .focus-task-item.pending {
             background: #fef2f2;
             border-color: #fecaca;
+        }
+
+        .focus-task-item.future {
+            background: #f3f4f6;
+            border-color: #e5e7eb;
+            opacity: 0.6;
         }
 
         .focus-task-checkbox {
@@ -852,6 +874,10 @@
 
         .focus-task-item.pending .focus-task-checkbox {
             border-color: #dc2626;
+        }
+
+        .focus-task-item.future .focus-task-checkbox {
+            border-color: #d1d5db;
         }
 
         .focus-task-sr {
@@ -895,6 +921,11 @@
         .focus-task-item .task-status-label.pending-label {
             background: #fef2f2;
             color: #dc2626;
+        }
+
+        .focus-task-item .task-status-label.future-label {
+            background: #e5e7eb;
+            color: #6b7280;
         }
 
         .focus-no-tasks {
@@ -994,6 +1025,111 @@
             color: white;
         }
 
+        /* ===== BULK SPEED MODAL ===== */
+        .bulk-speed-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.5);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 9999;
+            padding: 20px;
+        }
+
+        .bulk-speed-overlay.active {
+            display: flex;
+        }
+
+        .bulk-speed-box {
+            background: white;
+            border-radius: 16px;
+            padding: 20px;
+            max-width: 320px;
+            width: 100%;
+            text-align: center;
+            animation: modalIn 0.3s ease;
+        }
+
+        .bulk-speed-box h3 {
+            font-size: 16px;
+            color: #1a202c;
+            margin-bottom: 6px;
+        }
+
+        .bulk-speed-box p {
+            font-size: 12px;
+            color: #6b7280;
+            margin-bottom: 12px;
+        }
+
+        .bulk-speed-box .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 8px;
+            margin-bottom: 12px;
+        }
+
+        .bulk-speed-box .form-row input {
+            width: 100%;
+            padding: 6px 8px;
+            border: 2px solid #e5e7eb;
+            border-radius: 6px;
+            font-size: 12px;
+            font-family: inherit;
+            outline: none;
+        }
+
+        .bulk-speed-box .form-row input:focus {
+            border-color: #4f46e5;
+        }
+
+        .bulk-speed-box input[type="number"] {
+            width: 100%;
+            padding: 8px 10px;
+            border: 2px solid #e5e7eb;
+            border-radius: 6px;
+            font-size: 13px;
+            font-weight: 500;
+            font-family: inherit;
+            outline: none;
+            margin-bottom: 12px;
+        }
+
+        .bulk-speed-box input:focus {
+            border-color: #4f46e5;
+        }
+
+        .bulk-speed-box .modal-actions {
+            display: flex;
+            gap: 8px;
+        }
+
+        .bulk-speed-box .modal-actions button {
+            flex: 1;
+            padding: 8px;
+            border: none;
+            border-radius: 6px;
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            font-family: inherit;
+            transition: all 0.2s;
+        }
+
+        .bulk-speed-box .modal-actions .btn-cancel {
+            background: #e5e7eb;
+            color: #1a202c;
+        }
+
+        .bulk-speed-box .modal-actions .btn-save {
+            background: #4f46e5;
+            color: white;
+        }
+
         /* ===== HISTORY ===== */
         .history-section {
             background: white;
@@ -1015,6 +1151,8 @@
             border-bottom: 1px solid #f3f4f6;
             font-size: 11px;
             align-items: center;
+            flex-wrap: wrap;
+            gap: 4px;
         }
 
         .history-item:last-child {
@@ -1023,14 +1161,22 @@
 
         .history-item .date {
             color: #6b7280;
-            min-width: 60px;
             font-size: 10px;
+            min-width: 60px;
         }
 
         .history-item .task-info {
             flex: 1;
             margin: 0 6px;
             font-size: 10px;
+        }
+
+        .history-item .completed-on {
+            font-size: 9px;
+            color: #059669;
+            background: #ecfdf5;
+            padding: 1px 6px;
+            border-radius: 8px;
         }
 
         .history-item .progress {
@@ -1116,6 +1262,20 @@
             color: #64748b;
             font-size: 9px;
             text-transform: uppercase;
+        }
+
+        .results-table td input {
+            width: 50px;
+            padding: 2px 4px;
+            border: 1px solid #e5e7eb;
+            border-radius: 3px;
+            font-size: 10px;
+            font-family: inherit;
+            outline: none;
+        }
+
+        .results-table td input:focus {
+            border-color: #4f46e5;
         }
 
         /* ===== ENTRY ===== */
@@ -1664,6 +1824,10 @@
             background: #d97706;
             color: white;
         }
+        .btn-bulk-speed {
+            background: #7c3aed;
+            color: white;
+        }
 
         .default-speed-input {
             display: flex;
@@ -1991,6 +2155,12 @@
                 padding: 16px;
                 max-width: 280px;
             }
+            .bulk-speed-box {
+                padding: 16px;
+            }
+            .bulk-speed-box .form-row {
+                grid-template-columns: 1fr;
+            }
         }
 
         /* ===== SCROLLBAR ===== */
@@ -2111,7 +2281,7 @@
                         <button class="btn-focus-select-all" onclick="focusSelectAll()">✅ Select All</button>
                         <button class="btn-focus-deselect-all" onclick="focusDeselectAll()">❌ Deselect All</button>
                         <button class="btn-focus-toggle-view" onclick="focusToggleView()">👁 <span id="focusViewToggleLabel">All</span></button>
-                        <button class="btn-focus-execute" onclick="focusExecute()">💾 Execute</button>
+                        <button class="btn-focus-execute" id="executeBtn" onclick="focusExecute()">💾 Execute</button>
                     </div>
                     <div id="focusTasksList">
                         <div class="focus-no-tasks">
@@ -2229,6 +2399,14 @@
                     </div>
 
                     <div class="settings-card">
+                        <h3>📅 Bulk Speed Update</h3>
+                        <p>Apply a speed to a range of dates for the selected sheet</p>
+                        <div class="settings-buttons">
+                            <button class="btn-bulk-speed" onclick="openBulkSpeed()">📊 Bulk Speed</button>
+                        </div>
+                    </div>
+
+                    <div class="settings-card">
                         <h3>🧪 Sample Data</h3>
                         <p>Add 2 sample sheets with example data to try the app</p>
                         <div class="settings-buttons">
@@ -2238,7 +2416,7 @@
 
                     <div class="settings-card">
                         <h3>☁️ GitHub Sync</h3>
-                        <p>Manually sync your progress to GitHub. Your friend can view it.</p>
+                        <p>Manually sync your progress to GitHub. Auto-sync at 12pm & 6pm daily.</p>
                         <div class="github-setup">
                             <h4>Setup Instructions:</h4>
                             <p>1. Create a GitHub repository (public)</p>
@@ -2292,6 +2470,23 @@
         </div>
     </div>
 
+    <!-- ===== BULK SPEED MODAL ===== -->
+    <div class="bulk-speed-overlay" id="bulkSpeedModal">
+        <div class="bulk-speed-box">
+            <h3>📅 Bulk Speed Update</h3>
+            <p>Apply speed to a range of dates for the selected sheet</p>
+            <div class="form-row">
+                <input type="date" id="bulkStartDate" />
+                <input type="date" id="bulkEndDate" />
+            </div>
+            <input type="number" id="bulkSpeedValue" placeholder="Speed (hours/day)" min="0.5" max="24" step="0.5" />
+            <div class="modal-actions">
+                <button class="btn-cancel" onclick="closeBulkSpeed()">Cancel</button>
+                <button class="btn-save" onclick="saveBulkSpeed()">Apply</button>
+            </div>
+        </div>
+    </div>
+
     <!-- ===== CONFIRM MODAL ===== -->
     <div class="modal-overlay" id="confirmModal">
         <div class="modal-content">
@@ -2325,7 +2520,8 @@
             history: [],
             lastSync: null,
             dateSpeedOverrides: {},
-            sampleDataAdded: false
+            sampleDataAdded: false,
+            hasChanges: false
         };
 
         let modalCallback = null;
@@ -2358,11 +2554,42 @@
             hours = hours % 12 || 12;
             minutes = String(minutes).padStart(2, '0');
             document.getElementById('currentTime').textContent = `${hours}:${minutes} ${ampm}`;
+
+            // Auto-execute at 12pm and 6pm
+            if ((hours === 12 || hours === 6) && minutes === 0) {
+                autoExecute();
+            }
         }
 
-        setInterval(updateClock, 1000);
+        setInterval(updateClock, 60000);
         updateClock();
         updateTodayDate();
+
+        // ============================================================
+        // AUTO-EXECUTE
+        // ============================================================
+        function autoExecute() {
+            // Auto-execute all pending tasks for all sheets
+            let totalExecuted = 0;
+            appData.sheets.forEach(sheet => {
+                const tempCompletions = appData.history.filter(h =>
+                    h.sheetName === sheet.name &&
+                    h.permanent !== true
+                );
+                tempCompletions.forEach(h => {
+                    h.permanent = true;
+                    totalExecuted++;
+                });
+            });
+            if (totalExecuted > 0) {
+                saveData();
+                updateFocusTasks();
+                updateFocusDashboard();
+                updateFocusBattery();
+                updateHistory();
+                console.log(`✅ Auto-executed ${totalExecuted} tasks at ${new Date().toLocaleString()}`);
+            }
+        }
 
         // ============================================================
         // DATE FUNCTIONS
@@ -2427,11 +2654,87 @@
             const dateStr = selectedDate.toISOString().split('T')[0];
             const speedHours = parseFloat(document.getElementById('speedEditInput').value) || appData.defaultSpeed;
             appData.dateSpeedOverrides[dateStr] = speedHours * 60;
+            appData.hasChanges = true;
+            updateExecuteButton();
             saveData();
             closeSpeedEdit();
             updateFocusTasks();
             updateFocusBattery();
-            alert(`✅ Speed set to ${speedHours} hrs/day for ${dateStr}`);
+            updateResults();
+            alert(`✅ Speed set to ${speedHours.toFixed(2)} hrs/day for ${dateStr}`);
+        }
+
+        // ============================================================
+        // BULK SPEED UPDATE
+        // ============================================================
+        function openBulkSpeed() {
+            const sheet = getSelectedSheet();
+            if (!sheet) {
+                alert('⚠️ Select a sheet first in Focus tab.');
+                return;
+            }
+            document.getElementById('bulkSpeedModal').classList.add('active');
+        }
+
+        function closeBulkSpeed() {
+            document.getElementById('bulkSpeedModal').classList.remove('active');
+        }
+
+        function saveBulkSpeed() {
+            const sheet = getSelectedSheet();
+            if (!sheet) {
+                alert('⚠️ Select a sheet first.');
+                closeBulkSpeed();
+                return;
+            }
+
+            const startDate = document.getElementById('bulkStartDate').value;
+            const endDate = document.getElementById('bulkEndDate').value;
+            const speed = parseFloat(document.getElementById('bulkSpeedValue').value);
+
+            if (!startDate || !endDate || !speed) {
+                alert('⚠️ Please fill all fields.');
+                return;
+            }
+
+            if (speed < 0.5 || speed > 24) {
+                alert('⚠️ Speed must be between 0.5 and 24 hours/day.');
+                return;
+            }
+
+            let current = new Date(startDate);
+            const end = new Date(endDate);
+
+            let count = 0;
+            while (current <= end) {
+                const dateStr = current.toISOString().split('T')[0];
+                appData.dateSpeedOverrides[dateStr] = speed * 60;
+                count++;
+                current.setDate(current.getDate() + 1);
+            }
+
+            appData.hasChanges = true;
+            updateExecuteButton();
+            saveData();
+            closeBulkSpeed();
+            updateFocusTasks();
+            updateFocusBattery();
+            updateResults();
+            alert(`✅ Applied ${speed.toFixed(2)} hrs/day to ${count} dates`);
+        }
+
+        // ============================================================
+        // EXECUTE BUTTON - Color change indicator
+        // ============================================================
+        function updateExecuteButton() {
+            const btn = document.getElementById('executeBtn');
+            if (appData.hasChanges) {
+                btn.classList.add('has-changes');
+                btn.textContent = '💾 Execute Changes!';
+            } else {
+                btn.classList.remove('has-changes');
+                btn.textContent = '💾 Execute';
+            }
         }
 
         // ============================================================
@@ -2454,7 +2757,7 @@
         }
 
         // ============================================================
-        // SMART TASK SPLITTING
+        // SMART TASK SPLITTING - Balanced distribution
         // ============================================================
         function getTaskGroups(sheet, dateStr) {
             if (!sheet) return [];
@@ -2475,22 +2778,34 @@
                 .map((row, idx) => ({ row, idx }))
                 .filter(({ idx }) => !permanentlyCompleted.includes(idx));
 
+            // Distribute tasks evenly across days (balanced approach)
+            const totalAvailableDuration = availableRows.reduce((sum, { row }) => sum + (parseFloat(row.duration) || 0), 0);
+            const totalDays = Math.ceil(totalAvailableDuration / speed);
+
+            if (totalDays <= 0) return [];
+
+            // Calculate target per day
+            const targetPerDay = totalAvailableDuration / totalDays;
+
+            let currentDayDuration = 0;
+            let currentDayRows = [];
+
             availableRows.forEach(({ row, idx }) => {
-                const duration = parseInt(row.duration) || 0;
-                if (currentDuration + duration <= speed) {
-                    currentGroup.push(idx);
-                    currentDuration += duration;
+                const duration = parseFloat(row.duration) || 0;
+                if (currentDayDuration + duration <= targetPerDay) {
+                    currentDayRows.push(idx);
+                    currentDayDuration += duration;
                 } else {
-                    if (currentGroup.length > 0) {
-                        groups.push({ rows: currentGroup, duration: currentDuration });
+                    if (currentDayRows.length > 0) {
+                        groups.push({ rows: currentDayRows, duration: parseFloat(currentDayDuration.toFixed(2)) });
                     }
-                    currentGroup = [idx];
-                    currentDuration = duration;
+                    currentDayRows = [idx];
+                    currentDayDuration = duration;
                 }
             });
 
-            if (currentGroup.length > 0) {
-                groups.push({ rows: currentGroup, duration: currentDuration });
+            if (currentDayRows.length > 0) {
+                groups.push({ rows: currentDayRows, duration: parseFloat(currentDayDuration.toFixed(2)) });
             }
 
             return groups;
@@ -2525,7 +2840,6 @@
                 dailyProgress[h.date] += parseInt(h.taskDuration) || 0;
             });
 
-            // Adjust based on actual daily progress
             let adjustedDays = daysNeeded;
             const today = new Date();
             const daysPassed = Math.floor((today - startDate) / (1000 * 60 * 60 * 24));
@@ -2543,10 +2857,10 @@
             adjustedDate.setDate(adjustedDate.getDate() + adjustedDays);
 
             return {
-                daysNeeded: adjustedDays,
+                daysNeeded: parseFloat(adjustedDays.toFixed(2)),
                 completionDate: adjustedDate,
-                remainingDuration: remainingDuration,
-                speed: speed,
+                remainingDuration: parseFloat(remainingDuration.toFixed(2)),
+                speed: parseFloat(speed.toFixed(2)),
                 dailyProgress: dailyProgress,
                 startDate: startDate
             };
@@ -2584,15 +2898,19 @@
             updateFocusTasks();
             updateDateDisplay();
             updateHistory();
+            updateExecuteButton();
             checkDailySync();
         }
 
         // ============================================================
-        // DAILY SYNC CHECK
+        // DAILY SYNC CHECK (12pm & 6pm)
         // ============================================================
         function checkDailySync() {
             const now = new Date();
-            if (now.getHours() === 12 && now.getMinutes() === 0) {
+            const hours = now.getHours();
+            const minutes = now.getMinutes();
+
+            if ((hours === 12 || hours === 18) && minutes === 0) {
                 const g = appData.github;
                 if (g.username && g.repo && g.token) {
                     syncToGitHub();
@@ -2619,7 +2937,7 @@
                 }
             }
             if (appData.sheets.length === 0) {
-                // Don't auto-add sample data, wait for user to click button
+                // Wait for user to add sample data
             }
         }
 
@@ -2660,7 +2978,8 @@
             ];
             sheet1.data = workoutData;
             sheet1.completed = workoutData.map(() => false);
-            sheet1.speed = 1.5; // 1.5 hours/day
+            sheet1.speed = 1.5;
+            sheet1.startDate = new Date().toISOString().split('T')[0];
             appData.sheets.push(sheet1);
 
             // Sheet 2: Course Material
@@ -2679,7 +2998,8 @@
             ];
             sheet2.data = courseData;
             sheet2.completed = courseData.map(() => false);
-            sheet2.speed = 3; // 3 hours/day
+            sheet2.speed = 3;
+            sheet2.startDate = new Date().toISOString().split('T')[0];
             appData.sheets.push(sheet2);
 
             appData.currentSheetIndex = 0;
@@ -2904,6 +3224,8 @@
             updateFocusDashboard();
             updateFocusBattery();
             updateFocusTasks();
+            updateResults();
+            updateTracker();
             saveData();
         }
 
@@ -2937,6 +3259,19 @@
             appData.focusSheetIndex = selectedIndex;
             const sheet = appData.sheets[selectedIndex];
             const dateStr = selectedDate.toISOString().split('T')[0];
+
+            // Check if date is before start date
+            const startDate = sheet.startDate || new Date().toISOString().split('T')[0];
+            if (dateStr < startDate) {
+                fill.style.height = '0%';
+                fill.className = 'battery-fill';
+                percentEl.textContent = '0';
+                label.textContent = `${sheet.name} (Not Started)`;
+                sub.textContent = `Start date: ${startDate}`;
+                status.style.display = 'none';
+                starsEmoji.style.display = 'none';
+                return;
+            }
 
             const completedOnOrBefore = appData.history.filter(h =>
                 h.sheetName === sheet.name &&
@@ -2986,7 +3321,7 @@
         }
 
         // ============================================================
-        // FOCUS TASKS
+        // FOCUS TASKS - Shift only 1 day at a time
         // ============================================================
         function updateFocusTasks() {
             const sheet = getSelectedSheet();
@@ -3011,27 +3346,52 @@
             }
 
             const dateStr = selectedDate.toISOString().split('T')[0];
+            const startDate = sheet.startDate || new Date().toISOString().split('T')[0];
+
+            // Don't show tasks before start date
+            if (dateStr < startDate) {
+                container.innerHTML = `
+                        <div class="focus-no-tasks">
+                            <span class="emoji">📅</span>
+                            Tasks start from ${startDate}
+                        </div>
+                    `;
+                summary.textContent = '0/0 completed';
+                backlogInfo.classList.remove('show');
+                totalDisplay.style.display = 'none';
+                return;
+            }
+
             const defaultSpeedMinutes = (sheet.speed || appData.defaultSpeed) * 60;
             const speed = appData.dateSpeedOverrides[dateStr] || defaultSpeedMinutes;
 
+            // Get permanently completed tasks
             const permanentlyCompleted = appData.history.filter(h =>
                 h.sheetName === sheet.name &&
                 h.permanent === true
             ).map(h => h.taskIndex);
 
+            // Get temp completed for this date
             const tempCompleted = appData.history.filter(h =>
                 h.sheetName === sheet.name &&
                 h.date === dateStr &&
                 h.permanent !== true
             ).map(h => h.taskIndex);
 
-            const previousHistory = appData.history.filter(h =>
-                h.date < dateStr &&
+            // Get backlog from previous day only (shift 1 day at a time)
+            const previousDate = new Date(selectedDate);
+            previousDate.setDate(previousDate.getDate() - 1);
+            const prevDateStr = previousDate.toISOString().split('T')[0];
+
+            const backlogFromPrev = appData.history.filter(h =>
+                h.date === prevDateStr &&
                 h.sheetName === sheet.name &&
                 h.permanent !== true
             );
-            const backlogTaskIndices = new Set(previousHistory.map(h => h.taskIndex));
 
+            const backlogTaskIndices = new Set(backlogFromPrev.map(h => h.taskIndex));
+
+            // Calculate backlog duration
             let backlogDurationTotal = 0;
             backlogTaskIndices.forEach(idx => {
                 if (sheet.data[idx]) {
@@ -3039,39 +3399,66 @@
                 }
             });
 
+            // Build task list
             let tasksToShow = [];
             let totalTaskDuration = 0;
 
-            if (focusShowAllTasks) {
-                sheet.data.forEach((row, idx) => {
-                    if (!permanentlyCompleted.includes(idx)) {
-                        tasksToShow.push({ ...row, index: idx });
-                        totalTaskDuration += parseInt(row.duration) || 0;
-                    }
-                });
-            } else {
-                const groups = getTaskGroups(sheet, dateStr);
-                let groupIndex = 0;
-
-                for (let i = 0; i < groups.length; i++) {
-                    const group = groups[i];
-                    const hasPermanentCompleted = group.rows.some(idx => permanentlyCompleted.includes(idx));
-                    if (!hasPermanentCompleted) {
-                        groupIndex = i;
-                        break;
-                    }
+            // First, add backlog tasks (from previous day)
+            backlogTaskIndices.forEach(idx => {
+                if (!permanentlyCompleted.includes(idx) && sheet.data[idx]) {
+                    tasksToShow.push({ ...sheet.data[idx], index: idx, isBacklog: true });
+                    totalTaskDuration += parseInt(sheet.data[idx].duration) || 0;
                 }
+            });
 
-                if (groups[groupIndex]) {
-                    groups[groupIndex].rows.forEach(idx => {
-                        if (!permanentlyCompleted.includes(idx)) {
-                            tasksToShow.push({ ...sheet.data[idx], index: idx });
-                            totalTaskDuration += parseInt(sheet.data[idx].duration) || 0;
-                        }
-                    });
+            // Then add today's tasks (based on groups)
+            const groups = getTaskGroups(sheet, dateStr);
+            let groupIndex = 0;
+
+            // Find first incomplete group
+            for (let i = 0; i < groups.length; i++) {
+                const group = groups[i];
+                const allCompleted = group.rows.every(idx => permanentlyCompleted.includes(idx));
+                if (!allCompleted) {
+                    groupIndex = i;
+                    break;
                 }
             }
 
+            if (groups[groupIndex]) {
+                groups[groupIndex].rows.forEach(idx => {
+                    if (!permanentlyCompleted.includes(idx) && !backlogTaskIndices.has(idx)) {
+                        tasksToShow.push({ ...sheet.data[idx], index: idx, isBacklog: false });
+                        totalTaskDuration += parseInt(sheet.data[idx].duration) || 0;
+                    }
+                });
+            }
+
+            // If no tasks for today and no backlog, show message
+            if (tasksToShow.length === 0) {
+                const allDone = sheet.data.every((_, idx) => permanentlyCompleted.includes(idx));
+                container.innerHTML = `
+                        <div class="focus-no-tasks">
+                            <span class="emoji">${allDone ? '🎉' : '📭'}</span>
+                            ${allDone ? 'All tasks completed! Great job!' : 'No tasks for today'}
+                        </div>
+                    `;
+                summary.textContent = `${permanentlyCompleted.length}/${sheet.data.length} completed`;
+                backlogInfo.classList.remove('show');
+                totalDisplay.style.display = 'block';
+                totalMinutes.textContent = '0';
+                return;
+            }
+
+            // Count completed for summary
+            let completedCount = 0;
+            tasksToShow.forEach(task => {
+                if (permanentlyCompleted.includes(task.index) || tempCompleted.includes(task.index)) {
+                    completedCount++;
+                }
+            });
+
+            summary.textContent = `${permanentlyCompleted.length}/${sheet.data.length} completed`;
             totalDisplay.style.display = 'block';
             totalMinutes.textContent = totalTaskDuration;
 
@@ -3082,33 +3469,14 @@
                 backlogInfo.classList.remove('show');
             }
 
-            let completedCount = 0;
-            tasksToShow.forEach(task => {
-                if (permanentlyCompleted.includes(task.index) || tempCompleted.includes(task.index)) {
-                    completedCount++;
-                }
-            });
-
-            summary.textContent = `${completedCount}/${tasksToShow.length} completed`;
-
             document.getElementById('focusTasksViewLabel').textContent = focusShowAllTasks ? 'All' : "Today's";
             document.getElementById('focusViewToggleLabel').textContent = focusShowAllTasks ? 'Today' : 'All';
-
-            if (tasksToShow.length === 0) {
-                container.innerHTML = `
-                        <div class="focus-no-tasks">
-                            <span class="emoji">🎉</span>
-                            All tasks completed! Great job!
-                        </div>
-                    `;
-                return;
-            }
 
             let html = '';
             tasksToShow.forEach(task => {
                 const isPermanent = permanentlyCompleted.includes(task.index);
                 const isTemp = tempCompleted.includes(task.index);
-                const isBacklog = backlogTaskIndices.has(task.index);
+                const isBacklog = task.isBacklog || false;
                 const isCompleted = isPermanent || isTemp;
 
                 let statusClass = '';
@@ -3131,6 +3499,16 @@
                     statusClass = 'pending';
                     statusLabel = '⏳ Pending';
                     labelClass = 'pending-label';
+                }
+
+                // Check if this is a future date (after today)
+                const today = new Date();
+                const isFuture = selectedDate > today && !isPermanent;
+
+                if (isFuture) {
+                    statusClass = 'future';
+                    statusLabel = '🔮 Future';
+                    labelClass = 'future-label';
                 }
 
                 html += `
@@ -3186,6 +3564,8 @@
                     timestamp: new Date().toISOString(),
                     permanent: false
                 });
+                appData.hasChanges = true;
+                updateExecuteButton();
             }
 
             saveData();
@@ -3207,10 +3587,8 @@
                 return;
             }
 
-            const dateStr = selectedDate.toISOString().split('T')[0];
-
+            // Get all temp completions for this sheet across all dates
             const tempCompletions = appData.history.filter(h =>
-                h.date === dateStr &&
                 h.sheetName === sheet.name &&
                 h.permanent !== true
             );
@@ -3222,13 +3600,18 @@
 
             tempCompletions.forEach(h => {
                 h.permanent = true;
+                h.completedDate = new Date().toISOString().split('T')[0];
             });
+
+            appData.hasChanges = false;
+            updateExecuteButton();
 
             saveData();
             updateFocusTasks();
             updateFocusDashboard();
             updateFocusBattery();
             updateHistory();
+            updateResults();
             alert(`✅ Executed ${tempCompletions.length} tasks permanently!`);
         }
 
@@ -3245,6 +3628,12 @@
             }
 
             const dateStr = selectedDate.toISOString().split('T')[0];
+            const startDate = sheet.startDate || new Date().toISOString().split('T')[0];
+
+            if (dateStr < startDate) {
+                alert('⚠️ Cannot select tasks before start date.');
+                return;
+            }
 
             const permanentlyCompleted = appData.history.filter(h =>
                 h.sheetName === sheet.name &&
@@ -3276,6 +3665,11 @@
                     added++;
                 }
             });
+
+            if (added > 0) {
+                appData.hasChanges = true;
+                updateExecuteButton();
+            }
 
             saveData();
             updateFocusTasks();
@@ -3309,6 +3703,11 @@
                 !(h.date === dateStr && h.sheetName === sheet.name && h.permanent !== true)
             );
 
+            if (removed > 0) {
+                appData.hasChanges = true;
+                updateExecuteButton();
+            }
+
             saveData();
             updateFocusTasks();
             updateFocusDashboard();
@@ -3327,7 +3726,7 @@
         }
 
         // ============================================================
-        // HISTORY
+        // HISTORY - With Completed On date
         // ============================================================
         function updateHistory() {
             const container = document.getElementById('historyList');
@@ -3372,11 +3771,18 @@
                         month: 'short',
                         day: 'numeric'
                     });
+                    const completedDate = entry.completedDate ? new Date(entry.completedDate + 'T00:00:00') : null;
+                    const completedLabel = completedDate ? completedDate.toLocaleDateString('en-US', {
+                        month: 'short',
+                        day: 'numeric'
+                    }) : '-';
+
                     html += `
                             <div class="history-item">
                                 <span class="date">${dateLabel}</span>
                                 <span class="task-info">#${entry.taskIndex + 1} ${entry.taskRef || 'Task'}</span>
-                                <span class="progress completed">✅ ${entry.taskDuration || 0}m</span>
+                                <span class="completed-on">✅ Done: ${completedLabel}</span>
+                                <span class="progress completed">${entry.taskDuration || 0}m</span>
                             </div>
                         `;
                 });
@@ -3388,7 +3794,7 @@
         }
 
         // ============================================================
-        // RESULTS PAGE
+        // RESULTS PAGE - With Last 3 and Coming 3 days
         // ============================================================
         function updateResults() {
             const select = document.getElementById('resultsSheetSelect');
@@ -3420,23 +3826,40 @@
 
             const delayedInfo = calculateDelayedDate(sheet);
 
+            // Get last 3 and coming 3 days
+            const today = new Date();
+            const last3 = [];
+            const coming3 = [];
+
+            for (let i = 3; i >= 1; i--) {
+                const d = new Date(today);
+                d.setDate(d.getDate() - i);
+                last3.push(d);
+            }
+
+            for (let i = 1; i <= 3; i++) {
+                const d = new Date(today);
+                d.setDate(d.getDate() + i);
+                coming3.push(d);
+            }
+
             let html = `
                     <div class="results-summary-top">
                         <div class="summary-item">
                             <span class="label">Total Duration</span>
-                            <span class="value">${totalDuration} mins (${(totalDuration/60).toFixed(1)} hrs)</span>
+                            <span class="value">${totalDuration.toFixed(2)} mins (${(totalDuration/60).toFixed(2)} hrs)</span>
                         </div>
                         <div class="summary-item">
                             <span class="label">Completed</span>
-                            <span class="value success">${completedDuration} mins</span>
+                            <span class="value success">${completedDuration.toFixed(2)} mins</span>
                         </div>
                         <div class="summary-item">
                             <span class="label">Remaining</span>
-                            <span class="value warning">${remainingDuration} mins</span>
+                            <span class="value warning">${remainingDuration.toFixed(2)} mins</span>
                         </div>
                         <div class="summary-item">
                             <span class="label">Days to Complete</span>
-                            <span class="value highlight">${daysRequired} days @ ${sheet.speed || appData.defaultSpeed} hrs/day</span>
+                            <span class="value highlight">${daysRequired.toFixed(2)} days @ ${(sheet.speed || appData.defaultSpeed).toFixed(2)} hrs/day</span>
                         </div>
                         ${delayedInfo ? `
                         <div class="summary-item">
@@ -3445,13 +3868,50 @@
                         </div>
                         <div class="summary-item">
                             <span class="label">Pending Hours</span>
-                            <span class="value warning">${(delayedInfo.remainingDuration / 60).toFixed(1)} hrs</span>
+                            <span class="value warning">${(delayedInfo.remainingDuration / 60).toFixed(2)} hrs</span>
+                        </div>
+                        <div class="summary-item">
+                            <span class="label">Current Speed</span>
+                            <span class="value">${(delayedInfo.speed / 60).toFixed(2)} hrs/day</span>
                         </div>
                         ` : ''}
                         <div class="summary-item">
                             <span class="label">Task Groups</span>
-                            <span class="value">${groups.length} groups</span>
+                            <span class="value">${groups.length}</span>
                         </div>
+                    </div>
+
+                    <div style="margin-bottom:10px;padding:6px;background:#f3f4f6;border-radius:4px;">
+                        <div style="font-size:10px;font-weight:600;color:#6b7280;margin-bottom:4px;">📅 Speed per Day</div>
+                        <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:4px;font-size:10px;">
+                            <div style="text-align:center;color:#9ca3af;">Last 3 Days</div>
+                            <div style="text-align:center;color:#4f46e5;font-weight:600;">Today</div>
+                            <div style="text-align:center;color:#9ca3af;">Next 3 Days</div>
+                        </div>
+                        <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:4px;font-size:10px;text-align:center;">
+                            <div>
+                                ${last3.map(d => {
+                                    const ds = d.toISOString().split('T')[0];
+                                    const spd = appData.dateSpeedOverrides[ds] || (sheet.speed || appData.defaultSpeed) * 60;
+                                    return `<div style="padding:2px;background:white;border-radius:3px;margin-bottom:2px;">${d.toLocaleDateString('en-US',{month:'short',day:'numeric'})}: ${(spd/60).toFixed(2)}h</div>`;
+                                }).join('')}
+                            </div>
+                            <div style="background:#dbeafe;border-radius:4px;padding:2px;">
+                                ${(() => {
+                                    const ds = today.toISOString().split('T')[0];
+                                    const spd = appData.dateSpeedOverrides[ds] || (sheet.speed || appData.defaultSpeed) * 60;
+                                    return `<div style="padding:2px;font-weight:600;">${today.toLocaleDateString('en-US',{month:'short',day:'numeric'})}: ${(spd/60).toFixed(2)}h</div>`;
+                                })()}
+                            </div>
+                            <div>
+                                ${coming3.map(d => {
+                                    const ds = d.toISOString().split('T')[0];
+                                    const spd = appData.dateSpeedOverrides[ds] || (sheet.speed || appData.defaultSpeed) * 60;
+                                    return `<div style="padding:2px;background:white;border-radius:3px;margin-bottom:2px;">${d.toLocaleDateString('en-US',{month:'short',day:'numeric'})}: ${(spd/60).toFixed(2)}h</div>`;
+                                }).join('')}
+                            </div>
+                        </div>
+                        <div style="font-size:9px;color:#9ca3af;margin-top:4px;text-align:center;">✏️ Click date in Focus tab to edit speed</div>
                     </div>
                     <table class="results-table">
                         <thead>
@@ -3460,6 +3920,7 @@
                                 <th>Reference</th>
                                 <th>Mins</th>
                                 <th>Status</th>
+                                <th>Speed</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -3467,12 +3928,15 @@
 
             sheet.data.forEach((row, i) => {
                 const isCompleted = permanentlyCompleted.some(h => h.taskIndex === i);
+                const taskSpeed = (row.duration || 0) > 0 ? ((row.duration || 0) / 60).toFixed(2) : '0.00';
                 html += `
                         <tr>
                             <td>${row.sr || i + 1}</td>
                             <td>${row.reference || '-'}</td>
                             <td>${row.duration || 0}</td>
                             <td>${isCompleted ? '✅' : '⏳'}</td>
+                            <td><input type="text" value="${taskSpeed}" size="4" 
+                                      onchange="updateTaskSpeed(${selectedIndex}, ${i}, this.value)" /></td>
                         </tr>
                     `;
             });
@@ -3483,6 +3947,20 @@
                 `;
 
             container.innerHTML = html;
+        }
+
+        function updateTaskSpeed(sheetIndex, taskIndex, value) {
+            const speed = parseFloat(value) * 60;
+            if (!isNaN(speed) && speed > 0) {
+                const sheet = appData.sheets[sheetIndex];
+                const dateStr = selectedDate.toISOString().split('T')[0];
+                appData.dateSpeedOverrides[dateStr] = speed;
+                appData.hasChanges = true;
+                updateExecuteButton();
+                saveData();
+                updateFocusTasks();
+                updateFocusBattery();
+            }
         }
 
         // ============================================================
@@ -3531,7 +4009,7 @@
                         const isCompleted = permanentlyCompleted.some(h => h.taskIndex === i);
                         return sum + (!isCompleted ? (parseFloat(row.duration) || 0) : 0);
                     }, 0);
-                    requiredSpeed = (remMin / 60 / daysToTarget).toFixed(1);
+                    requiredSpeed = (remMin / 60 / daysToTarget).toFixed(2);
                 }
             }
 
@@ -3541,15 +4019,15 @@
                     <div class="tracker-summary-top">
                         <div class="summary-item">
                             <span class="label">Total Duration</span>
-                            <span class="value">${totalDuration} mins (${(totalDuration/60).toFixed(1)} hrs)</span>
+                            <span class="value">${totalDuration.toFixed(2)} mins (${(totalDuration/60).toFixed(2)} hrs)</span>
                         </div>
                         <div class="summary-item">
                             <span class="label">Completed</span>
-                            <span class="value success">${completedDuration} mins</span>
+                            <span class="value success">${completedDuration.toFixed(2)} mins</span>
                         </div>
                         <div class="summary-item">
                             <span class="label">Remaining</span>
-                            <span class="value warning">${remainingDuration} mins</span>
+                            <span class="value warning">${remainingDuration.toFixed(2)} mins</span>
                         </div>
                         ${delayedInfo ? `
                         <div class="summary-item">
@@ -3558,11 +4036,11 @@
                         </div>
                         <div class="summary-item">
                             <span class="label">Pending Hours</span>
-                            <span class="value warning">${(delayedInfo.remainingDuration / 60).toFixed(1)} hrs</span>
+                            <span class="value warning">${(delayedInfo.remainingDuration / 60).toFixed(2)} hrs</span>
                         </div>
                         <div class="summary-item">
                             <span class="label">Current Speed</span>
-                            <span class="value">${(delayedInfo.speed / 60).toFixed(1)} hrs/day</span>
+                            <span class="value">${(delayedInfo.speed / 60).toFixed(2)} hrs/day</span>
                         </div>
                         ` : ''}
                     </div>
@@ -3590,7 +4068,7 @@
                         <h4>📊 Calculations</h4>
                         <div class="tracker-result-item">
                             <span class="label">Days Required</span>
-                            <span class="value highlight">${daysRequired} days</span>
+                            <span class="value highlight">${daysRequired.toFixed(2)} days</span>
                         </div>
                         <div class="tracker-result-item">
                             <span class="label">Expected Completion</span>
@@ -3604,7 +4082,7 @@
                         ` : ''}
                         <div class="tracker-result-item">
                             <span class="label">Task Groups</span>
-                            <span class="value highlight">${groups.length} groups</span>
+                            <span class="value highlight">${groups.length}</span>
                         </div>
                     </div>
                 `;
@@ -3613,11 +4091,14 @@
         function saveTrackerSpeed(sheetIndex) {
             const speed = parseFloat(document.getElementById('trackerSpeed').value) || appData.defaultSpeed;
             appData.sheets[sheetIndex].speed = speed;
+            appData.hasChanges = true;
+            updateExecuteButton();
             saveData();
             updateTracker();
             updateFocusDashboard();
             updateFocusBattery();
             updateFocusTasks();
+            updateResults();
         }
 
         function saveTrackerDates(sheetIndex) {
@@ -3625,6 +4106,8 @@
             appData.sheets[sheetIndex].targetDate = document.getElementById('trackerTargetDate').value;
             saveData();
             updateTracker();
+            updateFocusTasks();
+            updateFocusBattery();
         }
 
         // ============================================================
@@ -3723,6 +4206,7 @@
                 updateFocusBattery();
                 updateFocusTasks();
                 updateHistory();
+                updateResults();
             });
 
             document.getElementById('modalConfirmBtn').className = 'btn-danger';
@@ -3782,9 +4266,7 @@
         let selectedRow = -1;
 
         function selectRow(index) {
-            // Remove previous selection
             document.querySelectorAll('.spreadsheet-row').forEach(el => el.classList.remove('selected'));
-            // Select new row
             const row = document.getElementById(`row-${index}`);
             if (row) {
                 row.classList.add('selected');
@@ -3799,6 +4281,8 @@
             while (sheet.completed.length < sheet.data.length) {
                 sheet.completed.push(false);
             }
+            appData.hasChanges = true;
+            updateExecuteButton();
             saveData();
         }
 
@@ -3823,6 +4307,8 @@
                     }
                 });
 
+                appData.hasChanges = true;
+                updateExecuteButton();
                 saveData();
                 renderSpreadsheet();
                 updateAllSelectors();
@@ -3830,6 +4316,7 @@
                 updateFocusBattery();
                 updateFocusTasks();
                 updateHistory();
+                updateResults();
             }
         }
 
@@ -3841,6 +4328,8 @@
             const sheet = appData.sheets[appData.currentSheetIndex];
             sheet.data.push({ sr: sheet.data.length + 1, reference: '', duration: '' });
             sheet.completed.push(false);
+            appData.hasChanges = true;
+            updateExecuteButton();
             saveData();
             renderSpreadsheet();
             updateAllSelectors();
@@ -3862,6 +4351,8 @@
                     { sr: 5, reference: '', duration: '' }
                 ];
                 sheet.completed = sheet.data.map(() => false);
+                appData.hasChanges = true;
+                updateExecuteButton();
                 saveData();
                 renderSpreadsheet();
                 updateHistory();
@@ -3885,12 +4376,15 @@
             }
             sheet.completed = sheet.completed.slice(0, sheet.data.length);
 
+            appData.hasChanges = true;
+            updateExecuteButton();
             saveData();
             updateAllSelectors();
             updateFocusDashboard();
             updateFocusBattery();
             updateFocusTasks();
             updateSheetTabs();
+            updateResults();
 
             const removed = originalLength - sheet.data.length;
             alert(`✅ Saved ${sheet.data.length} rows${removed > 0 ? ` (${removed} empty rows removed)` : ''}`);
@@ -3941,6 +4435,8 @@
                 sheet.completed.push(false);
             });
 
+            appData.hasChanges = true;
+            updateExecuteButton();
             saveData();
             renderSpreadsheet();
             updateAllSelectors();
@@ -3999,6 +4495,8 @@
                 rowCount++;
             });
 
+            appData.hasChanges = true;
+            updateExecuteButton();
             saveData();
             renderSpreadsheet();
             updateAllSelectors();
@@ -4042,7 +4540,7 @@
             const speed = parseFloat(document.getElementById('defaultSpeedInput').value) || 3;
             appData.defaultSpeed = speed;
             saveData();
-            alert(`✅ Default speed set to ${speed} hrs/day`);
+            alert(`✅ Default speed set to ${speed.toFixed(2)} hrs/day`);
         }
 
         function exportAllData() {
@@ -4077,7 +4575,10 @@
                         updateFocusBattery();
                         updateFocusTasks();
                         updateHistory();
+                        updateResults();
+                        updateTracker();
                         document.getElementById('defaultSpeedInput').value = appData.defaultSpeed;
+                        updateExecuteButton();
                         alert('📂 Data imported successfully!');
                     });
                 } catch (err) {
@@ -4150,7 +4651,8 @@
                 taskRef: h.taskRef,
                 taskDuration: h.taskDuration,
                 taskIndex: h.taskIndex,
-                timestamp: h.timestamp
+                timestamp: h.timestamp,
+                completedDate: h.completedDate || h.date
             }));
 
             const data = {
