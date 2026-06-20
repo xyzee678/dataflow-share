@@ -510,6 +510,107 @@
             color: #dc2626;
         }
 
+        /* ===== 3 BATTERY LEVELS ===== */
+        .battery-levels {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 8px;
+            margin-bottom: 8px;
+        }
+
+        .battery-level-item {
+            background: white;
+            border-radius: 8px;
+            padding: 6px 8px;
+            border: 1px solid #f0f0f0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .battery-level-item .label {
+            font-size: 9px;
+            font-weight: 600;
+            color: #6b7280;
+            margin-bottom: 4px;
+        }
+
+        .battery-level-item .mini-battery {
+            position: relative;
+            width: 100%;
+            height: 60px;
+            background: #f3f4f6;
+            border-radius: 6px;
+            border: 2px solid #1a202c;
+            overflow: hidden;
+        }
+
+        .battery-level-item .mini-battery .mini-cap {
+            position: absolute;
+            top: -4px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 12px;
+            height: 4px;
+            background: #1a202c;
+            border-radius: 2px 2px 0 0;
+        }
+
+        .battery-level-item .mini-battery .mini-fill {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 0%;
+            transition: height 1s ease;
+            border-radius: 0 0 4px 4px;
+        }
+
+        .battery-level-item .mini-battery .mini-fill.red {
+            background: linear-gradient(180deg, #f87171, #dc2626);
+        }
+        .battery-level-item .mini-battery .mini-fill.yellow {
+            background: linear-gradient(180deg, #fbbf24, #d97706);
+        }
+        .battery-level-item .mini-battery .mini-fill.green {
+            background: linear-gradient(180deg, #34d399, #059669);
+        }
+        .battery-level-item .mini-battery .mini-fill.stars {
+            background: linear-gradient(180deg, #fcd34d, #f59e0b);
+            animation: miniGlow 1.5s infinite alternate;
+        }
+
+        @keyframes miniGlow {
+            0% { box-shadow: inset 0 0 10px rgba(251, 191, 36, 0.3); }
+            100% { box-shadow: inset 0 0 20px rgba(251, 191, 36, 0.6); }
+        }
+
+        .battery-level-item .mini-percent {
+            font-size: 11px;
+            font-weight: 700;
+            color: #1a202c;
+            margin-top: 4px;
+        }
+
+        .battery-level-item .mini-notes {
+            width: 100%;
+            margin-top: 4px;
+            padding: 2px 4px;
+            border: 1px solid #e5e7eb;
+            border-radius: 4px;
+            font-size: 9px;
+            font-family: inherit;
+            outline: none;
+            background: #fafbfc;
+            resize: none;
+            min-height: 24px;
+        }
+
+        .battery-level-item .mini-notes:focus {
+            border-color: #4f46e5;
+            background: white;
+        }
+
         /* ===== BIG BATTERY ===== */
         .battery-container {
             display: flex;
@@ -849,7 +950,7 @@
         .focus-task-item.completed {
             background: #ecfdf5;
             border-color: #059669;
-            opacity: 0.8;
+            opacity: 0.9;
         }
 
         .focus-task-item.completed .task-ref {
@@ -1168,12 +1269,38 @@
             margin-bottom: 6px;
         }
 
+        .history-date-group {
+            margin-bottom: 6px;
+            padding: 6px;
+            background: #f8fafc;
+            border-radius: 6px;
+        }
+
+        .history-date-header {
+            display: flex;
+            justify-content: space-between;
+            font-size: 11px;
+            font-weight: 600;
+            color: #1a202c;
+            padding: 2px 0;
+            border-bottom: 1px solid #e5e7eb;
+            margin-bottom: 4px;
+        }
+
+        .history-date-header .date-label {
+            color: #6b7280;
+        }
+
+        .history-date-header .date-total {
+            color: #4f46e5;
+        }
+
         .history-item {
             display: flex;
             justify-content: space-between;
-            padding: 4px 0;
+            padding: 3px 0;
             border-bottom: 1px solid #f3f4f6;
-            font-size: 11px;
+            font-size: 10px;
             align-items: center;
             flex-wrap: wrap;
             gap: 4px;
@@ -1183,33 +1310,22 @@
             border-bottom: none;
         }
 
-        .history-item .date {
-            color: #6b7280;
-            font-size: 10px;
-            min-width: 60px;
-        }
-
         .history-item .task-info {
             flex: 1;
-            margin: 0 6px;
             font-size: 10px;
         }
 
-        .history-item .completed-on {
-            font-size: 9px;
-            color: #059669;
-            background: #ecfdf5;
-            padding: 1px 6px;
-            border-radius: 8px;
-        }
-
-        .history-item .progress {
+        .history-item .task-duration {
             font-weight: 600;
             font-size: 10px;
         }
 
-        .history-item .progress.completed {
+        .history-item .task-duration.done {
             color: #059669;
+        }
+
+        .history-item .task-duration.pending {
+            color: #dc2626;
         }
 
         .history-item .delete-btn {
@@ -1852,6 +1968,10 @@
             background: #7c3aed;
             color: white;
         }
+        .btn-github-push {
+            background: #1f2937;
+            color: white;
+        }
 
         .default-speed-input {
             display: flex;
@@ -2189,6 +2309,13 @@
                 width: 8px;
                 height: 8px;
             }
+            .battery-levels {
+                grid-template-columns: 1fr;
+                gap: 4px;
+            }
+            .battery-level-item .mini-battery {
+                height: 40px;
+            }
         }
 
         /* ===== SCROLLBAR ===== */
@@ -2230,7 +2357,6 @@
                 <div class="subtitle" id="headerSubtitle">Focus</div>
             </div>
             <div class="header-actions">
-                <!-- Floating button moved to top-right -->
                 <button class="floating-btn" id="floatingBtn" onclick="toggleAppView()">
                     <span class="btn-icon">⚡</span>
                 </button>
@@ -2260,6 +2386,11 @@
                 <div class="focus-dashboard-section">
                     <h2>📊 Your Goals</h2>
                     <div class="focus-dashboard-grid" id="focusDashboardGrid"></div>
+                </div>
+
+                <!-- 3 Battery Levels -->
+                <div class="battery-levels" id="batteryLevels">
+                    <!-- Rendered by JavaScript -->
                 </div>
 
                 <div class="battery-container">
@@ -2406,25 +2537,25 @@
                     </div>
 
                     <div class="settings-card">
-                        <h3>☁️ GitHub Sync</h3>
-                        <p>Manually sync your progress to GitHub. Auto-sync at 12pm & 6pm daily.</p>
+                        <h3>☁️ GitHub Sync & Upload</h3>
+                        <p>Push your app data directly to GitHub as index.html</p>
                         <div class="github-setup">
                             <h4>Setup Instructions:</h4>
                             <p>1. Create a GitHub repository (public)</p>
-                            <p>2. Create a <code>data.json</code> file in it</p>
-                            <p>3. Get a GitHub Personal Access Token (repo scope)</p>
-                            <p>4. Enter your details below</p>
+                            <p>2. Get a GitHub Personal Access Token (repo scope)</p>
+                            <p>3. Enter your details below</p>
                             <input type="text" id="githubUsername" placeholder="GitHub Username" />
                             <input type="text" id="githubRepo" placeholder="Repository Name" />
                             <input type="text" id="githubToken" placeholder="Personal Access Token" />
                             <input type="text" id="githubUserID" placeholder="Your Name (for sharing)" />
                             <button class="btn-github-save" onclick="saveGitHubSettings()">💾 Save Settings</button>
                         </div>
-                        <div style="margin-top:6px;">
-                            <button class="btn-export" onclick="syncToGitHub()" style="width:100%;">☁️ Sync Now</button>
-                            <div style="font-size:9px;color:#9ca3af;margin-top:3px;text-align:center;">
-                                Last sync: <span id="lastSyncTime">Never</span>
-                            </div>
+                        <div style="margin-top:6px;display:flex;gap:6px;flex-wrap:wrap;">
+                            <button class="btn-github-push" onclick="pushToGitHub()" style="flex:1;padding:6px 12px;border:none;border-radius:6px;font-size:11px;font-weight:600;cursor:pointer;font-family:inherit;background:#1f2937;color:white;">☁️ Push to GitHub</button>
+                            <button class="btn-export" onclick="syncToGitHub()" style="flex:1;">☁️ Sync Data</button>
+                        </div>
+                        <div style="font-size:9px;color:#9ca3af;margin-top:3px;text-align:center;">
+                            Last sync: <span id="lastSyncTime">Never</span>
                         </div>
                     </div>
 
@@ -2548,6 +2679,7 @@
             history: [],
             lastSync: null,
             dateSpeedOverrides: {},
+            dateNotes: {},
             sampleDataAdded: false,
             hasChanges: false
         };
@@ -2583,7 +2715,6 @@
             minutes = String(minutes).padStart(2, '0');
             document.getElementById('currentTime').textContent = `${hours}:${minutes} ${ampm}`;
 
-            // Auto-execute at 12pm and 6pm
             if ((hours === 12 || hours === 6) && minutes === 0) {
                 autoExecute();
             }
@@ -2610,12 +2741,24 @@
             });
             if (totalExecuted > 0) {
                 saveData();
-                updateFocusTasks();
-                updateFocusDashboard();
-                updateFocusBattery();
-                updateHistory();
+                updateAll();
                 console.log(`✅ Auto-executed ${totalExecuted} tasks at ${new Date().toLocaleString()}`);
             }
+        }
+
+        // ============================================================
+        // UPDATE ALL
+        // ============================================================
+        function updateAll() {
+            updateFocusDashboard();
+            updateFocusBattery();
+            updateFocusTasks();
+            updateHistory();
+            updateResults();
+            updateTracker();
+            updateBatteryLevels();
+            updateStatusDot();
+            updateExecuteButton();
         }
 
         // ============================================================
@@ -2641,7 +2784,6 @@
                 badge.style.display = 'none';
             }
 
-            // Update status dot
             updateStatusDot();
             updateFocusTasks();
         }
@@ -2650,16 +2792,18 @@
             selectedDate.setDate(selectedDate.getDate() + days);
             updateDateDisplay();
             updateFocusBattery();
+            updateBatteryLevels();
         }
 
         function goToday() {
             selectedDate = new Date();
             updateDateDisplay();
             updateFocusBattery();
+            updateBatteryLevels();
         }
 
         // ============================================================
-        // STATUS DOT - Red/Green/Yellow
+        // STATUS DOT
         // ============================================================
         function updateStatusDot() {
             const dot = document.getElementById('statusDot');
@@ -2670,47 +2814,36 @@
             }
 
             const dateStr = selectedDate.toISOString().split('T')[0];
-            const todayStr = new Date().toISOString().split('T')[0];
 
-            // Get tasks for this date
-            const tasksForDate = getTasksForDate(sheet, dateStr);
-            const completedForDate = appData.history.filter(h =>
-                h.sheetName === sheet.name &&
-                h.date === dateStr &&
-                h.permanent === true
-            );
-
-            const totalTasks = tasksForDate.length;
-            const completedTasks = completedForDate.length;
-
-            // Get backlog from previous day
-            const prevDate = new Date(selectedDate);
-            prevDate.setDate(prevDate.getDate() - 1);
-            const prevDateStr = prevDate.toISOString().split('T')[0];
             const backlogTasks = appData.history.filter(h =>
                 h.sheetName === sheet.name &&
-                h.date === prevDateStr &&
+                h.date < dateStr &&
                 h.permanent !== true
             );
 
-            // Get advance work (tasks completed ahead of schedule)
             const advanceTasks = appData.history.filter(h =>
                 h.sheetName === sheet.name &&
                 h.date < dateStr &&
                 h.permanent === true
             );
 
-            // Determine status
+            const todayTasks = getTasksForDate(sheet, dateStr);
+            const completedToday = appData.history.filter(h =>
+                h.sheetName === sheet.name &&
+                h.date === dateStr &&
+                h.permanent === true
+            ).length;
+
             if (backlogTasks.length > 0) {
                 dot.className = 'status-dot red';
-                dot.title = '🔴 Backlog from previous day';
-            } else if (advanceTasks.length > 0 && completedTasks > 0) {
+                dot.title = '🔴 Backlog from previous days';
+            } else if (advanceTasks.length > 0 && completedToday > 0) {
                 dot.className = 'status-dot green';
                 dot.title = '🟢 Ahead of schedule';
-            } else if (completedTasks === totalTasks && totalTasks > 0) {
+            } else if (completedToday === todayTasks.length && todayTasks.length > 0) {
                 dot.className = 'status-dot green';
                 dot.title = '🟢 All tasks completed';
-            } else if (completedTasks > 0) {
+            } else if (completedToday > 0) {
                 dot.className = 'status-dot yellow';
                 dot.title = '🟡 In progress';
             } else {
@@ -2720,7 +2853,71 @@
         }
 
         // ============================================================
-        // GET TASKS FOR A SPECIFIC DATE (No duplicates across dates)
+        // BATTERY LEVELS (Yesterday, Today, Tomorrow)
+        // ============================================================
+        function updateBatteryLevels() {
+            const container = document.getElementById('batteryLevels');
+            const sheet = getSelectedSheet();
+            if (!sheet) {
+                container.innerHTML = `
+                    <div style="grid-column:1/-1;text-align:center;padding:8px;color:#9ca3af;font-size:10px;">Select a sheet to see battery levels</div>
+                `;
+                return;
+            }
+
+            const today = new Date();
+            const dates = [
+                { label: 'Yesterday', date: new Date(today), offset: -1 },
+                { label: 'Today', date: new Date(today), offset: 0 },
+                { label: 'Tomorrow', date: new Date(today), offset: 1 }
+            ];
+
+            let html = '';
+            dates.forEach(({ label, date, offset }) => {
+                const d = new Date(date);
+                d.setDate(d.getDate() + offset);
+                const dateStr = d.toISOString().split('T')[0];
+
+                const tasks = getTasksForDate(sheet, dateStr);
+                const totalTasks = tasks.length;
+                const completed = appData.history.filter(h =>
+                    h.sheetName === sheet.name &&
+                    h.date === dateStr &&
+                    h.permanent === true
+                ).length;
+
+                const percent = totalTasks > 0 ? Math.round((completed / totalTasks) * 100) : 0;
+
+                let colorClass = 'red';
+                if (percent === 100) colorClass = 'stars';
+                else if (percent >= 70) colorClass = 'green';
+                else if (percent >= 30) colorClass = 'yellow';
+
+                const note = appData.dateNotes[dateStr] || '';
+
+                html += `
+                    <div class="battery-level-item">
+                        <div class="label">${label} ${offset === 0 ? '📌' : ''}</div>
+                        <div class="mini-battery">
+                            <div class="mini-cap"></div>
+                            <div class="mini-fill ${colorClass}" style="height: ${percent}%;"></div>
+                        </div>
+                        <div class="mini-percent">${percent}%</div>
+                        <textarea class="mini-notes" placeholder="Add note..." onchange="saveNote('${dateStr}', this.value)">${note}</textarea>
+                    </div>
+                `;
+            });
+
+            container.innerHTML = html;
+        }
+
+        function saveNote(dateStr, value) {
+            appData.dateNotes[dateStr] = value;
+            saveData();
+        }
+
+        // ============================================================
+        // GET TASKS FOR A SPECIFIC DATE
         // ============================================================
         function getTasksForDate(sheet, dateStr) {
             if (!sheet) return [];
@@ -2728,15 +2925,6 @@
             const startDate = sheet.startDate || new Date().toISOString().split('T')[0];
             if (dateStr < startDate) return [];
 
-            const defaultSpeedMinutes = (sheet.speed || appData.defaultSpeed) * 60;
-            const speed = appData.dateSpeedOverrides[dateStr] || defaultSpeedMinutes;
-
-            const permanentlyCompleted = appData.history.filter(h =>
-                h.sheetName === sheet.name &&
-                h.permanent === true
-            ).map(h => h.taskIndex);
-
-            // Get all tasks assigned to this date (from groups)
             const groups = getTaskGroups(sheet, dateStr);
             let taskIndices = [];
             groups.forEach(group => {
@@ -2746,9 +2934,6 @@
                     }
                 });
             });
-
-            // Filter out permanently completed
-            taskIndices = taskIndices.filter(idx => !permanentlyCompleted.includes(idx));
 
             return taskIndices.map(idx => ({ ...sheet.data[idx], index: idx }));
         }
@@ -2861,6 +3046,17 @@
         }
 
         // ============================================================
+        // FORMAT DURATION (convert to hours if > 60)
+        // ============================================================
+        function formatDuration(minutes) {
+            if (minutes >= 60) {
+                const hrs = (minutes / 60).toFixed(1);
+                return `${hrs} hrs`;
+            }
+            return `${minutes} mins`;
+        }
+
+        // ============================================================
         // SPEED EDIT
         // ============================================================
         function openSpeedEdit() {
@@ -2890,10 +3086,7 @@
             updateExecuteButton();
             saveData();
             closeSpeedEdit();
-            updateFocusTasks();
-            updateFocusBattery();
-            updateResults();
-            updateStatusDot();
+            updateAll();
             alert(`✅ Speed set to ${speedHours.toFixed(2)} hrs/day for ${dateStr}`);
         }
 
@@ -2950,9 +3143,7 @@
             updateExecuteButton();
             saveData();
             closeBulkSpeed();
-            updateFocusTasks();
-            updateFocusBattery();
-            updateResults();
+            updateAll();
             alert(`✅ Applied ${speed.toFixed(2)} hrs/day to ${count} dates`);
         }
 
@@ -2983,17 +3174,71 @@
         }
 
         // ============================================================
+        // PUSH TO GITHUB (Direct upload of index.html)
+        // ============================================================
+        function pushToGitHub() {
+            const g = appData.github;
+            if (!g.username || !g.repo || !g.token) {
+                alert('⚠️ Please configure GitHub settings first (Settings → GitHub Sync)');
+                return;
+            }
+
+            // Get the full HTML content of the current page
+            const htmlContent = document.documentElement.outerHTML;
+
+            // Encode to base64
+            const encoded = btoa(unescape(encodeURIComponent(htmlContent)));
+
+            fetch(`https://api.github.com/repos/${g.username}/${g.repo}/contents/index.html`, {
+                headers: { 'Authorization': `token ${g.token}` }
+            })
+            .then(response => {
+                if (response.status === 404) {
+                    return null;
+                }
+                if (!response.ok) throw new Error('Failed to read file');
+                return response.json();
+            })
+            .then(fileData => {
+                let sha = null;
+                if (fileData && fileData.sha) {
+                    sha = fileData.sha;
+                }
+
+                const body = {
+                    message: `Update DataFlow app - ${new Date().toLocaleString()}`,
+                    content: encoded,
+                    sha: sha
+                };
+
+                return fetch(`https://api.github.com/repos/${g.username}/${g.repo}/contents/index.html`, {
+                    method: 'PUT',
+                    headers: {
+                        'Authorization': `token ${g.token}`,
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(body)
+                });
+            })
+            .then(response => {
+                if (response && !response.ok) throw new Error('Failed to upload');
+                alert(`✅ Successfully uploaded to GitHub!\n\nhttps://${g.username}.github.io/${g.repo}/`);
+                return response;
+            })
+            .catch(error => {
+                console.error('GitHub upload error:', error);
+                alert('❌ Upload failed: ' + error.message + '\nCheck your GitHub settings.');
+            });
+        }
+
+        // ============================================================
         // INITIALIZATION
         // ============================================================
         function init() {
             loadData();
             updateAllSelectors();
-            updateFocusDashboard();
-            updateSheetTabs();
-            renderSpreadsheet();
-            updateFocusBattery();
+            updateAll();
 
-            // Start with Focus page visible
             document.getElementById('topTabs').classList.add('hidden');
             document.getElementById('appContent').classList.add('hidden');
 
@@ -3011,12 +3256,12 @@
 
             document.getElementById('headerSubtitle').textContent = 'Focus';
             updateGitHubStatus();
-            updateFocusTasks();
             updateDateDisplay();
-            updateHistory();
             updateExecuteButton();
             updateStatusDot();
             checkDailySync();
+            updateSheetTabs();
+            renderSpreadsheet();
         }
 
         // ============================================================
@@ -3121,14 +3366,7 @@
             appData.sampleDataAdded = true;
 
             saveData();
-            updateAllSelectors();
-            updateFocusDashboard();
-            updateSheetTabs();
-            renderSpreadsheet();
-            updateFocusBattery();
-            updateFocusTasks();
-            updateHistory();
-
+            updateAll();
             alert('✅ Sample data added! Two sheets created with example tasks.');
         }
 
@@ -3222,9 +3460,7 @@
             document.getElementById('headerSubtitle').textContent = labels[pageName] || pageName;
 
             if (pageName === 'focus') {
-                updateFocusDashboard();
-                updateFocusBattery();
-                updateFocusTasks();
+                updateAll();
                 updateDateDisplay();
                 updateStatusDot();
             }
@@ -3336,12 +3572,7 @@
             }
             appData.focusSheetIndex = index;
             document.getElementById('focusSheetSelect').value = index;
-            updateFocusDashboard();
-            updateFocusBattery();
-            updateFocusTasks();
-            updateResults();
-            updateTracker();
-            updateStatusDot();
+            updateAll();
             saveData();
         }
 
@@ -3476,23 +3707,18 @@
                 return;
             }
 
-            // Get tasks for this date (no duplicates across dates)
             const tasksForDate = getTasksForDate(sheet, dateStr);
-
-            // Get permanently completed
             const permanentlyCompleted = appData.history.filter(h =>
                 h.sheetName === sheet.name &&
                 h.permanent === true
             ).map(h => h.taskIndex);
 
-            // Get temp completed for this date
             const tempCompleted = appData.history.filter(h =>
                 h.sheetName === sheet.name &&
                 h.date === dateStr &&
                 h.permanent !== true
             ).map(h => h.taskIndex);
 
-            // Get backlog from previous day only
             const previousDate = new Date(selectedDate);
             previousDate.setDate(previousDate.getDate() - 1);
             const prevDateStr = previousDate.toISOString().split('T')[0];
@@ -3504,7 +3730,6 @@
             );
             const backlogTaskIndices = new Set(backlogFromPrev.map(h => h.taskIndex));
 
-            // Calculate backlog duration
             let backlogDurationTotal = 0;
             backlogTaskIndices.forEach(idx => {
                 if (sheet.data[idx]) {
@@ -3512,11 +3737,9 @@
                 }
             });
 
-            // Build task list - only tasks for this date
             let tasksToShow = [];
             let totalTaskDuration = 0;
 
-            // Add backlog tasks first
             backlogTaskIndices.forEach(idx => {
                 if (!permanentlyCompleted.includes(idx) && sheet.data[idx]) {
                     tasksToShow.push({ ...sheet.data[idx], index: idx, isBacklog: true });
@@ -3524,7 +3747,6 @@
                 }
             });
 
-            // Add today's tasks
             tasksForDate.forEach(task => {
                 if (!permanentlyCompleted.includes(task.index) && !backlogTaskIndices.has(task.index)) {
                     tasksToShow.push({ ...task, isBacklog: false });
@@ -3597,7 +3819,6 @@
                     labelClass = 'pending-label';
                 }
 
-                // Check if this is a future date
                 const today = new Date();
                 const isFuture = selectedDate > today && !isPermanent;
 
@@ -3638,7 +3859,7 @@
             );
 
             if (permanentIndex >= 0) {
-                alert('✅ This task is already permanently completed. Cannot undo.');
+                alert('✅ This task is already permanently completed.');
                 return;
             }
 
@@ -3666,11 +3887,7 @@
             }
 
             saveData();
-            updateFocusTasks();
-            updateFocusDashboard();
-            updateFocusBattery();
-            updateHistory();
-            updateStatusDot();
+            updateAll();
         }
 
         function focusExecute() {
@@ -3704,12 +3921,7 @@
             updateExecuteButton();
 
             saveData();
-            updateFocusTasks();
-            updateFocusDashboard();
-            updateFocusBattery();
-            updateHistory();
-            updateResults();
-            updateStatusDot();
+            updateAll();
             alert(`✅ Executed ${tempCompletions.length} tasks permanently!`);
         }
 
@@ -3771,11 +3983,7 @@
             }
 
             saveData();
-            updateFocusTasks();
-            updateFocusDashboard();
-            updateFocusBattery();
-            updateHistory();
-            updateStatusDot();
+            updateAll();
             alert(`✅ Selected ${added} tasks for execution`);
         }
 
@@ -3809,11 +4017,7 @@
             }
 
             saveData();
-            updateFocusTasks();
-            updateFocusDashboard();
-            updateFocusBattery();
-            updateHistory();
-            updateStatusDot();
+            updateAll();
             alert(`❌ Deselected ${removed} tasks`);
         }
 
@@ -3827,7 +4031,7 @@
         }
 
         // ============================================================
-        // HISTORY
+        // HISTORY - With daily totals
         // ============================================================
         function updateHistory() {
             const container = document.getElementById('historyList');
@@ -3845,45 +4049,39 @@
                 return;
             }
 
+            // Group by date
             const grouped = {};
             permanentHistory.forEach(h => {
-                if (!grouped[h.sheetName]) grouped[h.sheetName] = [];
-                grouped[h.sheetName].push(h);
+                if (!grouped[h.date]) grouped[h.date] = [];
+                grouped[h.date].push(h);
             });
 
             let html = '';
-            Object.keys(grouped).forEach(sheetName => {
-                const entries = grouped[sheetName].sort((a, b) => a.taskIndex - b.taskIndex);
+            const sortedDates = Object.keys(grouped).sort((a, b) => b.localeCompare(a));
 
-                const totalTasks = entries.length;
+            sortedDates.forEach(date => {
+                const entries = grouped[date];
                 const totalDuration = entries.reduce((sum, e) => sum + (parseInt(e.taskDuration) || 0), 0);
+                const dateObj = new Date(date + 'T00:00:00');
+                const dateLabel = dateObj.toLocaleDateString('en-US', {
+                    weekday: 'short',
+                    month: 'short',
+                    day: 'numeric'
+                });
 
                 html += `
-                        <div style="margin-top:6px;padding:6px;background:#f8fafc;border-radius:6px;">
-                            <div style="display:flex;justify-content:space-between;margin-bottom:3px;font-size:11px;font-weight:600;color:#1a202c;">
-                                <span>📋 ${sheetName}</span>
-                                <span>${totalTasks} tasks · ${totalDuration} mins</span>
+                        <div class="history-date-group">
+                            <div class="history-date-header">
+                                <span class="date-label">📅 ${dateLabel}</span>
+                                <span class="date-total">${formatDuration(totalDuration)}</span>
                             </div>
                     `;
 
-                entries.forEach(entry => {
-                    const dateObj = new Date(entry.date + 'T00:00:00');
-                    const dateLabel = dateObj.toLocaleDateString('en-US', {
-                        month: 'short',
-                        day: 'numeric'
-                    });
-                    const completedDate = entry.completedDate ? new Date(entry.completedDate + 'T00:00:00') : null;
-                    const completedLabel = completedDate ? completedDate.toLocaleDateString('en-US', {
-                        month: 'short',
-                        day: 'numeric'
-                    }) : '-';
-
+                entries.sort((a, b) => a.taskIndex - b.taskIndex).forEach(entry => {
                     html += `
                             <div class="history-item">
-                                <span class="date">${dateLabel}</span>
                                 <span class="task-info">#${entry.taskIndex + 1} ${entry.taskRef || 'Task'}</span>
-                                <span class="completed-on">✅ Done: ${completedLabel}</span>
-                                <span class="progress completed">${entry.taskDuration || 0}m</span>
+                                <span class="task-duration done">${formatDuration(parseInt(entry.taskDuration) || 0)}</span>
                             </div>
                         `;
                 });
@@ -3927,7 +4125,6 @@
 
             const delayedInfo = calculateDelayedDate(sheet);
 
-            // Last 3 and coming 3 days
             const today = new Date();
             const last3 = [];
             const coming3 = [];
@@ -3948,15 +4145,15 @@
                     <div class="results-summary-top">
                         <div class="summary-item">
                             <span class="label">Total Duration</span>
-                            <span class="value">${totalDuration.toFixed(2)} mins (${(totalDuration/60).toFixed(2)} hrs)</span>
+                            <span class="value">${formatDuration(totalDuration)}</span>
                         </div>
                         <div class="summary-item">
                             <span class="label">Completed</span>
-                            <span class="value success">${completedDuration.toFixed(2)} mins</span>
+                            <span class="value success">${formatDuration(completedDuration)}</span>
                         </div>
                         <div class="summary-item">
                             <span class="label">Remaining</span>
-                            <span class="value warning">${remainingDuration.toFixed(2)} mins</span>
+                            <span class="value warning">${formatDuration(remainingDuration)}</span>
                         </div>
                         <div class="summary-item">
                             <span class="label">Days to Complete</span>
@@ -3970,10 +4167,6 @@
                         <div class="summary-item">
                             <span class="label">Pending Hours</span>
                             <span class="value warning">${(delayedInfo.remainingDuration / 60).toFixed(2)} hrs</span>
-                        </div>
-                        <div class="summary-item">
-                            <span class="label">Current Speed</span>
-                            <span class="value">${(delayedInfo.speed / 60).toFixed(2)} hrs/day</span>
                         </div>
                         ` : ''}
                         <div class="summary-item">
@@ -4012,7 +4205,6 @@
                                 }).join('')}
                             </div>
                         </div>
-                        <div style="font-size:9px;color:#9ca3af;margin-top:4px;text-align:center;">✏️ Click date in Focus tab to edit speed</div>
                     </div>
                     <table class="results-table">
                         <thead>
@@ -4059,9 +4251,7 @@
                 appData.hasChanges = true;
                 updateExecuteButton();
                 saveData();
-                updateFocusTasks();
-                updateFocusBattery();
-                updateStatusDot();
+                updateAll();
             }
         }
 
@@ -4121,15 +4311,15 @@
                     <div class="tracker-summary-top">
                         <div class="summary-item">
                             <span class="label">Total Duration</span>
-                            <span class="value">${totalDuration.toFixed(2)} mins (${(totalDuration/60).toFixed(2)} hrs)</span>
+                            <span class="value">${formatDuration(totalDuration)}</span>
                         </div>
                         <div class="summary-item">
                             <span class="label">Completed</span>
-                            <span class="value success">${completedDuration.toFixed(2)} mins</span>
+                            <span class="value success">${formatDuration(completedDuration)}</span>
                         </div>
                         <div class="summary-item">
                             <span class="label">Remaining</span>
-                            <span class="value warning">${remainingDuration.toFixed(2)} mins</span>
+                            <span class="value warning">${formatDuration(remainingDuration)}</span>
                         </div>
                         ${delayedInfo ? `
                         <div class="summary-item">
@@ -4196,21 +4386,14 @@
             appData.hasChanges = true;
             updateExecuteButton();
             saveData();
-            updateTracker();
-            updateFocusDashboard();
-            updateFocusBattery();
-            updateFocusTasks();
-            updateResults();
-            updateStatusDot();
+            updateAll();
         }
 
         function saveTrackerDates(sheetIndex) {
             appData.sheets[sheetIndex].startDate = document.getElementById('trackerStartDate').value;
             appData.sheets[sheetIndex].targetDate = document.getElementById('trackerTargetDate').value;
             saveData();
-            updateTracker();
-            updateFocusTasks();
-            updateFocusBattery();
+            updateAll();
         }
 
         // ============================================================
@@ -4257,7 +4440,7 @@
                     updateSheetTabs();
                     renderSpreadsheet();
                     updateAllSelectors();
-                    updateFocusDashboard();
+                    updateAll();
                 }
             }, `Sheet ${appData.sheets.length + 1}`);
         }
@@ -4274,9 +4457,7 @@
                     saveData();
                     updateSheetTabs();
                     updateAllSelectors();
-                    updateFocusDashboard();
-                    updateFocusBattery();
-                    updateFocusTasks();
+                    updateAll();
                 }
             }, sheet.name);
         }
@@ -4305,11 +4486,7 @@
                 updateSheetTabs();
                 renderSpreadsheet();
                 updateAllSelectors();
-                updateFocusDashboard();
-                updateFocusBattery();
-                updateFocusTasks();
-                updateHistory();
-                updateResults();
+                updateAll();
             });
 
             document.getElementById('modalConfirmBtn').className = 'btn-danger';
@@ -4413,14 +4590,7 @@
                 appData.hasChanges = true;
                 updateExecuteButton();
                 saveData();
-                renderSpreadsheet();
-                updateAllSelectors();
-                updateFocusDashboard();
-                updateFocusBattery();
-                updateFocusTasks();
-                updateHistory();
-                updateResults();
-                updateStatusDot();
+                updateAll();
             }
         }
 
@@ -4458,10 +4628,7 @@
                 appData.hasChanges = true;
                 updateExecuteButton();
                 saveData();
-                renderSpreadsheet();
-                updateHistory();
-                updateFocusTasks();
-                updateAllSelectors();
+                updateAll();
             });
         }
 
@@ -4483,13 +4650,8 @@
             appData.hasChanges = true;
             updateExecuteButton();
             saveData();
-            updateAllSelectors();
-            updateFocusDashboard();
-            updateFocusBattery();
-            updateFocusTasks();
+            updateAll();
             updateSheetTabs();
-            updateResults();
-            updateStatusDot();
 
             const removed = originalLength - sheet.data.length;
             alert(`✅ Saved ${sheet.data.length} rows${removed > 0 ? ` (${removed} empty rows removed)` : ''}`);
@@ -4543,9 +4705,7 @@
             appData.hasChanges = true;
             updateExecuteButton();
             saveData();
-            renderSpreadsheet();
-            updateAllSelectors();
-            updateFocusDashboard();
+            updateAll();
             document.getElementById('pasteInput').value = '';
             alert(`✅ Pasted ${rows.length} rows successfully!`);
         }
@@ -4603,9 +4763,7 @@
             appData.hasChanges = true;
             updateExecuteButton();
             saveData();
-            renderSpreadsheet();
-            updateAllSelectors();
-            updateFocusDashboard();
+            updateAll();
             document.getElementById('pasteInput').value = '';
             alert(`✅ Smart pasted ${rowCount} rows from Excel!`);
         }
@@ -4674,17 +4832,9 @@
                         appData = { ...appData, ...imported };
                         saveData();
                         updateAllSelectors();
-                        updateFocusDashboard();
-                        updateSheetTabs();
-                        renderSpreadsheet();
-                        updateFocusBattery();
-                        updateFocusTasks();
-                        updateHistory();
-                        updateResults();
-                        updateTracker();
+                        updateAll();
                         document.getElementById('defaultSpeedInput').value = appData.defaultSpeed;
                         updateExecuteButton();
-                        updateStatusDot();
                         alert('📂 Data imported successfully!');
                     });
                 } catch (err) {
@@ -4768,6 +4918,7 @@
                         history: historyData,
                         defaultSpeed: appData.defaultSpeed,
                         dateSpeedOverrides: appData.dateSpeedOverrides || {},
+                        dateNotes: appData.dateNotes || {},
                         lastUpdated: new Date().toISOString()
                     }
                 }
