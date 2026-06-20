@@ -2481,22 +2481,22 @@
         }
 
         // ============================================================
-        // GET TASKS FOR A SPECIFIC DATE
+        // GET TASKS FOR A SPECIFIC DATE (SMART ALLOCATION)
         // ============================================================
         function getTasksForDate(sheet, dateStr) {
             if (!sheet) return [];
             const startDate = sheet.startDate || new Date().toISOString().split('T')[0];
             if (dateStr < startDate) return [];
-            const defaultSpeedMinutes = (sheet.speed || appData.defaultSpeed) * 60;
-            const speed = appData.dateSpeedOverrides[dateStr] || defaultSpeedMinutes;
+            // Get the groups (smart allocation)
             const groups = getTaskGroups(sheet);
-            let taskIndices = [];
             const startDateObj = new Date(startDate);
             const currentDateObj = new Date(dateStr);
             const daysDiff = Math.floor((currentDateObj - startDateObj) / (1000 * 60 * 60 * 24));
+            let taskIndices = [];
             if (daysDiff >= 0 && daysDiff < groups.length) {
                 taskIndices = groups[daysDiff].rows;
             }
+            // Also include any manually assigned tasks for this date
             const manualAssignments = appData.history.filter(h =>
                 h.sheetName === sheet.name && h.date === dateStr && h.permanent === false
             ).map(h => h.taskIndex);
@@ -2505,43 +2505,46 @@
         }
 
         // ============================================================
-        // SMART TASK SPLITTING
+        // SMART TASK SPLITTING - BALANCED GROUPS
         // ============================================================
         function getTaskGroups(sheet) {
             if (!sheet) return [];
-            const defaultSpeedMinutes = (sheet.speed || appData.defaultSpeed) * 60;
-            const speed = defaultSpeedMinutes;
-            const groups = [];
-            let currentGroup = [];
-            let currentDuration = 0;
+            // Use the sheet's speed (hours/day) converted to minutes
+            const speed = (sheet.speed || appData.defaultSpeed) * 60;
+            // Get only tasks that are NOT permanently completed
             const permanentlyCompleted = appData.history.filter(h =>
                 h.sheetName === sheet.name && h.permanent === true
             ).map(h => h.taskIndex);
             const availableRows = sheet.data
                 .map((row, idx) => ({ row, idx }))
                 .filter(({ idx }) => !permanentlyCompleted.includes(idx));
-            const totalAvailableDuration = availableRows.reduce((sum, { row }) => sum + (parseFloat(row.duration) || 0),
-            0);
-            const totalDays = Math.ceil(totalAvailableDuration / speed);
-            if (totalDays <= 0) return [];
-            const targetPerDay = totalAvailableDuration / totalDays;
-            let currentDayDuration = 0;
-            let currentDayRows = [];
+            const totalDuration = availableRows.reduce((sum, { row }) => sum + (parseFloat(row.duration) || 0), 0);
+            if (totalDuration === 0) return [];
+            // Calculate number of days needed
+            const daysNeeded = Math.max(1, Math.ceil(totalDuration / speed));
+            // Target per day (balanced)
+            const targetPerDay = totalDuration / daysNeeded;
+            const groups = [];
+            let currentGroup = [];
+            let currentDuration = 0;
             availableRows.forEach(({ row, idx }) => {
                 const duration = parseFloat(row.duration) || 0;
-                if (currentDayDuration + duration <= targetPerDay + 0.01) {
-                    currentDayRows.push(idx);
-                    currentDayDuration += duration;
-                } else {
-                    if (currentDayRows.length > 0) {
-                        groups.push({ rows: currentDayRows, duration: parseFloat(currentDayDuration.toFixed(2)) });
-                    }
-                    currentDayRows = [idx];
-                    currentDayDuration = duration;
+                // If adding this task would exceed the target by more than a small tolerance,
+                // start a new group, but only if the current group is not empty.
+                if (currentGroup.length > 0 && currentDuration + duration > targetPerDay * 1.15) {
+                    groups.push({ rows: currentGroup, duration: parseFloat(currentDuration.toFixed(2)) });
+                    currentGroup = [];
+                    currentDuration = 0;
                 }
+                currentGroup.push(idx);
+                currentDuration += duration;
             });
-            if (currentDayRows.length > 0) {
-                groups.push({ rows: currentDayRows, duration: parseFloat(currentDayDuration.toFixed(2)) });
+            if (currentGroup.length > 0) {
+                groups.push({ rows: currentGroup, duration: parseFloat(currentDuration.toFixed(2)) });
+            }
+            // Ensure we have at least one group
+            if (groups.length === 0 && availableRows.length > 0) {
+                groups.push({ rows: availableRows.map(({ idx }) => idx), duration: parseFloat(totalDuration.toFixed(2)) });
             }
             return groups;
         }
@@ -3022,6 +3025,7 @@
                 totalDisplay.style.display = 'none';
                 return;
             }
+            // Get tasks for this date using smart allocation
             const tasksForDate = getTasksForDate(sheet, dateStr);
             const permanentlyCompleted = appData.history.filter(h =>
                 h.sheetName === sheet.name && h.permanent === true
@@ -3042,12 +3046,14 @@
             });
             let tasksToShow = [];
             let totalTaskDuration = 0;
+            // Add backlog tasks first
             backlogTaskIndices.forEach(idx => {
                 if (!permanentlyCompleted.includes(idx) && sheet.data[idx]) {
                     tasksToShow.push({ ...sheet.data[idx], index: idx, isBacklog: true });
                     totalTaskDuration += parseInt(sheet.data[idx].duration) || 0;
                 }
             });
+            // Add today's tasks
             tasksForDate.forEach(task => {
                 if (!permanentlyCompleted.includes(task.index) && !backlogTaskIndices.has(task.index)) {
                     tasksToShow.push({ ...task, isBacklog: false });
