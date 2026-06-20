@@ -38,9 +38,30 @@
       "lastUpdated": "2026-06-20T18:13:59.920Z"
     },
     "Neeraj": {
-      "batteryPercent": 38,
-      "sheetName": "Sheet 1",
-      "lastUpdated": "2026-06-20T18:42:37.271Z"
+      "sheets": [
+        {
+          "sheetName": "Sheet 1",
+          "batteryPercent": 38,
+          "totalItems": 8,
+          "completedItems": 3,
+          "lastUpdated": "2026-06-20T18:46:32.560Z"
+        },
+        {
+          "sheetName": "Sheet 2",
+          "batteryPercent": 40,
+          "totalItems": 5,
+          "completedItems": 2,
+          "lastUpdated": "2026-06-20T18:46:32.566Z"
+        },
+        {
+          "sheetName": "Sheet 3",
+          "batteryPercent": 43,
+          "totalItems": 7,
+          "completedItems": 3,
+          "lastUpdated": "2026-06-20T18:46:32.566Z"
+        }
+      ],
+      "lastUpdated": "2026-06-20T18:46:32.566Z"
     }
   }
 }
