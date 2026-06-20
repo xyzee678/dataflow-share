@@ -1,0 +1,3113 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <title>DataFlow</title>
+    <script src="https://cdn.sheetjs.com/xlsx-0.20.2/package/dist/xlsx.full.min.js">
+    </script>
+    <style>
+        /* ===== RESET & BASE ===== */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #f5f7fa;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            user-select: none;
+            -webkit-user-select: none;
+        }
+
+        .app-wrapper {
+            width: 100%;
+            max-width: 480px;
+            height: 100vh;
+            max-height: 900px;
+            background: white;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            position: relative;
+            border-radius: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        @media (min-width: 481px) {
+            .app-wrapper {
+                border-radius: 24px;
+                box-shadow: 0 20px 60px rgba(0, 0, 0, 0.15);
+                height: 90vh;
+            }
+        }
+
+        /* ===== LOCK OVERLAY ===== */
+        .lock-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.08);
+            z-index: 999;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+            border-radius: inherit;
+        }
+
+        .lock-overlay.active {
+            display: flex;
+        }
+
+        .lock-overlay .lock-icon-big {
+            font-size: 60px;
+            opacity: 0.4;
+            animation: pulse 2s ease-in-out infinite;
+            margin-bottom: 20px;
+        }
+
+        @keyframes pulse {
+            0%,
+            100% {
+                opacity: 0.3;
+                transform: scale(1);
+            }
+            50% {
+                opacity: 0.6;
+                transform: scale(1.05);
+            }
+        }
+
+        .lock-overlay .unlock-big-btn {
+            padding: 16px 40px;
+            background: #ef4444;
+            color: white;
+            border: none;
+            border-radius: 16px;
+            font-size: 20px;
+            font-weight: 700;
+            cursor: pointer;
+            font-family: inherit;
+            box-shadow: 0 4px 20px rgba(239, 68, 68, 0.4);
+            transition: all 0.2s;
+            -webkit-tap-highlight-color: transparent;
+            z-index: 1000;
+            position: relative;
+        }
+
+        .lock-overlay .unlock-big-btn:active {
+            transform: scale(0.95);
+        }
+
+        .lock-overlay .unlock-big-btn:hover {
+            background: #dc2626;
+        }
+
+        .app-wrapper.locked .lock-overlay {
+            display: flex;
+        }
+
+        .app-wrapper.locked .app-content,
+        .app-wrapper.locked .top-tabs,
+        .app-wrapper.locked .floating-btn {
+            pointer-events: none;
+            opacity: 0.3;
+        }
+
+        /* ===== HEADER ===== */
+        .app-header {
+            padding: 10px 14px;
+            background: white;
+            border-bottom: 1px solid #f0f0f0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            z-index: 10;
+            min-height: 50px;
+            flex-shrink: 0;
+        }
+
+        .app-header h1 {
+            font-size: 18px;
+            font-weight: 700;
+            color: #1a202c;
+        }
+
+        .app-header .subtitle {
+            font-size: 11px;
+            color: #9ca3af;
+            margin-top: 2px;
+        }
+
+        .header-actions {
+            display: flex;
+            gap: 8px;
+            align-items: center;
+        }
+
+        .lock-btn {
+            padding: 8px 16px;
+            background: #e5e7eb;
+            border: none;
+            border-radius: 20px;
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-family: inherit;
+            color: #1a202c;
+            z-index: 1001;
+            -webkit-tap-highlight-color: transparent;
+            transition: all 0.2s;
+        }
+
+        .lock-btn:active {
+            transform: scale(0.95);
+        }
+
+        .lock-btn.locked {
+            background: #ef4444;
+            color: white;
+        }
+
+        /* ===== TOP TABS ===== */
+        .top-tabs {
+            display: flex;
+            background: white;
+            border-bottom: 1px solid #e5e7eb;
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+            padding: 0 4px;
+            flex-shrink: 0;
+        }
+
+        .top-tabs.hidden {
+            display: none;
+        }
+
+        .top-tabs::-webkit-scrollbar {
+            height: 0;
+        }
+
+        .top-tab {
+            padding: 12px 16px;
+            background: none;
+            border: none;
+            font-size: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            font-family: inherit;
+            color: #9ca3af;
+            white-space: nowrap;
+            border-bottom: 3px solid transparent;
+            -webkit-tap-highlight-color: transparent;
+            transition: all 0.2s;
+        }
+
+        .top-tab:hover {
+            color: #6b7280;
+        }
+
+        .top-tab.active {
+            color: #4f46e5;
+            border-bottom-color: #4f46e5;
+        }
+
+        .top-tab .badge {
+            background: #e5e7eb;
+            color: #6b7280;
+            font-size: 9px;
+            padding: 0 6px;
+            border-radius: 10px;
+            margin-left: 4px;
+            font-weight: 600;
+        }
+
+        .top-tab.active .badge {
+            background: #dbeafe;
+            color: #4f46e5;
+        }
+
+        /* ===== CONTENT ===== */
+        .app-content {
+            flex: 1;
+            overflow-y: auto;
+            padding: 14px;
+            background: #fafbfc;
+        }
+
+        .app-content.hidden {
+            display: none;
+        }
+
+        .page {
+            display: none;
+            animation: fadeIn 0.25s ease;
+        }
+
+        .page.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(6px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* ===== FLOATING BUTTON ===== */
+        .floating-btn {
+            position: absolute;
+            bottom: 30px;
+            right: 20px;
+            z-index: 100;
+            background: #4f46e5;
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 60px;
+            height: 60px;
+            font-size: 28px;
+            cursor: pointer;
+            box-shadow: 0 4px 20px rgba(79, 70, 229, 0.4);
+            transition: all 0.3s ease;
+            -webkit-tap-highlight-color: transparent;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .floating-btn:active {
+            transform: scale(0.92);
+        }
+
+        .floating-btn.open {
+            background: #ef4444;
+            box-shadow: 0 4px 20px rgba(239, 68, 68, 0.4);
+        }
+
+        .floating-btn.open .btn-icon {
+            transform: rotate(45deg);
+        }
+
+        /* ===== FOCUS PAGE (Combined: Dashboard + Battery + Tasks) ===== */
+        .focus-page {
+            display: block !important;
+        }
+
+        .focus-dashboard-section {
+            margin-bottom: 12px;
+        }
+
+        .focus-dashboard-section h2 {
+            font-size: 14px;
+            color: #1a202c;
+            margin-bottom: 8px;
+        }
+
+        /* ===== BIG BATTERY ===== */
+        .battery-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 10px 0 15px;
+            background: white;
+            border-radius: 12px;
+            border: 1px solid #f0f0f0;
+            margin-bottom: 12px;
+        }
+
+        .battery-wrapper {
+            position: relative;
+            width: 100px;
+            height: 220px;
+            background: #f3f4f6;
+            border-radius: 16px;
+            border: 4px solid #1a202c;
+            overflow: hidden;
+            margin-bottom: 14px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+        }
+
+        .battery-cap {
+            position: absolute;
+            top: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 32px;
+            height: 10px;
+            background: #1a202c;
+            border-radius: 4px 4px 0 0;
+        }
+
+        .battery-fill {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 0%;
+            transition: height 1.2s cubic-bezier(0.4, 0, 0.2, 1), background 0.6s ease;
+            border-radius: 0 0 12px 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .battery-fill.red {
+            background: linear-gradient(180deg, #f87171, #dc2626);
+        }
+        .battery-fill.yellow {
+            background: linear-gradient(180deg, #fbbf24, #d97706);
+        }
+        .battery-fill.green {
+            background: linear-gradient(180deg, #34d399, #059669);
+        }
+        .battery-fill.stars {
+            background: linear-gradient(180deg, #fcd34d, #f59e0b, #fbbf24);
+            animation: starGlow 1.5s ease-in-out infinite alternate;
+        }
+
+        @keyframes starGlow {
+            0% {
+                box-shadow: inset 0 0 20px rgba(251, 191, 36, 0.3);
+            }
+            100% {
+                box-shadow: inset 0 0 40px rgba(251, 191, 36, 0.6), 0 0 30px rgba(251, 191, 36, 0.2);
+            }
+        }
+
+        .stars-emoji {
+            font-size: 30px;
+            animation: spin 4s linear infinite;
+        }
+
+        @keyframes spin {
+            from {
+                transform: rotate(0deg);
+            }
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        .battery-percentage {
+            font-size: 40px;
+            font-weight: 800;
+            color: #1a202c;
+            margin-bottom: 2px;
+        }
+
+        .percent-sign {
+            font-size: 20px;
+            color: #6b7280;
+        }
+
+        .battery-label {
+            font-size: 16px;
+            font-weight: 600;
+            color: #1a202c;
+            margin-bottom: 2px;
+            text-align: center;
+            padding: 0 10px;
+        }
+
+        .battery-sub {
+            font-size: 13px;
+            color: #6b7280;
+            text-align: center;
+        }
+
+        .battery-status-text {
+            font-size: 14px;
+            font-weight: 600;
+            margin-top: 8px;
+            padding: 6px 20px;
+            border-radius: 20px;
+            text-align: center;
+        }
+
+        .battery-status-text.red {
+            color: #dc2626;
+            background: #fef2f2;
+        }
+        .battery-status-text.yellow {
+            color: #d97706;
+            background: #fffbeb;
+        }
+        .battery-status-text.green {
+            color: #059669;
+            background: #ecfdf5;
+        }
+        .battery-status-text.stars {
+            color: #d97706;
+            background: #fffbeb;
+            font-size: 18px;
+        }
+
+        .battery-sheet-selector {
+            width: 100%;
+            max-width: 250px;
+            margin: 0 auto 10px;
+        }
+
+        .battery-sheet-selector select {
+            width: 100%;
+            padding: 10px 14px;
+            border: 2px solid #e5e7eb;
+            border-radius: 10px;
+            font-size: 14px;
+            font-weight: 500;
+            background: white;
+            outline: none;
+            font-family: inherit;
+            -webkit-appearance: none;
+            appearance: none;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%236b7280' d='M6 8L1 3h10z'/%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 12px center;
+            cursor: pointer;
+        }
+
+        .battery-sheet-selector select:focus {
+            border-color: #4f46e5;
+        }
+
+        /* ===== FOCUS DASHBOARD CARDS ===== */
+        .focus-dashboard-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 8px;
+        }
+
+        .focus-dashboard-card {
+            background: white;
+            border-radius: 10px;
+            padding: 10px 12px;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06);
+            border: 2px solid #f0f0f0;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .focus-dashboard-card:active {
+            transform: scale(0.97);
+        }
+
+        .focus-dashboard-card.active-card {
+            border-color: #4f46e5;
+            box-shadow: 0 0 0 2px rgba(79, 70, 229, 0.1);
+        }
+
+        .focus-card-title {
+            font-size: 12px;
+            font-weight: 600;
+            color: #1a202c;
+            margin-bottom: 4px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .focus-card-stats {
+            font-size: 11px;
+            color: #6b7280;
+            margin-bottom: 4px;
+        }
+
+        .focus-card-progress {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .focus-card-bar {
+            flex: 1;
+            height: 6px;
+            background: #f3f4f6;
+            border-radius: 6px;
+            overflow: hidden;
+        }
+
+        .focus-card-bar .fill {
+            height: 100%;
+            border-radius: 6px;
+            transition: width 0.6s ease;
+        }
+
+        .focus-card-bar .fill.c0 {
+            background: linear-gradient(90deg, #4f46e5, #818cf8);
+        }
+        .focus-card-bar .fill.c1 {
+            background: linear-gradient(90deg, #059669, #34d399);
+        }
+        .focus-card-bar .fill.c2 {
+            background: linear-gradient(90deg, #d97706, #fbbf24);
+        }
+        .focus-card-bar .fill.c3 {
+            background: linear-gradient(90deg, #dc2626, #f87171);
+        }
+
+        .focus-card-percent {
+            font-size: 13px;
+            font-weight: 700;
+            min-width: 36px;
+            text-align: right;
+        }
+
+        .focus-card-percent.c0 {
+            color: #4f46e5;
+        }
+        .focus-card-percent.c1 {
+            color: #059669;
+        }
+        .focus-card-percent.c2 {
+            color: #d97706;
+        }
+        .focus-card-percent.c3 {
+            color: #dc2626;
+        }
+
+        /* ===== TODAY'S TASKS (in Focus) ===== */
+        .focus-tasks-section {
+            background: white;
+            border-radius: 12px;
+            padding: 12px 14px;
+            border: 1px solid #f0f0f0;
+        }
+
+        .focus-tasks-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 8px;
+            flex-wrap: wrap;
+            gap: 4px;
+        }
+
+        .focus-tasks-header h3 {
+            font-size: 13px;
+            color: #1a202c;
+        }
+
+        .focus-tasks-header .task-summary {
+            font-size: 11px;
+            color: #6b7280;
+        }
+
+        .focus-tasks-header .task-summary strong {
+            color: #1a202c;
+        }
+
+        .focus-task-actions {
+            display: flex;
+            gap: 6px;
+            margin-bottom: 8px;
+            flex-wrap: wrap;
+        }
+
+        .focus-task-actions button {
+            padding: 4px 12px;
+            border: none;
+            border-radius: 6px;
+            font-size: 11px;
+            font-weight: 600;
+            cursor: pointer;
+            font-family: inherit;
+            -webkit-tap-highlight-color: transparent;
+            transition: all 0.2s;
+        }
+
+        .focus-task-actions button:active {
+            transform: scale(0.95);
+        }
+
+        .btn-focus-select-all {
+            background: #4f46e5;
+            color: white;
+        }
+        .btn-focus-deselect-all {
+            background: #ef4444;
+            color: white;
+        }
+        .btn-focus-toggle-view {
+            background: #059669;
+            color: white;
+        }
+
+        .focus-task-item {
+            display: flex;
+            align-items: center;
+            padding: 8px 10px;
+            background: #fafbfc;
+            border-radius: 8px;
+            margin-bottom: 4px;
+            gap: 8px;
+            cursor: pointer;
+            transition: all 0.2s;
+            border: 1px solid transparent;
+        }
+
+        .focus-task-item:hover {
+            background: #f3f4f6;
+        }
+
+        .focus-task-item.completed {
+            background: #ecfdf5;
+            border-color: #059669;
+        }
+
+        .focus-task-item.completed .task-ref {
+            text-decoration: line-through;
+            color: #9ca3af;
+        }
+
+        .focus-task-checkbox {
+            width: 18px;
+            height: 18px;
+            border: 2px solid #d1d5db;
+            border-radius: 5px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            font-size: 12px;
+            transition: all 0.2s;
+        }
+
+        .focus-task-item.completed .focus-task-checkbox {
+            background: #059669;
+            border-color: #059669;
+            color: white;
+        }
+
+        .focus-task-sr {
+            font-size: 10px;
+            color: #9ca3af;
+            min-width: 24px;
+        }
+
+        .focus-task-ref {
+            flex: 1;
+            font-size: 12px;
+            font-weight: 500;
+            color: #1a202c;
+        }
+
+        .focus-task-duration {
+            font-size: 11px;
+            color: #6b7280;
+            background: #f3f4f6;
+            padding: 2px 6px;
+            border-radius: 4px;
+        }
+
+        .focus-no-tasks {
+            text-align: center;
+            padding: 20px;
+            color: #9ca3af;
+            font-size: 13px;
+        }
+
+        .focus-no-tasks .emoji {
+            font-size: 24px;
+            display: block;
+            margin-bottom: 6px;
+        }
+
+        /* ===== RESULTS ===== */
+        .results-container {
+            background: white;
+            border-radius: 12px;
+            padding: 16px;
+            border: 1px solid #f0f0f0;
+        }
+
+        .results-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 13px;
+        }
+
+        .results-table th,
+        .results-table td {
+            padding: 10px 8px;
+            text-align: left;
+            border-bottom: 1px solid #f0f0f0;
+        }
+
+        .results-table th {
+            background: #f8fafc;
+            font-weight: 600;
+            color: #64748b;
+            font-size: 11px;
+            text-transform: uppercase;
+        }
+
+        .results-summary {
+            margin-top: 16px;
+            padding: 14px;
+            background: #f8fafc;
+            border-radius: 10px;
+        }
+
+        .results-summary-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 8px 0;
+            border-bottom: 1px solid #e5e7eb;
+        }
+
+        .results-summary-item:last-child {
+            border-bottom: none;
+        }
+
+        .results-summary-item .label {
+            color: #6b7280;
+            font-size: 13px;
+        }
+
+        .results-summary-item .value {
+            font-weight: 600;
+            color: #1a202c;
+            font-size: 14px;
+        }
+
+        .results-summary-item .value.highlight {
+            color: #4f46e5;
+        }
+        .results-summary-item .value.success {
+            color: #059669;
+        }
+        .results-summary-item .value.warning {
+            color: #d97706;
+        }
+
+        /* ===== ENTRY / SPREADSHEET ===== */
+        .sheet-tabs-container {
+            background: white;
+            border-radius: 12px;
+            padding: 12px;
+            margin-bottom: 12px;
+            border: 1px solid #f0f0f0;
+        }
+
+        .sheet-tabs {
+            display: flex;
+            gap: 8px;
+            overflow-x: auto;
+            padding-bottom: 8px;
+            -webkit-overflow-scrolling: touch;
+        }
+
+        .sheet-tabs::-webkit-scrollbar {
+            height: 0;
+        }
+
+        .sheet-tab {
+            padding: 8px 16px;
+            background: #f3f4f6;
+            border: none;
+            border-radius: 8px;
+            font-size: 13px;
+            font-weight: 500;
+            cursor: pointer;
+            font-family: inherit;
+            white-space: nowrap;
+            transition: all 0.2s;
+            -webkit-tap-highlight-color: transparent;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .sheet-tab:active {
+            transform: scale(0.95);
+        }
+
+        .sheet-tab.active {
+            background: #4f46e5;
+            color: white;
+        }
+
+        .sheet-tab .count {
+            font-size: 10px;
+            background: rgba(0, 0, 0, 0.1);
+            padding: 0 6px;
+            border-radius: 10px;
+        }
+
+        .sheet-tab.active .count {
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+        .sheet-management {
+            display: flex;
+            gap: 8px;
+            margin-top: 10px;
+            flex-wrap: wrap;
+        }
+
+        .sheet-management button {
+            padding: 8px 14px;
+            border: none;
+            border-radius: 8px;
+            font-size: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            font-family: inherit;
+            transition: all 0.2s;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        .sheet-management button:active {
+            transform: scale(0.95);
+        }
+
+        .btn-add-sheet {
+            background: #4f46e5;
+            color: white;
+        }
+        .btn-edit-sheet {
+            background: #059669;
+            color: white;
+        }
+        .btn-delete-sheet {
+            background: #ef4444;
+            color: white;
+        }
+
+        /* ===== PASTE AREA ===== */
+        .paste-area {
+            background: white;
+            border-radius: 12px;
+            padding: 14px;
+            margin-bottom: 12px;
+            border: 2px dashed #d1d5db;
+            transition: border-color 0.2s, background 0.2s;
+        }
+
+        .paste-area:focus-within {
+            border-color: #4f46e5;
+            background: #f8fafc;
+        }
+
+        .paste-area label {
+            font-size: 12px;
+            font-weight: 600;
+            color: #64748b;
+            display: block;
+            margin-bottom: 6px;
+        }
+
+        .paste-area textarea {
+            width: 100%;
+            padding: 10px 12px;
+            border: 1px solid #e5e7eb;
+            border-radius: 8px;
+            font-size: 13px;
+            font-family: 'Courier New', monospace;
+            resize: vertical;
+            min-height: 70px;
+            outline: none;
+            transition: border-color 0.2s;
+            background: #fafbfc;
+        }
+
+        .paste-area textarea:focus {
+            border-color: #4f46e5;
+            background: white;
+        }
+
+        .paste-area .paste-hint {
+            font-size: 11px;
+            color: #9ca3af;
+            margin-top: 6px;
+            display: flex;
+            gap: 16px;
+            flex-wrap: wrap;
+        }
+
+        .paste-area .paste-hint kbd {
+            background: #f3f4f6;
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-size: 10px;
+            border: 1px solid #e5e7eb;
+            font-family: inherit;
+        }
+
+        .paste-actions {
+            display: flex;
+            gap: 8px;
+            margin-top: 8px;
+            flex-wrap: wrap;
+        }
+
+        .paste-actions button {
+            padding: 8px 18px;
+            border: none;
+            border-radius: 8px;
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            font-family: inherit;
+            transition: all 0.2s;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        .paste-actions button:active {
+            transform: scale(0.95);
+        }
+
+        .btn-paste {
+            background: #4f46e5;
+            color: white;
+        }
+        .btn-paste-excel {
+            background: #217346;
+            color: white;
+        }
+        .btn-paste-clear {
+            background: #e5e7eb;
+            color: #1a202c;
+        }
+
+        /* ===== SPREADSHEET ===== */
+        .spreadsheet-container {
+            background: white;
+            border-radius: 12px;
+            overflow: hidden;
+            border: 1px solid #e5e7eb;
+        }
+
+        .spreadsheet-header {
+            display: flex;
+            background: #f8fafc;
+            border-bottom: 2px solid #e5e7eb;
+            font-weight: 600;
+            font-size: 12px;
+            color: #64748b;
+        }
+
+        .spreadsheet-header>div {
+            padding: 12px 8px;
+            text-align: center;
+            border-right: 1px solid #e5e7eb;
+        }
+
+        .spreadsheet-header>div:last-child {
+            border-right: none;
+        }
+
+        .col-sr {
+            width: 60px;
+            flex-shrink: 0;
+        }
+        .col-ref {
+            flex: 1;
+            min-width: 120px;
+        }
+        .col-dur {
+            width: 90px;
+            flex-shrink: 0;
+        }
+
+        .spreadsheet-body {
+            max-height: 250px;
+            overflow-y: auto;
+        }
+
+        .spreadsheet-row {
+            display: flex;
+            border-bottom: 1px solid #f0f0f0;
+        }
+
+        .spreadsheet-row:last-child {
+            border-bottom: none;
+        }
+
+        .spreadsheet-row>div {
+            padding: 0;
+            border-right: 1px solid #f0f0f0;
+        }
+
+        .spreadsheet-row>div:last-child {
+            border-right: none;
+        }
+
+        .spreadsheet-row input {
+            width: 100%;
+            height: 100%;
+            padding: 10px 8px;
+            border: none;
+            font-size: 13px;
+            font-family: inherit;
+            outline: none;
+            background: transparent;
+        }
+
+        .spreadsheet-row input:focus {
+            background: #eff6ff;
+        }
+
+        .spreadsheet-row .col-sr input {
+            text-align: center;
+            color: #64748b;
+        }
+
+        .spreadsheet-row .col-dur input {
+            text-align: center;
+        }
+
+        .spreadsheet-actions {
+            display: flex;
+            gap: 10px;
+            margin-top: 12px;
+            flex-wrap: wrap;
+        }
+
+        .spreadsheet-actions button {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 10px;
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            font-family: inherit;
+            transition: all 0.2s;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        .spreadsheet-actions button:active {
+            transform: scale(0.95);
+        }
+
+        .btn-add-row {
+            background: #e5e7eb;
+            color: #1a202c;
+        }
+        .btn-clear {
+            background: #fef2f2;
+            color: #dc2626;
+        }
+        .btn-execute {
+            background: #4f46e5;
+            color: white;
+            flex: 1;
+        }
+
+        /* ===== TRACKER ===== */
+        .tracker-container {
+            background: white;
+            border-radius: 12px;
+            padding: 16px;
+            border: 1px solid #f0f0f0;
+        }
+
+        .tracker-form {
+            display: flex;
+            flex-direction: column;
+            gap: 14px;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .form-group label {
+            font-size: 12px;
+            font-weight: 600;
+            color: #64748b;
+            text-transform: uppercase;
+        }
+
+        .form-group input,
+        .form-group select {
+            padding: 12px 14px;
+            border: 2px solid #e5e7eb;
+            border-radius: 10px;
+            font-size: 14px;
+            font-family: inherit;
+            outline: none;
+            transition: border-color 0.2s;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus {
+            border-color: #4f46e5;
+        }
+
+        .form-group input:disabled {
+            background: #f3f4f6;
+            color: #6b7280;
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+        }
+
+        .tracker-results {
+            margin-top: 20px;
+            padding: 16px;
+            background: #f8fafc;
+            border-radius: 12px;
+        }
+
+        .tracker-results h4 {
+            font-size: 14px;
+            color: #1a202c;
+            margin-bottom: 12px;
+        }
+
+        .tracker-result-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 10px 0;
+            border-bottom: 1px solid #e5e7eb;
+        }
+
+        .tracker-result-item:last-child {
+            border-bottom: none;
+        }
+
+        .tracker-result-item .label {
+            color: #6b7280;
+            font-size: 13px;
+        }
+
+        .tracker-result-item .value {
+            font-weight: 600;
+            color: #1a202c;
+        }
+
+        .tracker-result-item .value.highlight {
+            color: #4f46e5;
+        }
+        .tracker-result-item .value.warning {
+            color: #d97706;
+        }
+        .tracker-result-item .value.success {
+            color: #059669;
+        }
+
+        /* ===== SETTINGS ===== */
+        .settings-container {
+            display: flex;
+            flex-direction: column;
+            gap: 14px;
+        }
+
+        .settings-card {
+            background: white;
+            border-radius: 12px;
+            padding: 16px;
+            border: 1px solid #f0f0f0;
+        }
+
+        .settings-card h3 {
+            font-size: 14px;
+            color: #1a202c;
+            margin-bottom: 8px;
+        }
+
+        .settings-card p {
+            font-size: 12px;
+            color: #6b7280;
+            margin-bottom: 12px;
+        }
+
+        .settings-buttons {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .settings-buttons button {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 10px;
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            font-family: inherit;
+            transition: all 0.2s;
+            -webkit-tap-highlight-color: transparent;
+            flex: 1;
+            min-width: 120px;
+        }
+
+        .settings-buttons button:active {
+            transform: scale(0.95);
+        }
+
+        .btn-export {
+            background: #4f46e5;
+            color: white;
+        }
+        .btn-import {
+            background: #059669;
+            color: white;
+        }
+
+        .default-speed-input {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .default-speed-input input {
+            flex: 1;
+            padding: 10px 14px;
+            border: 2px solid #e5e7eb;
+            border-radius: 10px;
+            font-size: 14px;
+            font-family: inherit;
+            outline: none;
+            min-width: 80px;
+        }
+
+        .default-speed-input input:focus {
+            border-color: #4f46e5;
+        }
+
+        .default-speed-input span {
+            font-size: 13px;
+            color: #6b7280;
+        }
+
+        .default-speed-input button {
+            padding: 10px 16px;
+            background: #4f46e5;
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            font-family: inherit;
+        }
+
+        /* ===== GITHUB SETUP ===== */
+        .github-setup {
+            background: #f8fafc;
+            border-radius: 12px;
+            padding: 14px;
+            margin-top: 12px;
+            border: 1px solid #e5e7eb;
+        }
+
+        .github-setup h4 {
+            font-size: 13px;
+            color: #1a202c;
+            margin-bottom: 6px;
+        }
+
+        .github-setup p {
+            font-size: 12px;
+            color: #6b7280;
+            margin-bottom: 8px;
+        }
+
+        .github-setup input {
+            width: 100%;
+            padding: 8px 12px;
+            border: 1px solid #e5e7eb;
+            border-radius: 8px;
+            font-size: 13px;
+            font-family: inherit;
+            outline: none;
+            margin-bottom: 6px;
+        }
+
+        .github-setup input:focus {
+            border-color: #4f46e5;
+        }
+
+        .github-setup .btn-github-save {
+            padding: 8px 20px;
+            background: #4f46e5;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            font-family: inherit;
+        }
+
+        .github-setup .btn-github-save:active {
+            transform: scale(0.95);
+        }
+
+        .github-status {
+            font-size: 12px;
+            color: #6b7280;
+            margin-top: 8px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            justify-content: center;
+        }
+
+        .github-status .dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            display: inline-block;
+        }
+
+        .github-status .dot.online {
+            background: #059669;
+        }
+        .github-status .dot.offline {
+            background: #dc2626;
+        }
+        .github-status .dot.syncing {
+            background: #f59e0b;
+            animation: blink 0.8s infinite;
+        }
+
+        @keyframes blink {
+            0%,
+            100% {
+                opacity: 1;
+            }
+            50% {
+                opacity: 0.3;
+            }
+        }
+
+        /* ===== MODAL ===== */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.5);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 2000;
+            padding: 20px;
+        }
+
+        .modal-overlay.active {
+            display: flex;
+        }
+
+        .modal-content {
+            background: white;
+            border-radius: 16px;
+            padding: 24px;
+            max-width: 340px;
+            width: 100%;
+            text-align: center;
+            animation: modalIn 0.3s ease;
+        }
+
+        @keyframes modalIn {
+            from {
+                opacity: 0;
+                transform: scale(0.9);
+            }
+            to {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+
+        .modal-content h3 {
+            font-size: 18px;
+            color: #1a202c;
+            margin-bottom: 10px;
+        }
+
+        .modal-content p {
+            font-size: 14px;
+            color: #6b7280;
+            margin-bottom: 20px;
+        }
+
+        .modal-input {
+            width: 100%;
+            padding: 12px 14px;
+            border: 2px solid #e5e7eb;
+            border-radius: 10px;
+            font-size: 14px;
+            font-family: inherit;
+            outline: none;
+            margin-bottom: 16px;
+        }
+
+        .modal-input:focus {
+            border-color: #4f46e5;
+        }
+
+        .modal-buttons {
+            display: flex;
+            gap: 12px;
+        }
+
+        .modal-buttons button {
+            flex: 1;
+            padding: 12px;
+            border: none;
+            border-radius: 10px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            font-family: inherit;
+            transition: all 0.2s;
+        }
+
+        .modal-buttons .btn-cancel {
+            background: #e5e7eb;
+            color: #1a202c;
+        }
+
+        .modal-buttons .btn-confirm {
+            background: #4f46e5;
+            color: white;
+        }
+
+        .modal-buttons .btn-danger {
+            background: #ef4444;
+            color: white;
+        }
+
+        /* ===== EMPTY STATE ===== */
+        .empty-state {
+            text-align: center;
+            padding: 40px 20px;
+            color: #9ca3af;
+        }
+
+        .empty-state .icon {
+            font-size: 48px;
+            margin-bottom: 12px;
+        }
+
+        .empty-state h3 {
+            font-size: 16px;
+            color: #6b7280;
+            margin-bottom: 6px;
+        }
+
+        .empty-state p {
+            font-size: 13px;
+        }
+
+        /* ===== RESPONSIVE ===== */
+        @media (max-width: 480px) {
+            .app-content {
+                padding: 10px;
+            }
+            .app-header {
+                padding: 8px 12px;
+                min-height: 44px;
+            }
+            .app-header h1 {
+                font-size: 16px;
+            }
+            .lock-btn {
+                padding: 6px 12px;
+                font-size: 12px;
+            }
+            .top-tab {
+                padding: 10px 12px;
+                font-size: 11px;
+            }
+            .battery-wrapper {
+                width: 80px;
+                height: 180px;
+            }
+            .battery-percentage {
+                font-size: 32px;
+            }
+            .battery-label {
+                font-size: 14px;
+            }
+            .floating-btn {
+                width: 50px;
+                height: 50px;
+                font-size: 24px;
+                bottom: 20px;
+                right: 16px;
+            }
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+            .settings-buttons button {
+                min-width: 80px;
+                font-size: 12px;
+                padding: 8px 14px;
+            }
+            .spreadsheet-body {
+                max-height: 200px;
+            }
+            .col-sr {
+                width: 50px;
+            }
+            .col-dur {
+                width: 70px;
+            }
+            .focus-task-item {
+                padding: 6px 8px;
+            }
+            .focus-task-checkbox {
+                width: 16px;
+                height: 16px;
+                font-size: 10px;
+            }
+            .lock-overlay .unlock-big-btn {
+                padding: 14px 28px;
+                font-size: 17px;
+            }
+            .paste-area textarea {
+                min-height: 50px;
+                font-size: 12px;
+            }
+            .focus-dashboard-grid {
+                grid-template-columns: 1fr 1fr;
+                gap: 6px;
+            }
+            .focus-dashboard-card {
+                padding: 8px 10px;
+            }
+            .focus-card-title {
+                font-size: 11px;
+            }
+        }
+
+        /* ===== SCROLLBAR ===== */
+        .app-content::-webkit-scrollbar {
+            width: 3px;
+        }
+        .app-content::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        .app-content::-webkit-scrollbar-thumb {
+            background: #d1d5db;
+            border-radius: 10px;
+        }
+
+        /* ===== HIDDEN ===== */
+        .hidden {
+            display: none !important;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="app-wrapper" id="appWrapper">
+
+        <!-- ===== LOCK OVERLAY ===== -->
+        <div class="lock-overlay" id="lockOverlay">
+            <div class="lock-icon-big">🔒</div>
+            <button class="unlock-big-btn" onclick="unlockApp()">🔓 Tap to Unlock</button>
+        </div>
+
+        <!-- ===== HEADER ===== -->
+        <header class="app-header">
+            <div>
+                <h1>📊 DataFlow</h1>
+                <div class="subtitle" id="headerSubtitle">Focus</div>
+            </div>
+            <div class="header-actions">
+                <button class="lock-btn" id="lockBtn" onclick="toggleLock()">
+                    <span class="lock-icon">🔓</span>
+                    <span class="lock-text">Lock</span>
+                </button>
+            </div>
+        </header>
+
+        <!-- ===== TOP TABS ===== -->
+        <nav class="top-tabs" id="topTabs">
+            <button class="top-tab" data-page="focus" onclick="switchPage('focus')">🔋 Focus</button>
+            <button class="top-tab" data-page="results" onclick="switchPage('results')">📈 Results</button>
+            <button class="top-tab" data-page="tracker" onclick="switchPage('tracker')">🎯 Tracker</button>
+            <button class="top-tab" data-page="entry" onclick="confirmEntry()">📝 Entry</button>
+            <button class="top-tab" data-page="settings" onclick="switchPage('settings')">⚙️ Settings</button>
+        </nav>
+
+        <!-- ===== CONTENT ===== -->
+        <main class="app-content" id="appContent">
+
+            <!-- ===== FOCUS PAGE (Combined: Dashboard Cards + Battery + Tasks) ===== -->
+            <div class="page active" id="page-focus">
+
+                <!-- ===== DASHBOARD CARDS (TOP) ===== -->
+                <div class="focus-dashboard-section">
+                    <h2>📊 Your Goals</h2>
+                    <div class="focus-dashboard-grid" id="focusDashboardGrid">
+                        <!-- Rendered by JavaScript -->
+                    </div>
+                </div>
+
+                <!-- ===== BATTERY (MIDDLE) ===== -->
+                <div class="battery-container">
+                    <div class="battery-sheet-selector">
+                        <select id="focusSheetSelect" onchange="updateFocusBattery()">
+                            <option value="">-- Select a Goal --</option>
+                        </select>
+                    </div>
+                    <div class="battery-wrapper">
+                        <div class="battery-cap"></div>
+                        <div class="battery-fill" id="focusBatteryFill">
+                            <span class="stars-emoji" id="starsEmoji" style="display:none;">⭐</span>
+                        </div>
+                    </div>
+                    <div class="battery-percentage">
+                        <span id="focusPercent">0</span><span class="percent-sign">%</span>
+                    </div>
+                    <div class="battery-label" id="focusLabel">No Goal Selected</div>
+                    <div class="battery-sub" id="focusSub">Select a goal to track your progress</div>
+                    <div class="battery-status-text" id="focusStatus" style="display:none;"></div>
+
+                    <!-- GitHub Sync Status -->
+                    <div class="github-status" id="githubStatus">
+                        <span class="dot offline" id="githubDot"></span>
+                        <span id="githubStatusText">GitHub: Offline</span>
+                    </div>
+                </div>
+
+                <!-- ===== TODAY'S TASKS (BOTTOM) ===== -->
+                <div class="focus-tasks-section" id="focusTasksSection">
+                    <div class="focus-tasks-header">
+                        <h3>📋 <span id="focusTasksViewLabel">Today's</span> Tasks</h3>
+                        <span class="task-summary" id="focusTaskSummary">0/0 completed</span>
+                    </div>
+                    <div class="focus-task-actions">
+                        <button class="btn-focus-select-all" onclick="focusSelectAll()">✅ Select All</button>
+                        <button class="btn-focus-deselect-all" onclick="focusDeselectAll()">❌ Deselect All</button>
+                        <button class="btn-focus-toggle-view" onclick="focusToggleView()">👁 <span id="focusViewToggleLabel">All</span></button>
+                    </div>
+                    <div id="focusTasksList">
+                        <div class="focus-no-tasks">
+                            <span class="emoji">📭</span>
+                            Select a sheet to view tasks
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- ===== RESULTS PAGE ===== -->
+            <div class="page" id="page-results">
+                <div class="results-container">
+                    <div class="battery-sheet-selector">
+                        <select id="resultsSheetSelect" onchange="updateResults()">
+                            <option value="">-- Select a Sheet --</option>
+                        </select>
+                    </div>
+                    <div id="resultsContent">
+                        <div class="empty-state">
+                            <div class="icon">📈</div>
+                            <h3>Select a Sheet</h3>
+                            <p>Choose a sheet to view detailed results</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ===== TRACKER PAGE ===== -->
+            <div class="page" id="page-tracker">
+                <div class="tracker-container">
+                    <div class="battery-sheet-selector">
+                        <select id="trackerSheetSelect" onchange="updateTracker()">
+                            <option value="">-- Select a Sheet --</option>
+                        </select>
+                    </div>
+                    <div id="trackerContent">
+                        <div class="empty-state">
+                            <div class="icon">🎯</div>
+                            <h3>Select a Sheet</h3>
+                            <p>Choose a sheet to configure tracking</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ===== ENTRY PAGE ===== -->
+            <div class="page" id="page-entry">
+                <div class="sheet-tabs-container">
+                    <div class="sheet-tabs" id="sheetTabs"></div>
+                    <div class="sheet-management">
+                        <button class="btn-add-sheet" onclick="addNewSheet()">➕ Add Sheet</button>
+                        <button class="btn-edit-sheet" onclick="editCurrentSheet()">✏️ Rename</button>
+                        <button class="btn-delete-sheet" onclick="deleteCurrentSheet()">🗑️ Delete</button>
+                    </div>
+                </div>
+
+                <!-- Paste Area -->
+                <div class="paste-area">
+                    <label>📋 Paste from Excel</label>
+                    <textarea id="pasteInput" placeholder="Paste tab-separated data from Excel here...&#10;Example:&#10;1   REF001  30&#10;2   REF002  45"></textarea>
+                    <div class="paste-hint">
+                        <span>💡 <kbd>Ctrl+V</kbd> from Excel</span>
+                        <span>📊 <kbd>Tab</kbd> separated</span>
+                        <span>📄 Format: Sr No.  Reference  Duration</span>
+                    </div>
+                    <div class="paste-actions">
+                        <button class="btn-paste" onclick="pasteData()">📋 Paste Data</button>
+                        <button class="btn-paste-excel" onclick="pasteExcelData()">📊 Smart Paste</button>
+                        <button class="btn-paste-clear" onclick="clearPasteArea()">✕ Clear</button>
+                    </div>
+                </div>
+
+                <div class="spreadsheet-container">
+                    <div class="spreadsheet-header">
+                        <div class="col-sr">Sr No.</div>
+                        <div class="col-ref">Reference</div>
+                        <div class="col-dur">Duration (mins)</div>
+                    </div>
+                    <div class="spreadsheet-body" id="spreadsheetBody"></div>
+                </div>
+                <div class="spreadsheet-actions">
+                    <button class="btn-add-row" onclick="addRow()">➕ Add Row</button>
+                    <button class="btn-clear" onclick="clearSpreadsheet()">✕ Clear All</button>
+                    <button class="btn-execute" onclick="executeSpreadsheet()">💾 Save</button>
+                </div>
+            </div>
+
+            <!-- ===== SETTINGS PAGE ===== -->
+            <div class="page" id="page-settings">
+                <div class="settings-container">
+                    <div class="settings-card">
+                        <h3>⚙️ Default Speed</h3>
+                        <p>Set the default study speed for new sheets (hours per day)</p>
+                        <div class="default-speed-input">
+                            <input type="number" id="defaultSpeedInput" value="3" min="0.5" max="24" step="0.5">
+                            <span>hrs/day</span>
+                            <button onclick="saveDefaultSpeed()">Save</button>
+                        </div>
+                    </div>
+
+                    <!-- GitHub Sync Setup -->
+                    <div class="settings-card">
+                        <h3>☁️ GitHub Sync (Share Progress)</h3>
+                        <p>Share your battery status with a friend. They can view it at a public link.</p>
+                        <div class="github-setup">
+                            <h4>Setup Instructions:</h4>
+                            <p>1. Create a GitHub repository (public)</p>
+                            <p>2. Create a <code>data.json</code> file in it</p>
+                            <p>3. Get a GitHub Personal Access Token (repo scope)</p>
+                            <p>4. Enter your details below</p>
+                            <input type="text" id="githubUsername" placeholder="GitHub Username" />
+                            <input type="text" id="githubRepo" placeholder="Repository Name" />
+                            <input type="text" id="githubToken" placeholder="Personal Access Token" />
+                            <input type="text" id="githubUserID" placeholder="Your Name (for sharing)" />
+                            <button class="btn-github-save" onclick="saveGitHubSettings()">💾 Save Settings</button>
+                        </div>
+                        <div style="margin-top:10px;">
+                            <button class="btn-export" onclick="syncToGitHub()" style="width:100%;">☁️ Sync Now</button>
+                        </div>
+                    </div>
+
+                    <div class="settings-card">
+                        <h3>💾 Backup & Restore</h3>
+                        <p>Export all your data and settings, or import from a backup file.</p>
+                        <div class="settings-buttons">
+                            <button class="btn-export" onclick="exportAllData()">📤 Export Backup</button>
+                            <button class="btn-import" onclick="document.getElementById('importFile').click()">📥 Import Backup</button>
+                        </div>
+                        <input type="file" id="importFile" accept=".json" style="display:none" onchange="importAllData(event)">
+                    </div>
+                </div>
+            </div>
+
+        </main>
+
+        <!-- ===== FLOATING BUTTON ===== -->
+        <button class="floating-btn" id="floatingBtn" onclick="toggleAppView()">
+            <span class="btn-icon">⚡</span>
+        </button>
+    </div>
+
+    <!-- ===== MODAL ===== -->
+    <div class="modal-overlay" id="confirmModal">
+        <div class="modal-content">
+            <h3 id="modalTitle">Confirm</h3>
+            <p id="modalMessage">Are you sure?</p>
+            <input type="text" class="modal-input" id="modalInput" style="display:none" placeholder="Enter name">
+            <div class="modal-buttons">
+                <button class="btn-cancel" onclick="closeModal()">Cancel</button>
+                <button class="btn-confirm" id="modalConfirmBtn" onclick="confirmModalAction()">Confirm</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // ============================================================
+        // DATA STRUCTURE
+        // ============================================================
+        let appData = {
+            sheets: [],
+            currentSheetIndex: 0,
+            isLocked: false,
+            isFullAppVisible: false,
+            defaultSpeed: 3,
+            focusSheetIndex: -1,
+            github: {
+                username: '',
+                repo: '',
+                token: '',
+                userID: ''
+            }
+        };
+
+        let modalCallback = null;
+        let focusShowAllTasks = false;
+
+        // ============================================================
+        // INITIALIZATION
+        // ============================================================
+        function init() {
+            loadData();
+            updateAllSelectors();
+            updateFocusDashboard();
+            updateSheetTabs();
+            renderSpreadsheet();
+            updateFocusBattery();
+
+            // Start with Focus visible - NO need to click floating button
+            document.getElementById('topTabs').classList.add('hidden');
+            document.getElementById('appContent').classList.add('hidden');
+            document.getElementById('floatingBtn').innerHTML = '<span class="btn-icon">⚡</span>';
+
+            // But show Focus content directly
+            document.getElementById('page-focus').classList.add('active');
+            document.getElementById('appContent').classList.remove('hidden');
+
+            document.getElementById('defaultSpeedInput').value = appData.defaultSpeed;
+
+            // Load GitHub settings
+            if (appData.github) {
+                document.getElementById('githubUsername').value = appData.github.username || '';
+                document.getElementById('githubRepo').value = appData.github.repo || '';
+                document.getElementById('githubToken').value = appData.github.token || '';
+                document.getElementById('githubUserID').value = appData.github.userID || '';
+            }
+
+            document.getElementById('headerSubtitle').textContent = 'Focus';
+            updateGitHubStatus();
+            updateFocusTasks();
+        }
+
+        // ============================================================
+        // DATA PERSISTENCE
+        // ============================================================
+        function saveData() {
+            localStorage.setItem('dataflowapp', JSON.stringify(appData));
+        }
+
+        function loadData() {
+            const saved = localStorage.getItem('dataflowapp');
+            if (saved) {
+                try {
+                    const parsed = JSON.parse(saved);
+                    appData = { ...appData, ...parsed };
+                } catch (e) {
+                    console.warn('Error loading data, using defaults');
+                }
+            }
+            if (appData.sheets.length === 0) {
+                appData.sheets.push(createNewSheet('Sheet 1'));
+                const sampleData = [
+                    { sr: 1, reference: 'REF-1001', duration: 30 },
+                    { sr: 2, reference: 'REF-1002', duration: 45 },
+                    { sr: 3, reference: 'REF-1003', duration: 20 },
+                    { sr: 4, reference: 'REF-1004', duration: 60 },
+                    { sr: 5, reference: 'REF-1005', duration: 15 },
+                    { sr: 6, reference: 'REF-1006', duration: 40 },
+                    { sr: 7, reference: 'REF-1007', duration: 25 },
+                    { sr: 8, reference: 'REF-1008', duration: 50 },
+                ];
+                appData.sheets[0].data = sampleData;
+                appData.sheets[0].completed = sampleData.map(() => false);
+                saveData();
+            }
+        }
+
+        function createNewSheet(name) {
+            return {
+                name: name,
+                data: [],
+                completed: [],
+                speed: appData.defaultSpeed,
+                startDate: new Date().toISOString().split('T')[0],
+                targetDate: '',
+                dailyProgress: {}
+            };
+        }
+
+        // ============================================================
+        // UNLOCK - BIG BUTTON
+        // ============================================================
+        function unlockApp() {
+            const wrapper = document.getElementById('appWrapper');
+            const lockBtn = document.getElementById('lockBtn');
+            const lockOverlay = document.getElementById('lockOverlay');
+
+            appData.isLocked = false;
+            wrapper.classList.remove('locked');
+            lockOverlay.classList.remove('active');
+            lockBtn.classList.remove('locked');
+            lockBtn.innerHTML = '<span class="lock-icon">🔓</span><span class="lock-text">Lock</span>';
+            saveData();
+        }
+
+        // ============================================================
+        // LOCK FUNCTIONALITY
+        // ============================================================
+        function toggleLock() {
+            const wrapper = document.getElementById('appWrapper');
+            const lockBtn = document.getElementById('lockBtn');
+            const lockOverlay = document.getElementById('lockOverlay');
+
+            if (appData.isLocked) {
+                unlockApp();
+            } else {
+                appData.isLocked = true;
+                wrapper.classList.add('locked');
+                lockOverlay.classList.add('active');
+                lockBtn.classList.add('locked');
+                lockBtn.innerHTML = '<span class="lock-icon">🔒</span><span class="lock-text">Unlock</span>';
+                saveData();
+            }
+        }
+
+        // ============================================================
+        // APP VIEW TOGGLE (Floating Button)
+        // ============================================================
+        function toggleAppView() {
+            const topTabs = document.getElementById('topTabs');
+            const appContent = document.getElementById('appContent');
+            const floatingBtn = document.getElementById('floatingBtn');
+
+            appData.isFullAppVisible = !appData.isFullAppVisible;
+
+            if (appData.isFullAppVisible) {
+                topTabs.classList.remove('hidden');
+                appContent.classList.remove('hidden');
+                floatingBtn.classList.add('open');
+                floatingBtn.innerHTML = '<span class="btn-icon">✕</span>';
+                // Show Focus tab in full app
+                switchPage('focus');
+            } else {
+                topTabs.classList.add('hidden');
+                appContent.classList.add('hidden');
+                floatingBtn.classList.remove('open');
+                floatingBtn.innerHTML = '<span class="btn-icon">⚡</span>';
+                document.getElementById('headerSubtitle').textContent = 'Focus';
+                // Show Focus page directly
+                document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+                document.getElementById('page-focus').classList.add('active');
+                appContent.classList.remove('hidden');
+            }
+        }
+
+        // ============================================================
+        // PAGE NAVIGATION
+        // ============================================================
+        function switchPage(pageName) {
+            if (appData.isLocked) {
+                alert('🔒 App is locked. Tap "Unlock" at the bottom.');
+                return;
+            }
+
+            document.querySelectorAll('.top-tab').forEach(tab => tab.classList.remove('active'));
+            document.querySelectorAll('.page').forEach(page => page.classList.remove('active'));
+
+            const tab = document.querySelector(`.top-tab[data-page="${pageName}"]`);
+            const page = document.getElementById(`page-${pageName}`);
+
+            if (tab) tab.classList.add('active');
+            if (page) page.classList.add('active');
+
+            const labels = {
+                focus: 'Focus',
+                results: 'Results',
+                tracker: 'Tracker',
+                entry: 'Entry',
+                settings: 'Settings'
+            };
+            document.getElementById('headerSubtitle').textContent = labels[pageName] || pageName;
+
+            if (pageName === 'focus') {
+                updateFocusDashboard();
+                updateFocusBattery();
+                updateFocusTasks();
+            }
+            if (pageName === 'results') updateResults();
+            if (pageName === 'tracker') updateTracker();
+            if (pageName === 'entry') {
+                updateSheetTabs();
+                renderSpreadsheet();
+            }
+        }
+
+        function confirmEntry() {
+            if (appData.isLocked) {
+                alert('🔒 App is locked. Tap "Unlock" at the bottom.');
+                return;
+            }
+            showModal(
+                '⚠️ Sensitive Area',
+                'The Entry section allows editing and deleting data. Are you sure you want to continue?',
+                false,
+                () => {
+                    switchPage('entry');
+                }
+            );
+        }
+
+        // ============================================================
+        // MODAL FUNCTIONS
+        // ============================================================
+        function showModal(title, message, showInput = false, callback = null, inputValue = '') {
+            document.getElementById('modalTitle').textContent = title;
+            document.getElementById('modalMessage').textContent = message;
+            const input = document.getElementById('modalInput');
+            input.style.display = showInput ? 'block' : 'none';
+            input.value = inputValue || '';
+            document.getElementById('confirmModal').classList.add('active');
+
+            const confirmBtn = document.getElementById('modalConfirmBtn');
+            confirmBtn.className = 'btn-confirm';
+            confirmBtn.textContent = 'Confirm';
+
+            modalCallback = callback;
+        }
+
+        function closeModal() {
+            document.getElementById('confirmModal').classList.remove('active');
+            modalCallback = null;
+        }
+
+        function confirmModalAction() {
+            if (modalCallback) {
+                const inputValue = document.getElementById('modalInput').value;
+                modalCallback(inputValue);
+            }
+            closeModal();
+        }
+
+        // ============================================================
+        // FOCUS DASHBOARD (Top of Focus Page)
+        // ============================================================
+        function updateFocusDashboard() {
+            const grid = document.getElementById('focusDashboardGrid');
+
+            if (appData.sheets.length === 0) {
+                grid.innerHTML = `
+                        <div style="grid-column:1/-1;text-align:center;padding:20px;color:#9ca3af;font-size:13px;">
+                            No sheets yet. Create one in Entry.
+                        </div>
+                    `;
+                return;
+            }
+
+            let html = '';
+            appData.sheets.forEach((sheet, index) => {
+                const colorIndex = index % 4;
+                const totalItems = sheet.data.length;
+                const completedItems = sheet.completed.filter(Boolean).length;
+                const percent = totalItems > 0 ? Math.round((completedItems / totalItems) * 100) : 0;
+
+                const isActive = index === appData.focusSheetIndex;
+
+                let statusEmoji = '🔴';
+                if (percent === 100) statusEmoji = '✅';
+                else if (percent >= 70) statusEmoji = '🟢';
+                else if (percent >= 30) statusEmoji = '🟡';
+
+                html += `
+                        <div class="focus-dashboard-card ${isActive ? 'active-card' : ''}" onclick="selectFocusSheet(${index})">
+                            <div class="focus-card-title">${statusEmoji} ${sheet.name}</div>
+                            <div class="focus-card-stats">${completedItems}/${totalItems}</div>
+                            <div class="focus-card-progress">
+                                <div class="focus-card-bar">
+                                    <div class="fill c${colorIndex}" style="width: ${percent}%"></div>
+                                </div>
+                                <span class="focus-card-percent c${colorIndex}">${percent}%</span>
+                            </div>
+                        </div>
+                    `;
+            });
+
+            grid.innerHTML = html;
+        }
+
+        function selectFocusSheet(index) {
+            if (appData.isLocked) {
+                alert('🔒 App is locked. Tap "Unlock" at the bottom.');
+                return;
+            }
+            appData.focusSheetIndex = index;
+            document.getElementById('focusSheetSelect').value = index;
+            updateFocusDashboard();
+            updateFocusBattery();
+            updateFocusTasks();
+            saveData();
+        }
+
+        // ============================================================
+        // FOCUS BATTERY (Middle of Focus Page)
+        // ============================================================
+        function updateFocusBattery() {
+            const select = document.getElementById('focusSheetSelect');
+            const selectedIndex = parseInt(select.value);
+
+            const fill = document.getElementById('focusBatteryFill');
+            const percentEl = document.getElementById('focusPercent');
+            const label = document.getElementById('focusLabel');
+            const sub = document.getElementById('focusSub');
+            const status = document.getElementById('focusStatus');
+            const starsEmoji = document.getElementById('starsEmoji');
+
+            if (isNaN(selectedIndex) || selectedIndex < 0 || !appData.sheets[selectedIndex]) {
+                fill.style.height = '0%';
+                fill.className = 'battery-fill';
+                percentEl.textContent = '0';
+                label.textContent = 'No Goal Selected';
+                sub.textContent = 'Select a goal to track';
+                status.style.display = 'none';
+                starsEmoji.style.display = 'none';
+                appData.focusSheetIndex = -1;
+                saveData();
+                return;
+            }
+
+            appData.focusSheetIndex = selectedIndex;
+            const sheet = appData.sheets[selectedIndex];
+            const totalItems = sheet.data.length;
+            const completedItems = sheet.completed.filter(Boolean).length;
+            const percent = totalItems > 0 ? Math.round((completedItems / totalItems) * 100) : 0;
+
+            fill.style.height = percent + '%';
+            percentEl.textContent = percent;
+            label.textContent = sheet.name;
+            sub.textContent = `${completedItems} of ${totalItems} items completed`;
+
+            fill.classList.remove('red', 'yellow', 'green', 'stars');
+            status.classList.remove('red', 'yellow', 'green', 'stars');
+
+            if (percent === 100) {
+                fill.classList.add('stars');
+                starsEmoji.style.display = 'block';
+                status.textContent = '🎉 Congratulations! Goal Complete! 🌟✨';
+                status.classList.add('stars');
+                status.style.display = 'block';
+            } else if (percent >= 70) {
+                fill.classList.add('green');
+                starsEmoji.style.display = 'none';
+                status.textContent = '🚀 Almost there! Keep going!';
+                status.classList.add('green');
+                status.style.display = 'block';
+            } else if (percent >= 30) {
+                fill.classList.add('yellow');
+                starsEmoji.style.display = 'none';
+                status.textContent = '💪 Good progress! Stay focused!';
+                status.classList.add('yellow');
+                status.style.display = 'block';
+            } else {
+                fill.classList.add('red');
+                starsEmoji.style.display = 'none';
+                status.textContent = '📚 Just getting started!';
+                status.classList.add('red');
+                status.style.display = 'block';
+            }
+
+            // Auto-sync to GitHub when battery changes
+            if (appData.github && appData.github.username && appData.github.repo) {
+                syncToGitHub();
+            }
+
+            saveData();
+        }
+
+        // ============================================================
+        // FOCUS TASKS (Bottom of Focus Page)
+        // ============================================================
+        function updateFocusTasks() {
+            const select = document.getElementById('focusSheetSelect');
+            const selectedIndex = parseInt(select.value);
+            const container = document.getElementById('focusTasksList');
+            const summary = document.getElementById('focusTaskSummary');
+
+            if (isNaN(selectedIndex) || selectedIndex < 0 || !appData.sheets[selectedIndex]) {
+                container.innerHTML = `
+                        <div class="focus-no-tasks">
+                            <span class="emoji">📭</span>
+                            Select a sheet to view tasks
+                        </div>
+                    `;
+                summary.textContent = '0/0 completed';
+                return;
+            }
+
+            const sheet = appData.sheets[selectedIndex];
+            const speed = (sheet.speed || appData.defaultSpeed) * 60;
+
+            let tasksToShow = [];
+            let accumulatedDuration = 0;
+            let todayTarget = speed;
+
+            if (focusShowAllTasks) {
+                tasksToShow = sheet.data.map((d, i) => ({ ...d, index: i }));
+            } else {
+                for (let i = 0; i < sheet.data.length; i++) {
+                    const duration = parseFloat(sheet.data[i].duration) || 0;
+                    if (accumulatedDuration < todayTarget) {
+                        tasksToShow.push({ ...sheet.data[i], index: i });
+                        accumulatedDuration += duration;
+                    } else {
+                        break;
+                    }
+                }
+                if (tasksToShow.length === 0 && sheet.data.length > 0) {
+                    tasksToShow = sheet.data.slice(0, 3).map((d, i) => ({ ...d, index: i }));
+                }
+            }
+
+            const completedCount = sheet.completed.filter(Boolean).length;
+            const totalCount = sheet.data.length;
+            summary.textContent = `${completedCount}/${totalCount} completed`;
+
+            document.getElementById('focusTasksViewLabel').textContent = focusShowAllTasks ? 'All' : "Today's";
+            document.getElementById('focusViewToggleLabel').textContent = focusShowAllTasks ? 'Today' : 'All';
+
+            if (tasksToShow.length === 0) {
+                container.innerHTML = `
+                        <div class="focus-no-tasks">
+                            <span class="emoji">🎉</span>
+                            No tasks available
+                        </div>
+                    `;
+                return;
+            }
+
+            let html = '';
+            tasksToShow.forEach(task => {
+                const isCompleted = sheet.completed[task.index];
+                html += `
+                        <div class="focus-task-item ${isCompleted ? 'completed' : ''}" onclick="focusToggleTask(${selectedIndex}, ${task.index})">
+                            <div class="focus-task-checkbox">${isCompleted ? '✓' : ''}</div>
+                            <span class="focus-task-sr">#${task.sr || task.index + 1}</span>
+                            <span class="focus-task-ref">${task.reference || '-'}</span>
+                            <span class="focus-task-duration">${task.duration || 0}m</span>
+                        </div>
+                    `;
+            });
+
+            container.innerHTML = html;
+        }
+
+        function focusToggleTask(sheetIndex, taskIndex) {
+            if (appData.isLocked) {
+                alert('🔒 App is locked. Tap "Unlock" at the bottom.');
+                return;
+            }
+
+            const sheet = appData.sheets[sheetIndex];
+            const wasCompleted = sheet.completed[taskIndex];
+
+            if (wasCompleted) {
+                for (let i = taskIndex; i < sheet.completed.length; i++) {
+                    sheet.completed[i] = false;
+                }
+            } else {
+                for (let i = 0; i <= taskIndex; i++) {
+                    sheet.completed[i] = true;
+                }
+            }
+
+            saveData();
+            updateFocusTasks();
+            updateFocusDashboard();
+            updateFocusBattery();
+        }
+
+        function focusSelectAll() {
+            if (appData.isLocked) {
+                alert('🔒 App is locked. Tap "Unlock" at the bottom.');
+                return;
+            }
+
+            const select = document.getElementById('focusSheetSelect');
+            const selectedIndex = parseInt(select.value);
+            if (isNaN(selectedIndex) || !appData.sheets[selectedIndex]) return;
+
+            const sheet = appData.sheets[selectedIndex];
+            sheet.completed = sheet.data.map(() => true);
+            saveData();
+            updateFocusTasks();
+            updateFocusDashboard();
+            updateFocusBattery();
+        }
+
+        function focusDeselectAll() {
+            if (appData.isLocked) {
+                alert('🔒 App is locked. Tap "Unlock" at the bottom.');
+                return;
+            }
+
+            const select = document.getElementById('focusSheetSelect');
+            const selectedIndex = parseInt(select.value);
+            if (isNaN(selectedIndex) || !appData.sheets[selectedIndex]) return;
+
+            const sheet = appData.sheets[selectedIndex];
+            sheet.completed = sheet.data.map(() => false);
+            saveData();
+            updateFocusTasks();
+            updateFocusDashboard();
+            updateFocusBattery();
+        }
+
+        function focusToggleView() {
+            if (appData.isLocked) {
+                alert('🔒 App is locked. Tap "Unlock" at the bottom.');
+                return;
+            }
+            focusShowAllTasks = !focusShowAllTasks;
+            updateFocusTasks();
+        }
+
+        // ============================================================
+        // GITHUB SYNC
+        // ============================================================
+        function saveGitHubSettings() {
+            appData.github.username = document.getElementById('githubUsername').value.trim();
+            appData.github.repo = document.getElementById('githubRepo').value.trim();
+            appData.github.token = document.getElementById('githubToken').value.trim();
+            appData.github.userID = document.getElementById('githubUserID').value.trim();
+            saveData();
+            updateGitHubStatus();
+            alert('✅ GitHub settings saved!');
+        }
+
+        function updateGitHubStatus() {
+            const dot = document.getElementById('githubDot');
+            const text = document.getElementById('githubStatusText');
+
+            if (appData.github && appData.github.username && appData.github.repo) {
+                dot.className = 'dot online';
+                text.textContent = `GitHub: Ready (${appData.github.userID || 'Anonymous'})`;
+            } else {
+                dot.className = 'dot offline';
+                text.textContent = 'GitHub: Not configured';
+            }
+        }
+
+        function syncToGitHub() {
+            const g = appData.github;
+            if (!g.username || !g.repo || !g.token) {
+                alert('⚠️ Please configure GitHub settings first (Settings → GitHub Sync)');
+                return;
+            }
+
+            const dot = document.getElementById('githubDot');
+            const text = document.getElementById('githubStatusText');
+            dot.className = 'dot syncing';
+            text.textContent = 'Syncing...';
+
+            const sheet = appData.sheets[appData.focusSheetIndex] || appData.sheets[0];
+            const percent = document.getElementById('focusPercent').textContent || '0';
+
+            const data = {
+                users: {
+                    [g.userID || 'user']: {
+                        batteryPercent: parseInt(percent) || 0,
+                        sheetName: sheet ? sheet.name : 'No sheet',
+                        lastUpdated: new Date().toISOString()
+                    }
+                }
+            };
+
+            fetch(`https://api.github.com/repos/${g.username}/${g.repo}/contents/data.json`, {
+                headers: { 'Authorization': `token ${g.token}` }
+            })
+            .then(response => {
+                if (response.status === 404) {
+                    return null;
+                }
+                if (!response.ok) throw new Error('Failed to read file');
+                return response.json();
+            })
+            .then(fileData => {
+                let sha = null;
+                let existingContent = { users: {} };
+
+                if (fileData && fileData.content) {
+                    sha = fileData.sha;
+                    try {
+                        existingContent = JSON.parse(atob(fileData.content));
+                    } catch (e) {
+                        existingContent = { users: {} };
+                    }
+                }
+
+                const userID = g.userID || 'user';
+                existingContent.users[userID] = data.users[userID];
+
+                const updatedContent = btoa(JSON.stringify(existingContent, null, 2));
+
+                const body = {
+                    message: `Update battery status for ${userID}`,
+                    content: updatedContent,
+                    sha: sha
+                };
+
+                return fetch(`https://api.github.com/repos/${g.username}/${g.repo}/contents/data.json`, {
+                    method: 'PUT',
+                    headers: {
+                        'Authorization': `token ${g.token}`,
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(body)
+                });
+            })
+            .then(response => {
+                if (response && !response.ok) throw new Error('Failed to upload');
+                dot.className = 'dot online';
+                text.textContent = '✅ Synced!';
+                setTimeout(() => {
+                    updateGitHubStatus();
+                }, 3000);
+                alert('✅ Battery status synced to GitHub!');
+                return response;
+            })
+            .catch(error => {
+                dot.className = 'dot offline';
+                text.textContent = '❌ Sync failed';
+                console.error('GitHub sync error:', error);
+                alert('❌ Sync failed: ' + error.message + '\nCheck your GitHub settings.');
+            });
+        }
+
+        // ============================================================
+        // RESULTS PAGE
+        // ============================================================
+        function updateResults() {
+            const select = document.getElementById('resultsSheetSelect');
+            const selectedIndex = parseInt(select.value);
+            const container = document.getElementById('resultsContent');
+
+            if (isNaN(selectedIndex) || selectedIndex < 0 || !appData.sheets[selectedIndex]) {
+                container.innerHTML = `
+                        <div class="empty-state">
+                            <div class="icon">📈</div>
+                            <h3>Select a Sheet</h3>
+                            <p>Choose a sheet to view detailed results</p>
+                        </div>
+                    `;
+                return;
+            }
+
+            const sheet = appData.sheets[selectedIndex];
+            const totalDuration = sheet.data.reduce((sum, row) => sum + (parseFloat(row.duration) || 0), 0);
+            const completedDuration = sheet.data.reduce((sum, row, i) => {
+                return sum + (sheet.completed[i] ? (parseFloat(row.duration) || 0) : 0);
+            }, 0);
+            const remainingDuration = totalDuration - completedDuration;
+            const speed = (sheet.speed || appData.defaultSpeed) * 60;
+            const daysRequired = Math.ceil(remainingDuration / speed);
+
+            let html = `
+                    <table class="results-table">
+                        <thead>
+                            <tr>
+                                <th style="width:50px;">Sr</th>
+                                <th>Reference</th>
+                                <th style="width:80px;">Duration</th>
+                                <th style="width:70px;">Status</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                    `;
+
+            sheet.data.forEach((row, i) => {
+                html += `
+                        <tr>
+                            <td style="text-align:center;color:#9ca3af;">${row.sr || i + 1}</td>
+                            <td>${row.reference || '-'}</td>
+                            <td style="text-align:center;">${row.duration || 0}m</td>
+                            <td>${sheet.completed[i] ? '✅' : '⏳'}</td>
+                        </tr>
+                    `;
+            });
+
+            html += `
+                        </tbody>
+                    </table>
+                    <div class="results-summary">
+                        <div class="results-summary-item">
+                            <span class="label">Total Duration</span>
+                            <span class="value">${totalDuration} mins (${(totalDuration/60).toFixed(1)} hrs)</span>
+                        </div>
+                        <div class="results-summary-item">
+                            <span class="label">Completed</span>
+                            <span class="value success">${completedDuration} mins</span>
+                        </div>
+                        <div class="results-summary-item">
+                            <span class="label">Remaining</span>
+                            <span class="value warning">${remainingDuration} mins</span>
+                        </div>
+                        <div class="results-summary-item">
+                            <span class="label">Days to Complete</span>
+                            <span class="value highlight">${daysRequired} days @ ${sheet.speed || appData.defaultSpeed} hrs/day</span>
+                        </div>
+                    </div>
+                `;
+
+            container.innerHTML = html;
+        }
+
+        // ============================================================
+        // TRACKER PAGE
+        // ============================================================
+        function updateTracker() {
+            const select = document.getElementById('trackerSheetSelect');
+            const selectedIndex = parseInt(select.value);
+            const container = document.getElementById('trackerContent');
+
+            if (isNaN(selectedIndex) || selectedIndex < 0 || !appData.sheets[selectedIndex]) {
+                container.innerHTML = `
+                        <div class="empty-state">
+                            <div class="icon">🎯</div>
+                            <h3>Select a Sheet</h3>
+                            <p>Choose a sheet to configure tracking</p>
+                        </div>
+                    `;
+                return;
+            }
+
+            const sheet = appData.sheets[selectedIndex];
+            const totalDuration = sheet.data.reduce((sum, row) => sum + (parseFloat(row.duration) || 0), 0);
+            const completedDuration = sheet.data.reduce((sum, row, i) => {
+                return sum + (sheet.completed[i] ? (parseFloat(row.duration) || 0) : 0);
+            }, 0);
+            const remainingDuration = totalDuration - completedDuration;
+            const speed = (sheet.speed || appData.defaultSpeed) * 60;
+            const daysRequired = Math.ceil(remainingDuration / speed);
+
+            const startDate = sheet.startDate || new Date().toISOString().split('T')[0];
+            const expectedDate = new Date(startDate);
+            expectedDate.setDate(expectedDate.getDate() + daysRequired);
+
+            let requiredSpeed = sheet.speed || appData.defaultSpeed;
+            if (sheet.targetDate) {
+                const targetDate = new Date(sheet.targetDate);
+                const today = new Date();
+                const daysToTarget = Math.ceil((targetDate - today) / (1000 * 60 * 60 * 24));
+                if (daysToTarget > 0) {
+                    const remMin = sheet.data.reduce((sum, row, i) => {
+                        return sum + (!sheet.completed[i] ? (parseFloat(row.duration) || 0) : 0);
+                    }, 0);
+                    requiredSpeed = (remMin / 60 / daysToTarget).toFixed(1);
+                }
+            }
+
+            container.innerHTML = `
+                    <div class="tracker-form">
+                        <div class="form-group">
+                            <label>Total Duration</label>
+                            <input type="text" value="${totalDuration} mins (${(totalDuration/60).toFixed(1)} hrs)" disabled>
+                        </div>
+                        <div class="form-group">
+                            <label>Completed</label>
+                            <input type="text" value="${completedDuration} mins" disabled style="color:#059669;">
+                        </div>
+                        <div class="form-group">
+                            <label>Remaining</label>
+                            <input type="text" value="${remainingDuration} mins" disabled style="color:#d97706;">
+                        </div>
+                        <div class="form-group">
+                            <label>Speed (Hours/Day)</label>
+                            <input type="number" id="trackerSpeed" value="${sheet.speed || appData.defaultSpeed}" 
+                                   min="0.5" max="24" step="0.5" 
+                                   onchange="saveTrackerSpeed(${selectedIndex})">
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label>Start Date</label>
+                                <input type="date" id="trackerStartDate" value="${startDate}" 
+                                       onchange="saveTrackerDates(${selectedIndex})">
+                            </div>
+                            <div class="form-group">
+                                <label>Target Date (Optional)</label>
+                                <input type="date" id="trackerTargetDate" value="${sheet.targetDate || ''}" 
+                                       onchange="saveTrackerDates(${selectedIndex})">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="tracker-results">
+                        <h4>📊 Calculations</h4>
+                        <div class="tracker-result-item">
+                            <span class="label">Days Required</span>
+                            <span class="value highlight">${daysRequired} days</span>
+                        </div>
+                        <div class="tracker-result-item">
+                            <span class="label">Expected Completion</span>
+                            <span class="value success">${expectedDate.toLocaleDateString()}</span>
+                        </div>
+                        ${sheet.targetDate ? `
+                        <div class="tracker-result-item">
+                            <span class="label">Speed Required for Target</span>
+                            <span class="value warning">${requiredSpeed} hrs/day</span>
+                        </div>
+                        ` : ''}
+                    </div>
+                `;
+        }
+
+        function saveTrackerSpeed(sheetIndex) {
+            const speed = parseFloat(document.getElementById('trackerSpeed').value) || appData.defaultSpeed;
+            appData.sheets[sheetIndex].speed = speed;
+            saveData();
+            updateTracker();
+            updateFocusDashboard();
+            updateFocusBattery();
+            updateFocusTasks();
+        }
+
+        function saveTrackerDates(sheetIndex) {
+            appData.sheets[sheetIndex].startDate = document.getElementById('trackerStartDate').value;
+            appData.sheets[sheetIndex].targetDate = document.getElementById('trackerTargetDate').value;
+            saveData();
+            updateTracker();
+        }
+
+        // ============================================================
+        // SHEET MANAGEMENT
+        // ============================================================
+        function updateSheetTabs() {
+            const container = document.getElementById('sheetTabs');
+            let html = '';
+
+            appData.sheets.forEach((sheet, index) => {
+                const count = sheet.data.length;
+                html += `
+                        <button class="sheet-tab ${index === appData.currentSheetIndex ? 'active' : ''}" 
+                                onclick="switchSheet(${index})">
+                            ${sheet.name} <span class="count">${count}</span>
+                        </button>
+                    `;
+            });
+
+            container.innerHTML = html;
+        }
+
+        function switchSheet(index) {
+            if (appData.isLocked) {
+                alert('🔒 App is locked. Tap "Unlock" at the bottom.');
+                return;
+            }
+            appData.currentSheetIndex = index;
+            saveData();
+            updateSheetTabs();
+            renderSpreadsheet();
+        }
+
+        function addNewSheet() {
+            if (appData.isLocked) {
+                alert('🔒 App is locked. Tap "Unlock" at the bottom.');
+                return;
+            }
+            showModal('Add New Sheet', 'Enter a name for the new sheet:', true, (name) => {
+                if (name && name.trim()) {
+                    appData.sheets.push(createNewSheet(name.trim()));
+                    appData.currentSheetIndex = appData.sheets.length - 1;
+                    saveData();
+                    updateSheetTabs();
+                    renderSpreadsheet();
+                    updateAllSelectors();
+                    updateFocusDashboard();
+                }
+            }, `Sheet ${appData.sheets.length + 1}`);
+        }
+
+        function editCurrentSheet() {
+            if (appData.isLocked) {
+                alert('🔒 App is locked. Tap "Unlock" at the bottom.');
+                return;
+            }
+            const sheet = appData.sheets[appData.currentSheetIndex];
+            showModal('Rename Sheet', 'Enter a new name:', true, (name) => {
+                if (name && name.trim()) {
+                    sheet.name = name.trim();
+                    saveData();
+                    updateSheetTabs();
+                    updateAllSelectors();
+                    updateFocusDashboard();
+                    updateFocusBattery();
+                    updateFocusTasks();
+                }
+            }, sheet.name);
+        }
+
+        function deleteCurrentSheet() {
+            if (appData.isLocked) {
+                alert('🔒 App is locked. Tap "Unlock" at the bottom.');
+                return;
+            }
+            if (appData.sheets.length <= 1) {
+                alert('⚠️ Cannot delete the last sheet');
+                return;
+            }
+
+            const sheet = appData.sheets[appData.currentSheetIndex];
+            showModal('Delete Sheet', `Are you sure you want to delete "${sheet.name}"? This cannot be undone.`, false, () => {
+                appData.sheets.splice(appData.currentSheetIndex, 1);
+                if (appData.currentSheetIndex >= appData.sheets.length) {
+                    appData.currentSheetIndex = appData.sheets.length - 1;
+                }
+                if (appData.focusSheetIndex >= appData.sheets.length) {
+                    appData.focusSheetIndex = -1;
+                }
+                saveData();
+                updateSheetTabs();
+                renderSpreadsheet();
+                updateAllSelectors();
+                updateFocusDashboard();
+                updateFocusBattery();
+                updateFocusTasks();
+            });
+
+            document.getElementById('modalConfirmBtn').className = 'btn-danger';
+            document.getElementById('modalConfirmBtn').textContent = 'Delete';
+        }
+
+        // ============================================================
+        // PASTE FROM EXCEL
+        // ============================================================
+        function clearPasteArea() {
+            document.getElementById('pasteInput').value = '';
+        }
+
+        function pasteData() {
+            if (appData.isLocked) {
+                alert('🔒 App is locked. Tap "Unlock" at the bottom.');
+                return;
+            }
+
+            const text = document.getElementById('pasteInput').value.trim();
+            if (!text) {
+                alert('⚠️ Please paste some data first.');
+                return;
+            }
+
+            const sheet = appData.sheets[appData.currentSheetIndex];
+            const rows = text.split(/[\r\n]+/).filter(r => r.trim());
+
+            rows.forEach((row, i) => {
+                const cells = row.split(/\t/);
+                const rowIndex = sheet.data.length;
+
+                let sr = rowIndex + 1;
+                let ref = '';
+                let dur = '';
+
+                if (cells.length >= 3) {
+                    sr = cells[0].trim() || rowIndex + 1;
+                    ref = cells[1].trim() || '';
+                    dur = cells[2].trim() || '';
+                } else if (cells.length === 2) {
+                    ref = cells[0].trim() || '';
+                    dur = cells[1].trim() || '';
+                } else if (cells.length === 1) {
+                    ref = cells[0].trim() || '';
+                }
+
+                sheet.data.push({ sr: sr, reference: ref, duration: dur });
+                sheet.completed.push(false);
+            });
+
+            saveData();
+            renderSpreadsheet();
+            updateAllSelectors();
+            updateFocusDashboard();
+            document.getElementById('pasteInput').value = '';
+            alert(`✅ Pasted ${rows.length} rows successfully!`);
+        }
+
+        function pasteExcelData() {
+            if (appData.isLocked) {
+                alert('🔒 App is locked. Tap "Unlock" at the bottom.');
+                return;
+            }
+
+            const text = document.getElementById('pasteInput').value.trim();
+            if (!text) {
+                alert('⚠️ Please paste Excel data first.');
+                return;
+            }
+
+            const sheet = appData.sheets[appData.currentSheetIndex];
+            const lines = text.split(/[\r\n]+/).filter(r => r.trim());
+
+            let separator = '\t';
+            if (text.includes('\t')) separator = '\t';
+            else if (text.includes(',')) separator = ',';
+            else separator = /\s+/;
+
+            let rowCount = 0;
+            lines.forEach((line) => {
+                const cells = line.split(separator).map(c => c.trim()).filter(c => c !== '');
+                if (cells.length === 0) return;
+
+                const rowIndex = sheet.data.length;
+                let sr = rowIndex + 1;
+                let ref = '';
+                let dur = '';
+
+                if (cells.length >= 3) {
+                    sr = cells[0] || rowIndex + 1;
+                    ref = cells[1] || '';
+                    dur = cells[2] || '';
+                } else if (cells.length === 2) {
+                    ref = cells[0] || '';
+                    dur = cells[1] || '';
+                } else if (cells.length === 1) {
+                    if (!isNaN(cells[0])) {
+                        dur = cells[0];
+                    } else {
+                        ref = cells[0];
+                    }
+                }
+
+                sheet.data.push({ sr: sr, reference: ref, duration: dur });
+                sheet.completed.push(false);
+                rowCount++;
+            });
+
+            saveData();
+            renderSpreadsheet();
+            updateAllSelectors();
+            updateFocusDashboard();
+            document.getElementById('pasteInput').value = '';
+            alert(`✅ Smart pasted ${rowCount} rows from Excel!`);
+        }
+
+        // ============================================================
+        // SPREADSHEET (Entry)
+        // ============================================================
+        function renderSpreadsheet() {
+            const body = document.getElementById('spreadsheetBody');
+            const sheet = appData.sheets[appData.currentSheetIndex];
+
+            if (!sheet || sheet.data.length === 0) {
+                sheet.data = [
+                    { sr: 1, reference: '', duration: '' },
+                    { sr: 2, reference: '', duration: '' },
+                    { sr: 3, reference: '', duration: '' },
+                    { sr: 4, reference: '', duration: '' },
+                    { sr: 5, reference: '', duration: '' }
+                ];
+                sheet.completed = sheet.data.map(() => false);
+                saveData();
+            }
+
+            let html = '';
+            sheet.data.forEach((row, index) => {
+                html += `
+                        <div class="spreadsheet-row">
+                            <div class="col-sr">
+                                <input type="text" value="${row.sr || index + 1}" 
+                                       onchange="updateCell(${index}, 'sr', this.value)">
+                            </div>
+                            <div class="col-ref">
+                                <input type="text" value="${row.reference || ''}" 
+                                       onchange="updateCell(${index}, 'reference', this.value)"
+                                       placeholder="Enter reference">
+                            </div>
+                            <div class="col-dur">
+                                <input type="text" value="${row.duration || ''}" 
+                                       onchange="updateCell(${index}, 'duration', this.value)"
+                                       placeholder="mins">
+                            </div>
+                        </div>
+                    `;
+            });
+
+            body.innerHTML = html;
+        }
+
+        function updateCell(rowIndex, field, value) {
+            if (appData.isLocked) return;
+            const sheet = appData.sheets[appData.currentSheetIndex];
+            sheet.data[rowIndex][field] = value;
+            while (sheet.completed.length < sheet.data.length) {
+                sheet.completed.push(false);
+            }
+            saveData();
+        }
+
+        function addRow() {
+            if (appData.isLocked) {
+                alert('🔒 App is locked. Tap "Unlock" at the bottom.');
+                return;
+            }
+            const sheet = appData.sheets[appData.currentSheetIndex];
+            sheet.data.push({ sr: sheet.data.length + 1, reference: '', duration: '' });
+            sheet.completed.push(false);
+            saveData();
+            renderSpreadsheet();
+        }
+
+        function clearSpreadsheet() {
+            if (appData.isLocked) {
+                alert('🔒 App is locked. Tap "Unlock" at the bottom.');
+                return;
+            }
+            showModal('Clear All', 'Are you sure you want to clear all data in this sheet?', false, () => {
+                const sheet = appData.sheets[appData.currentSheetIndex];
+                sheet.data = [
+                    { sr: 1, reference: '', duration: '' },
+                    { sr: 2, reference: '', duration: '' },
+                    { sr: 3, reference: '', duration: '' },
+                    { sr: 4, reference: '', duration: '' },
+                    { sr: 5, reference: '', duration: '' }
+                ];
+                sheet.completed = sheet.data.map(() => false);
+                saveData();
+                renderSpreadsheet();
+            });
+        }
+
+        function executeSpreadsheet() {
+            if (appData.isLocked) {
+                alert('🔒 App is locked. Tap "Unlock" at the bottom.');
+                return;
+            }
+
+            const sheet = appData.sheets[appData.currentSheetIndex];
+            const originalLength = sheet.data.length;
+            sheet.data = sheet.data.filter(row => row.reference || row.duration);
+
+            while (sheet.completed.length < sheet.data.length) {
+                sheet.completed.push(false);
+            }
+            sheet.completed = sheet.completed.slice(0, sheet.data.length);
+
+            saveData();
+            updateAllSelectors();
+            updateFocusDashboard();
+            updateFocusBattery();
+            updateFocusTasks();
+            updateSheetTabs();
+
+            const removed = originalLength - sheet.data.length;
+            alert(`✅ Saved ${sheet.data.length} rows${removed > 0 ? ` (${removed} empty rows removed)` : ''}`);
+        }
+
+        // ============================================================
+        // SELECTORS
+        // ============================================================
+        function updateAllSelectors() {
+            const selectors = ['focusSheetSelect', 'resultsSheetSelect', 'trackerSheetSelect'];
+
+            selectors.forEach(id => {
+                const select = document.getElementById(id);
+                if (!select) return;
+
+                const currentValue = select.value;
+                let html = '<option value="">-- Select a Sheet --</option>';
+
+                appData.sheets.forEach((sheet, index) => {
+                    const count = sheet.data.length;
+                    html += `<option value="${index}">${sheet.name} (${count} items)</option>`;
+                });
+
+                select.innerHTML = html;
+
+                if (currentValue !== '' && appData.sheets[parseInt(currentValue)]) {
+                    select.value = currentValue;
+                } else if (appData.focusSheetIndex >= 0 && appData.sheets[appData.focusSheetIndex]) {
+                    select.value = appData.focusSheetIndex;
+                }
+            });
+        }
+
+        // ============================================================
+        // SETTINGS
+        // ============================================================
+        function saveDefaultSpeed() {
+            const speed = parseFloat(document.getElementById('defaultSpeedInput').value) || 3;
+            appData.defaultSpeed = speed;
+            saveData();
+            alert(`✅ Default speed set to ${speed} hrs/day`);
+        }
+
+        function exportAllData() {
+            const dataStr = JSON.stringify(appData, null, 2);
+            const blob = new Blob([dataStr], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `dataflow_backup_${new Date().toISOString().split('T')[0]}.json`;
+            a.click();
+
+            URL.revokeObjectURL(url);
+            alert('💾 Data exported successfully!');
+        }
+
+        function importAllData(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                try {
+                    const imported = JSON.parse(e.target.result);
+                    showModal('Import Data', 'This will replace all current data. Continue?', false, () => {
+                        appData = { ...appData, ...imported };
+                        saveData();
+                        updateAllSelectors();
+                        updateFocusDashboard();
+                        updateSheetTabs();
+                        renderSpreadsheet();
+                        updateFocusBattery();
+                        updateFocusTasks();
+                        document.getElementById('defaultSpeedInput').value = appData.defaultSpeed;
+                        alert('📂 Data imported successfully!');
+                    });
+                } catch (err) {
+                    alert('❌ Invalid file format');
+                }
+            };
+            reader.readAsText(file);
+            event.target.value = '';
+        }
+
+        // ============================================================
+        // START
+        // ============================================================
+        init();
+    </script>
+
+</body>
+</html>
