@@ -2270,7 +2270,8 @@
             dateSpeedOverrides: {},
             dateNotes: {},
             sampleDataAdded: false,
-            hasChanges: false
+            hasChanges: false,
+            taskAllocations: {} // sheetName -> { taskIndex: dateString }
         };
         let modalCallback = null;
         let focusShowAllTasks = false;
@@ -2487,19 +2488,40 @@
             if (!sheet) return [];
             const startDate = sheet.startDate || new Date().toISOString().split('T')[0];
             if (dateStr < startDate) return [];
-            // Get the groups (smart allocation)
+
+            // First, ensure allocations are up to date
             const groups = getTaskGroups(sheet);
             const startDateObj = new Date(startDate);
-            const currentDateObj = new Date(dateStr);
-            const daysDiff = Math.floor((currentDateObj - startDateObj) / (1000 * 60 * 60 * 24));
+
+            // Build allocation map from groups
+            const allocationMap = {};
+            groups.forEach((group, idx) => {
+                const date = new Date(startDateObj);
+                date.setDate(date.getDate() + idx);
+                const dStr = date.toISOString().split('T')[0];
+                group.rows.forEach(taskIdx => {
+                    allocationMap[taskIdx] = dStr;
+                });
+            });
+
+            // Store allocations in appData for persistence
+            if (!appData.taskAllocations) appData.taskAllocations = {};
+            appData.taskAllocations[sheet.name] = allocationMap;
+            saveData();
+
+            // Get tasks for the requested date
             let taskIndices = [];
-            if (daysDiff >= 0 && daysDiff < groups.length) {
-                taskIndices = groups[daysDiff].rows;
+            if (allocationMap) {
+                taskIndices = Object.keys(allocationMap)
+                    .filter(idx => allocationMap[idx] === dateStr)
+                    .map(Number);
             }
-            // Also include any manually assigned tasks for this date
+
+            // Also include manually assigned tasks for this date (from history with permanent=false)
             const manualAssignments = appData.history.filter(h =>
                 h.sheetName === sheet.name && h.date === dateStr && h.permanent === false
             ).map(h => h.taskIndex);
+
             const allIndices = new Set([...taskIndices, ...manualAssignments]);
             return Array.from(allIndices).map(idx => ({ ...sheet.data[idx], index: idx }));
         }
@@ -2509,28 +2531,29 @@
         // ============================================================
         function getTaskGroups(sheet) {
             if (!sheet) return [];
-            // Use the sheet's speed (hours/day) converted to minutes
             const speed = (sheet.speed || appData.defaultSpeed) * 60;
+
             // Get only tasks that are NOT permanently completed
             const permanentlyCompleted = appData.history.filter(h =>
                 h.sheetName === sheet.name && h.permanent === true
             ).map(h => h.taskIndex);
+
             const availableRows = sheet.data
                 .map((row, idx) => ({ row, idx }))
                 .filter(({ idx }) => !permanentlyCompleted.includes(idx));
+
             const totalDuration = availableRows.reduce((sum, { row }) => sum + (parseFloat(row.duration) || 0), 0);
             if (totalDuration === 0) return [];
-            // Calculate number of days needed
+
             const daysNeeded = Math.max(1, Math.ceil(totalDuration / speed));
-            // Target per day (balanced)
             const targetPerDay = totalDuration / daysNeeded;
+
             const groups = [];
             let currentGroup = [];
             let currentDuration = 0;
+
             availableRows.forEach(({ row, idx }) => {
                 const duration = parseFloat(row.duration) || 0;
-                // If adding this task would exceed the target by more than a small tolerance,
-                // start a new group, but only if the current group is not empty.
                 if (currentGroup.length > 0 && currentDuration + duration > targetPerDay * 1.15) {
                     groups.push({ rows: currentGroup, duration: parseFloat(currentDuration.toFixed(2)) });
                     currentGroup = [];
@@ -2539,13 +2562,15 @@
                 currentGroup.push(idx);
                 currentDuration += duration;
             });
+
             if (currentGroup.length > 0) {
                 groups.push({ rows: currentGroup, duration: parseFloat(currentDuration.toFixed(2)) });
             }
-            // Ensure we have at least one group
+
             if (groups.length === 0 && availableRows.length > 0) {
                 groups.push({ rows: availableRows.map(({ idx }) => idx), duration: parseFloat(totalDuration.toFixed(2)) });
             }
+
             return groups;
         }
 
@@ -2699,6 +2724,8 @@
         // ============================================================
         function init() {
             loadData();
+            // Ensure taskAllocations exists
+            if (!appData.taskAllocations) appData.taskAllocations = {};
             updateAllSelectors();
             updateFocusDashboard();
             updateSheetTabs();
@@ -2775,6 +2802,7 @@
         function addSampleData() {
             if (appData.sheets.length >= 2 && !confirm('This will add 2 sample sheets. Continue?')) return;
             appData.sheets = [];
+            appData.taskAllocations = {};
             const sheet1 = createNewSheet('Workout Plan');
             const workoutData = [
                 { sr: 1, reference: 'Push-ups', duration: 10 },
@@ -3342,6 +3370,11 @@
             for (let i = 1; i <= 3; i++) { const d = new Date(today);
                 d.setDate(d.getDate() + i);
                 coming3.push(d); }
+
+            // Get allocation map
+            const allocMap = appData.taskAllocations[sheet.name] || {};
+            const startDateObj = new Date(sheet.startDate || new Date().toISOString().split('T')[0]);
+
             let html = `
                     <div class="results-summary-top">
                         <div class="summary-item"><span class="label">Total Duration</span><span class="value">${totalDuration.toFixed(2)} mins (${(totalDuration/60).toFixed(2)} hrs)</span></div>
@@ -3388,29 +3421,87 @@
                         <div style="font-size:9px;color:#9ca3af;margin-top:4px;text-align:center;">✏️ Click date in Focus tab to edit speed</div>
                     </div>
                     <table class="results-table">
-                        <thead><tr><th>Sr</th><th>Reference</th><th>Mins</th><th>Status</th><th>Done On</th><th>Speed</th></tr></thead>
+                        <thead><tr><th>Sr</th><th>Reference</th><th>Mins</th><th>Status</th><th>Allocated</th><th>Done On</th></tr></thead>
                         <tbody>
                     `;
+
             sheet.data.forEach((row, i) => {
                 const isCompleted = permanentlyCompleted.some(h => h.taskIndex === i);
                 const doneOn = permanentlyCompleted.find(h => h.taskIndex === i);
                 const doneDate = doneOn ? doneOn.completedDate || doneOn.date : '-';
-                const taskSpeed = (row.duration || 0) > 0 ? ((row.duration || 0) / 60).toFixed(2) : '0.00';
+                // Allocated date
+                let allocDate = allocMap[i] || '-';
+                if (allocDate !== '-') {
+                    const d = new Date(allocDate);
+                    allocDate = d.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+                }
                 html += `
                         <tr>
                             <td>${row.sr || i + 1}</td>
                             <td>${row.reference || '-'}</td>
                             <td>${row.duration || 0}</td>
                             <td>${isCompleted ? '✅' : '⏳'}</td>
+                            <td><input type="text" value="${allocDate}" size="8" 
+                                      onchange="updateAllocation(${selectedIndex}, ${i}, this.value)" /></td>
                             <td><input type="text" value="${doneDate}" size="8" 
                                       onchange="updateDoneDate(${selectedIndex}, ${i}, this.value)" /></td>
-                            <td><input type="text" value="${taskSpeed}" size="4" 
-                                      onchange="updateTaskSpeed(${selectedIndex}, ${i}, this.value)" /></td>
                         </tr>
                     `;
             });
             html += `</tbody></table>`;
             container.innerHTML = html;
+        }
+
+        function updateAllocation(sheetIndex, taskIndex, value) {
+            const sheet = appData.sheets[sheetIndex];
+            if (!appData.taskAllocations) appData.taskAllocations = {};
+            if (!appData.taskAllocations[sheet.name]) appData.taskAllocations[sheet.name] = {};
+
+            // Parse date - try to match format like "Jan 15"
+            let dateStr = value.trim();
+            if (dateStr && dateStr !== '-') {
+                // Try to parse as date
+                const parts = dateStr.split(' ');
+                if (parts.length === 2) {
+                    const monthMap = { jan: 0, feb: 1, mar: 2, apr: 3, may: 4, jun: 5, jul: 6, aug: 7, sep: 8, oct: 9,
+                        nov: 10, dec: 11 };
+                    const month = monthMap[parts[0].toLowerCase().substring(0, 3)];
+                    const day = parseInt(parts[1]);
+                    if (!isNaN(month) && !isNaN(day)) {
+                        const year = new Date().getFullYear();
+                        const d = new Date(year, month, day);
+                        if (!isNaN(d.getTime())) {
+                            appData.taskAllocations[sheet.name][taskIndex] = d.toISOString().split('T')[0];
+                            appData.hasChanges = true;
+                            updateExecuteButton();
+                            saveData();
+                            updateFocusTasks();
+                            updateResults();
+                            return;
+                        }
+                    }
+                }
+                // If not parsed, try direct date string
+                const d = new Date(dateStr);
+                if (!isNaN(d.getTime())) {
+                    appData.taskAllocations[sheet.name][taskIndex] = d.toISOString().split('T')[0];
+                    appData.hasChanges = true;
+                    updateExecuteButton();
+                    saveData();
+                    updateFocusTasks();
+                    updateResults();
+                    return;
+                }
+                // If invalid, remove allocation
+                delete appData.taskAllocations[sheet.name][taskIndex];
+            } else {
+                delete appData.taskAllocations[sheet.name][taskIndex];
+            }
+            appData.hasChanges = true;
+            updateExecuteButton();
+            saveData();
+            updateFocusTasks();
+            updateResults();
         }
 
         function updateDoneDate(sheetIndex, taskIndex, value) {
@@ -3427,22 +3518,6 @@
                 updateHistory();
                 updateFocusTasks();
                 updateResults();
-                updateStatusDot();
-                updateThreeBatteries();
-            }
-        }
-
-        function updateTaskSpeed(sheetIndex, taskIndex, value) {
-            const speed = parseFloat(value) * 60;
-            if (!isNaN(speed) && speed > 0) {
-                const sheet = appData.sheets[sheetIndex];
-                const dateStr = selectedDate.toISOString().split('T')[0];
-                appData.dateSpeedOverrides[dateStr] = speed;
-                appData.hasChanges = true;
-                updateExecuteButton();
-                saveData();
-                updateFocusTasks();
-                updateFocusBattery();
                 updateStatusDot();
                 updateThreeBatteries();
             }
@@ -3996,6 +4071,7 @@
                         defaultSpeed: appData.defaultSpeed,
                         dateSpeedOverrides: appData.dateSpeedOverrides || {},
                         dateNotes: appData.dateNotes || {},
+                        taskAllocations: appData.taskAllocations || {},
                         lastUpdated: new Date().toISOString()
                     }
                 }
