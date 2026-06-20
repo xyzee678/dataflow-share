@@ -124,10 +124,10 @@
         // ============================================================
         // CONFIGURATION - EDIT THESE
         // ============================================================
-        const GITHUB_USERNAME = 'YOUR_GITHUB_USERNAME';
-        const GITHUB_REPO = 'dataflow-share';
+        const GITHUB_USERNAME = 'xyzee678';      // ← YOUR USERNAME
+        const GITHUB_REPO = 'dataflow-share';     // ← YOUR REPO NAME
         const DATA_FILE = 'data.json';
-        const FRIEND_NAME = 'yourName'; // The name of the person you're tracking
+        const FRIEND_NAME = 'xyzee678';           // ← YOUR NAME
 
         // ============================================================
         // LOAD DATA FROM GITHUB
@@ -200,7 +200,7 @@
                 </div>
                 <div class="battery-percentage">${percent}<span class="percent-sign">%</span></div>
                 <div class="battery-label">${sheetName}</div>
-                <div class="battery-sub">${userData.batteryPercent || 0}% complete</div>
+                <div class="battery-sub">${percent}% complete</div>
                 <div class="status-text ${statusClass}">${statusText}</div>
             `;
 
