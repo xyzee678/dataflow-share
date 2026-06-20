@@ -1,14 +1,36 @@
 {
   "users": {
     "xyzee678": {
-      "batteryPercent": 0,
-      "sheetName": "No sheet",
-      "lastUpdated": "2026-06-20T18:30:00Z"
+      "sheets": [
+        {
+          "sheetName": "Sheet 1",
+          "batteryPercent": 75,
+          "lastUpdated": "2026-06-20T18:30:00Z"
+        },
+        {
+          "sheetName": "Sheet 2",
+          "batteryPercent": 45,
+          "lastUpdated": "2026-06-20T18:30:00Z"
+        }
+      ]
     },
-    "Amey": {
-      "batteryPercent": 40,
-      "sheetName": "Sheet 2",
-      "lastUpdated": "2026-06-20T18:07:12.039Z"
+    "friend2": {
+      "sheets": [
+        {
+          "sheetName": "Course A",
+          "batteryPercent": 90,
+          "lastUpdated": "2026-06-20T18:30:00Z"
+        }
+      ]
+    },
+    "friend3": {
+      "sheets": [
+        {
+          "sheetName": "Project X",
+          "batteryPercent": 30,
+          "lastUpdated": "2026-06-20T18:30:00Z"
+        }
+      ]
     }
   }
 }
