@@ -9,6 +9,11 @@
       "batteryPercent": 42,
       "sheetName": "Course A",
       "lastUpdated": "2026-06-20T18:25:00Z"
+    },
+    "Vinay": {
+      "batteryPercent": 0,
+      "sheetName": "Sheet 1",
+      "lastUpdated": "2026-06-20T17:28:39.268Z"
     }
   }
 }
