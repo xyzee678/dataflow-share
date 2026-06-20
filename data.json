@@ -4,16 +4,6 @@
       "batteryPercent": 0,
       "sheetName": "No sheet",
       "lastUpdated": "2026-06-20T18:30:00Z"
-    },
-    "Vinay": {
-      "batteryPercent": 0,
-      "sheetName": "Sheet 3",
-      "lastUpdated": "2026-06-20T17:50:20.440Z"
-    },
-    "Amey": {
-      "batteryPercent": 80,
-      "sheetName": "Sheet 3",
-      "lastUpdated": "2026-06-20T17:53:27.181Z"
     }
   }
 }
