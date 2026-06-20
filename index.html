@@ -305,11 +305,7 @@
             transform: rotate(45deg);
         }
 
-        /* ===== FOCUS PAGE (Combined: Dashboard + Battery + Tasks) ===== */
-        .focus-page {
-            display: block !important;
-        }
-
+        /* ===== FOCUS PAGE ===== */
         .focus-dashboard-section {
             margin-bottom: 12px;
         }
@@ -582,7 +578,7 @@
             color: #dc2626;
         }
 
-        /* ===== TODAY'S TASKS (in Focus) ===== */
+        /* ===== TODAY'S TASKS ===== */
         .focus-tasks-section {
             background: white;
             border-radius: 12px;
@@ -787,17 +783,7 @@
             font-size: 14px;
         }
 
-        .results-summary-item .value.highlight {
-            color: #4f46e5;
-        }
-        .results-summary-item .value.success {
-            color: #059669;
-        }
-        .results-summary-item .value.warning {
-            color: #d97706;
-        }
-
-        /* ===== ENTRY / SPREADSHEET ===== */
+        /* ===== ENTRY ===== */
         .sheet-tabs-container {
             background: white;
             border-radius: 12px;
@@ -874,10 +860,6 @@
             -webkit-tap-highlight-color: transparent;
         }
 
-        .sheet-management button:active {
-            transform: scale(0.95);
-        }
-
         .btn-add-sheet {
             background: #4f46e5;
             color: white;
@@ -898,7 +880,6 @@
             padding: 14px;
             margin-bottom: 12px;
             border: 2px dashed #d1d5db;
-            transition: border-color 0.2s, background 0.2s;
         }
 
         .paste-area:focus-within {
@@ -924,7 +905,6 @@
             resize: vertical;
             min-height: 70px;
             outline: none;
-            transition: border-color 0.2s;
             background: #fafbfc;
         }
 
@@ -967,7 +947,6 @@
             cursor: pointer;
             font-family: inherit;
             transition: all 0.2s;
-            -webkit-tap-highlight-color: transparent;
         }
 
         .paste-actions button:active {
@@ -1090,7 +1069,6 @@
             cursor: pointer;
             font-family: inherit;
             transition: all 0.2s;
-            -webkit-tap-highlight-color: transparent;
         }
 
         .spreadsheet-actions button:active {
@@ -1185,10 +1163,6 @@
             border-bottom: 1px solid #e5e7eb;
         }
 
-        .tracker-result-item:last-child {
-            border-bottom: none;
-        }
-
         .tracker-result-item .label {
             color: #6b7280;
             font-size: 13px;
@@ -1197,16 +1171,6 @@
         .tracker-result-item .value {
             font-weight: 600;
             color: #1a202c;
-        }
-
-        .tracker-result-item .value.highlight {
-            color: #4f46e5;
-        }
-        .tracker-result-item .value.warning {
-            color: #d97706;
-        }
-        .tracker-result-item .value.success {
-            color: #059669;
         }
 
         /* ===== SETTINGS ===== */
@@ -1250,7 +1214,6 @@
             cursor: pointer;
             font-family: inherit;
             transition: all 0.2s;
-            -webkit-tap-highlight-color: transparent;
             flex: 1;
             min-width: 120px;
         }
@@ -1654,18 +1617,16 @@
         <!-- ===== CONTENT ===== -->
         <main class="app-content" id="appContent">
 
-            <!-- ===== FOCUS PAGE (Combined: Dashboard Cards + Battery + Tasks) ===== -->
+            <!-- ===== FOCUS PAGE ===== -->
             <div class="page active" id="page-focus">
 
-                <!-- ===== DASHBOARD CARDS (TOP) ===== -->
+                <!-- DASHBOARD CARDS -->
                 <div class="focus-dashboard-section">
                     <h2>📊 Your Goals</h2>
-                    <div class="focus-dashboard-grid" id="focusDashboardGrid">
-                        <!-- Rendered by JavaScript -->
-                    </div>
+                    <div class="focus-dashboard-grid" id="focusDashboardGrid"></div>
                 </div>
 
-                <!-- ===== BATTERY (MIDDLE) ===== -->
+                <!-- BATTERY -->
                 <div class="battery-container">
                     <div class="battery-sheet-selector">
                         <select id="focusSheetSelect" onchange="updateFocusBattery()">
@@ -1685,14 +1646,13 @@
                     <div class="battery-sub" id="focusSub">Select a goal to track your progress</div>
                     <div class="battery-status-text" id="focusStatus" style="display:none;"></div>
 
-                    <!-- GitHub Sync Status -->
                     <div class="github-status" id="githubStatus">
                         <span class="dot offline" id="githubDot"></span>
                         <span id="githubStatusText">GitHub: Offline</span>
                     </div>
                 </div>
 
-                <!-- ===== TODAY'S TASKS (BOTTOM) ===== -->
+                <!-- TODAY'S TASKS -->
                 <div class="focus-tasks-section" id="focusTasksSection">
                     <div class="focus-tasks-header">
                         <h3>📋 <span id="focusTasksViewLabel">Today's</span> Tasks</h3>
@@ -1760,7 +1720,6 @@
                     </div>
                 </div>
 
-                <!-- Paste Area -->
                 <div class="paste-area">
                     <label>📋 Paste from Excel</label>
                     <textarea id="pasteInput" placeholder="Paste tab-separated data from Excel here...&#10;Example:&#10;1   REF001  30&#10;2   REF002  45"></textarea>
@@ -1804,7 +1763,6 @@
                         </div>
                     </div>
 
-                    <!-- GitHub Sync Setup -->
                     <div class="settings-card">
                         <h3>☁️ GitHub Sync (Share Progress)</h3>
                         <p>Share your battery status with a friend. They can view it at a public link.</p>
@@ -1891,18 +1849,16 @@
             renderSpreadsheet();
             updateFocusBattery();
 
-            // Start with Focus visible - NO need to click floating button
+            // Start with Focus visible
             document.getElementById('topTabs').classList.add('hidden');
             document.getElementById('appContent').classList.add('hidden');
             document.getElementById('floatingBtn').innerHTML = '<span class="btn-icon">⚡</span>';
 
-            // But show Focus content directly
             document.getElementById('page-focus').classList.add('active');
             document.getElementById('appContent').classList.remove('hidden');
 
             document.getElementById('defaultSpeedInput').value = appData.defaultSpeed;
 
-            // Load GitHub settings
             if (appData.github) {
                 document.getElementById('githubUsername').value = appData.github.username || '';
                 document.getElementById('githubRepo').value = appData.github.repo || '';
@@ -1963,7 +1919,7 @@
         }
 
         // ============================================================
-        // UNLOCK - BIG BUTTON
+        // UNLOCK / LOCK
         // ============================================================
         function unlockApp() {
             const wrapper = document.getElementById('appWrapper');
@@ -1978,9 +1934,6 @@
             saveData();
         }
 
-        // ============================================================
-        // LOCK FUNCTIONALITY
-        // ============================================================
         function toggleLock() {
             const wrapper = document.getElementById('appWrapper');
             const lockBtn = document.getElementById('lockBtn');
@@ -1999,7 +1952,7 @@
         }
 
         // ============================================================
-        // APP VIEW TOGGLE (Floating Button)
+        // APP VIEW TOGGLE
         // ============================================================
         function toggleAppView() {
             const topTabs = document.getElementById('topTabs');
@@ -2013,7 +1966,6 @@
                 appContent.classList.remove('hidden');
                 floatingBtn.classList.add('open');
                 floatingBtn.innerHTML = '<span class="btn-icon">✕</span>';
-                // Show Focus tab in full app
                 switchPage('focus');
             } else {
                 topTabs.classList.add('hidden');
@@ -2021,7 +1973,6 @@
                 floatingBtn.classList.remove('open');
                 floatingBtn.innerHTML = '<span class="btn-icon">⚡</span>';
                 document.getElementById('headerSubtitle').textContent = 'Focus';
-                // Show Focus page directly
                 document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
                 document.getElementById('page-focus').classList.add('active');
                 appContent.classList.remove('hidden');
@@ -2115,17 +2066,14 @@
         }
 
         // ============================================================
-        // FOCUS DASHBOARD (Top of Focus Page)
+        // FOCUS DASHBOARD
         // ============================================================
         function updateFocusDashboard() {
             const grid = document.getElementById('focusDashboardGrid');
 
             if (appData.sheets.length === 0) {
-                grid.innerHTML = `
-                        <div style="grid-column:1/-1;text-align:center;padding:20px;color:#9ca3af;font-size:13px;">
-                            No sheets yet. Create one in Entry.
-                        </div>
-                    `;
+                grid.innerHTML =
+                    `<div style="grid-column:1/-1;text-align:center;padding:20px;color:#9ca3af;font-size:13px;">No sheets yet. Create one in Entry.</div>`;
                 return;
             }
 
@@ -2174,7 +2122,7 @@
         }
 
         // ============================================================
-        // FOCUS BATTERY (Middle of Focus Page)
+        // FOCUS BATTERY
         // ============================================================
         function updateFocusBattery() {
             const select = document.getElementById('focusSheetSelect');
@@ -2240,16 +2188,11 @@
                 status.style.display = 'block';
             }
 
-            // Auto-sync to GitHub when battery changes
-            if (appData.github && appData.github.username && appData.github.repo) {
-                syncToGitHub();
-            }
-
             saveData();
         }
 
         // ============================================================
-        // FOCUS TASKS (Bottom of Focus Page)
+        // FOCUS TASKS
         // ============================================================
         function updateFocusTasks() {
             const select = document.getElementById('focusSheetSelect');
@@ -2396,7 +2339,7 @@
         }
 
         // ============================================================
-        // GITHUB SYNC
+        // GITHUB SYNC - UPDATED TO SEND MULTIPLE SHEETS
         // ============================================================
         function saveGitHubSettings() {
             appData.github.username = document.getElementById('githubUsername').value.trim();
@@ -2433,19 +2376,35 @@
             dot.className = 'dot syncing';
             text.textContent = 'Syncing...';
 
-            const sheet = appData.sheets[appData.focusSheetIndex] || appData.sheets[0];
-            const percent = document.getElementById('focusPercent').textContent || '0';
+            // ============================================================
+            // BUILD DATA WITH ALL SHEETS - UPDATED!
+            // ============================================================
+            const sheetsData = appData.sheets.map(sheet => {
+                const totalItems = sheet.data.length;
+                const completedItems = sheet.completed.filter(Boolean).length;
+                const percent = totalItems > 0 ? Math.round((completedItems / totalItems) * 100) : 0;
+
+                return {
+                    sheetName: sheet.name,
+                    batteryPercent: percent,
+                    totalItems: totalItems,
+                    completedItems: completedItems,
+                    lastUpdated: new Date().toISOString()
+                };
+            });
 
             const data = {
                 users: {
                     [g.userID || 'user']: {
-                        batteryPercent: parseInt(percent) || 0,
-                        sheetName: sheet ? sheet.name : 'No sheet',
+                        sheets: sheetsData,
                         lastUpdated: new Date().toISOString()
                     }
                 }
             };
 
+            // ============================================================
+            // WRITE TO GITHUB
+            // ============================================================
             fetch(`https://api.github.com/repos/${g.username}/${g.repo}/contents/data.json`, {
                 headers: { 'Authorization': `token ${g.token}` }
             })
@@ -2458,24 +2417,24 @@
             })
             .then(fileData => {
                 let sha = null;
-                let existingContent = { users: {} };
 
                 if (fileData && fileData.content) {
                     sha = fileData.sha;
                     try {
-                        existingContent = JSON.parse(atob(fileData.content));
+                        const existingContent = JSON.parse(atob(fileData.content));
+                        // Merge with existing data to preserve other users
+                        if (existingContent.users) {
+                            data.users = { ...existingContent.users, ...data.users };
+                        }
                     } catch (e) {
-                        existingContent = { users: {} };
+                        // If parsing fails, use new data
                     }
                 }
 
-                const userID = g.userID || 'user';
-                existingContent.users[userID] = data.users[userID];
-
-                const updatedContent = btoa(JSON.stringify(existingContent, null, 2));
+                const updatedContent = btoa(JSON.stringify(data, null, 2));
 
                 const body = {
-                    message: `Update battery status for ${userID}`,
+                    message: `Update battery status for ${g.userID || 'user'}`,
                     content: updatedContent,
                     sha: sha
                 };
@@ -2496,7 +2455,7 @@
                 setTimeout(() => {
                     updateGitHubStatus();
                 }, 3000);
-                alert('✅ Battery status synced to GitHub!');
+                alert(`✅ Synced ${appData.sheets.length} sheets to GitHub!`);
                 return response;
             })
             .catch(error => {
@@ -2801,7 +2760,7 @@
         }
 
         // ============================================================
-        // PASTE FROM EXCEL
+        // PASTE FUNCTIONS
         // ============================================================
         function clearPasteArea() {
             document.getElementById('pasteInput').value = '';
@@ -2912,7 +2871,7 @@
         }
 
         // ============================================================
-        // SPREADSHEET (Entry)
+        // SPREADSHEET
         // ============================================================
         function renderSpreadsheet() {
             const body = document.getElementById('spreadsheetBody');
