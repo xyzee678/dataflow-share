@@ -609,6 +609,14 @@
             color: #1a202c;
             min-width: 120px;
             text-align: center;
+            cursor: pointer;
+            padding: 4px 8px;
+            border-radius: 6px;
+            transition: background 0.2s;
+        }
+
+        .date-navigation .date-display:hover {
+            background: #f3f4f6;
         }
 
         .date-navigation .date-display .today-badge {
@@ -619,6 +627,12 @@
             padding: 2px 10px;
             border-radius: 12px;
             margin-left: 6px;
+        }
+
+        .date-navigation .date-display .edit-speed {
+            font-size: 10px;
+            color: #4f46e5;
+            margin-left: 4px;
         }
 
         .btn-today {
@@ -654,6 +668,19 @@
         }
 
         .focus-tasks-header .task-summary strong {
+            color: #1a202c;
+        }
+
+        .task-total {
+            font-size: 11px;
+            color: #6b7280;
+            padding: 4px 8px;
+            background: #f3f4f6;
+            border-radius: 6px;
+            margin-top: 4px;
+        }
+
+        .task-total strong {
             color: #1a202c;
         }
 
@@ -706,6 +733,10 @@
             background: #059669;
             color: white;
         }
+        .btn-focus-execute {
+            background: #217346;
+            color: white;
+        }
 
         .focus-task-item {
             display: flex;
@@ -728,11 +759,17 @@
         .focus-task-item.completed {
             background: #ecfdf5;
             border-color: #059669;
+            opacity: 0.7;
         }
 
         .focus-task-item.completed .task-ref {
             text-decoration: line-through;
             color: #9ca3af;
+        }
+
+        .focus-task-item.backlog {
+            background: #fef3c7;
+            border-color: #f59e0b;
         }
 
         .focus-task-item.pending {
@@ -757,6 +794,10 @@
             background: #059669;
             border-color: #059669;
             color: white;
+        }
+
+        .focus-task-item.backlog .focus-task-checkbox {
+            border-color: #f59e0b;
         }
 
         .focus-task-item.pending .focus-task-checkbox {
@@ -784,6 +825,28 @@
             border-radius: 4px;
         }
 
+        .focus-task-item .task-status-label {
+            font-size: 9px;
+            padding: 1px 6px;
+            border-radius: 10px;
+            font-weight: 600;
+        }
+
+        .focus-task-item .task-status-label.done {
+            background: #d1fae5;
+            color: #065f46;
+        }
+
+        .focus-task-item .task-status-label.backlog-label {
+            background: #fef3c7;
+            color: #92400e;
+        }
+
+        .focus-task-item .task-status-label.pending-label {
+            background: #fef2f2;
+            color: #dc2626;
+        }
+
         .focus-no-tasks {
             text-align: center;
             padding: 16px;
@@ -795,6 +858,90 @@
             font-size: 20px;
             display: block;
             margin-bottom: 4px;
+        }
+
+        /* ===== EDIT SPEED MODAL ===== */
+        .speed-edit-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.5);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 9999;
+            padding: 20px;
+        }
+
+        .speed-edit-overlay.active {
+            display: flex;
+        }
+
+        .speed-edit-box {
+            background: white;
+            border-radius: 16px;
+            padding: 24px;
+            max-width: 320px;
+            width: 100%;
+            text-align: center;
+            animation: modalIn 0.3s ease;
+        }
+
+        .speed-edit-box h3 {
+            font-size: 17px;
+            color: #1a202c;
+            margin-bottom: 8px;
+        }
+
+        .speed-edit-box p {
+            font-size: 13px;
+            color: #6b7280;
+            margin-bottom: 16px;
+        }
+
+        .speed-edit-box input {
+            width: 100%;
+            padding: 10px 12px;
+            border: 2px solid #e5e7eb;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 500;
+            font-family: inherit;
+            outline: none;
+            margin-bottom: 16px;
+        }
+
+        .speed-edit-box input:focus {
+            border-color: #4f46e5;
+        }
+
+        .speed-edit-box .modal-actions {
+            display: flex;
+            gap: 10px;
+        }
+
+        .speed-edit-box .modal-actions button {
+            flex: 1;
+            padding: 10px;
+            border: none;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            font-family: inherit;
+            transition: all 0.2s;
+        }
+
+        .speed-edit-box .modal-actions .btn-cancel {
+            background: #e5e7eb;
+            color: #1a202c;
+        }
+
+        .speed-edit-box .modal-actions .btn-save {
+            background: #4f46e5;
+            color: white;
         }
 
         /* ===== HISTORY ===== */
@@ -817,6 +964,7 @@
             padding: 6px 0;
             border-bottom: 1px solid #f3f4f6;
             font-size: 12px;
+            align-items: center;
         }
 
         .history-item:last-child {
@@ -825,6 +973,12 @@
 
         .history-item .date {
             color: #6b7280;
+            min-width: 80px;
+        }
+
+        .history-item .task-info {
+            flex: 1;
+            margin: 0 8px;
         }
 
         .history-item .progress {
@@ -1744,6 +1898,9 @@
                 padding: 4px 10px;
                 font-size: 12px;
             }
+            .task-total {
+                font-size: 10px;
+            }
         }
 
         /* ===== SCROLLBAR ===== */
@@ -1839,9 +1996,10 @@
 
                 <div class="date-navigation">
                     <button onclick="changeDate(-1)">◀</button>
-                    <span class="date-display" id="dateDisplay">
+                    <span class="date-display" id="dateDisplay" onclick="openSpeedEdit()">
                         <span id="dateText">Today</span>
                         <span class="today-badge" id="todayBadge">📌</span>
+                        <span class="edit-speed">✏️</span>
                     </span>
                     <button onclick="changeDate(1)">▶</button>
                     <button class="btn-today" onclick="goToday()">Today</button>
@@ -1855,10 +2013,14 @@
                     <div class="backlog-info" id="backlogInfo">
                         ⚠️ Backlog: <span id="backlogDuration">0</span> mins from previous days
                     </div>
+                    <div class="task-total" id="taskTotalDisplay">
+                        📊 Total: <strong id="taskTotalMinutes">0</strong> mins
+                    </div>
                     <div class="focus-task-actions">
                         <button class="btn-focus-select-all" onclick="focusSelectAll()">✅ Select All</button>
                         <button class="btn-focus-deselect-all" onclick="focusDeselectAll()">❌ Deselect All</button>
                         <button class="btn-focus-toggle-view" onclick="focusToggleView()">👁 <span id="focusViewToggleLabel">All</span></button>
+                        <button class="btn-focus-execute" onclick="focusExecute()">💾 Execute</button>
                     </div>
                     <div id="focusTasksList">
                         <div class="focus-no-tasks">
@@ -2018,7 +2180,20 @@
         </button>
     </div>
 
-    <!-- ===== MODAL ===== -->
+    <!-- ===== SPEED EDIT MODAL ===== -->
+    <div class="speed-edit-overlay" id="speedEditModal">
+        <div class="speed-edit-box">
+            <h3>✏️ Edit Speed</h3>
+            <p>Set the speed (hours/day) for <span id="speedEditDate">today</span></p>
+            <input type="number" id="speedEditInput" value="3" min="0.5" max="24" step="0.5" />
+            <div class="modal-actions">
+                <button class="btn-cancel" onclick="closeSpeedEdit()">Cancel</button>
+                <button class="btn-save" onclick="saveSpeedEdit()">Save</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ===== CONFIRM MODAL ===== -->
     <div class="modal-overlay" id="confirmModal">
         <div class="modal-content">
             <h3 id="modalTitle">Confirm</h3>
@@ -2049,13 +2224,15 @@
                 userID: ''
             },
             history: [],
-            lastSync: null
+            lastSync: null,
+            dateSpeedOverrides: {} // { dateStr: speedInMinutes }
         };
 
         let modalCallback = null;
         let focusShowAllTasks = false;
         let currentDate = new Date();
         let selectedDate = new Date();
+        let speedEditCallback = null;
 
         // ============================================================
         // DATE FUNCTIONS
@@ -2085,11 +2262,46 @@
         function changeDate(days) {
             selectedDate.setDate(selectedDate.getDate() + days);
             updateDateDisplay();
+            updateFocusBattery();
         }
 
         function goToday() {
             selectedDate = new Date();
             updateDateDisplay();
+            updateFocusBattery();
+        }
+
+        // ============================================================
+        // SPEED EDIT
+        // ============================================================
+        function openSpeedEdit() {
+            const dateStr = selectedDate.toISOString().split('T')[0];
+            document.getElementById('speedEditDate').textContent = selectedDate.toLocaleDateString('en-US', {
+                month: 'short',
+                day: 'numeric',
+                year: 'numeric'
+            });
+
+            const sheet = getSelectedSheet();
+            const defaultSpeed = sheet ? (sheet.speed || appData.defaultSpeed) * 60 : appData.defaultSpeed * 60;
+            const currentSpeed = appData.dateSpeedOverrides[dateStr] || defaultSpeed;
+            document.getElementById('speedEditInput').value = (currentSpeed / 60).toFixed(1);
+            document.getElementById('speedEditModal').classList.add('active');
+        }
+
+        function closeSpeedEdit() {
+            document.getElementById('speedEditModal').classList.remove('active');
+        }
+
+        function saveSpeedEdit() {
+            const dateStr = selectedDate.toISOString().split('T')[0];
+            const speedHours = parseFloat(document.getElementById('speedEditInput').value) || appData.defaultSpeed;
+            appData.dateSpeedOverrides[dateStr] = speedHours * 60;
+            saveData();
+            closeSpeedEdit();
+            updateFocusTasks();
+            updateFocusBattery();
+            showToast(`✅ Speed set to ${speedHours} hrs/day for ${dateStr}`);
         }
 
         // ============================================================
@@ -2108,24 +2320,60 @@
         updateClock();
 
         // ============================================================
+        // TOAST
+        // ============================================================
+        function showToast(message) {
+            // Simple alert for now - can be enhanced
+            alert(message);
+        }
+
+        // ============================================================
+        // GET SELECTED SHEET
+        // ============================================================
+        function getSelectedSheet() {
+            const select = document.getElementById('focusSheetSelect');
+            const selectedIndex = parseInt(select.value);
+            if (isNaN(selectedIndex) || selectedIndex < 0 || !appData.sheets[selectedIndex]) {
+                return null;
+            }
+            return appData.sheets[selectedIndex];
+        }
+
+        // ============================================================
         // SMART TASK SPLITTING - Group rows by speed
         // ============================================================
-        function getTaskGroups(sheet) {
-            const speed = (sheet.speed || appData.defaultSpeed) * 60; // Convert to minutes
+        function getTaskGroups(sheet, dateStr) {
+            if (!sheet) return [];
+
+            // Get speed for this date
+            const defaultSpeedMinutes = (sheet.speed || appData.defaultSpeed) * 60;
+            const speed = appData.dateSpeedOverrides[dateStr] || defaultSpeedMinutes;
+
             const groups = [];
             let currentGroup = [];
             let currentDuration = 0;
 
-            sheet.data.forEach((row, index) => {
+            // Only consider tasks that are NOT permanently completed
+            const permanentlyCompleted = appData.history.filter(h =>
+                h.sheetName === sheet.name &&
+                h.permanent === true
+            ).map(h => h.taskIndex);
+
+            // Get rows that are not permanently completed
+            const availableRows = sheet.data
+                .map((row, idx) => ({ row, idx }))
+                .filter(({ idx }) => !permanentlyCompleted.includes(idx));
+
+            availableRows.forEach(({ row, idx }) => {
                 const duration = parseInt(row.duration) || 0;
                 if (currentDuration + duration <= speed) {
-                    currentGroup.push(index);
+                    currentGroup.push(idx);
                     currentDuration += duration;
                 } else {
                     if (currentGroup.length > 0) {
                         groups.push({ rows: currentGroup, duration: currentDuration });
                     }
-                    currentGroup = [index];
+                    currentGroup = [idx];
                     currentDuration = duration;
                 }
             });
@@ -2399,8 +2647,12 @@
             appData.sheets.forEach((sheet, index) => {
                 const colorIndex = index % 4;
                 const totalItems = sheet.data.length;
-                const completedItems = sheet.completed.filter(Boolean).length;
-                const percent = totalItems > 0 ? Math.round((completedItems / totalItems) * 100) : 0;
+                // Count permanently completed tasks
+                const permanentlyCompleted = appData.history.filter(h =>
+                    h.sheetName === sheet.name &&
+                    h.permanent === true
+                ).length;
+                const percent = totalItems > 0 ? Math.round((permanentlyCompleted / totalItems) * 100) : 0;
 
                 const isActive = index === appData.focusSheetIndex;
 
@@ -2412,7 +2664,7 @@
                 html += `
                         <div class="focus-dashboard-card ${isActive ? 'active-card' : ''}" onclick="selectFocusSheet(${index})">
                             <div class="focus-card-title">${statusEmoji} ${sheet.name}</div>
-                            <div class="focus-card-stats">${completedItems}/${totalItems}</div>
+                            <div class="focus-card-stats">${permanentlyCompleted}/${totalItems}</div>
                             <div class="focus-card-progress">
                                 <div class="focus-card-bar">
                                     <div class="fill c${colorIndex}" style="width: ${percent}%"></div>
@@ -2440,7 +2692,7 @@
         }
 
         // ============================================================
-        // FOCUS BATTERY
+        // FOCUS BATTERY - Shows progress for selected date
         // ============================================================
         function updateFocusBattery() {
             const select = document.getElementById('focusSheetSelect');
@@ -2468,14 +2720,30 @@
 
             appData.focusSheetIndex = selectedIndex;
             const sheet = appData.sheets[selectedIndex];
+            const dateStr = selectedDate.toISOString().split('T')[0];
+
+            // Count tasks completed on or before this date
+            const completedOnOrBefore = appData.history.filter(h =>
+                h.sheetName === sheet.name &&
+                h.date <= dateStr &&
+                h.permanent === true
+            );
+
+            // Also check if tasks were completed on this date (temporary)
+            const tempCompleted = appData.history.filter(h =>
+                h.sheetName === sheet.name &&
+                h.date === dateStr &&
+                h.permanent !== true
+            );
+
+            const totalCompleted = new Set([...completedOnOrBefore, ...tempCompleted].map(h => h.taskIndex)).size;
             const totalItems = sheet.data.length;
-            const completedItems = sheet.completed.filter(Boolean).length;
-            const percent = totalItems > 0 ? Math.round((completedItems / totalItems) * 100) : 0;
+            const percent = totalItems > 0 ? Math.round((totalCompleted / totalItems) * 100) : 0;
 
             fill.style.height = percent + '%';
             percentEl.textContent = percent;
-            label.textContent = sheet.name;
-            sub.textContent = `${completedItems} of ${totalItems} items completed`;
+            label.textContent = `${sheet.name} (${dateStr})`;
+            sub.textContent = `${totalCompleted} of ${totalItems} items completed`;
 
             fill.classList.remove('red', 'yellow', 'green', 'stars');
             status.classList.remove('red', 'yellow', 'green', 'stars');
@@ -2510,17 +2778,18 @@
         }
 
         // ============================================================
-        // FOCUS TASKS - WITH SMART SPLITTING AND BACKLOG
+        // FOCUS TASKS - Smart splitting with backlog tracking
         // ============================================================
         function updateFocusTasks() {
-            const select = document.getElementById('focusSheetSelect');
-            const selectedIndex = parseInt(select.value);
+            const sheet = getSelectedSheet();
             const container = document.getElementById('focusTasksList');
             const summary = document.getElementById('focusTaskSummary');
             const backlogInfo = document.getElementById('backlogInfo');
             const backlogDuration = document.getElementById('backlogDuration');
+            const totalDisplay = document.getElementById('taskTotalDisplay');
+            const totalMinutes = document.getElementById('taskTotalMinutes');
 
-            if (isNaN(selectedIndex) || selectedIndex < 0 || !appData.sheets[selectedIndex]) {
+            if (!sheet) {
                 container.innerHTML = `
                         <div class="focus-no-tasks">
                             <span class="emoji">📭</span>
@@ -2529,53 +2798,86 @@
                     `;
                 summary.textContent = '0/0 completed';
                 backlogInfo.classList.remove('show');
+                totalDisplay.style.display = 'none';
                 return;
             }
 
-            const sheet = appData.sheets[selectedIndex];
-            const speed = (sheet.speed || appData.defaultSpeed) * 60;
-
-            // Get task groups (smart splitting)
-            const groups = getTaskGroups(sheet);
-
-            // Determine which group to show for the selected date
             const dateStr = selectedDate.toISOString().split('T')[0];
-            const todayStr = new Date().toISOString().split('T')[0];
+            const defaultSpeedMinutes = (sheet.speed || appData.defaultSpeed) * 60;
+            const speed = appData.dateSpeedOverrides[dateStr] || defaultSpeedMinutes;
 
-            // Calculate backlog from previous days
-            let totalBacklog = 0;
+            // Get permanently completed tasks
+            const permanentlyCompleted = appData.history.filter(h =>
+                h.sheetName === sheet.name &&
+                h.permanent === true
+            ).map(h => h.taskIndex);
+
+            // Get tasks completed on this date (temporary - not yet executed)
+            const tempCompleted = appData.history.filter(h =>
+                h.sheetName === sheet.name &&
+                h.date === dateStr &&
+                h.permanent !== true
+            ).map(h => h.taskIndex);
+
+            // Get tasks from previous dates that are NOT permanently completed (backlog)
             const previousHistory = appData.history.filter(h =>
                 h.date < dateStr &&
                 h.sheetName === sheet.name &&
-                h.taskIndex !== undefined
+                h.permanent !== true
             );
-            const backlogGroupIndices = new Set();
-            previousHistory.forEach(h => {
-                // Find which group this task belongs to
-                groups.forEach((group, groupIdx) => {
-                    if (group.rows.includes(h.taskIndex)) {
-                        backlogGroupIndices.add(groupIdx);
-                    }
-                });
-            });
+            const backlogTaskIndices = new Set(previousHistory.map(h => h.taskIndex));
 
-            // Calculate total backlog duration
+            // Calculate backlog duration
             let backlogDurationTotal = 0;
-            backlogGroupIndices.forEach(groupIdx => {
-                const group = groups[groupIdx];
-                if (group) {
-                    // Check if this group was fully completed
-                    const allCompleted = group.rows.every(rowIndex =>
-                        appData.history.some(h => h.date <= dateStr && h.sheetName === sheet.name && h.taskIndex ===
-                        rowIndex)
-                    );
-                    if (!allCompleted) {
-                        backlogDurationTotal += group.duration;
-                    }
+            backlogTaskIndices.forEach(idx => {
+                if (sheet.data[idx]) {
+                    backlogDurationTotal += parseInt(sheet.data[idx].duration) || 0;
                 }
             });
 
-            // Show backlog info
+            // Build task list
+            let tasksToShow = [];
+            let totalTaskDuration = 0;
+
+            if (focusShowAllTasks) {
+                // Show all available tasks (excluding permanently completed)
+                sheet.data.forEach((row, idx) => {
+                    if (!permanentlyCompleted.includes(idx)) {
+                        tasksToShow.push({ ...row, index: idx });
+                        totalTaskDuration += parseInt(row.duration) || 0;
+                    }
+                });
+            } else {
+                // Show tasks based on groups
+                const groups = getTaskGroups(sheet, dateStr);
+                let groupIndex = 0;
+
+                // Find which group to show
+                for (let i = 0; i < groups.length; i++) {
+                    const group = groups[i];
+                    // Check if this group has any permanently completed tasks
+                    const hasPermanentCompleted = group.rows.some(idx => permanentlyCompleted.includes(idx));
+                    if (!hasPermanentCompleted) {
+                        groupIndex = i;
+                        break;
+                    }
+                }
+
+                if (groups[groupIndex]) {
+                    groups[groupIndex].rows.forEach(idx => {
+                        if (!permanentlyCompleted.includes(idx)) {
+                            tasksToShow.push({ ...sheet.data[idx], index: idx });
+                            totalTaskDuration += parseInt(sheet.data[idx].duration) || 0;
+                        }
+                    });
+                }
+            }
+
+            // Update total display
+            totalDisplay.style.display = 'block';
+            totalMinutes.textContent = totalTaskDuration;
+
+            // Update backlog info
             if (backlogDurationTotal > 0) {
                 backlogInfo.classList.add('show');
                 backlogDuration.textContent = backlogDurationTotal;
@@ -2583,73 +2885,10 @@
                 backlogInfo.classList.remove('show');
             }
 
-            // Determine which groups to show for this date
-            let groupsToShow = [];
-            if (focusShowAllTasks) {
-                groupsToShow = groups;
-            } else {
-                // Find which group corresponds to this date
-                const dateHistory = appData.history.filter(h =>
-                    h.date === dateStr &&
-                    h.sheetName === sheet.name
-                );
-
-                // If there's history for this date, find which groups were completed
-                if (dateHistory.length > 0) {
-                    const completedIndices = dateHistory.map(h => h.taskIndex);
-                    groups.forEach((group, idx) => {
-                        const allInGroupCompleted = group.rows.every(ri => completedIndices.includes(ri));
-                        if (allInGroupCompleted) {
-                            groupsToShow.push(group);
-                        }
-                    });
-                }
-
-                // If no groups found or it's today, show the next incomplete group
-                if (groupsToShow.length === 0) {
-                    // Find the first incomplete group
-                    for (let i = 0; i < groups.length; i++) {
-                        const group = groups[i];
-                        const allCompleted = group.rows.every(rowIndex =>
-                            appData.history.some(h => h.date <= dateStr && h.sheetName === sheet.name && h.taskIndex ===
-                                rowIndex)
-                        );
-                        if (!allCompleted) {
-                            groupsToShow.push(group);
-                            break;
-                        }
-                    }
-                    // If all groups are complete, show the last group
-                    if (groupsToShow.length === 0 && groups.length > 0) {
-                        groupsToShow.push(groups[groups.length - 1]);
-                    }
-                }
-            }
-
-            // Build task list from groups
-            let tasksToShow = [];
-            groupsToShow.forEach(group => {
-                group.rows.forEach(rowIndex => {
-                    tasksToShow.push({ ...sheet.data[rowIndex], index: rowIndex });
-                });
-            });
-
-            // If no tasks to show, fallback
-            if (tasksToShow.length === 0 && sheet.data.length > 0) {
-                tasksToShow = sheet.data.slice(0, 5).map((d, i) => ({ ...d, index: i }));
-            }
-
-            // Check completion status for selected date
-            const dateStrSelected = selectedDate.toISOString().split('T')[0];
-            const completedOnDate = appData.history.filter(h =>
-                h.date === dateStrSelected &&
-                h.sheetName === sheet.name
-            );
-            const completedIndices = completedOnDate.map(h => h.taskIndex);
-
+            // Count completed
             let completedCount = 0;
             tasksToShow.forEach(task => {
-                if (completedIndices.includes(task.index)) {
+                if (permanentlyCompleted.includes(task.index) || tempCompleted.includes(task.index)) {
                     completedCount++;
                 }
             });
@@ -2663,7 +2902,7 @@
                 container.innerHTML = `
                         <div class="focus-no-tasks">
                             <span class="emoji">🎉</span>
-                            No tasks available for this date
+                            All tasks completed! Great job!
                         </div>
                     `;
                 return;
@@ -2671,20 +2910,40 @@
 
             let html = '';
             tasksToShow.forEach(task => {
-                const isCompleted = completedIndices.includes(task.index);
-                const isBacklog = backlogGroupIndices.size > 0 &&
-                    groups.some(g => g.rows.includes(task.index) && backlogGroupIndices.has(groups.indexOf(g)));
+                const isPermanent = permanentlyCompleted.includes(task.index);
+                const isTemp = tempCompleted.includes(task.index);
+                const isBacklog = backlogTaskIndices.has(task.index);
+                const isCompleted = isPermanent || isTemp;
 
                 let statusClass = '';
-                if (isCompleted) statusClass = 'completed';
-                else if (isBacklog) statusClass = 'pending';
+                let statusLabel = '';
+                let labelClass = '';
+
+                if (isPermanent) {
+                    statusClass = 'completed';
+                    statusLabel = '✅ Done';
+                    labelClass = 'done';
+                } else if (isTemp) {
+                    statusClass = 'completed';
+                    statusLabel = '⏳ Pending Execute';
+                    labelClass = 'done';
+                } else if (isBacklog) {
+                    statusClass = 'backlog';
+                    statusLabel = '📌 Backlog';
+                    labelClass = 'backlog-label';
+                } else {
+                    statusClass = 'pending';
+                    statusLabel = '⏳ Pending';
+                    labelClass = 'pending-label';
+                }
 
                 html += `
-                        <div class="focus-task-item ${statusClass}" onclick="focusToggleTask(${selectedIndex}, ${task.index})">
+                        <div class="focus-task-item ${statusClass}" onclick="focusToggleTask(${appData.focusSheetIndex}, ${task.index})">
                             <div class="focus-task-checkbox">${isCompleted ? '✓' : ''}</div>
                             <span class="focus-task-sr">#${task.sr || task.index + 1}</span>
-                            <span class="focus-task-ref">${task.reference || '-'} ${isBacklog ? '📌' : ''}</span>
+                            <span class="focus-task-ref">${task.reference || '-'}</span>
                             <span class="focus-task-duration">${task.duration || 0}m</span>
+                            <span class="task-status-label ${labelClass}">${statusLabel}</span>
                         </div>
                     `;
             });
@@ -2692,6 +2951,9 @@
             container.innerHTML = html;
         }
 
+        // ============================================================
+        // FOCUS TASK TOGGLE
+        // ============================================================
         function focusToggleTask(sheetIndex, taskIndex) {
             if (appData.isLocked) {
                 alert('🔒 App is locked. Tap "Unlock" at the bottom.');
@@ -2701,29 +2963,39 @@
             const sheet = appData.sheets[sheetIndex];
             const dateStr = selectedDate.toISOString().split('T')[0];
 
+            // Check if already permanently completed
+            const permanentIndex = appData.history.findIndex(h =>
+                h.sheetName === sheet.name &&
+                h.taskIndex === taskIndex &&
+                h.permanent === true
+            );
+
+            if (permanentIndex >= 0) {
+                alert('✅ This task is already permanently completed. Cannot undo.');
+                return;
+            }
+
+            // Check if already temp completed on this date
             const existingIndex = appData.history.findIndex(h =>
-                h.date === dateStr && h.sheetName === sheet.name && h.taskIndex === taskIndex
+                h.date === dateStr &&
+                h.sheetName === sheet.name &&
+                h.taskIndex === taskIndex &&
+                h.permanent !== true
             );
 
             if (existingIndex >= 0) {
+                // Uncomplete (remove temp completion)
                 appData.history.splice(existingIndex, 1);
             } else {
-                // Also remove from any other date for this task (move to selected date)
-                const otherDates = appData.history.filter(h =>
-                    h.sheetName === sheet.name && h.taskIndex === taskIndex && h.date !== dateStr
-                );
-                otherDates.forEach(h => {
-                    const idx = appData.history.indexOf(h);
-                    if (idx >= 0) appData.history.splice(idx, 1);
-                });
-
+                // Add temp completion (pending execute)
                 appData.history.push({
                     date: dateStr,
                     sheetName: sheet.name,
                     taskIndex: taskIndex,
                     taskRef: sheet.data[taskIndex].reference,
                     taskDuration: sheet.data[taskIndex].duration,
-                    timestamp: new Date().toISOString()
+                    timestamp: new Date().toISOString(),
+                    permanent: false
                 });
             }
 
@@ -2734,48 +3006,83 @@
             updateHistory();
         }
 
+        // ============================================================
+        // FOCUS EXECUTE - Makes temp completions permanent
+        // ============================================================
+        function focusExecute() {
+            if (appData.isLocked) {
+                alert('🔒 App is locked. Tap "Unlock" at the bottom.');
+                return;
+            }
+
+            const sheet = getSelectedSheet();
+            if (!sheet) {
+                alert('⚠️ Select a sheet first.');
+                return;
+            }
+
+            const dateStr = selectedDate.toISOString().split('T')[0];
+
+            // Get temp completions for this date
+            const tempCompletions = appData.history.filter(h =>
+                h.date === dateStr &&
+                h.sheetName === sheet.name &&
+                h.permanent !== true
+            );
+
+            if (tempCompletions.length === 0) {
+                alert('⚠️ No pending tasks to execute.');
+                return;
+            }
+
+            // Convert temp to permanent
+            tempCompletions.forEach(h => {
+                h.permanent = true;
+            });
+
+            saveData();
+            updateFocusTasks();
+            updateFocusDashboard();
+            updateFocusBattery();
+            updateHistory();
+            showToast(`✅ Executed ${tempCompletions.length} tasks permanently!`);
+        }
+
+        // ============================================================
+        // FOCUS SELECT ALL / DESELECT ALL
+        // ============================================================
         function focusSelectAll() {
             if (appData.isLocked) {
                 alert('🔒 App is locked. Tap "Unlock" at the bottom.');
                 return;
             }
 
-            const select = document.getElementById('focusSheetSelect');
-            const selectedIndex = parseInt(select.value);
-            if (isNaN(selectedIndex) || !appData.sheets[selectedIndex]) return;
-
-            const sheet = appData.sheets[selectedIndex];
-            const dateStr = selectedDate.toISOString().split('T')[0];
-
-            // Get tasks for this date
-            const groups = getTaskGroups(sheet);
-            let tasksToComplete = [];
-            if (focusShowAllTasks) {
-                sheet.data.forEach((_, idx) => tasksToComplete.push(idx));
-            } else {
-                // Complete the current group
-                const dateHistory = appData.history.filter(h =>
-                    h.date === dateStr && h.sheetName === sheet.name
-                );
-                const completedIndices = dateHistory.map(h => h.taskIndex);
-
-                let targetGroup = null;
-                for (let i = 0; i < groups.length; i++) {
-                    const allCompleted = groups[i].rows.every(ri => completedIndices.includes(ri));
-                    if (!allCompleted) {
-                        targetGroup = groups[i];
-                        break;
-                    }
-                }
-                if (!targetGroup) targetGroup = groups[0];
-                if (targetGroup) {
-                    tasksToComplete = targetGroup.rows;
-                }
+            const sheet = getSelectedSheet();
+            if (!sheet) {
+                alert('⚠️ Select a sheet first.');
+                return;
             }
 
-            tasksToComplete.forEach(taskIndex => {
+            const dateStr = selectedDate.toISOString().split('T')[0];
+
+            // Get permanently completed
+            const permanentlyCompleted = appData.history.filter(h =>
+                h.sheetName === sheet.name &&
+                h.permanent === true
+            ).map(h => h.taskIndex);
+
+            // Get tasks to select (all available tasks not permanently completed)
+            const availableTasks = sheet.data
+                .map((_, idx) => idx)
+                .filter(idx => !permanentlyCompleted.includes(idx));
+
+            let added = 0;
+            availableTasks.forEach(taskIndex => {
                 const existing = appData.history.findIndex(h =>
-                    h.date === dateStr && h.sheetName === sheet.name && h.taskIndex === taskIndex
+                    h.date === dateStr &&
+                    h.sheetName === sheet.name &&
+                    h.taskIndex === taskIndex &&
+                    h.permanent !== true
                 );
                 if (existing < 0) {
                     appData.history.push({
@@ -2784,8 +3091,10 @@
                         taskIndex: taskIndex,
                         taskRef: sheet.data[taskIndex].reference,
                         taskDuration: sheet.data[taskIndex].duration,
-                        timestamp: new Date().toISOString()
+                        timestamp: new Date().toISOString(),
+                        permanent: false
                     });
+                    added++;
                 }
             });
 
@@ -2794,6 +3103,7 @@
             updateFocusDashboard();
             updateFocusBattery();
             updateHistory();
+            showToast(`✅ Selected ${added} tasks for execution`);
         }
 
         function focusDeselectAll() {
@@ -2802,15 +3112,23 @@
                 return;
             }
 
-            const select = document.getElementById('focusSheetSelect');
-            const selectedIndex = parseInt(select.value);
-            if (isNaN(selectedIndex) || !appData.sheets[selectedIndex]) return;
+            const sheet = getSelectedSheet();
+            if (!sheet) {
+                alert('⚠️ Select a sheet first.');
+                return;
+            }
 
-            const sheet = appData.sheets[selectedIndex];
             const dateStr = selectedDate.toISOString().split('T')[0];
 
+            // Remove temp completions for this date
+            const removed = appData.history.filter(h =>
+                h.date === dateStr &&
+                h.sheetName === sheet.name &&
+                h.permanent !== true
+            ).length;
+
             appData.history = appData.history.filter(h =>
-                !(h.date === dateStr && h.sheetName === sheet.name)
+                !(h.date === dateStr && h.sheetName === sheet.name && h.permanent !== true)
             );
 
             saveData();
@@ -2818,6 +3136,7 @@
             updateFocusDashboard();
             updateFocusBattery();
             updateHistory();
+            showToast(`❌ Deselected ${removed} tasks`);
         }
 
         function focusToggleView() {
@@ -2830,60 +3149,59 @@
         }
 
         // ============================================================
-        // HISTORY
+        // HISTORY - Sorted by serial number
         // ============================================================
         function updateHistory() {
             const container = document.getElementById('historyList');
 
-            if (appData.history.length === 0) {
+            // Get all permanently completed tasks
+            const permanentHistory = appData.history.filter(h => h.permanent === true);
+
+            if (permanentHistory.length === 0) {
                 container.innerHTML = `
                         <div class="empty-state">
                             <div class="icon">📭</div>
                             <h3>No History Yet</h3>
-                            <p>Start tracking your progress to see history here</p>
+                            <p>Execute tasks to see them in history</p>
                         </div>
                     `;
                 return;
             }
 
+            // Group by sheet and sort by serial number
             const grouped = {};
-            appData.history.forEach(h => {
-                if (!grouped[h.date]) grouped[h.date] = [];
-                grouped[h.date].push(h);
+            permanentHistory.forEach(h => {
+                if (!grouped[h.sheetName]) grouped[h.sheetName] = [];
+                grouped[h.sheetName].push(h);
             });
 
             let html = '';
-            const sortedDates = Object.keys(grouped).sort((a, b) => b.localeCompare(a));
+            Object.keys(grouped).forEach(sheetName => {
+                // Sort by taskIndex (serial number)
+                const entries = grouped[sheetName].sort((a, b) => a.taskIndex - b.taskIndex);
 
-            sortedDates.forEach(date => {
-                const entries = grouped[date];
                 const totalTasks = entries.length;
                 const totalDuration = entries.reduce((sum, e) => sum + (parseInt(e.taskDuration) || 0), 0);
 
-                const dateObj = new Date(date + 'T00:00:00');
-                const dateLabel = dateObj.toLocaleDateString('en-US', {
-                    weekday: 'short',
-                    month: 'short',
-                    day: 'numeric'
-                });
-
-                const isToday = date === new Date().toISOString().split('T')[0];
-
                 html += `
-                        <div style="margin-top:8px;padding:8px;background:#f8fafc;border-radius:8px;${isToday ? 'border:2px solid #4f46e5;' : ''}">
+                        <div style="margin-top:8px;padding:8px;background:#f8fafc;border-radius:8px;">
                             <div style="display:flex;justify-content:space-between;margin-bottom:4px;font-size:12px;font-weight:600;color:#1a202c;">
-                                <span>📅 ${dateLabel} ${isToday ? '📌' : ''}</span>
+                                <span>📋 ${sheetName}</span>
                                 <span>${totalTasks} tasks · ${totalDuration} mins</span>
                             </div>
                     `;
 
-                entries.forEach((entry, idx) => {
-                    const key = `${date}_${entry.sheetName}_${entry.taskIndex}`;
+                entries.forEach(entry => {
+                    const dateObj = new Date(entry.date + 'T00:00:00');
+                    const dateLabel = dateObj.toLocaleDateString('en-US', {
+                        month: 'short',
+                        day: 'numeric'
+                    });
                     html += `
                             <div class="history-item">
-                                <span class="date">${entry.taskRef || 'Task'} (${entry.sheetName})</span>
+                                <span class="date">${dateLabel}</span>
+                                <span class="task-info">${entry.taskRef || 'Task'}</span>
                                 <span class="progress completed">✅ ${entry.taskDuration || 0}m</span>
-                                <button class="delete-btn" onclick="deleteHistory('${date}', '${entry.sheetName}', ${entry.taskIndex})">✕</button>
                             </div>
                         `;
                 });
@@ -2892,25 +3210,6 @@
             });
 
             container.innerHTML = html;
-        }
-
-        function deleteHistory(date, sheetName, taskIndex) {
-            if (appData.isLocked) {
-                alert('🔒 App is locked. Tap "Unlock" at the bottom.');
-                return;
-            }
-
-            const idx = appData.history.findIndex(h =>
-                h.date === date && h.sheetName === sheetName && h.taskIndex === taskIndex
-            );
-            if (idx >= 0) {
-                appData.history.splice(idx, 1);
-                saveData();
-                updateHistory();
-                updateFocusTasks();
-                updateFocusDashboard();
-                updateFocusBattery();
-            }
         }
 
         // ============================================================
@@ -2953,20 +3252,23 @@
 
             const sheetsData = appData.sheets.map(sheet => {
                 const totalItems = sheet.data.length;
-                const completedItems = sheet.completed.filter(Boolean).length;
-                const percent = totalItems > 0 ? Math.round((completedItems / totalItems) * 100) : 0;
+                const permanentlyCompleted = appData.history.filter(h =>
+                    h.sheetName === sheet.name &&
+                    h.permanent === true
+                ).length;
+                const percent = totalItems > 0 ? Math.round((permanentlyCompleted / totalItems) * 100) : 0;
 
                 return {
                     sheetName: sheet.name,
                     batteryPercent: percent,
                     totalItems: totalItems,
-                    completedItems: completedItems,
+                    completedItems: permanentlyCompleted,
                     speed: sheet.speed || appData.defaultSpeed,
                     lastUpdated: new Date().toISOString()
                 };
             });
 
-            const historyData = appData.history.map(h => ({
+            const historyData = appData.history.filter(h => h.permanent === true).map(h => ({
                 date: h.date,
                 sheetName: h.sheetName,
                 taskRef: h.taskRef,
@@ -2981,6 +3283,7 @@
                         sheets: sheetsData,
                         history: historyData,
                         defaultSpeed: appData.defaultSpeed,
+                        dateSpeedOverrides: appData.dateSpeedOverrides || {},
                         lastUpdated: new Date().toISOString()
                     }
                 }
@@ -3038,7 +3341,7 @@
                 setTimeout(() => {
                     updateGitHubStatus();
                 }, 3000);
-                alert(`✅ Synced ${appData.sheets.length} sheets and ${appData.history.length} history entries!`);
+                alert(`✅ Synced ${appData.sheets.length} sheets and ${appData.history.filter(h=>h.permanent).length} history entries!`);
                 return response;
             })
             .catch(error => {
@@ -3070,13 +3373,15 @@
 
             const sheet = appData.sheets[selectedIndex];
             const totalDuration = sheet.data.reduce((sum, row) => sum + (parseFloat(row.duration) || 0), 0);
-            const completedDuration = sheet.data.reduce((sum, row, i) => {
-                return sum + (sheet.completed[i] ? (parseFloat(row.duration) || 0) : 0);
-            }, 0);
+            const permanentlyCompleted = appData.history.filter(h =>
+                h.sheetName === sheet.name &&
+                h.permanent === true
+            );
+            const completedDuration = permanentlyCompleted.reduce((sum, h) => sum + (parseInt(h.taskDuration) || 0), 0);
             const remainingDuration = totalDuration - completedDuration;
             const speed = (sheet.speed || appData.defaultSpeed) * 60;
             const daysRequired = Math.ceil(remainingDuration / speed);
-            const groups = getTaskGroups(sheet);
+            const groups = getTaskGroups(sheet, new Date().toISOString().split('T')[0]);
 
             let html = `
                     <table class="results-table">
@@ -3092,12 +3397,13 @@
                     `;
 
             sheet.data.forEach((row, i) => {
+                const isCompleted = permanentlyCompleted.some(h => h.taskIndex === i);
                 html += `
                         <tr>
                             <td style="text-align:center;color:#9ca3af;">${row.sr || i + 1}</td>
                             <td>${row.reference || '-'}</td>
                             <td style="text-align:center;">${row.duration || 0}m</td>
-                            <td>${sheet.completed[i] ? '✅' : '⏳'}</td>
+                            <td>${isCompleted ? '✅' : '⏳'}</td>
                         </tr>
                     `;
             });
@@ -3153,9 +3459,11 @@
 
             const sheet = appData.sheets[selectedIndex];
             const totalDuration = sheet.data.reduce((sum, row) => sum + (parseFloat(row.duration) || 0), 0);
-            const completedDuration = sheet.data.reduce((sum, row, i) => {
-                return sum + (sheet.completed[i] ? (parseFloat(row.duration) || 0) : 0);
-            }, 0);
+            const permanentlyCompleted = appData.history.filter(h =>
+                h.sheetName === sheet.name &&
+                h.permanent === true
+            );
+            const completedDuration = permanentlyCompleted.reduce((sum, h) => sum + (parseInt(h.taskDuration) || 0), 0);
             const remainingDuration = totalDuration - completedDuration;
             const speed = (sheet.speed || appData.defaultSpeed) * 60;
             const daysRequired = Math.ceil(remainingDuration / speed);
@@ -3171,13 +3479,14 @@
                 const daysToTarget = Math.ceil((targetDate - today) / (1000 * 60 * 60 * 24));
                 if (daysToTarget > 0) {
                     const remMin = sheet.data.reduce((sum, row, i) => {
-                        return sum + (!sheet.completed[i] ? (parseFloat(row.duration) || 0) : 0);
+                        const isCompleted = permanentlyCompleted.some(h => h.taskIndex === i);
+                        return sum + (!isCompleted ? (parseFloat(row.duration) || 0) : 0);
                     }, 0);
                     requiredSpeed = (remMin / 60 / daysToTarget).toFixed(1);
                 }
             }
 
-            const groups = getTaskGroups(sheet);
+            const groups = getTaskGroups(sheet, new Date().toISOString().split('T')[0]);
 
             container.innerHTML = `
                     <div class="tracker-form">
@@ -3333,6 +3642,8 @@
 
             const sheet = appData.sheets[appData.currentSheetIndex];
             showModal('Delete Sheet', `Are you sure you want to delete "${sheet.name}"? This cannot be undone.`, false, () => {
+                // Remove from history
+                appData.history = appData.history.filter(h => h.sheetName !== sheet.name);
                 appData.sheets.splice(appData.currentSheetIndex, 1);
                 if (appData.currentSheetIndex >= appData.sheets.length) {
                     appData.currentSheetIndex = appData.sheets.length - 1;
@@ -3347,6 +3658,7 @@
                 updateFocusDashboard();
                 updateFocusBattery();
                 updateFocusTasks();
+                updateHistory();
             });
 
             document.getElementById('modalConfirmBtn').className = 'btn-danger';
