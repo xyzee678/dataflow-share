@@ -4,6 +4,11 @@
       "batteryPercent": 0,
       "sheetName": "No sheet",
       "lastUpdated": "2026-06-20T18:30:00Z"
+    },
+    "Amey": {
+      "batteryPercent": 80,
+      "sheetName": "Sheet 3",
+      "lastUpdated": "2026-06-20T18:01:26.975Z"
     }
   }
 }
