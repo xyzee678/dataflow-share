@@ -3,661 +3,620 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
-  <title>Lecture Scheduler · Course Timetable</title>
+  <title>Lecture Planner · Course Timetable</title>
+  <!-- Font Awesome for icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
   <style>
     * {
       box-sizing: border-box;
-      font-family: system-ui, -apple-system, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+      font-family: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
     }
     body {
-      background: #f5f7fb;
-      margin: 0;
+      background: #f4f7fc;
       padding: 16px 12px 40px;
-      color: #1e293b;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
     }
     .container {
-      max-width: 600px;
-      margin: 0 auto;
-    }
-    .card {
+      max-width: 700px;
+      width: 100%;
       background: white;
-      border-radius: 24px;
-      padding: 18px 16px;
-      box-shadow: 0 8px 20px rgba(0,0,0,0.03), 0 2px 6px rgba(0,0,0,0.05);
+      border-radius: 28px;
+      box-shadow: 0 8px 24px rgba(0,0,0,0.06);
+      padding: 20px 16px;
       margin-bottom: 20px;
-      border: 1px solid #e9edf2;
     }
-    h2, h3 {
-      margin: 0 0 12px 0;
+    h1, h2 {
       font-weight: 600;
-      font-size: 1.3rem;
-      letter-spacing: -0.01em;
+      font-size: 1.5rem;
+      letter-spacing: -0.3px;
+      color: #0b1b33;
       display: flex;
       align-items: center;
       gap: 8px;
+      margin-bottom: 12px;
     }
-    h3 {
-      font-size: 1.1rem;
-      margin-bottom: 8px;
-    }
+    h2 { font-size: 1.2rem; margin-top: 18px; border-bottom: 1px solid #e9edf4; padding-bottom: 8px; }
     .flex-row {
       display: flex;
       flex-wrap: wrap;
       align-items: center;
       gap: 10px 8px;
     }
-    .label {
-      font-weight: 500;
-      font-size: 0.9rem;
-      color: #475569;
-      min-width: 70px;
-    }
-    input, select, button {
-      font-size: 0.95rem;
-      padding: 10px 14px;
-      border-radius: 60px;
-      border: 1px solid #d1d9e6;
-      background: white;
-      transition: 0.15s;
-      outline: none;
-    }
-    input:focus, select:focus {
-      border-color: #6c8cff;
-      box-shadow: 0 0 0 3px rgba(108, 140, 255, 0.2);
-    }
-    button {
-      background: #1e293b;
-      color: white;
-      font-weight: 500;
-      border: none;
-      padding: 10px 18px;
-      cursor: pointer;
-      box-shadow: 0 2px 4px rgba(0,0,0,0.05);
-      border-radius: 60px;
-      touch-action: manipulation;
-    }
-    button.secondary {
-      background: #eef2f6;
-      color: #1e293b;
-    }
-    button.success {
-      background: #2b6e4f;
-    }
-    button.danger {
-      background: #b91c1c;
-    }
-    button:active {
-      transform: scale(0.97);
-    }
-    .upload-area {
-      display: flex;
-      flex-wrap: wrap;
-      align-items: center;
-      gap: 8px;
-      margin-top: 6px;
-    }
-    .upload-area input[type="file"] {
-      flex: 1;
-      padding: 8px 12px;
-      border-radius: 40px;
-      background: #f8fafc;
-    }
-    .course-selector {
-      display: flex;
-      flex-wrap: wrap;
-      align-items: center;
-      gap: 12px;
-      margin: 6px 0 4px;
-    }
-    .date-picker {
-      display: flex;
-      flex-wrap: wrap;
-      align-items: center;
-      gap: 6px 12px;
-    }
-    .timetable {
-      margin-top: 16px;
-      overflow-x: auto;
-    }
-    .day-group {
-      background: #f8fafc;
-      border-radius: 20px;
-      padding: 12px 14px;
-      margin-bottom: 12px;
-      border-left: 4px solid #6c8cff;
-      transition: 0.1s;
-    }
-    .day-header {
+    .flex-between {
       display: flex;
       justify-content: space-between;
-      font-weight: 600;
-      font-size: 0.95rem;
-      color: #0f172a;
-      margin-bottom: 8px;
-      flex-wrap: wrap;
-    }
-    .lecture-item {
-      display: flex;
       align-items: center;
-      gap: 10px;
-      padding: 8px 4px;
-      border-radius: 16px;
-      margin: 4px 0;
-      background: white;
-      box-shadow: 0 1px 2px rgba(0,0,0,0.02);
-      border: 1px solid #eef2f6;
-      transition: 0.1s;
-    }
-    .lecture-item.done {
-      background: #e6f5ec;
-      border-color: #9bc9b0;
-    }
-    .lecture-item.done .lec-name {
-      text-decoration: line-through;
-      color: #2d6b4a;
-    }
-    .lec-status {
-      width: 28px;
-      height: 28px;
-      border-radius: 30px;
-      border: 2px solid #cbd5e1;
-      background: white;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 1rem;
-      flex-shrink: 0;
-      cursor: pointer;
-      transition: 0.1s;
-      touch-action: manipulation;
-    }
-    .lecture-item.done .lec-status {
-      background: #1f8b4c;
-      border-color: #1f8b4c;
-      color: white;
-    }
-    .lec-name {
-      flex: 1;
-      font-size: 0.9rem;
-      font-weight: 500;
-      word-break: break-word;
-    }
-    .lec-dur {
-      font-size: 0.8rem;
-      background: #eef2f6;
-      padding: 2px 12px;
-      border-radius: 30px;
-      color: #334155;
-      white-space: nowrap;
-    }
-    .empty-state {
-      color: #64748b;
-      text-align: center;
-      padding: 30px 10px;
-      font-style: italic;
     }
     .badge {
-      background: #e2e8f0;
+      background: #eef3fa;
       border-radius: 40px;
-      padding: 2px 12px;
-      font-size: 0.75rem;
+      padding: 6px 14px;
+      font-size: 0.8rem;
+      color: #1f3a6b;
+    }
+    .btn {
+      background: white;
+      border: 1px solid #d0d9e8;
+      padding: 8px 16px;
+      border-radius: 40px;
+      font-size: 0.9rem;
       font-weight: 500;
+      color: #1f3a6b;
+      cursor: pointer;
+      transition: 0.15s;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: #fafcff;
+      box-shadow: 0 1px 2px rgba(0,0,0,0.02);
     }
-    .hr-light {
-      border: none;
-      border-top: 1px solid #e2e8f0;
-      margin: 16px 0;
+    .btn-primary {
+      background: #1f3a6b;
+      border: 1px solid #1f3a6b;
+      color: white;
     }
-    .dummy-btn {
-      background: #f1f5f9;
-      color: #1e293b;
-      border: 1px dashed #94a3b8;
+    .btn-primary i { color: white; }
+    .btn-success {
+      background: #1e7b4c;
+      border-color: #1e7b4c;
+      color: white;
     }
-    .row {
+    .btn-outline { background: transparent; border: 1px solid #bcc9dd; }
+    .btn-sm { padding: 4px 12px; font-size: 0.8rem; }
+    .btn-block { width: 100%; justify-content: center; }
+    .mt-2 { margin-top: 16px; }
+    .mb-1 { margin-bottom: 8px; }
+    .gap-1 { gap: 6px; }
+    textarea, input, select {
+      width: 100%;
+      padding: 12px 14px;
+      border: 1px solid #d7dfe9;
+      border-radius: 18px;
+      font-size: 0.95rem;
+      background: white;
+      transition: 0.1s;
+    }
+    textarea { min-height: 90px; resize: vertical; }
+    label { font-weight: 500; font-size: 0.9rem; color: #1d2b44; display: block; margin: 8px 0 4px; }
+    .file-upload-wrapper {
+      background: #f1f6fe;
+      border-radius: 20px;
+      padding: 16px;
+      border: 1px dashed #a2b9d9;
+      text-align: center;
+    }
+    .table-wrap {
+      overflow-x: auto;
+      margin: 12px 0;
+      border-radius: 18px;
+      border: 1px solid #e4eaf2;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.85rem;
+    }
+    th {
+      background: #eef3fa;
+      color: #1f3a6b;
+      font-weight: 600;
+      padding: 10px 6px;
+      text-align: left;
+      white-space: nowrap;
+    }
+    td {
+      padding: 10px 6px;
+      border-bottom: 1px solid #e9edf4;
+      vertical-align: middle;
+    }
+    .lecture-row {
+      transition: 0.1s;
+    }
+    .lecture-row.done {
+      background: #d9f0e1 !important;
+    }
+    .lecture-row.done td {
+      color: #0c3b24;
+    }
+    .tick-box {
+      width: 22px;
+      height: 22px;
+      border-radius: 8px;
+      border: 2px solid #859bb9;
+      background: white;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: 0.1s;
+      font-size: 14px;
+      color: #1e7b4c;
+    }
+    .tick-box.checked {
+      background: #1e7b4c;
+      border-color: #1e7b4c;
+      color: white;
+    }
+    .status-badge {
+      font-size: 0.7rem;
+      background: #eef3fa;
+      padding: 2px 12px;
+      border-radius: 30px;
+      white-space: nowrap;
+    }
+    .page {
+      display: none;
+    }
+    .page.active {
+      display: block;
+    }
+    .nav-tabs {
       display: flex;
+      gap: 8px;
+      margin: 16px 0 8px;
       flex-wrap: wrap;
+    }
+    .nav-tab {
+      background: #eef3fa;
+      padding: 6px 18px;
+      border-radius: 40px;
+      font-weight: 500;
+      color: #1f3a6b;
+      cursor: pointer;
+      border: 1px solid transparent;
+      font-size: 0.9rem;
+    }
+    .nav-tab.active {
+      background: #1f3a6b;
+      color: white;
+      border-color: #1f3a6b;
+    }
+    .course-selector {
+      background: #f8faff;
+      border-radius: 30px;
+      padding: 4px 8px 4px 16px;
+      border: 1px solid #d7dfe9;
+      display: flex;
       align-items: center;
       gap: 8px;
+    }
+    .course-selector select {
+      border: none;
+      background: transparent;
+      padding: 8px 4px;
+      font-weight: 500;
+      width: auto;
+      min-width: 120px;
+    }
+    .date-picker {
+      border: 1px solid #d7dfe9;
+      border-radius: 30px;
+      padding: 4px 12px;
+      background: white;
+    }
+    .date-picker input {
+      border: none;
+      padding: 8px 4px;
+      background: transparent;
+      width: 140px;
+    }
+    .empty-state {
+      padding: 30px 10px;
+      text-align: center;
+      color: #6f7f9b;
+    }
+    .footer-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 16px;
+    }
+    @media (max-width: 480px) {
+      .container { padding: 14px 10px; }
+      .flex-row { gap: 6px; }
+      .btn { font-size: 0.8rem; padding: 6px 12px; }
     }
   </style>
 </head>
 <body>
-<div class="container" id="app">
-  <div class="card">
-    <h2>📚 Course Scheduler</h2>
-    <div class="upload-area">
-      <input type="file" id="fileInput" accept=".csv,.txt,.text" style="flex:2;">
-      <button id="uploadBtn">⬆️ Upload</button>
-    </div>
-    <div style="font-size:0.8rem; color:#64748b; margin-top:6px;">Format: srno, LectureName, duration (hours) — one per line</div>
+<div class="container">
+  <h1><i class="fas fa-calendar-alt" style="color:#1f3a6b;"></i> Lecture Planner</h1>
+  <!-- Tabs -->
+  <div class="nav-tabs">
+    <span class="nav-tab active" data-page="page-upload">Upload</span>
+    <span class="nav-tab" data-page="page-timetable">Timetable</span>
+    <span class="nav-tab" data-page="page-edit">Edit Data</span>
   </div>
 
-  <div class="card">
-    <div class="flex-row">
-      <span class="label">📖 Course</span>
-      <select id="courseSelect" style="flex:1; min-width:120px;"></select>
-      <button id="deleteCourseBtn" class="danger" style="background:#b91c1c; padding:6px 14px;">✕</button>
+  <!-- ========== PAGE UPLOAD ========== -->
+  <div id="page-upload" class="page active">
+    <div class="file-upload-wrapper">
+      <p style="font-weight:500;"><i class="fas fa-cloud-upload-alt"></i> Paste lecture data</p>
+      <p style="font-size:0.8rem; color:#4a5f7a;">Format: sr_no. Lecture_name duration_in_mins (one per line)</p>
+      <textarea id="lectureRawData" placeholder="1. Introduction 45&#10;2. Basics 30&#10;3. Advanced 75">1. Intro to Algebra 45
+2. Linear equations 60
+3. Quadratic 40
+4. Polynomials 55
+5. Graphing 70
+6. Exponents 25
+7. Logarithms 50
+8. Complex numbers 35
+9. Matrices 80
+10. Statistics 30</textarea>
+      <div class="flex-row mt-2">
+        <input type="text" id="courseNameInput" placeholder="Course name (e.g. Math 101)" value="Math 101" style="flex:2; min-width:120px;">
+        <button class="btn btn-primary" id="uploadCourseBtn"><i class="fas fa-upload"></i> Upload</button>
+        <button class="btn btn-outline" id="addDummyBtn"><i class="fas fa-database"></i> Dummy</button>
+      </div>
+      <div style="font-size:0.8rem; margin-top:6px; color:#2b4a7a;">Daily speed (mins): <input type="number" id="dailySpeedInput" value="120" style="width:70px; display:inline-block; padding:4px 8px; border-radius:30px;"></div>
     </div>
-    <div class="date-picker" style="margin-top:8px;">
-      <span class="label">📅 Start</span>
-      <input type="date" id="startDateInput" style="flex:1; min-width:140px;">
-      <span class="label">⚡ Speed</span>
-      <input type="number" id="speedInput" value="2" step="0.5" min="0.5" style="width:70px;">
-      <span style="font-size:0.8rem;">hr/day</span>
+    <div style="margin-top:10px; background:#eef3fa; border-radius:30px; padding:8px 16px; font-size:0.85rem;">
+      <i class="fas fa-info-circle"></i> Uploaded courses: <span id="courseListBadge">none</span>
     </div>
-    <div style="margin-top:12px;">
-      <button id="generateBtn" class="success" style="width:100%;">📋 Generate Timetable</button>
+    <!-- dummy data quick note -->
+    <div style="font-size:0.75rem; color:#4d6a8f; margin-top:8px;">💡 Click "Dummy" to add two demo courses with lectures.</div>
+  </div>
+
+  <!-- ========== PAGE TIMETABLE ========== -->
+  <div id="page-timetable" class="page">
+    <div class="flex-row course-selector">
+      <i class="fas fa-book-open"></i>
+      <select id="courseSelectTimetable"><option value="">-- select course --</option></select>
+      <div class="date-picker">
+        <input type="date" id="timetableDate" value="2026-06-21">
+      </div>
+      <button class="btn btn-sm btn-primary" id="refreshTimetableBtn"><i class="fas fa-sync-alt"></i></button>
+    </div>
+    <div id="timetableContainer">
+      <div class="empty-state"><i class="fas fa-table"></i> Select a course and date to view timetable.</div>
     </div>
   </div>
 
-  <div class="card" style="padding-bottom:8px;">
-    <div style="display:flex; justify-content:space-between; align-items:center;">
-      <h3>📆 Timetable · <span id="courseDisplayName">—</span></h3>
-      <button id="dummyDataBtn" class="dummy-btn" style="padding:4px 14px;">🧪 + dummy</button>
+  <!-- ========== PAGE EDIT DATA ========== -->
+  <div id="page-edit" class="page">
+    <h2><i class="fas fa-pen"></i> Uploaded lectures (editable)</h2>
+    <div id="editDataContainer">
+      <div class="empty-state">No course data yet. Upload a course first.</div>
     </div>
-    <div id="timetableContainer" class="timetable">
-      <div class="empty-state">Upload data or add dummy courses to start</div>
+    <div class="footer-actions">
+      <button class="btn btn-outline btn-sm" id="refreshEditBtn"><i class="fas fa-refresh"></i> Refresh</button>
     </div>
   </div>
 </div>
+
 <script>
   (function(){
-    // ----- DATA STORE -----
-    let courses = {};               // courseName -> { lectures: [{srno, name, duration}], timetable: [] }
-    let selectedCourse = '';
-    let currentTimetable = [];      // array of day objects: { date, lectures: [{srno, name, duration, done}] }
+    // ---------- DATA STORE ----------
+    // courseData: { courseName: { lectures: [ {sr, name, duration}, ... ], dailySpeed: 120, startDate: '2026-06-21' } }
+    let courseData = {};
+    // result store: { courseName: { '2026-06-21': [ { lectureIndex, done: bool, date } ] } } 
+    // but we compute timetable on the fly.
+    // progress store: { courseName: { lectureIndex: { done: bool, date: string } } }
+    let progressStore = {};
 
-    // DOM refs
-    const fileInput = document.getElementById('fileInput');
-    const uploadBtn = document.getElementById('uploadBtn');
-    const courseSelect = document.getElementById('courseSelect');
-    const startDateInput = document.getElementById('startDateInput');
-    const speedInput = document.getElementById('speedInput');
-    const generateBtn = document.getElementById('generateBtn');
-    const timetableContainer = document.getElementById('timetableContainer');
-    const courseDisplayName = document.getElementById('courseDisplayName');
-    const deleteCourseBtn = document.getElementById('deleteCourseBtn');
-    const dummyDataBtn = document.getElementById('dummyDataBtn');
+    // helpers
+    function getTodayStr() { return new Date().toISOString().split('T')[0]; }
 
-    // set default start date to today
-    function setDefaultDate() {
-      const today = new Date();
-      const yyyy = today.getFullYear();
-      const mm = String(today.getMonth()+1).padStart(2,'0');
-      const dd = String(today.getDate()).padStart(2,'0');
-      startDateInput.value = `${yyyy}-${mm}-${dd}`;
-    }
-    setDefaultDate();
-
-    // ----- helpers -----
-    function parseLectureLine(line) {
-      const parts = line.split(',').map(s => s.trim());
-      if (parts.length < 3) return null;
-      const srno = parts[0];
-      const name = parts[1];
-      const dur = parseFloat(parts[2]);
-      if (isNaN(dur) || dur <= 0) return null;
-      return { srno, name, duration: dur };
-    }
-
-    function loadCourseFromText(text, courseName) {
-      const lines = text.split(/\r?\n/).filter(l => l.trim() !== '');
+    // ----- parse lectures from text -----
+    function parseLectures(text) {
+      const lines = text.split(/\n/).filter(line => line.trim() !== '');
       const lectures = [];
       for (let line of lines) {
-        const parsed = parseLectureLine(line);
-        if (parsed) lectures.push(parsed);
+        // pattern: "1. Lecture name 45"  or "1. Lecture 45"
+        const match = line.match(/^(\d+)\.\s*(.+?)\s+(\d+)$/);
+        if (match) {
+          const sr = parseInt(match[1], 10);
+          const name = match[2].trim();
+          const duration = parseInt(match[3], 10);
+          if (!isNaN(duration) && duration > 0) {
+            lectures.push({ sr, name, duration });
+          }
+        }
       }
-      if (lectures.length === 0) return false;
-      courses[courseName] = { lectures, timetable: [] };
-      return true;
+      return lectures;
     }
 
-    // build timetable (immutable) from lectures, speed, startDate
-    function buildTimetable(lectures, speed, startDateStr) {
-      if (!lectures || lectures.length === 0 || speed <= 0) return [];
-      const start = new Date(startDateStr);
-      if (isNaN(start.getTime())) return [];
-
-      let timetable = [];
-      let currentDay = new Date(start);
-      let remaining = 0;          // remaining hours from current lecture
-      let currentLectureIdx = 0;
-      let currentLecture = null;
-
-      // helper: advance day
-      function nextDay(date) {
-        const d = new Date(date);
-        d.setDate(d.getDate() + 1);
-        return d;
-      }
-
-      // loop over lectures
-      while (currentLectureIdx < lectures.length) {
-        if (currentLecture === null) {
-          currentLecture = { ...lectures[currentLectureIdx], done: false };
-        }
-        // how much to allocate today?
-        let dailyCapacity = speed;
-        let allocated = 0;
-        let lectureCompleted = false;
-
-        // if remaining > 0 (lecture carried over)
-        if (remaining > 0) {
-          if (remaining <= dailyCapacity) {
-            allocated = remaining;
-            dailyCapacity -= remaining;
-            remaining = 0;
-            lectureCompleted = true;
-          } else {
-            allocated = dailyCapacity;
-            remaining -= dailyCapacity;
-            dailyCapacity = 0;
-          }
-        } else {
-          // fresh lecture
-          if (currentLecture.duration <= dailyCapacity) {
-            allocated = currentLecture.duration;
-            dailyCapacity -= currentLecture.duration;
-            lectureCompleted = true;
-          } else {
-            allocated = dailyCapacity;
-            remaining = currentLecture.duration - dailyCapacity;
-            dailyCapacity = 0;
-          }
-        }
-
-        // push to timetable for this day
-        const dateStr = currentDay.toISOString().split('T')[0];
-        let dayEntry = timetable.find(d => d.date === dateStr);
-        if (!dayEntry) {
-          dayEntry = { date: dateStr, lectures: [] };
-          timetable.push(dayEntry);
-        }
-
-        // create lecture entry for today (show the actual lecture, with its original duration)
-        const lectureForToday = {
-          srno: currentLecture.srno,
-          name: currentLecture.name,
-          duration: currentLecture.duration,
-          done: false,
-          // store the allocated amount for display? but we keep original
-        };
-        dayEntry.lectures.push(lectureForToday);
-
-        // if lecture completed, move to next
-        if (lectureCompleted) {
-          currentLectureIdx++;
-          currentLecture = null;
-          remaining = 0;
-        }
-
-        // if no capacity left for today -> next day
-        if (dailyCapacity < 0.001) {
-          currentDay = nextDay(currentDay);
-        } else {
-          // if lecture not completed but capacity remains -> maybe same day? continue with remaining? 
-          // but we need to avoid infinite loop: if remaining > 0 and dailyCapacity > 0, we should continue same day
-          if (remaining > 0 && dailyCapacity > 0) {
-            // we have remaining hours but still capacity? keep same day (loop will continue)
-            // but we already added the lecture. we need to not advance day.
-            // however, we added the lecture, but we need to add again? Actually we should add a new entry for same lecture 
-            // but our logic uses currentLecture pointer. Since remaining > 0, we don't advance lectureIdx. 
-            // We'll continue the while loop with same currentLecture and same day.
-            // To avoid double-push, we check if we already added a lecture for today with same srno?
-            // better approach: we only push one lecture per day per course. But if a lecture spans multiple days, 
-            // we show it on multiple days with same name. 
-            // Our current push adds a new lecture each day. We should show the lecture on each day it's studied.
-            // This works: each day we push the same lecture (with same name/duration) until it's done.
-            // But we need to mark the 'done' state. We'll handle 'done' per lecture occurrence? 
-            // For simplicity: we treat each day entry as a separate item, and done means that lecture is fully completed.
-            // We'll mark lecture as done only when it's the last part. But we need to store progress.
-            // Since we want tick/untick per day, we'll mark the day's lecture as done when clicked.
-            // But if a lecture spans multiple days, ticking one day should not mark the lecture fully done.
-            // Instead we'll treat each day's lecture entry independently. The user ticks each day they study.
-            // So we keep as separate entries. Perfect.
-            // But we already added a lecture for today. We should continue adding the same lecture if remaining > 0.
-            // However we will create a new entry for next day. Our currentDay remains same if there is capacity left and remaining > 0.
-            // To avoid infinite loop, we need to advance day when we have consumed capacity or when remaining >0 and capacity>0? 
-            // Actually if remaining >0 and capacity>0, we should still allocate the rest of capacity to this same lecture on same day.
-            // But we already added the lecture for today. We can't add another entry for same day for same lecture.
-            // We'll simply not push another entry, but we need to track that we allocated some time.
-            // Our simple approach: we only push one entry per day per lecture. If a lecture spans multiple days, we push it again on subsequent days.
-            // So if remaining > 0 and dailyCapacity > 0, we should NOT push again, but we need to consume capacity.
-            // We'll just skip pushing and continue the loop with same day, but we already consumed capacity.
-            // Let's refactor: we push a lecture entry for each day it appears. If it spans multiple days, we push it on each day.
-            // But we need to avoid pushing twice on the same day.
-            // We'll restructure: we'll consume dailyCapacity and if lecture is not done, we push the entry, then continue to next day if capacity exhausted.
-            // But capacity might not be exhausted (remaining>0 and capacity>0). In that case we should continue same day with remaining time.
-            // To avoid double push, we can use a flag.
-            // Simpler: We'll break the while loop differently.
-            // We'll use a while over lectures, and for each day we allocate speed.
-            // Let's use a simpler approach: 
-          }
-        }
-      }
-
-      // post-process: combine duplicates on same day? Not needed.
-      return timetable;
-    }
-
-    // regenerate timetable for selected course
-    function regenerateTimetable() {
-      if (!selectedCourse || !courses[selectedCourse]) {
-        timetableContainer.innerHTML = `<div class="empty-state">Select a course</div>`;
-        courseDisplayName.textContent = '—';
-        return;
-      }
-      const course = courses[selectedCourse];
+    // ----- compute timetable for a course and date -----
+    function getTimetableForDate(courseName, dateStr) {
+      const course = courseData[courseName];
+      if (!course) return [];
       const lectures = course.lectures;
-      if (!lectures || lectures.length === 0) {
-        timetableContainer.innerHTML = `<div class="empty-state">No lectures in this course</div>`;
-        courseDisplayName.textContent = selectedCourse;
-        return;
+      if (!lectures.length) return [];
+      const dailySpeed = course.dailySpeed || 120;
+      const startDate = course.startDate || getTodayStr();
+
+      // calculate total duration
+      const totalDuration = lectures.reduce((acc, l) => acc + l.duration, 0);
+      if (totalDuration === 0) return [];
+
+      // we need to assign each lecture to a day offset from startDate
+      // Greedy: accumulate duration per day, cut when exceed dailySpeed.
+      const result = [];
+      let dayOffset = 0;
+      let remainingToday = dailySpeed;
+      let currentDate = new Date(startDate);
+      currentDate.setDate(currentDate.getDate() + dayOffset);
+
+      for (let i = 0; i < lectures.length; i++) {
+        const lecture = lectures[i];
+        let duration = lecture.duration;
+        let assigned = false;
+        while (duration > 0) {
+          const take = Math.min(duration, remainingToday);
+          // If take == 0, move to next day
+          if (take === 0) {
+            dayOffset++;
+            currentDate = new Date(startDate);
+            currentDate.setDate(currentDate.getDate() + dayOffset);
+            remainingToday = dailySpeed;
+            continue;
+          }
+          // assign lecture portion to currentDate
+          const dateKey = currentDate.toISOString().split('T')[0];
+          // if we are on target date, push
+          if (dateKey === dateStr) {
+            const done = (progressStore[courseName] && progressStore[courseName][i] && progressStore[courseName][i].done) || false;
+            result.push({
+              lectureIndex: i,
+              sr: lecture.sr,
+              name: lecture.name,
+              duration: lecture.duration,
+              portion: take,   // portion done that day
+              done: done,
+              date: dateKey
+            });
+          }
+          duration -= take;
+          remainingToday -= take;
+          if (remainingToday === 0 && duration > 0) {
+            // move to next day
+            dayOffset++;
+            currentDate = new Date(startDate);
+            currentDate.setDate(currentDate.getDate() + dayOffset);
+            remainingToday = dailySpeed;
+          }
+        }
       }
-      const speed = parseFloat(speedInput.value) || 2;
-      const startDate = startDateInput.value;
-      if (!startDate) {
-        timetableContainer.innerHTML = `<div class="empty-state">Please select a start date</div>`;
-        return;
-      }
-      const timetable = buildTimetable(lectures, speed, startDate);
-      course.timetable = timetable;
-      currentTimetable = timetable;
-      renderTimetable(timetable, selectedCourse);
-      courseDisplayName.textContent = selectedCourse;
+      // filter only for the requested date
+      return result.filter(item => item.date === dateStr);
     }
 
-    // render timetable with tick toggles
-    function renderTimetable(timetable, courseName) {
-      if (!timetable || timetable.length === 0) {
-        timetableContainer.innerHTML = `<div class="empty-state">No timetable generated. Check speed & date.</div>`;
+    // ----- render timetable -----
+    function renderTimetable() {
+      const container = document.getElementById('timetableContainer');
+      const courseSelect = document.getElementById('courseSelectTimetable');
+      const dateInput = document.getElementById('timetableDate');
+      const courseName = courseSelect.value;
+      const dateStr = dateInput.value;
+
+      if (!courseName || !courseData[courseName]) {
+        container.innerHTML = `<div class="empty-state"><i class="fas fa-info-circle"></i> Select a valid course.</div>`;
         return;
       }
-      let html = '';
-      for (let day of timetable) {
-        const dateObj = new Date(day.date + 'T00:00:00');
-        const dayLabel = dateObj.toLocaleDateString(undefined, { weekday: 'short', month: 'short', day: 'numeric' });
-        html += `<div class="day-group"><div class="day-header"><span>📅 ${dayLabel}</span><span class="badge">${day.lectures.length} lecture(s)</span></div>`;
-        for (let lec of day.lectures) {
-          const doneClass = lec.done ? 'done' : '';
-          const checkMark = lec.done ? '✅' : '☐';
-          html += `<div class="lecture-item ${doneClass}" data-date="${day.date}" data-srno="${lec.srno}" data-name="${lec.name}">
-            <span class="lec-status" data-action="toggle">${checkMark}</span>
-            <span class="lec-name">${lec.srno}. ${lec.name}</span>
-            <span class="lec-dur">${lec.duration}h</span>
-          </div>`;
-        }
-        html += `</div>`;
+      const entries = getTimetableForDate(courseName, dateStr);
+      if (!entries || entries.length === 0) {
+        container.innerHTML = `<div class="empty-state"><i class="far fa-calendar-check"></i> No lectures scheduled on this date.</div>`;
+        return;
       }
-      timetableContainer.innerHTML = html;
-      // attach click listeners to status
-      document.querySelectorAll('.lec-status').forEach(el => {
+
+      // build table
+      let html = `<div class="table-wrap"><table><thead><tr><th>#</th><th>Lecture</th><th>Duration</th><th>Done</th></tr></thead><tbody>`;
+      for (let e of entries) {
+        const done = e.done;
+        const rowClass = done ? 'lecture-row done' : 'lecture-row';
+        const tickClass = done ? 'tick-box checked' : 'tick-box';
+        const tickIcon = done ? '<i class="fas fa-check"></i>' : '';
+        html += `<tr class="${rowClass}" data-lecture-index="${e.lectureIndex}" data-course="${courseName}" data-date="${dateStr}">
+          <td>${e.sr}</td>
+          <td>${e.name}</td>
+          <td>${e.duration} min</td>
+          <td><span class="${tickClass}" data-action="toggle-done" data-lecture="${e.lectureIndex}" data-course="${courseName}" data-date="${dateStr}">${tickIcon}</span></td>
+        </tr>`;
+      }
+      html += `</tbody></table></div>`;
+      container.innerHTML = html;
+
+      // attach click listeners to tick boxes
+      container.querySelectorAll('[data-action="toggle-done"]').forEach(el => {
         el.addEventListener('click', function(e) {
           e.stopPropagation();
-          const parent = this.closest('.lecture-item');
-          if (!parent) return;
-          const date = parent.dataset.date;
-          const srno = parent.dataset.srno;
-          const name = parent.dataset.name;
-          toggleLectureDone(date, srno, name);
+          const course = this.dataset.course;
+          const lectureIdx = parseInt(this.dataset.lecture, 10);
+          const date = this.dataset.date;
+          toggleDone(course, lectureIdx, date);
         });
       });
     }
 
-    // toggle done status in currentTimetable and re-render
-    function toggleLectureDone(date, srno, name) {
-      if (!selectedCourse || !courses[selectedCourse]) return;
-      const course = courses[selectedCourse];
-      const timetable = course.timetable;
-      if (!timetable) return;
-      let found = false;
-      for (let day of timetable) {
-        if (day.date === date) {
-          for (let lec of day.lectures) {
-            if (lec.srno === srno && lec.name === name) {
-              lec.done = !lec.done;
-              found = true;
-              break;
-            }
-          }
-        }
-        if (found) break;
+    // ----- toggle done status -----
+    function toggleDone(courseName, lectureIndex, dateStr) {
+      if (!courseData[courseName]) return;
+      if (!progressStore[courseName]) progressStore[courseName] = {};
+      const key = lectureIndex;
+      if (!progressStore[courseName][key]) {
+        progressStore[courseName][key] = { done: false, date: dateStr };
       }
-      if (found) {
-        renderTimetable(timetable, selectedCourse);
+      progressStore[courseName][key].done = !progressStore[courseName][key].done;
+      progressStore[courseName][key].date = dateStr;
+      // re-render timetable
+      renderTimetable();
+      // refresh edit data if visible
+      if (document.getElementById('page-edit').classList.contains('active')) {
+        renderEditData();
       }
     }
 
-    // ----- UI update: course select dropdown -----
-    function updateCourseSelect() {
-      const names = Object.keys(courses);
-      courseSelect.innerHTML = '';
-      if (names.length === 0) {
-        const opt = document.createElement('option');
-        opt.value = '';
-        opt.textContent = '— no courses —';
-        courseSelect.appendChild(opt);
-        selectedCourse = '';
-        courseDisplayName.textContent = '—';
-        timetableContainer.innerHTML = `<div class="empty-state">No courses</div>`;
+    // ----- render edit data (all lectures with status) -----
+    function renderEditData() {
+      const container = document.getElementById('editDataContainer');
+      const courseNames = Object.keys(courseData);
+      if (courseNames.length === 0) {
+        container.innerHTML = `<div class="empty-state">No courses uploaded.</div>`;
         return;
       }
-      for (let name of names) {
-        const opt = document.createElement('option');
-        opt.value = name;
-        opt.textContent = name;
-        courseSelect.appendChild(opt);
+      let html = '';
+      for (let c of courseNames) {
+        const course = courseData[c];
+        const lectures = course.lectures || [];
+        html += `<div style="background:#f8faff; border-radius:18px; padding:12px; margin-bottom:16px; border:1px solid #e4eaf2;">
+          <h3 style="font-size:1rem; margin:0 0 6px;"><i class="fas fa-graduation-cap"></i> ${c}</h3>
+          <div class="table-wrap"><table><thead><tr><th>#</th><th>Lecture</th><th>Duration</th><th>Done</th></tr></thead><tbody>`;
+        for (let i=0; i<lectures.length; i++) {
+          const l = lectures[i];
+          const done = (progressStore[c] && progressStore[c][i] && progressStore[c][i].done) || false;
+          const rowClass = done ? 'lecture-row done' : 'lecture-row';
+          const tickClass = done ? 'tick-box checked' : 'tick-box';
+          const tickIcon = done ? '<i class="fas fa-check"></i>' : '';
+          html += `<tr class="${rowClass}">
+            <td>${l.sr}</td>
+            <td>${l.name}</td>
+            <td>${l.duration}</td>
+            <td><span class="${tickClass}">${tickIcon}</span></td>
+          </tr>`;
+        }
+        html += `</tbody></table></div></div>`;
       }
-      if (!selectedCourse || !courses[selectedCourse]) {
-        selectedCourse = names[0];
-      }
-      courseSelect.value = selectedCourse;
-      courseDisplayName.textContent = selectedCourse;
-      // load timetable if exists
-      const course = courses[selectedCourse];
-      if (course && course.timetable && course.timetable.length > 0) {
-        currentTimetable = course.timetable;
-        renderTimetable(currentTimetable, selectedCourse);
-      } else {
-        timetableContainer.innerHTML = `<div class="empty-state">Generate timetable for this course</div>`;
-      }
+      container.innerHTML = html;
     }
 
-    // ----- Add dummy data for two courses -----
-    function addDummyData() {
-      const dummy1 = `1, Intro to Algebra, 2.5\n2, Linear Equations, 1.5\n3, Quadratic Functions, 3\n4, Polynomials, 2\n5, Factoring, 1.5\n6, Rational Expressions, 2.5\n7, Radicals, 2\n8, Exponents, 1\n9, Logs, 3\n10, Review, 1`;
-      const dummy2 = `1, HTML Basics, 1.5\n2, CSS Grid, 2\n3, Flexbox, 1.5\n4, JavaScript DOM, 3\n5, Events, 2\n6, Fetch API, 2.5\n7, React Intro, 3\n8, State & Props, 2\n9, Hooks, 2.5\n10, Project, 3`;
-      let added = 0;
-      if (!courses['Math 101']) {
-        if (loadCourseFromText(dummy1, 'Math 101')) added++;
-      }
-      if (!courses['Web Dev']) {
-        if (loadCourseFromText(dummy2, 'Web Dev')) added++;
-      }
-      if (added > 0) {
-        updateCourseSelect();
-        if (selectedCourse && courses[selectedCourse]) {
-          // auto generate?
-        }
-        timetableContainer.innerHTML = `<div class="empty-state">Dummy courses added. Select & generate.</div>`;
-      } else {
-        alert('Dummy courses already exist.');
-      }
-    }
-
-    // ----- Event listeners -----
-    uploadBtn.addEventListener('click', function() {
-      const file = fileInput.files[0];
-      if (!file) { alert('Please select a file'); return; }
-      const reader = new FileReader();
-      reader.onload = function(e) {
-        const text = e.target.result;
-        let courseName = prompt('Enter course name:', file.name.replace(/\.[^.]+$/, ''));
-        if (!courseName) return;
-        if (courses[courseName]) {
-          if (!confirm(`Course "${courseName}" already exists. Overwrite?`)) return;
-        }
-        const success = loadCourseFromText(text, courseName);
-        if (!success) {
-          alert('Invalid format. Use: srno, LectureName, duration (hours)');
-          return;
-        }
-        updateCourseSelect();
-        selectedCourse = courseName;
-        courseSelect.value = courseName;
-        courseDisplayName.textContent = courseName;
-        timetableContainer.innerHTML = `<div class="empty-state">Course loaded. Generate timetable.</div>`;
-        fileInput.value = '';
+    // ----- upload course -----
+    function uploadCourse() {
+      const raw = document.getElementById('lectureRawData').value;
+      const courseName = document.getElementById('courseNameInput').value.trim();
+      const dailySpeed = parseInt(document.getElementById('dailySpeedInput').value, 10) || 120;
+      if (!courseName) { alert('Please enter a course name.'); return; }
+      const lectures = parseLectures(raw);
+      if (lectures.length === 0) { alert('No valid lectures found. Use format: "1. Lecture 45"'); return; }
+      // store
+      courseData[courseName] = {
+        lectures: lectures,
+        dailySpeed: dailySpeed,
+        startDate: getTodayStr()
       };
-      reader.readAsText(file);
-    });
-
-    generateBtn.addEventListener('click', function() {
-      if (!selectedCourse || !courses[selectedCourse]) {
-        alert('Select a course first.');
-        return;
-      }
-      regenerateTimetable();
-    });
-
-    courseSelect.addEventListener('change', function() {
-      selectedCourse = this.value;
-      if (!selectedCourse || !courses[selectedCourse]) {
-        courseDisplayName.textContent = '—';
-        timetableContainer.innerHTML = `<div class="empty-state">No course selected</div>`;
-        return;
-      }
-      courseDisplayName.textContent = selectedCourse;
-      const course = courses[selectedCourse];
-      if (course.timetable && course.timetable.length > 0) {
-        renderTimetable(course.timetable, selectedCourse);
-      } else {
-        timetableContainer.innerHTML = `<div class="empty-state">Generate timetable for this course</div>`;
-      }
-    });
-
-    deleteCourseBtn.addEventListener('click', function() {
-      if (!selectedCourse || !courses[selectedCourse]) {
-        alert('No course selected.');
-        return;
-      }
-      if (!confirm(`Delete course "${selectedCourse}"?`)) return;
-      delete courses[selectedCourse];
-      selectedCourse = '';
-      updateCourseSelect();
-      timetableContainer.innerHTML = `<div class="empty-state">Course deleted</div>`;
-      courseDisplayName.textContent = '—';
-    });
-
-    dummyDataBtn.addEventListener('click', addDummyData);
-
-    // init with empty state
-    updateCourseSelect();
-
-    // extra: if no courses, show dummy hint
-    if (Object.keys(courses).length === 0) {
-      timetableContainer.innerHTML = `<div class="empty-state">Use "➕ dummy" or upload a file</div>`;
+      if (!progressStore[courseName]) progressStore[courseName] = {};
+      // update select
+      populateCourseSelect();
+      updateBadge();
+      renderEditData();
+      // switch to timetable
+      document.querySelector('[data-page="page-timetable"]').click();
+      renderTimetable();
     }
+
+    // ----- populate course select -----
+    function populateCourseSelect() {
+      const select = document.getElementById('courseSelectTimetable');
+      const current = select.value;
+      select.innerHTML = '<option value="">-- select course --</option>';
+      for (let c of Object.keys(courseData)) {
+        const opt = document.createElement('option');
+        opt.value = c;
+        opt.textContent = c;
+        select.appendChild(opt);
+      }
+      if (current && courseData[current]) select.value = current;
+    }
+
+    function updateBadge() {
+      const names = Object.keys(courseData);
+      document.getElementById('courseListBadge').textContent = names.length ? names.join(', ') : 'none';
+    }
+
+    // ----- add dummy data -----
+    function addDummyData() {
+      const dummy1 = `1. Intro to Algebra 45
+2. Linear equations 60
+3. Quadratic 40
+4. Polynomials 55
+5. Graphing 70
+6. Exponents 25
+7. Logarithms 50
+8. Complex numbers 35
+9. Matrices 80
+10. Statistics 30`;
+      const dummy2 = `1. Thermodynamics 55
+2. Kinematics 40
+3. Newton laws 65
+4. Work & Energy 50
+5. Momentum 35
+6. Rotational motion 70
+7. Gravitation 45
+8. Waves 60
+9. Electrostatics 50
+10. Circuits 40`;
+
+      courseData['Math 101'] = {
+        lectures: parseLectures(dummy1),
+        dailySpeed: 120,
+        startDate: getTodayStr()
+      };
+      courseData['Physics 101'] = {
+        lectures: parseLectures(dummy2),
+        dailySpeed: 120,
+        startDate: getTodayStr()
+      };
+      if (!progressStore['Math 101']) progressStore['Math 101'] = {};
+      if (!progressStore['Physics 101']) progressStore['Physics 101'] = {};
+      populateCourseSelect();
+      updateBadge();
+      renderEditData();
+      document.querySelector('[data-page="page-timetable"]').click();
+      renderTimetable();
+    }
+
+    // ----- tab switching -----
+    document.querySelectorAll('.nav-tab').forEach(tab => {
+      tab.addEventListener('click', function() {
+        document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
+        this.classList.add('active');
+        const pageId = this.dataset.page;
+        document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+        document.getElementById(pageId).classList.add('active');
+        if (pageId === 'page-timetable') renderTimetable();
+        if (pageId === 'page-edit') renderEditData();
+      });
+    });
+
+    // ----- event binding -----
+    document.getElementById('uploadCourseBtn').addEventListener('click', uploadCourse);
+    document.getElementById('addDummyBtn').addEventListener('click', addDummyData);
+    document.getElementById('refreshTimetableBtn').addEventListener('click', renderTimetable);
+    document.getElementById('refreshEditBtn').addEventListener('click', renderEditData);
+    document.getElementById('courseSelectTimetable').addEventListener('change', renderTimetable);
+    document.getElementById('timetableDate').addEventListener('change', renderTimetable);
+
+    // init with dummy data for immediate testing
+    addDummyData();
+    // set default date to today
+    document.getElementById('timetableDate').value = getTodayStr();
+    // update select and show
+    populateCourseSelect();
+    renderTimetable();
   })();
 </script>
 </body>
