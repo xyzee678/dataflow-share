@@ -1,623 +1,1199 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
-  <title>Lecture Planner · Course Timetable</title>
-  <!-- Font Awesome for icons -->
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-  <style>
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-      font-family: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
-    }
-    body {
-      background: #f4f7fc;
-      padding: 16px 12px 40px;
-      min-height: 100vh;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-    }
-    .container {
-      max-width: 700px;
-      width: 100%;
-      background: white;
-      border-radius: 28px;
-      box-shadow: 0 8px 24px rgba(0,0,0,0.06);
-      padding: 20px 16px;
-      margin-bottom: 20px;
-    }
-    h1, h2 {
-      font-weight: 600;
-      font-size: 1.5rem;
-      letter-spacing: -0.3px;
-      color: #0b1b33;
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      margin-bottom: 12px;
-    }
-    h2 { font-size: 1.2rem; margin-top: 18px; border-bottom: 1px solid #e9edf4; padding-bottom: 8px; }
-    .flex-row {
-      display: flex;
-      flex-wrap: wrap;
-      align-items: center;
-      gap: 10px 8px;
-    }
-    .flex-between {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-    }
-    .badge {
-      background: #eef3fa;
-      border-radius: 40px;
-      padding: 6px 14px;
-      font-size: 0.8rem;
-      color: #1f3a6b;
-    }
-    .btn {
-      background: white;
-      border: 1px solid #d0d9e8;
-      padding: 8px 16px;
-      border-radius: 40px;
-      font-size: 0.9rem;
-      font-weight: 500;
-      color: #1f3a6b;
-      cursor: pointer;
-      transition: 0.15s;
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      background: #fafcff;
-      box-shadow: 0 1px 2px rgba(0,0,0,0.02);
-    }
-    .btn-primary {
-      background: #1f3a6b;
-      border: 1px solid #1f3a6b;
-      color: white;
-    }
-    .btn-primary i { color: white; }
-    .btn-success {
-      background: #1e7b4c;
-      border-color: #1e7b4c;
-      color: white;
-    }
-    .btn-outline { background: transparent; border: 1px solid #bcc9dd; }
-    .btn-sm { padding: 4px 12px; font-size: 0.8rem; }
-    .btn-block { width: 100%; justify-content: center; }
-    .mt-2 { margin-top: 16px; }
-    .mb-1 { margin-bottom: 8px; }
-    .gap-1 { gap: 6px; }
-    textarea, input, select {
-      width: 100%;
-      padding: 12px 14px;
-      border: 1px solid #d7dfe9;
-      border-radius: 18px;
-      font-size: 0.95rem;
-      background: white;
-      transition: 0.1s;
-    }
-    textarea { min-height: 90px; resize: vertical; }
-    label { font-weight: 500; font-size: 0.9rem; color: #1d2b44; display: block; margin: 8px 0 4px; }
-    .file-upload-wrapper {
-      background: #f1f6fe;
-      border-radius: 20px;
-      padding: 16px;
-      border: 1px dashed #a2b9d9;
-      text-align: center;
-    }
-    .table-wrap {
-      overflow-x: auto;
-      margin: 12px 0;
-      border-radius: 18px;
-      border: 1px solid #e4eaf2;
-    }
-    table {
-      width: 100%;
-      border-collapse: collapse;
-      font-size: 0.85rem;
-    }
-    th {
-      background: #eef3fa;
-      color: #1f3a6b;
-      font-weight: 600;
-      padding: 10px 6px;
-      text-align: left;
-      white-space: nowrap;
-    }
-    td {
-      padding: 10px 6px;
-      border-bottom: 1px solid #e9edf4;
-      vertical-align: middle;
-    }
-    .lecture-row {
-      transition: 0.1s;
-    }
-    .lecture-row.done {
-      background: #d9f0e1 !important;
-    }
-    .lecture-row.done td {
-      color: #0c3b24;
-    }
-    .tick-box {
-      width: 22px;
-      height: 22px;
-      border-radius: 8px;
-      border: 2px solid #859bb9;
-      background: white;
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      cursor: pointer;
-      transition: 0.1s;
-      font-size: 14px;
-      color: #1e7b4c;
-    }
-    .tick-box.checked {
-      background: #1e7b4c;
-      border-color: #1e7b4c;
-      color: white;
-    }
-    .status-badge {
-      font-size: 0.7rem;
-      background: #eef3fa;
-      padding: 2px 12px;
-      border-radius: 30px;
-      white-space: nowrap;
-    }
-    .page {
-      display: none;
-    }
-    .page.active {
-      display: block;
-    }
-    .nav-tabs {
-      display: flex;
-      gap: 8px;
-      margin: 16px 0 8px;
-      flex-wrap: wrap;
-    }
-    .nav-tab {
-      background: #eef3fa;
-      padding: 6px 18px;
-      border-radius: 40px;
-      font-weight: 500;
-      color: #1f3a6b;
-      cursor: pointer;
-      border: 1px solid transparent;
-      font-size: 0.9rem;
-    }
-    .nav-tab.active {
-      background: #1f3a6b;
-      color: white;
-      border-color: #1f3a6b;
-    }
-    .course-selector {
-      background: #f8faff;
-      border-radius: 30px;
-      padding: 4px 8px 4px 16px;
-      border: 1px solid #d7dfe9;
-      display: flex;
-      align-items: center;
-      gap: 8px;
-    }
-    .course-selector select {
-      border: none;
-      background: transparent;
-      padding: 8px 4px;
-      font-weight: 500;
-      width: auto;
-      min-width: 120px;
-    }
-    .date-picker {
-      border: 1px solid #d7dfe9;
-      border-radius: 30px;
-      padding: 4px 12px;
-      background: white;
-    }
-    .date-picker input {
-      border: none;
-      padding: 8px 4px;
-      background: transparent;
-      width: 140px;
-    }
-    .empty-state {
-      padding: 30px 10px;
-      text-align: center;
-      color: #6f7f9b;
-    }
-    .footer-actions {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 10px;
-      margin-top: 16px;
-    }
-    @media (max-width: 480px) {
-      .container { padding: 14px 10px; }
-      .flex-row { gap: 6px; }
-      .btn { font-size: 0.8rem; padding: 6px 12px; }
-    }
-  </style>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes" />
+    <title>Smart Course Scheduler</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+        }
+
+        body {
+            background: #f5f7fb;
+            padding: 16px 12px 80px;
+            min-height: 100vh;
+        }
+
+        .app-container {
+            max-width: 480px;
+            margin: 0 auto;
+        }
+
+        /* ----- HEADER ----- */
+        .app-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+        .app-header h1 {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #1e293b;
+            letter-spacing: -0.5px;
+        }
+        .header-actions {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+        .header-actions button {
+            background: #eef2f6;
+            border: none;
+            border-radius: 30px;
+            padding: 6px 14px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            color: #1e293b;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+        .header-actions button:active {
+            transform: scale(0.94);
+        }
+        .header-actions .backup-btn {
+            background: #1e293b;
+            color: white;
+        }
+        .header-actions .import-btn {
+            background: #3b82f6;
+            color: white;
+        }
+
+        /* ----- TABS ----- */
+        .tabs {
+            display: flex;
+            gap: 6px;
+            margin-bottom: 20px;
+            background: white;
+            padding: 4px;
+            border-radius: 40px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+        }
+        .tab {
+            flex: 1;
+            text-align: center;
+            padding: 10px 0;
+            border-radius: 40px;
+            font-weight: 600;
+            font-size: 0.85rem;
+            color: #64748b;
+            background: transparent;
+            border: none;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+        .tab.active {
+            background: #1e293b;
+            color: white;
+            box-shadow: 0 2px 8px rgba(30,41,59,0.15);
+        }
+        .tab:active {
+            transform: scale(0.96);
+        }
+
+        /* ----- PANELS ----- */
+        .panel {
+            display: none;
+            animation: fade 0.2s ease;
+        }
+        .panel.active {
+            display: block;
+        }
+        @keyframes fade {
+            from { opacity: 0.4; transform: translateY(6px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* ----- CARDS ----- */
+        .card {
+            background: white;
+            border-radius: 20px;
+            padding: 18px 16px;
+            margin-bottom: 16px;
+            box-shadow: 0 2px 12px rgba(0,0,0,0.04);
+        }
+        .card-title {
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: #334155;
+            margin-bottom: 12px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        /* UPLOAD */
+        .upload-area textarea {
+            width: 100%;
+            border: 1.5px dashed #cbd5e1;
+            border-radius: 16px;
+            padding: 14px;
+            font-size: 0.85rem;
+            resize: vertical;
+            min-height: 120px;
+            background: #f8fafc;
+            transition: 0.2s;
+            color: #0f172a;
+        }
+        .upload-area textarea:focus {
+            border-color: #3b82f6;
+            outline: none;
+            background: white;
+        }
+        .input-row {
+            display: flex;
+            gap: 10px;
+            margin: 12px 0 10px;
+            flex-wrap: wrap;
+        }
+        .input-row input {
+            flex: 1;
+            min-width: 120px;
+            padding: 10px 14px;
+            border: 1.5px solid #e2e8f0;
+            border-radius: 40px;
+            font-size: 0.85rem;
+            background: white;
+        }
+        .input-row input:focus {
+            border-color: #3b82f6;
+            outline: none;
+        }
+        .btn {
+            background: #1e293b;
+            color: white;
+            border: none;
+            padding: 10px 22px;
+            border-radius: 40px;
+            font-weight: 600;
+            font-size: 0.85rem;
+            cursor: pointer;
+            transition: 0.15s;
+            white-space: nowrap;
+        }
+        .btn:active {
+            transform: scale(0.94);
+        }
+        .btn-primary {
+            background: #3b82f6;
+        }
+        .btn-success {
+            background: #22c55e;
+        }
+        .btn-danger {
+            background: #ef4444;
+        }
+        .btn-outline {
+            background: transparent;
+            border: 1.5px solid #cbd5e1;
+            color: #1e293b;
+        }
+        .btn-sm {
+            padding: 6px 14px;
+            font-size: 0.75rem;
+        }
+        .dummy-row {
+            display: flex;
+            gap: 8px;
+            margin-top: 6px;
+            flex-wrap: wrap;
+        }
+
+        /* TIMETABLE */
+        .calendar-nav {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 16px;
+            gap: 6px;
+        }
+        .calendar-nav .date-display {
+            font-weight: 700;
+            font-size: 1.1rem;
+            color: #0f172a;
+            flex: 1;
+            text-align: center;
+        }
+        .calendar-nav button {
+            background: #f1f5f9;
+            border: none;
+            border-radius: 40px;
+            padding: 8px 16px;
+            font-weight: 600;
+            font-size: 0.8rem;
+            color: #1e293b;
+            cursor: pointer;
+        }
+        .calendar-nav button:active {
+            transform: scale(0.94);
+        }
+        .calendar-grid {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 4px;
+            margin-bottom: 12px;
+        }
+        .calendar-grid .day-label {
+            text-align: center;
+            font-size: 0.6rem;
+            font-weight: 600;
+            color: #94a3b8;
+            padding: 4px 0;
+        }
+        .calendar-grid .day-cell {
+            aspect-ratio: 1/1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 40px;
+            font-size: 0.8rem;
+            font-weight: 500;
+            background: transparent;
+            color: #1e293b;
+            cursor: pointer;
+            transition: 0.1s;
+            border: none;
+            width: 100%;
+        }
+        .day-cell.has-schedule {
+            background: #dbeafe;
+            color: #1e40af;
+            font-weight: 700;
+        }
+        .day-cell.today {
+            border: 2px solid #3b82f6;
+        }
+        .day-cell.selected {
+            background: #1e293b;
+            color: white;
+        }
+        .day-cell:active {
+            transform: scale(0.88);
+        }
+        .day-cell.empty {
+            pointer-events: none;
+        }
+
+        /* lecture list */
+        .lecture-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 12px 10px;
+            border-radius: 14px;
+            margin-bottom: 6px;
+            background: #f8fafc;
+            border-left: 4px solid #e2e8f0;
+            transition: 0.15s;
+        }
+        .lecture-item.done {
+            background: #ecfdf5;
+            border-left-color: #22c55e;
+        }
+        .lecture-item .info {
+            flex: 1;
+            font-size: 0.85rem;
+        }
+        .lecture-item .info .name {
+            font-weight: 600;
+            color: #0f172a;
+        }
+        .lecture-item .info .meta {
+            font-size: 0.7rem;
+            color: #64748b;
+        }
+        .lecture-item .status-btn {
+            width: 28px;
+            height: 28px;
+            border-radius: 30px;
+            border: 2px solid #cbd5e1;
+            background: white;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.8rem;
+            transition: 0.1s;
+        }
+        .lecture-item .status-btn.done {
+            background: #22c55e;
+            border-color: #22c55e;
+            color: white;
+        }
+        .lecture-item .status-btn:active {
+            transform: scale(0.88);
+        }
+        .empty-state {
+            text-align: center;
+            color: #94a3b8;
+            padding: 30px 0;
+            font-size: 0.9rem;
+        }
+
+        /* EDIT DATA */
+        .edit-course-select {
+            width: 100%;
+            padding: 10px 14px;
+            border-radius: 40px;
+            border: 1.5px solid #e2e8f0;
+            font-size: 0.85rem;
+            background: white;
+            margin-bottom: 14px;
+        }
+        .edit-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 8px 0;
+            border-bottom: 1px solid #f1f5f9;
+            flex-wrap: wrap;
+        }
+        .edit-item .e-name {
+            flex: 2;
+            min-width: 100px;
+            font-size: 0.85rem;
+            font-weight: 500;
+        }
+        .edit-item .e-speed {
+            width: 70px;
+            padding: 4px 8px;
+            border: 1.5px solid #e2e8f0;
+            border-radius: 30px;
+            font-size: 0.8rem;
+            text-align: center;
+        }
+        .edit-item .e-dur {
+            font-size: 0.75rem;
+            color: #64748b;
+            min-width: 50px;
+        }
+        .edit-item .e-actions button {
+            background: none;
+            border: none;
+            color: #ef4444;
+            font-size: 0.9rem;
+            cursor: pointer;
+            padding: 0 4px;
+        }
+
+        /* FILE INPUT HIDDEN */
+        .hidden-input {
+            display: none;
+        }
+
+        /* toast */
+        .toast {
+            position: fixed;
+            bottom: 100px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: #0f172a;
+            color: white;
+            padding: 10px 24px;
+            border-radius: 40px;
+            font-size: 0.85rem;
+            font-weight: 500;
+            box-shadow: 0 8px 30px rgba(0,0,0,0.2);
+            z-index: 999;
+            opacity: 0;
+            transition: 0.25s;
+            pointer-events: none;
+            max-width: 90%;
+        }
+        .toast.show {
+            opacity: 1;
+            bottom: 120px;
+        }
+
+        /* responsive */
+        @media (max-width: 420px) {
+            .app-header h1 { font-size: 1.2rem; }
+            .tab { font-size: 0.7rem; padding: 8px 0; }
+            .btn { font-size: 0.75rem; padding: 8px 16px; }
+        }
+    </style>
 </head>
 <body>
-<div class="container">
-  <h1><i class="fas fa-calendar-alt" style="color:#1f3a6b;"></i> Lecture Planner</h1>
-  <!-- Tabs -->
-  <div class="nav-tabs">
-    <span class="nav-tab active" data-page="page-upload">Upload</span>
-    <span class="nav-tab" data-page="page-timetable">Timetable</span>
-    <span class="nav-tab" data-page="page-edit">Edit Data</span>
-  </div>
 
-  <!-- ========== PAGE UPLOAD ========== -->
-  <div id="page-upload" class="page active">
-    <div class="file-upload-wrapper">
-      <p style="font-weight:500;"><i class="fas fa-cloud-upload-alt"></i> Paste lecture data</p>
-      <p style="font-size:0.8rem; color:#4a5f7a;">Format: sr_no. Lecture_name duration_in_mins (one per line)</p>
-      <textarea id="lectureRawData" placeholder="1. Introduction 45&#10;2. Basics 30&#10;3. Advanced 75">1. Intro to Algebra 45
-2. Linear equations 60
-3. Quadratic 40
-4. Polynomials 55
-5. Graphing 70
-6. Exponents 25
-7. Logarithms 50
-8. Complex numbers 35
-9. Matrices 80
-10. Statistics 30</textarea>
-      <div class="flex-row mt-2">
-        <input type="text" id="courseNameInput" placeholder="Course name (e.g. Math 101)" value="Math 101" style="flex:2; min-width:120px;">
-        <button class="btn btn-primary" id="uploadCourseBtn"><i class="fas fa-upload"></i> Upload</button>
-        <button class="btn btn-outline" id="addDummyBtn"><i class="fas fa-database"></i> Dummy</button>
-      </div>
-      <div style="font-size:0.8rem; margin-top:6px; color:#2b4a7a;">Daily speed (mins): <input type="number" id="dailySpeedInput" value="120" style="width:70px; display:inline-block; padding:4px 8px; border-radius:30px;"></div>
+<div class="app-container">
+    <!-- HEADER -->
+    <div class="app-header">
+        <h1>📚 Scheduler</h1>
+        <div class="header-actions">
+            <button class="backup-btn" id="backupBtn">💾 Backup</button>
+            <button class="import-btn" id="importBtn">📂 Import</button>
+            <input type="file" id="fileInput" class="hidden-input" accept=".json" />
+        </div>
     </div>
-    <div style="margin-top:10px; background:#eef3fa; border-radius:30px; padding:8px 16px; font-size:0.85rem;">
-      <i class="fas fa-info-circle"></i> Uploaded courses: <span id="courseListBadge">none</span>
-    </div>
-    <!-- dummy data quick note -->
-    <div style="font-size:0.75rem; color:#4d6a8f; margin-top:8px;">💡 Click "Dummy" to add two demo courses with lectures.</div>
-  </div>
 
-  <!-- ========== PAGE TIMETABLE ========== -->
-  <div id="page-timetable" class="page">
-    <div class="flex-row course-selector">
-      <i class="fas fa-book-open"></i>
-      <select id="courseSelectTimetable"><option value="">-- select course --</option></select>
-      <div class="date-picker">
-        <input type="date" id="timetableDate" value="2026-06-21">
-      </div>
-      <button class="btn btn-sm btn-primary" id="refreshTimetableBtn"><i class="fas fa-sync-alt"></i></button>
+    <!-- TABS -->
+    <div class="tabs">
+        <button class="tab active" data-tab="upload">📤 Upload</button>
+        <button class="tab" data-tab="timetable">📅 Timetable</button>
+        <button class="tab" data-tab="edit">✏️ Edit Data</button>
     </div>
-    <div id="timetableContainer">
-      <div class="empty-state"><i class="fas fa-table"></i> Select a course and date to view timetable.</div>
-    </div>
-  </div>
 
-  <!-- ========== PAGE EDIT DATA ========== -->
-  <div id="page-edit" class="page">
-    <h2><i class="fas fa-pen"></i> Uploaded lectures (editable)</h2>
-    <div id="editDataContainer">
-      <div class="empty-state">No course data yet. Upload a course first.</div>
+    <!-- TOAST -->
+    <div id="toast" class="toast"></div>
+
+    <!-- ============ UPLOAD PANEL ============ -->
+    <div id="panel-upload" class="panel active">
+        <div class="card upload-area">
+            <div class="card-title">📤 Upload Course</div>
+            <textarea id="courseDataInput" placeholder="Paste your course data here...&#10;Format: sr_no Lecture_name duration_in_mins&#10;Example:&#10;1 Introduction 15&#10;2 Basics 45&#10;3 Advanced 120"></textarea>
+            <div class="input-row">
+                <input type="text" id="courseNameInput" placeholder="Course name (e.g. Python)" />
+                <button class="btn btn-primary" id="uploadCourseBtn">Upload</button>
+            </div>
+            <div class="dummy-row">
+                <button class="btn btn-outline btn-sm" id="dummyCourse1Btn">➕ Dummy: Python</button>
+                <button class="btn btn-outline btn-sm" id="dummyCourse2Btn">➕ Dummy: Data Sci</button>
+            </div>
+            <div style="margin-top:8px;font-size:0.7rem;color:#94a3b8;">
+                <span id="uploadStatus">Ready</span>
+            </div>
+        </div>
+        <div class="card">
+            <div class="card-title">📋 My Courses</div>
+            <div id="courseList"></div>
+        </div>
     </div>
-    <div class="footer-actions">
-      <button class="btn btn-outline btn-sm" id="refreshEditBtn"><i class="fas fa-refresh"></i> Refresh</button>
+
+    <!-- ============ TIMETABLE PANEL ============ -->
+    <div id="panel-timetable" class="panel">
+        <div class="card">
+            <div class="card-title">📅 Select Course</div>
+            <select id="timetableCourseSelect" style="width:100%;padding:10px 14px;border-radius:40px;border:1.5px solid #e2e8f0;font-size:0.85rem;background:white;"></select>
+        </div>
+
+        <div class="card">
+            <div class="calendar-nav">
+                <button id="prevMonthBtn">◀</button>
+                <span class="date-display" id="monthYearDisplay">June 2026</span>
+                <button id="nextMonthBtn">▶</button>
+            </div>
+            <div class="calendar-grid" id="calendarGrid"></div>
+            <div style="display:flex;gap:10px;justify-content:center;margin-top:4px;">
+                <button class="btn btn-sm btn-outline" id="todayBtn">Today</button>
+                <button class="btn btn-sm btn-outline" id="prevDateBtn">◀ Prev</button>
+                <button class="btn btn-sm btn-outline" id="nextDateBtn">Next ▶</button>
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="card-title">📖 Lectures for <span id="selectedDateDisplay">—</span></div>
+            <div id="lectureListContainer">
+                <div class="empty-state">Select a date to view lectures</div>
+            </div>
+        </div>
     </div>
-  </div>
+
+    <!-- ============ EDIT PANEL ============ -->
+    <div id="panel-edit" class="panel">
+        <div class="card">
+            <div class="card-title">✏️ Edit Speeds & Data</div>
+            <select id="editCourseSelect" class="edit-course-select"></select>
+            <div id="editLecturesContainer">
+                <div class="empty-state">No course selected</div>
+            </div>
+            <div style="margin-top:12px;display:flex;gap:8px;flex-wrap:wrap;">
+                <button class="btn btn-danger btn-sm" id="deleteCourseBtn">🗑 Delete Course</button>
+                <button class="btn btn-outline btn-sm" id="refreshEditBtn">🔄 Refresh</button>
+            </div>
+        </div>
+    </div>
 </div>
 
 <script>
-  (function(){
-    // ---------- DATA STORE ----------
-    // courseData: { courseName: { lectures: [ {sr, name, duration}, ... ], dailySpeed: 120, startDate: '2026-06-21' } }
-    let courseData = {};
-    // result store: { courseName: { '2026-06-21': [ { lectureIndex, done: bool, date } ] } } 
-    // but we compute timetable on the fly.
-    // progress store: { courseName: { lectureIndex: { done: bool, date: string } } }
-    let progressStore = {};
+    (function() {
+        'use strict';
 
-    // helpers
-    function getTodayStr() { return new Date().toISOString().split('T')[0]; }
+        // ---------- STATE ----------
+        let appData = {
+            courses: {}  // key: courseName, value: { lectures: [ {sr, name, dur}, ... ], speeds: { sr: speedInMins }, startDate: 'YYYY-MM-DD' }
+        };
+        let currentViewDate = new Date(); // for calendar
+        let selectedDateStr = null;       // 'YYYY-MM-DD'
+        let selectedCourseForTimetable = null;
+        let selectedCourseForEdit = null;
 
-    // ----- parse lectures from text -----
-    function parseLectures(text) {
-      const lines = text.split(/\n/).filter(line => line.trim() !== '');
-      const lectures = [];
-      for (let line of lines) {
-        // pattern: "1. Lecture name 45"  or "1. Lecture 45"
-        const match = line.match(/^(\d+)\.\s*(.+?)\s+(\d+)$/);
-        if (match) {
-          const sr = parseInt(match[1], 10);
-          const name = match[2].trim();
-          const duration = parseInt(match[3], 10);
-          if (!isNaN(duration) && duration > 0) {
-            lectures.push({ sr, name, duration });
-          }
+        // DOM refs
+        const toastEl = document.getElementById('toast');
+        let toastTimer = null;
+
+        // ---------- HELPERS ----------
+        function formatDate(d) {
+            const y = d.getFullYear();
+            const m = String(d.getMonth() + 1).padStart(2,'0');
+            const day = String(d.getDate()).padStart(2,'0');
+            return `${y}-${m}-${day}`;
         }
-      }
-      return lectures;
-    }
 
-    // ----- compute timetable for a course and date -----
-    function getTimetableForDate(courseName, dateStr) {
-      const course = courseData[courseName];
-      if (!course) return [];
-      const lectures = course.lectures;
-      if (!lectures.length) return [];
-      const dailySpeed = course.dailySpeed || 120;
-      const startDate = course.startDate || getTodayStr();
+        function parseDate(str) {
+            const parts = str.split('-').map(Number);
+            return new Date(parts[0], parts[1]-1, parts[2]);
+        }
 
-      // calculate total duration
-      const totalDuration = lectures.reduce((acc, l) => acc + l.duration, 0);
-      if (totalDuration === 0) return [];
+        function addDays(date, n) {
+            const d = new Date(date);
+            d.setDate(d.getDate() + n);
+            return d;
+        }
 
-      // we need to assign each lecture to a day offset from startDate
-      // Greedy: accumulate duration per day, cut when exceed dailySpeed.
-      const result = [];
-      let dayOffset = 0;
-      let remainingToday = dailySpeed;
-      let currentDate = new Date(startDate);
-      currentDate.setDate(currentDate.getDate() + dayOffset);
+        function isSameDay(d1, d2) {
+            return d1.getFullYear() === d2.getFullYear() &&
+                   d1.getMonth() === d2.getMonth() &&
+                   d1.getDate() === d2.getDate();
+        }
 
-      for (let i = 0; i < lectures.length; i++) {
-        const lecture = lectures[i];
-        let duration = lecture.duration;
-        let assigned = false;
-        while (duration > 0) {
-          const take = Math.min(duration, remainingToday);
-          // If take == 0, move to next day
-          if (take === 0) {
-            dayOffset++;
-            currentDate = new Date(startDate);
-            currentDate.setDate(currentDate.getDate() + dayOffset);
-            remainingToday = dailySpeed;
-            continue;
-          }
-          // assign lecture portion to currentDate
-          const dateKey = currentDate.toISOString().split('T')[0];
-          // if we are on target date, push
-          if (dateKey === dateStr) {
-            const done = (progressStore[courseName] && progressStore[courseName][i] && progressStore[courseName][i].done) || false;
-            result.push({
-              lectureIndex: i,
-              sr: lecture.sr,
-              name: lecture.name,
-              duration: lecture.duration,
-              portion: take,   // portion done that day
-              done: done,
-              date: dateKey
+        function showToast(msg) {
+            toastEl.textContent = msg;
+            toastEl.classList.add('show');
+            if (toastTimer) clearTimeout(toastTimer);
+            toastTimer = setTimeout(() => toastEl.classList.remove('show'), 2500);
+        }
+
+        // ---------- PERSISTENCE ----------
+        function saveData() {
+            try {
+                localStorage.setItem('schedulerAppData', JSON.stringify(appData));
+            } catch(e) { console.warn('Save error', e); }
+        }
+
+        function loadData() {
+            try {
+                const raw = localStorage.getItem('schedulerAppData');
+                if (raw) {
+                    const parsed = JSON.parse(raw);
+                    // ensure structure
+                    if (parsed && typeof parsed === 'object' && parsed.courses) {
+                        appData.courses = parsed.courses;
+                        return true;
+                    }
+                }
+            } catch(e) { console.warn('Load error', e); }
+            return false;
+        }
+
+        // ---------- INIT DUMMY ----------
+        function generateDummyCourse(name, prefix, count, baseDur) {
+            const lectures = [];
+            for (let i = 1; i <= count; i++) {
+                const dur = Math.round(baseDur * (0.5 + Math.random() * 1.0));
+                lectures.push({ sr: i, name: `${prefix} ${i}`, dur: dur });
+            }
+            const speeds = {};
+            lectures.forEach(l => { speeds[l.sr] = 120; }); // default 2h = 120min
+            return { lectures, speeds, startDate: formatDate(new Date()) };
+        }
+
+        function loadDummyCourses() {
+            const c1 = generateDummyCourse('Python', 'Python', 10, 30);
+            const c2 = generateDummyCourse('Data Science', 'DS', 12, 35);
+            appData.courses['Python'] = c1;
+            appData.courses['Data Science'] = c2;
+            saveData();
+            showToast('✅ Dummy data loaded!');
+            renderAll();
+        }
+
+        // ---------- COMPUTE SCHEDULE ----------
+        function computeSchedule(courseName) {
+            const course = appData.courses[courseName];
+            if (!course) return null;
+            const { lectures, speeds, startDate } = course;
+            if (!lectures || lectures.length === 0) return null;
+
+            const start = parseDate(startDate);
+            const schedule = []; // array of { date, lectures: [ {sr, name, dur, done} ] }
+
+            let currentDate = new Date(start);
+            let idx = 0;
+            const total = lectures.length;
+
+            // We'll build day by day
+            while (idx < total) {
+                let remainingToday = speeds[lectures[idx].sr] || 120; // default 120min
+                const dayLectures = [];
+                let consumed = 0;
+
+                while (idx < total && remainingToday > 0) {
+                    const lec = lectures[idx];
+                    const lecDur = lec.dur;
+                    if (lecDur <= remainingToday) {
+                        // whole lecture fits
+                        dayLectures.push({ sr: lec.sr, name: lec.name, dur: lecDur, done: false });
+                        remainingToday -= lecDur;
+                        idx++;
+                    } else {
+                        // partial lecture: we carry over
+                        // We'll mark as continuing: show it as one lecture but with remaining duration
+                        // Actually we display same lecture across days, but we store only once per day with dur = remainingToday
+                        // But we need to keep track: we'll store the lecture with its actual dur and a flag that it's continued.
+                        // Simpler: we treat partial as a "slice" of the lecture.
+                        // We'll push a "partial" entry with dur = remainingToday, and set remainingToday = 0
+                        const partialDur = remainingToday;
+                        dayLectures.push({ sr: lec.sr, name: lec.name + ' (cont.)', dur: partialDur, done: false, partial: true, originalSr: lec.sr });
+                        // reduce lecture duration
+                        lectures[idx].dur -= partialDur;
+                        remainingToday = 0;
+                        // we don't increment idx, because same lecture continues next day
+                    }
+                }
+
+                // if we have no lectures for this day, skip? shouldn't happen.
+                if (dayLectures.length > 0) {
+                    schedule.push({ date: formatDate(currentDate), lectures: dayLectures });
+                }
+
+                // move to next day
+                currentDate = addDays(currentDate, 1);
+                // Safety: prevent infinite loop
+                if (schedule.length > 1000) break;
+            }
+
+            // Also we need to restore original durations? We mutated. Let's recalc from original.
+            // Better: we compute without mutating original. Let's rework: use a copy.
+            // We'll recompute using a clean approach.
+            return computeScheduleClean(course);
+        }
+
+        function computeScheduleClean(course) {
+            const { lectures, speeds, startDate } = course;
+            if (!lectures || lectures.length === 0) return [];
+
+            // Make a copy of lectures with remaining duration
+            const remaining = lectures.map(l => ({ ...l, remaining: l.dur }));
+            const start = parseDate(startDate);
+            const schedule = [];
+            let idx = 0;
+            let currentDate = new Date(start);
+
+            while (idx < remaining.length) {
+                let dailySpeed = speeds[remaining[idx].sr] || 120;
+                let dayLectures = [];
+                let used = 0;
+
+                while (idx < remaining.length && used < dailySpeed) {
+                    const lec = remaining[idx];
+                    const avail = dailySpeed - used;
+                    if (lec.remaining <= avail) {
+                        // whole lecture
+                        dayLectures.push({ sr: lec.sr, name: lec.name, dur: lec.remaining, done: false });
+                        used += lec.remaining;
+                        lec.remaining = 0;
+                        idx++;
+                    } else {
+                        // partial
+                        dayLectures.push({ sr: lec.sr, name: lec.name + ' (cont.)', dur: avail, done: false, partial: true, originalSr: lec.sr });
+                        lec.remaining -= avail;
+                        used = dailySpeed;
+                        // idx not incremented
+                    }
+                }
+
+                if (dayLectures.length > 0) {
+                    schedule.push({ date: formatDate(currentDate), lectures: dayLectures });
+                }
+                currentDate = addDays(currentDate, 1);
+                if (schedule.length > 2000) break;
+            }
+
+            return schedule;
+        }
+
+        // ---------- RENDER FUNCTIONS ----------
+        function renderAll() {
+            renderCourseList();
+            renderTimetableCourseSelect();
+            renderEditCourseSelect();
+            renderCalendar();
+            renderLecturesForDate();
+            renderEditLectures();
+            updateUploadStatus();
+        }
+
+        function renderCourseList() {
+            const container = document.getElementById('courseList');
+            const names = Object.keys(appData.courses);
+            if (names.length === 0) {
+                container.innerHTML = '<div class="empty-state">No courses uploaded yet.</div>';
+                return;
+            }
+            let html = '';
+            names.forEach(name => {
+                const c = appData.courses[name];
+                const lecCount = c.lectures ? c.lectures.length : 0;
+                html += `<div style="display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid #f1f5f9;">
+                            <span style="font-weight:500;">${name}</span>
+                            <span style="font-size:0.75rem;color:#64748b;">${lecCount} lectures · start: ${c.startDate || '—'}</span>
+                        </div>`;
             });
-          }
-          duration -= take;
-          remainingToday -= take;
-          if (remainingToday === 0 && duration > 0) {
-            // move to next day
-            dayOffset++;
-            currentDate = new Date(startDate);
-            currentDate.setDate(currentDate.getDate() + dayOffset);
-            remainingToday = dailySpeed;
-          }
+            container.innerHTML = html;
         }
-      }
-      // filter only for the requested date
-      return result.filter(item => item.date === dateStr);
-    }
 
-    // ----- render timetable -----
-    function renderTimetable() {
-      const container = document.getElementById('timetableContainer');
-      const courseSelect = document.getElementById('courseSelectTimetable');
-      const dateInput = document.getElementById('timetableDate');
-      const courseName = courseSelect.value;
-      const dateStr = dateInput.value;
-
-      if (!courseName || !courseData[courseName]) {
-        container.innerHTML = `<div class="empty-state"><i class="fas fa-info-circle"></i> Select a valid course.</div>`;
-        return;
-      }
-      const entries = getTimetableForDate(courseName, dateStr);
-      if (!entries || entries.length === 0) {
-        container.innerHTML = `<div class="empty-state"><i class="far fa-calendar-check"></i> No lectures scheduled on this date.</div>`;
-        return;
-      }
-
-      // build table
-      let html = `<div class="table-wrap"><table><thead><tr><th>#</th><th>Lecture</th><th>Duration</th><th>Done</th></tr></thead><tbody>`;
-      for (let e of entries) {
-        const done = e.done;
-        const rowClass = done ? 'lecture-row done' : 'lecture-row';
-        const tickClass = done ? 'tick-box checked' : 'tick-box';
-        const tickIcon = done ? '<i class="fas fa-check"></i>' : '';
-        html += `<tr class="${rowClass}" data-lecture-index="${e.lectureIndex}" data-course="${courseName}" data-date="${dateStr}">
-          <td>${e.sr}</td>
-          <td>${e.name}</td>
-          <td>${e.duration} min</td>
-          <td><span class="${tickClass}" data-action="toggle-done" data-lecture="${e.lectureIndex}" data-course="${courseName}" data-date="${dateStr}">${tickIcon}</span></td>
-        </tr>`;
-      }
-      html += `</tbody></table></div>`;
-      container.innerHTML = html;
-
-      // attach click listeners to tick boxes
-      container.querySelectorAll('[data-action="toggle-done"]').forEach(el => {
-        el.addEventListener('click', function(e) {
-          e.stopPropagation();
-          const course = this.dataset.course;
-          const lectureIdx = parseInt(this.dataset.lecture, 10);
-          const date = this.dataset.date;
-          toggleDone(course, lectureIdx, date);
-        });
-      });
-    }
-
-    // ----- toggle done status -----
-    function toggleDone(courseName, lectureIndex, dateStr) {
-      if (!courseData[courseName]) return;
-      if (!progressStore[courseName]) progressStore[courseName] = {};
-      const key = lectureIndex;
-      if (!progressStore[courseName][key]) {
-        progressStore[courseName][key] = { done: false, date: dateStr };
-      }
-      progressStore[courseName][key].done = !progressStore[courseName][key].done;
-      progressStore[courseName][key].date = dateStr;
-      // re-render timetable
-      renderTimetable();
-      // refresh edit data if visible
-      if (document.getElementById('page-edit').classList.contains('active')) {
-        renderEditData();
-      }
-    }
-
-    // ----- render edit data (all lectures with status) -----
-    function renderEditData() {
-      const container = document.getElementById('editDataContainer');
-      const courseNames = Object.keys(courseData);
-      if (courseNames.length === 0) {
-        container.innerHTML = `<div class="empty-state">No courses uploaded.</div>`;
-        return;
-      }
-      let html = '';
-      for (let c of courseNames) {
-        const course = courseData[c];
-        const lectures = course.lectures || [];
-        html += `<div style="background:#f8faff; border-radius:18px; padding:12px; margin-bottom:16px; border:1px solid #e4eaf2;">
-          <h3 style="font-size:1rem; margin:0 0 6px;"><i class="fas fa-graduation-cap"></i> ${c}</h3>
-          <div class="table-wrap"><table><thead><tr><th>#</th><th>Lecture</th><th>Duration</th><th>Done</th></tr></thead><tbody>`;
-        for (let i=0; i<lectures.length; i++) {
-          const l = lectures[i];
-          const done = (progressStore[c] && progressStore[c][i] && progressStore[c][i].done) || false;
-          const rowClass = done ? 'lecture-row done' : 'lecture-row';
-          const tickClass = done ? 'tick-box checked' : 'tick-box';
-          const tickIcon = done ? '<i class="fas fa-check"></i>' : '';
-          html += `<tr class="${rowClass}">
-            <td>${l.sr}</td>
-            <td>${l.name}</td>
-            <td>${l.duration}</td>
-            <td><span class="${tickClass}">${tickIcon}</span></td>
-          </tr>`;
+        function renderTimetableCourseSelect() {
+            const sel = document.getElementById('timetableCourseSelect');
+            const names = Object.keys(appData.courses);
+            const current = sel.value;
+            sel.innerHTML = '<option value="">— Select Course —</option>';
+            names.forEach(n => {
+                const opt = document.createElement('option');
+                opt.value = n;
+                opt.textContent = n;
+                sel.appendChild(opt);
+            });
+            if (current && names.includes(current)) sel.value = current;
+            else if (names.length > 0) sel.value = names[0];
+            selectedCourseForTimetable = sel.value || null;
         }
-        html += `</tbody></table></div></div>`;
-      }
-      container.innerHTML = html;
-    }
 
-    // ----- upload course -----
-    function uploadCourse() {
-      const raw = document.getElementById('lectureRawData').value;
-      const courseName = document.getElementById('courseNameInput').value.trim();
-      const dailySpeed = parseInt(document.getElementById('dailySpeedInput').value, 10) || 120;
-      if (!courseName) { alert('Please enter a course name.'); return; }
-      const lectures = parseLectures(raw);
-      if (lectures.length === 0) { alert('No valid lectures found. Use format: "1. Lecture 45"'); return; }
-      // store
-      courseData[courseName] = {
-        lectures: lectures,
-        dailySpeed: dailySpeed,
-        startDate: getTodayStr()
-      };
-      if (!progressStore[courseName]) progressStore[courseName] = {};
-      // update select
-      populateCourseSelect();
-      updateBadge();
-      renderEditData();
-      // switch to timetable
-      document.querySelector('[data-page="page-timetable"]').click();
-      renderTimetable();
-    }
+        function renderEditCourseSelect() {
+            const sel = document.getElementById('editCourseSelect');
+            const names = Object.keys(appData.courses);
+            const current = sel.value;
+            sel.innerHTML = '<option value="">— Select Course —</option>';
+            names.forEach(n => {
+                const opt = document.createElement('option');
+                opt.value = n;
+                opt.textContent = n;
+                sel.appendChild(opt);
+            });
+            if (current && names.includes(current)) sel.value = current;
+            else if (names.length > 0) sel.value = names[0];
+            selectedCourseForEdit = sel.value || null;
+        }
 
-    // ----- populate course select -----
-    function populateCourseSelect() {
-      const select = document.getElementById('courseSelectTimetable');
-      const current = select.value;
-      select.innerHTML = '<option value="">-- select course --</option>';
-      for (let c of Object.keys(courseData)) {
-        const opt = document.createElement('option');
-        opt.value = c;
-        opt.textContent = c;
-        select.appendChild(opt);
-      }
-      if (current && courseData[current]) select.value = current;
-    }
+        function renderCalendar() {
+            const grid = document.getElementById('calendarGrid');
+            const monthDisplay = document.getElementById('monthYearDisplay');
+            const year = currentViewDate.getFullYear();
+            const month = currentViewDate.getMonth();
+            monthDisplay.textContent = new Date(year, month).toLocaleString('default', { month: 'long', year: 'numeric' });
 
-    function updateBadge() {
-      const names = Object.keys(courseData);
-      document.getElementById('courseListBadge').textContent = names.length ? names.join(', ') : 'none';
-    }
+            const firstDay = new Date(year, month, 1).getDay();
+            const daysInMonth = new Date(year, month + 1, 0).getDate();
 
-    // ----- add dummy data -----
-    function addDummyData() {
-      const dummy1 = `1. Intro to Algebra 45
-2. Linear equations 60
-3. Quadratic 40
-4. Polynomials 55
-5. Graphing 70
-6. Exponents 25
-7. Logarithms 50
-8. Complex numbers 35
-9. Matrices 80
-10. Statistics 30`;
-      const dummy2 = `1. Thermodynamics 55
-2. Kinematics 40
-3. Newton laws 65
-4. Work & Energy 50
-5. Momentum 35
-6. Rotational motion 70
-7. Gravitation 45
-8. Waves 60
-9. Electrostatics 50
-10. Circuits 40`;
+            // get scheduled dates for selected course
+            let scheduledDates = new Set();
+            const courseName = document.getElementById('timetableCourseSelect').value;
+            if (courseName && appData.courses[courseName]) {
+                const schedule = computeScheduleClean(appData.courses[courseName]);
+                if (schedule) {
+                    schedule.forEach(day => scheduledDates.add(day.date));
+                }
+            }
 
-      courseData['Math 101'] = {
-        lectures: parseLectures(dummy1),
-        dailySpeed: 120,
-        startDate: getTodayStr()
-      };
-      courseData['Physics 101'] = {
-        lectures: parseLectures(dummy2),
-        dailySpeed: 120,
-        startDate: getTodayStr()
-      };
-      if (!progressStore['Math 101']) progressStore['Math 101'] = {};
-      if (!progressStore['Physics 101']) progressStore['Physics 101'] = {};
-      populateCourseSelect();
-      updateBadge();
-      renderEditData();
-      document.querySelector('[data-page="page-timetable"]').click();
-      renderTimetable();
-    }
+            let html = '';
+            const weekdays = ['Su','Mo','Tu','We','Th','Fr','Sa'];
+            weekdays.forEach(d => html += `<div class="day-label">${d}</div>`);
 
-    // ----- tab switching -----
-    document.querySelectorAll('.nav-tab').forEach(tab => {
-      tab.addEventListener('click', function() {
-        document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
-        this.classList.add('active');
-        const pageId = this.dataset.page;
-        document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-        document.getElementById(pageId).classList.add('active');
-        if (pageId === 'page-timetable') renderTimetable();
-        if (pageId === 'page-edit') renderEditData();
-      });
-    });
+            for (let i = 0; i < firstDay; i++) {
+                html += `<div class="day-cell empty"></div>`;
+            }
 
-    // ----- event binding -----
-    document.getElementById('uploadCourseBtn').addEventListener('click', uploadCourse);
-    document.getElementById('addDummyBtn').addEventListener('click', addDummyData);
-    document.getElementById('refreshTimetableBtn').addEventListener('click', renderTimetable);
-    document.getElementById('refreshEditBtn').addEventListener('click', renderEditData);
-    document.getElementById('courseSelectTimetable').addEventListener('change', renderTimetable);
-    document.getElementById('timetableDate').addEventListener('change', renderTimetable);
+            const today = new Date();
+            for (let d = 1; d <= daysInMonth; d++) {
+                const dateObj = new Date(year, month, d);
+                const dateStr = formatDate(dateObj);
+                const isToday = isSameDay(dateObj, today);
+                const hasSched = scheduledDates.has(dateStr);
+                const isSelected = (selectedDateStr === dateStr);
+                let cls = 'day-cell';
+                if (hasSched) cls += ' has-schedule';
+                if (isToday) cls += ' today';
+                if (isSelected) cls += ' selected';
+                html += `<button class="${cls}" data-date="${dateStr}">${d}</button>`;
+            }
 
-    // init with dummy data for immediate testing
-    addDummyData();
-    // set default date to today
-    document.getElementById('timetableDate').value = getTodayStr();
-    // update select and show
-    populateCourseSelect();
-    renderTimetable();
-  })();
+            grid.innerHTML = html;
+
+            // click listeners
+            grid.querySelectorAll('.day-cell:not(.empty)').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    selectedDateStr = this.dataset.date;
+                    renderCalendar();
+                    renderLecturesForDate();
+                });
+            });
+        }
+
+        function renderLecturesForDate() {
+            const container = document.getElementById('lectureListContainer');
+            const dateDisplay = document.getElementById('selectedDateDisplay');
+            const courseName = document.getElementById('timetableCourseSelect').value;
+
+            if (!courseName || !selectedDateStr) {
+                container.innerHTML = '<div class="empty-state">Select a course and date</div>';
+                dateDisplay.textContent = '—';
+                return;
+            }
+
+            const course = appData.courses[courseName];
+            if (!course) {
+                container.innerHTML = '<div class="empty-state">Course not found</div>';
+                dateDisplay.textContent = '—';
+                return;
+            }
+
+            const schedule = computeScheduleClean(course);
+            const day = schedule.find(d => d.date === selectedDateStr);
+            dateDisplay.textContent = selectedDateStr;
+
+            if (!day || day.lectures.length === 0) {
+                container.innerHTML = '<div class="empty-state">No lectures scheduled on this day</div>';
+                return;
+            }
+
+            // Load done status from storage
+            const doneKey = `done_${courseName}_${selectedDateStr}`;
+            let doneSet = new Set();
+            try {
+                const stored = localStorage.getItem(doneKey);
+                if (stored) doneSet = new Set(JSON.parse(stored));
+            } catch(e) {}
+
+            let html = '';
+            day.lectures.forEach((lec, idx) => {
+                const isDone = doneSet.has(String(idx));
+                const cls = isDone ? 'done' : '';
+                const tickSymbol = isDone ? '✓' : '☐';
+                html += `
+                    <div class="lecture-item ${cls}">
+                        <div class="info">
+                            <div class="name">${lec.name}</div>
+                            <div class="meta">${lec.dur} min ${lec.partial ? '· continued' : ''}</div>
+                        </div>
+                        <button class="status-btn ${isDone ? 'done' : ''}" data-idx="${idx}" data-course="${courseName}" data-date="${selectedDateStr}">${tickSymbol}</button>
+                    </div>
+                `;
+            });
+
+            container.innerHTML = html;
+
+            // attach toggle events
+            container.querySelectorAll('.status-btn').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const idx = parseInt(this.dataset.idx);
+                    const cName = this.dataset.course;
+                    const date = this.dataset.date;
+                    const key = `done_${cName}_${date}`;
+                    let doneSet = new Set();
+                    try {
+                        const stored = localStorage.getItem(key);
+                        if (stored) doneSet = new Set(JSON.parse(stored));
+                    } catch(e) {}
+                    if (doneSet.has(String(idx))) {
+                        doneSet.delete(String(idx));
+                    } else {
+                        doneSet.add(String(idx));
+                    }
+                    localStorage.setItem(key, JSON.stringify([...doneSet]));
+                    renderLecturesForDate();
+                    renderCalendar(); // refresh colors
+                });
+            });
+        }
+
+        function renderEditLectures() {
+            const container = document.getElementById('editLecturesContainer');
+            const courseName = document.getElementById('editCourseSelect').value;
+            if (!courseName || !appData.courses[courseName]) {
+                container.innerHTML = '<div class="empty-state">Select a course to edit</div>';
+                return;
+            }
+            const course = appData.courses[courseName];
+            const lectures = course.lectures || [];
+            const speeds = course.speeds || {};
+            let html = '';
+            lectures.forEach(l => {
+                const speed = speeds[l.sr] || 120;
+                html += `
+                    <div class="edit-item">
+                        <span class="e-name">${l.sr}. ${l.name}</span>
+                        <span class="e-dur">${l.dur} min</span>
+                        <input class="e-speed" type="number" value="${speed}" data-sr="${l.sr}" data-course="${courseName}" min="1" step="5" />
+                        <div class="e-actions">
+                            <button data-sr="${l.sr}" data-course="${courseName}" class="remove-speed-btn">✕</button>
+                        </div>
+                    </div>
+                `;
+            });
+            container.innerHTML = html;
+
+            // speed change
+            container.querySelectorAll('.e-speed').forEach(inp => {
+                inp.addEventListener('change', function() {
+                    const sr = parseInt(this.dataset.sr);
+                    const cName = this.dataset.course;
+                    const val = parseInt(this.value);
+                    if (val > 0 && appData.courses[cName]) {
+                        appData.courses[cName].speeds[sr] = val;
+                        saveData();
+                        showToast('✅ Speed updated');
+                        renderAll();
+                    }
+                });
+            });
+
+            // remove speed (reset to default)
+            container.querySelectorAll('.remove-speed-btn').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const sr = parseInt(this.dataset.sr);
+                    const cName = this.dataset.course;
+                    if (appData.courses[cName]) {
+                        delete appData.courses[cName].speeds[sr];
+                        saveData();
+                        showToast('↩️ Speed reset to default');
+                        renderAll();
+                    }
+                });
+            });
+        }
+
+        function updateUploadStatus() {
+            document.getElementById('uploadStatus').textContent = `📦 ${Object.keys(appData.courses).length} courses loaded`;
+        }
+
+        // ---------- UPLOAD COURSE ----------
+        function uploadCourse() {
+            const text = document.getElementById('courseDataInput').value.trim();
+            const name = document.getElementById('courseNameInput').value.trim();
+            if (!text || !name) {
+                showToast('⚠️ Please enter course data and name');
+                return;
+            }
+            if (appData.courses[name]) {
+                if (!confirm(`Course "${name}" exists. Overwrite?`)) return;
+            }
+
+            const lines = text.split('\n').filter(l => l.trim() !== '');
+            const lectures = [];
+            for (let line of lines) {
+                const parts = line.split(/\s+/);
+                if (parts.length < 3) continue;
+                const sr = parseInt(parts[0]);
+                const dur = parseInt(parts[parts.length - 1]);
+                const nameParts = parts.slice(1, parts.length - 1).join(' ');
+                if (!isNaN(sr) && !isNaN(dur) && nameParts) {
+                    lectures.push({ sr, name: nameParts, dur });
+                }
+            }
+
+            if (lectures.length === 0) {
+                showToast('⚠️ No valid lectures found. Format: sr name duration');
+                return;
+            }
+
+            const speeds = {};
+            lectures.forEach(l => { speeds[l.sr] = 120; });
+            appData.courses[name] = {
+                lectures,
+                speeds,
+                startDate: formatDate(new Date())
+            };
+            saveData();
+            document.getElementById('courseDataInput').value = '';
+            document.getElementById('courseNameInput').value = '';
+            showToast(`✅ Course "${name}" uploaded (${lectures.length} lectures)`);
+            renderAll();
+        }
+
+        // ---------- DELETE COURSE ----------
+        function deleteSelectedCourse() {
+            const sel = document.getElementById('editCourseSelect');
+            const name = sel.value;
+            if (!name) { showToast('Select a course'); return; }
+            if (!confirm(`Delete course "${name}"?`)) return;
+            delete appData.courses[name];
+            saveData();
+            showToast(`🗑 Deleted "${name}"`);
+            renderAll();
+        }
+
+        // ---------- BACKUP & IMPORT ----------
+        function backupData() {
+            const data = {
+                version: '1.0',
+                timestamp: new Date().toISOString(),
+                appData: appData,
+                // also save done statuses? we can include all localStorage keys that start with 'done_'
+                doneStatuses: {}
+            };
+            // Collect done statuses
+            for (let i = 0; i < localStorage.length; i++) {
+                const key = localStorage.key(i);
+                if (key && key.startsWith('done_')) {
+                    try {
+                        data.doneStatuses[key] = JSON.parse(localStorage.getItem(key));
+                    } catch(e) {}
+                }
+            }
+            const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `scheduler_backup_${formatDate(new Date())}.json`;
+            a.click();
+            URL.revokeObjectURL(url);
+            showToast('💾 Backup downloaded');
+        }
+
+        function importData(file) {
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                try {
+                    const data = JSON.parse(e.target.result);
+                    if (data.appData && data.appData.courses) {
+                        appData.courses = data.appData.courses;
+                        // restore done statuses
+                        if (data.doneStatuses) {
+                            for (const [key, val] of Object.entries(data.doneStatuses)) {
+                                localStorage.setItem(key, JSON.stringify(val));
+                            }
+                        }
+                        saveData();
+                        showToast('📂 Import successful!');
+                        renderAll();
+                    } else {
+                        showToast('⚠️ Invalid backup file');
+                    }
+                } catch(err) {
+                    showToast('⚠️ Error parsing file');
+                    console.error(err);
+                }
+            };
+            reader.readAsText(file);
+        }
+
+        // ---------- NAVIGATION ----------
+        function changeDate(delta) {
+            if (!selectedDateStr) {
+                selectedDateStr = formatDate(new Date());
+            }
+            const d = parseDate(selectedDateStr);
+            d.setDate(d.getDate() + delta);
+            selectedDateStr = formatDate(d);
+            // Also update view calendar to that month
+            currentViewDate = new Date(d.getFullYear(), d.getMonth(), 1);
+            renderCalendar();
+            renderLecturesForDate();
+        }
+
+        function goToday() {
+            const today = new Date();
+            selectedDateStr = formatDate(today);
+            currentViewDate = new Date(today.getFullYear(), today.getMonth(), 1);
+            renderCalendar();
+            renderLecturesForDate();
+        }
+
+        // ---------- EVENT BINDINGS ----------
+        function init() {
+            // load data
+            if (!loadData()) {
+                // no data, maybe first run
+                appData.courses = {};
+                saveData();
+            }
+
+            // render
+            renderAll();
+
+            // Tabs
+            document.querySelectorAll('.tab').forEach(tab => {
+                tab.addEventListener('click', function() {
+                    document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+                    this.classList.add('active');
+                    document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+                    document.getElementById('panel-' + this.dataset.tab).classList.add('active');
+                });
+            });
+
+            // Upload
+            document.getElementById('uploadCourseBtn').addEventListener('click', uploadCourse);
+
+            // Dummy
+            document.getElementById('dummyCourse1Btn').addEventListener('click', () => {
+                loadDummyCourses();
+            });
+            document.getElementById('dummyCourse2Btn').addEventListener('click', () => {
+                loadDummyCourses();
+            });
+
+            // Timetable course select
+            document.getElementById('timetableCourseSelect').addEventListener('change', function() {
+                selectedCourseForTimetable = this.value;
+                // reset selected date
+                selectedDateStr = formatDate(new Date());
+                currentViewDate = new Date();
+                renderCalendar();
+                renderLecturesForDate();
+            });
+
+            // Calendar nav
+            document.getElementById('prevMonthBtn').addEventListener('click', function() {
+                currentViewDate.setMonth(currentViewDate.getMonth() - 1);
+                renderCalendar();
+            });
+            document.getElementById('nextMonthBtn').addEventListener('click', function() {
+                currentViewDate.setMonth(currentViewDate.getMonth() + 1);
+                renderCalendar();
+            });
+            document.getElementById('todayBtn').addEventListener('click', goToday);
+            document.getElementById('prevDateBtn').addEventListener('click', () => changeDate(-1));
+            document.getElementById('nextDateBtn').addEventListener('click', () => changeDate(1));
+
+            // Edit course select
+            document.getElementById('editCourseSelect').addEventListener('change', function() {
+                selectedCourseForEdit = this.value;
+                renderEditLectures();
+            });
+
+            // Delete course
+            document.getElementById('deleteCourseBtn').addEventListener('click', deleteSelectedCourse);
+            document.getElementById('refreshEditBtn').addEventListener('click', function() {
+                renderEditLectures();
+                showToast('🔄 Refreshed');
+            });
+
+            // Backup
+            document.getElementById('backupBtn').addEventListener('click', backupData);
+
+            // Import
+            document.getElementById('importBtn').addEventListener('click', function() {
+                document.getElementById('fileInput').click();
+            });
+            document.getElementById('fileInput').addEventListener('change', function(e) {
+                if (this.files && this.files.length > 0) {
+                    importData(this.files[0]);
+                }
+                this.value = '';
+            });
+
+            // Set initial date
+            const today = new Date();
+            selectedDateStr = formatDate(today);
+            currentViewDate = new Date(today.getFullYear(), today.getMonth(), 1);
+            renderCalendar();
+            renderLecturesForDate();
+
+            // If no courses, show hint
+            if (Object.keys(appData.courses).length === 0) {
+                showToast('👋 Upload a course or load dummy data');
+            }
+        }
+
+        // run
+        document.addEventListener('DOMContentLoaded', init);
+    })();
 </script>
+
 </body>
 </html>
