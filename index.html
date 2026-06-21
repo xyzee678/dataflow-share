@@ -633,7 +633,7 @@
             height: 120px;
         }
 
-        /* ===== HORIZONTAL BATTERIES (Last 3 & Coming 3) ===== */
+        /* ===== HORIZONTAL BATTERIES ===== */
         .horiz-batteries {
             background: white;
             border-radius: 10px;
@@ -1021,6 +1021,16 @@
             color: #1a202c;
         }
 
+        .history-item.missed {
+            background: #fef2f2;
+            border-left: 3px solid #dc2626;
+            padding-left: 6px;
+        }
+
+        .history-item.missed .task-info {
+            color: #dc2626;
+        }
+
         /* ===== RESULTS ===== */
         .results-container {
             background: white;
@@ -1116,6 +1126,31 @@
             background: #ffffff;
         }
 
+        .results-table .row-color-0 {
+            background: #f0f9ff;
+        }
+        .results-table .row-color-1 {
+            background: #fef3c7;
+        }
+        .results-table .row-color-2 {
+            background: #ecfdf5;
+        }
+        .results-table .row-color-3 {
+            background: #fce4ec;
+        }
+        .results-table .row-color-4 {
+            background: #ede7f6;
+        }
+        .results-table .row-color-5 {
+            background: #e0f7fa;
+        }
+        .results-table .row-color-6 {
+            background: #fff3e0;
+        }
+        .results-table .row-color-7 {
+            background: #e8f5e9;
+        }
+
         .results-actions {
             display: flex;
             gap: 6px;
@@ -1159,8 +1194,8 @@
             background: #ef4444;
             color: white;
         }
-        .btn-resets-toggle-view {
-            background: #059669;
+        .btn-range-allocate {
+            background: #7c3aed;
             color: white;
         }
 
@@ -2154,6 +2189,21 @@
         .hidden {
             display: none !important;
         }
+
+        /* ===== RANGE SELECTION ===== */
+        .range-selection-mode .results-table tbody tr {
+            cursor: pointer;
+            transition: background 0.1s;
+        }
+
+        .range-selection-mode .results-table tbody tr:hover {
+            background: #dbeafe !important;
+        }
+
+        .range-selection-mode .results-table tbody tr.selected-range {
+            background: #bfdbfe !important;
+            outline: 2px solid #3b82f6;
+        }
     </style>
 </head>
 <body>
@@ -2272,7 +2322,7 @@
                     <textarea id="dateNote" placeholder="Add a note..." onchange="saveNote()"></textarea>
                 </div>
 
-                <!-- ===== HORIZONTAL BATTERIES (Last 3 & Coming 3) ===== -->
+                <!-- ===== HORIZONTAL BATTERIES ===== -->
                 <div class="horiz-batteries">
                     <div class="h-title">📊 Last 3 & Coming 3 Days</div>
                     <div id="horizBatteryList"></div>
@@ -2514,6 +2564,10 @@
         let modalCallback = null;
         let currentDate = new Date();
         let selectedDate = new Date();
+        let resultsHasChanges = false;
+        let rangeSelectionMode = false;
+        let rangeStartIndex = -1;
+        let rangeEndIndex = -1;
 
         // ============================================================
         // TODAY'S DATE IN HEADER
@@ -2709,7 +2763,7 @@
         }
 
         // ============================================================
-        // HORIZONTAL BATTERIES (Last 3 & Coming 3)
+        // HORIZONTAL BATTERIES
         // ============================================================
         function updateHorizBatteries() {
             const container = document.getElementById('horizBatteryList');
@@ -2717,7 +2771,7 @@
 
             if (!sheet) {
                 container.innerHTML =
-                '<div style="text-align:center;color:#9ca3af;font-size:10px;padding:8px;">Select a sheet to view</div>';
+                    '<div style="text-align:center;color:#9ca3af;font-size:10px;padding:8px;">Select a sheet to view</div>';
                 return;
             }
 
@@ -2832,7 +2886,7 @@
         }
 
         // ============================================================
-        // CORE LOGIC: ALLOCATE TASKS TO DATES (Adjacent grouping)
+        // CORE LOGIC: ALLOCATE TASKS TO DATES (Sequential by SR)
         // ============================================================
         function allocateTasksToDates(sheet) {
             if (!sheet || !sheet.data || sheet.data.length === 0) return {};
@@ -2847,51 +2901,66 @@
                 totalDuration += parseFloat(row.duration) || 0;
             });
 
-            if (totalDuration === 0 || speedMinutes === 0) return {};
-
-            const daysNeeded = Math.max(1, Math.ceil(totalDuration / speedMinutes));
-            const groups = [];
-            const targetPerDay = totalDuration / daysNeeded;
-
-            // Adjacent grouping - keep original order
-            let currentGroup = [];
-            let currentDuration = 0;
-
-            sheet.data.forEach((row, idx) => {
-                const dur = parseFloat(row.duration) || 0;
-                if (currentGroup.length > 0 && currentDuration + dur > targetPerDay * 1.15) {
-                    groups.push({ rows: [...currentGroup], duration: currentDuration });
-                    currentGroup = [];
-                    currentDuration = 0;
-                }
-                currentGroup.push(idx);
-                currentDuration += dur;
-            });
-
-            if (currentGroup.length > 0) {
-                groups.push({ rows: [...currentGroup], duration: currentDuration });
-            }
-
-            // If groups are empty or too few, distribute evenly
-            if (groups.length === 0 || groups.length < daysNeeded) {
+            if (totalDuration === 0 || speedMinutes === 0) {
+                // Distribute evenly by SR
                 const allocations = {};
                 sheet.data.forEach((row, idx) => {
-                    const dayOffset = Math.floor(idx / Math.max(1, Math.ceil(sheet.data.length / daysNeeded)));
                     const date = new Date(startDate);
-                    date.setDate(date.getDate() + dayOffset);
+                    date.setDate(date.getDate() + idx);
                     allocations[idx] = date.toISOString().split('T')[0];
                 });
                 return allocations;
             }
 
+            const daysNeeded = Math.max(1, Math.ceil(totalDuration / speedMinutes));
+            const targetPerDay = totalDuration / daysNeeded;
+
+            // Sort by SR to keep sequential order
+            const sortedRows = sheet.data.map((row, idx) => ({ ...row, index: idx }))
+                .sort((a, b) => (parseFloat(a.sr) || a.index + 1) - (parseFloat(b.sr) || b.index + 1));
+
             const allocations = {};
-            groups.forEach((group, index) => {
+            let currentDay = 0;
+            let currentDuration = 0;
+            let currentDayRows = [];
+
+            sortedRows.forEach((row, pos) => {
+                const dur = parseFloat(row.duration) || 0;
+
+                if (currentDayRows.length > 0 && currentDuration + dur > targetPerDay * 1.2) {
+                    // Finalize current day
+                    const date = new Date(startDate);
+                    date.setDate(date.getDate() + currentDay);
+                    const dateStr = date.toISOString().split('T')[0];
+                    currentDayRows.forEach(idx => {
+                        allocations[idx] = dateStr;
+                    });
+                    currentDay++;
+                    currentDayRows = [];
+                    currentDuration = 0;
+                }
+
+                currentDayRows.push(row.index);
+                currentDuration += dur;
+            });
+
+            // Finalize last day
+            if (currentDayRows.length > 0) {
                 const date = new Date(startDate);
-                date.setDate(date.getDate() + index);
+                date.setDate(date.getDate() + currentDay);
                 const dateStr = date.toISOString().split('T')[0];
-                group.rows.forEach(rowIndex => {
-                    allocations[rowIndex] = dateStr;
+                currentDayRows.forEach(idx => {
+                    allocations[idx] = dateStr;
                 });
+            }
+
+            // Ensure all rows are allocated
+            sheet.data.forEach((row, idx) => {
+                if (!allocations.hasOwnProperty(idx)) {
+                    const date = new Date(startDate);
+                    date.setDate(date.getDate() + idx);
+                    allocations[idx] = date.toISOString().split('T')[0];
+                }
             });
 
             return allocations;
@@ -3521,6 +3590,7 @@
                 const sheetName = entries[0]?.sheetName || '';
                 const sheet = appData.sheets.find(s => s.name === sheetName);
                 let dayPercent = 0;
+                let missedTasks = 0;
                 if (sheet) {
                     const tasksForDate = getTasksForDate(sheet, date);
                     const completedForDate = tasksForDate.filter(t =>
@@ -3532,15 +3602,16 @@
                     );
                     dayPercent = tasksForDate.length > 0 ? Math.round((completedForDate.length / tasksForDate.length) *
                         100) : 0;
+                    missedTasks = tasksForDate.length - completedForDate.length;
                 }
 
                 const colorClass = dayPercent === 100 ? 'stars' : dayPercent >= 70 ? 'green' : dayPercent >= 30 ? 'yellow' :
                     'red';
 
                 html += `
-                        <div style="margin-top:6px;padding:6px;background:#f8fafc;border-radius:6px;">
+                        <div style="margin-top:6px;padding:6px;background:#f8fafc;border-radius:6px;border-left: ${missedTasks > 0 ? '4px solid #dc2626' : '4px solid #059669'};">
                             <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:3px;font-size:11px;font-weight:600;color:#1a202c;">
-                                <span>📅 ${dateLabel}</span>
+                                <span>📅 ${dateLabel} ${missedTasks > 0 ? `⚠️ ${missedTasks} missed` : '✅'}</span>
                                 <span style="display:flex;align-items:center;gap:8px;">
                                     <span>${totalTasks} tasks · ${totalDisplay}</span>
                                     <span style="display:flex;align-items:center;gap:4px;">
@@ -3565,9 +3636,13 @@
                     const durationDisplay = entry.taskDuration >= 60 ? (entry.taskDuration / 60).toFixed(1) + 'h' : (entry
                         .taskDuration || 0) + 'm';
 
+                    // Check if this task was missed (allocated on this date but completed later)
+                    const allocatedDate = appData.taskAllocations[sheetName]?.[entry.taskIndex];
+                    const isMissed = allocatedDate && allocatedDate < entry.date;
+
                     html += `
-                            <div class="history-item">
-                                <span class="task-info">#${entry.taskIndex + 1} ${entry.taskRef || 'Task'}</span>
+                            <div class="history-item ${isMissed ? 'missed' : ''}">
+                                <span class="task-info">#${entry.taskIndex + 1} ${entry.taskRef || 'Task'} ${isMissed ? '⏰ Missed' : ''}</span>
                                 <span class="completed-on">✅ Done: ${completedLabel}</span>
                                 <span class="progress completed">${durationDisplay}</span>
                             </div>
@@ -3583,8 +3658,6 @@
         // ============================================================
         // RESULTS PAGE
         // ============================================================
-        let resultsHasChanges = false;
-
         function updateResults() {
             const select = document.getElementById('resultsSheetSelect');
             const selectedIndex = parseInt(select.value);
@@ -3615,6 +3688,16 @@
             const delayedInfo = calculateDelayedDate(sheet);
 
             const allocations = appData.taskAllocations[sheet.name] || {};
+
+            // Build a color map for allocated dates
+            const dateColors = {};
+            const uniqueDates = Object.values(allocations).filter(d => d !== undefined);
+            const colorPalette = ['row-color-0', 'row-color-1', 'row-color-2', 'row-color-3', 'row-color-4', 'row-color-5',
+                'row-color-6', 'row-color-7'
+            ];
+            uniqueDates.forEach((date, idx) => {
+                dateColors[date] = colorPalette[idx % colorPalette.length];
+            });
 
             let html = `
                     <div class="results-summary-top">
@@ -3657,10 +3740,12 @@
                     <div class="results-actions">
                         <button class="btn-results-select-all" onclick="resultsSelectAll()">✅ Select All</button>
                         <button class="btn-results-deselect-all" onclick="resultsDeselectAll()">❌ Deselect All</button>
+                        <button class="btn-range-allocate" onclick="toggleRangeMode()">📊 Range Allocate</button>
                         <button class="btn-results-execute" id="resultsExecuteBtn" onclick="resultsExecute()">💾 Execute</button>
                     </div>
+                    ${rangeSelectionMode ? `<div style="font-size:10px;color:#4f46e5;margin:4px 0;padding:4px;background:#dbeafe;border-radius:4px;text-align:center;">🔍 Click first row, then last row to select range. Click again to apply.</div>` : ''}
 
-                    <table class="results-table">
+                    <table class="results-table ${rangeSelectionMode ? 'range-selection-mode' : ''}">
                         <thead>
                             <tr>
                                 <th>Sr</th>
@@ -3674,11 +3759,11 @@
                         <tbody>
                     `;
 
-            // Sort by allocated date order
+            // Sort by SR
             const sortedIndices = sheet.data.map((_, i) => i).sort((a, b) => {
-                const dateA = allocations[a] || '9999-99-99';
-                const dateB = allocations[b] || '9999-99-99';
-                return dateA.localeCompare(dateB);
+                const srA = parseFloat(sheet.data[a].sr) || a + 1;
+                const srB = parseFloat(sheet.data[b].sr) || b + 1;
+                return srA - srB;
             });
 
             sortedIndices.forEach((i, rowIndex) => {
@@ -3698,10 +3783,10 @@
                     }
                 }
 
-                const rowClass = rowIndex % 2 === 0 ? 'row-even' : 'row-odd';
+                const rowColor = dateColors[allocatedDate] || (rowIndex % 2 === 0 ? 'row-even' : 'row-odd');
 
                 html += `
-                        <tr class="${rowClass}">
+                        <tr class="${rowColor}" data-row-index="${i}" onclick="${rangeSelectionMode ? `selectRangeRow(${i})` : ''}">
                             <td>${row.sr || i + 1}</td>
                             <td>${row.reference || '-'}</td>
                             <td>${row.duration || 0}</td>
@@ -3734,6 +3819,171 @@
                 execBtn.classList.remove('has-changes');
                 execBtn.textContent = '💾 Execute';
             }
+        }
+
+        // ============================================================
+        // RANGE SELECTION MODE
+        // ============================================================
+        function toggleRangeMode() {
+            rangeSelectionMode = !rangeSelectionMode;
+            if (!rangeSelectionMode) {
+                rangeStartIndex = -1;
+                rangeEndIndex = -1;
+                document.querySelectorAll('.selected-range').forEach(el => el.classList.remove('selected-range'));
+            }
+            updateResults();
+            if (rangeSelectionMode) {
+                showToast('📊 Click first row, then last row to select range. Click again to apply.');
+            }
+        }
+
+        function selectRangeRow(index) {
+            if (!rangeSelectionMode) return;
+
+            if (rangeStartIndex === -1) {
+                rangeStartIndex = index;
+                const row = document.querySelector(`tr[data-row-index="${index}"]`);
+                if (row) row.classList.add('selected-range');
+                showToast(`📊 First row #${index + 1} selected. Click last row.`);
+                return;
+            }
+
+            if (rangeEndIndex === -1) {
+                rangeEndIndex = index;
+                // Highlight range
+                const rows = document.querySelectorAll(`tr[data-row-index]`);
+                let minIdx = Math.min(rangeStartIndex, rangeEndIndex);
+                let maxIdx = Math.max(rangeStartIndex, rangeEndIndex);
+                rows.forEach(row => {
+                    const idx = parseInt(row.dataset.rowIndex);
+                    if (idx >= minIdx && idx <= maxIdx) {
+                        row.classList.add('selected-range');
+                    }
+                });
+
+                // Show modal for range operation
+                showRangeModal(minIdx, maxIdx);
+            }
+        }
+
+        function showRangeModal(startIdx, endIdx) {
+            const sheet = appData.sheets[parseInt(document.getElementById('resultsSheetSelect').value)];
+            if (!sheet) return;
+
+            const startSr = sheet.data[startIdx]?.sr || startIdx + 1;
+            const endSr = sheet.data[endIdx]?.sr || endIdx + 1;
+
+            showModal(
+                '📊 Range Operation',
+                `Selected rows #${startSr} to #${endSr} (${endIdx - startIdx + 1} tasks).\nWhat would you like to do?`,
+                true,
+                (action) => {
+                    if (action === 'allocate') {
+                        applyRangeAllocation(startIdx, endIdx);
+                    } else if (action === 'done') {
+                        applyRangeDone(startIdx, endIdx);
+                    } else {
+                        showToast('❌ Invalid action. Use "allocate" or "done"');
+                    }
+                    rangeSelectionMode = false;
+                    rangeStartIndex = -1;
+                    rangeEndIndex = -1;
+                    updateResults();
+                },
+                'allocate'
+            );
+
+            // Customize modal for range
+            const modalInput = document.getElementById('modalInput');
+            modalInput.placeholder = 'Enter "allocate" or "done"';
+            modalInput.value = 'allocate';
+            document.getElementById('modalMessage').textContent =
+                `Selected rows #${startSr} to #${endSr} (${endIdx - startIdx + 1} tasks).\nEnter "allocate" to set dates or "done" to mark as done.`;
+        }
+
+        function applyRangeAllocation(startIdx, endIdx) {
+            const select = document.getElementById('resultsSheetSelect');
+            const sheetIndex = parseInt(select.value);
+            const sheet = appData.sheets[sheetIndex];
+            if (!sheet) return;
+
+            const dateStr = selectedDate.toISOString().split('T')[0];
+            const newDate = prompt(`Enter allocation date for rows ${startIdx + 1} to ${endIdx + 1} (YYYY-MM-DD):`, dateStr);
+            if (!newDate) return;
+
+            const dateRegex = /^\d{4}-\d{2}-\d{2}$/;
+            if (!dateRegex.test(newDate) || isNaN(new Date(newDate + 'T00:00:00').getTime())) {
+                showToast('❌ Invalid date format. Use YYYY-MM-DD.');
+                return;
+            }
+
+            if (!appData.taskAllocations[sheet.name]) appData.taskAllocations[sheet.name] = {};
+
+            for (let i = startIdx; i <= endIdx; i++) {
+                appData.taskAllocations[sheet.name][i] = newDate;
+            }
+
+            resultsHasChanges = true;
+            saveData();
+            updateResults();
+            updateFocusBattery();
+            updateThreeBatteries();
+            updateHorizBatteries();
+            showToast(`✅ Allocated ${endIdx - startIdx + 1} tasks to ${newDate}`);
+        }
+
+        function applyRangeDone(startIdx, endIdx) {
+            const select = document.getElementById('resultsSheetSelect');
+            const sheetIndex = parseInt(select.value);
+            const sheet = appData.sheets[sheetIndex];
+            if (!sheet) return;
+
+            const dateStr = selectedDate.toISOString().split('T')[0];
+            const newDate = prompt(`Enter done date for rows ${startIdx + 1} to ${endIdx + 1} (YYYY-MM-DD):`, dateStr);
+            if (!newDate) return;
+
+            const dateRegex = /^\d{4}-\d{2}-\d{2}$/;
+            if (!dateRegex.test(newDate) || isNaN(new Date(newDate + 'T00:00:00').getTime())) {
+                showToast('❌ Invalid date format. Use YYYY-MM-DD.');
+                return;
+            }
+
+            let count = 0;
+            for (let i = startIdx; i <= endIdx; i++) {
+                const existing = appData.history.findIndex(h =>
+                    h.sheetName === sheet.name &&
+                    h.taskIndex === i &&
+                    h.permanent === true
+                );
+
+                if (existing >= 0) {
+                    appData.history[existing].date = newDate;
+                    appData.history[existing].completedDate = newDate;
+                } else {
+                    appData.history.push({
+                        date: newDate,
+                        sheetName: sheet.name,
+                        taskIndex: i,
+                        taskRef: sheet.data[i].reference || 'Task',
+                        taskDuration: sheet.data[i].duration || 0,
+                        timestamp: new Date().toISOString(),
+                        permanent: true,
+                        completedDate: newDate
+                    });
+                }
+                count++;
+            }
+
+            resultsHasChanges = true;
+            saveData();
+            updateResults();
+            updateFocusDashboard();
+            updateFocusBattery();
+            updateHistory();
+            updateStatusDot();
+            updateThreeBatteries();
+            updateHorizBatteries();
+            showToast(`✅ Marked ${count} tasks as done on ${newDate}`);
         }
 
         // ============================================================
@@ -3894,7 +4144,6 @@
                     resultsHasChanges = true;
                     showToast(`↩️ Unmarked task #${taskIndex + 1}`);
                 } else {
-                    // If it's permanent, can't uncheck via this method
                     const permIndex = appData.history.findIndex(h =>
                         h.sheetName === sheet.name &&
                         h.taskIndex === taskIndex &&
@@ -3902,7 +4151,6 @@
                     );
                     if (permIndex >= 0) {
                         showToast('✅ Task is permanently completed. Use Done Date field to remove.');
-                        // Re-check the checkbox
                         const checkbox = document.querySelector(`.status-checkbox[onchange*="${taskIndex}"]`);
                         if (checkbox) checkbox.checked = true;
                         return;
@@ -4298,7 +4546,8 @@
                 remainingDuration: parseFloat(remainingDuration.toFixed(2)),
                 speed: parseFloat(speed.toFixed(2)),
                 dailyProgress: dailyProgress,
-                startDate: startDate            };
+                startDate: startDate
+            };
         }
 
         // ============================================================
