@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Lecture Planner</title>
+    <title>Lecture Planner Pro</title>
     <style>
         * {
             margin: 0;
@@ -12,45 +12,69 @@
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
         }
 
+        :root {
+            --primary: #667eea;
+            --primary-dark: #5a67d8;
+            --success: #51cf66;
+            --danger: #ff6b6b;
+            --warning: #ffd93d;
+            --bg: #f0f2f5;
+            --card: #ffffff;
+            --text: #2d3748;
+            --text-light: #718096;
+            --shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+            --radius: 12px;
+        }
+
         body {
-            background: #f5f7fa;
-            padding-bottom: 70px;
+            background: var(--bg);
+            color: var(--text);
+            padding-bottom: 80px;
+            min-height: 100vh;
         }
 
         /* Header */
         .header {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: linear-gradient(135deg, var(--primary) 0%, #764ba2 100%);
             color: white;
             padding: 16px 20px;
-            font-size: 20px;
+            font-size: 18px;
             font-weight: 600;
             position: sticky;
             top: 0;
             z-index: 100;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.15);
             display: flex;
             justify-content: space-between;
             align-items: center;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+        }
+
+        .header-title {
+            display: flex;
+            align-items: center;
+            gap: 8px;
         }
 
         .header-actions {
             display: flex;
-            gap: 12px;
+            gap: 8px;
         }
 
         .header-actions button {
-            background: rgba(255,255,255,0.2);
+            background: rgba(255, 255, 255, 0.2);
             border: none;
             color: white;
             padding: 6px 12px;
             border-radius: 6px;
-            font-size: 14px;
+            font-size: 13px;
             cursor: pointer;
             transition: all 0.2s;
+            font-weight: 500;
         }
 
         .header-actions button:hover {
-            background: rgba(255,255,255,0.3);
+            background: rgba(255, 255, 255, 0.35);
+            transform: scale(1.05);
         }
 
         /* Bottom Navigation */
@@ -62,9 +86,9 @@
             background: white;
             display: flex;
             justify-content: space-around;
-            padding: 8px 0 12px;
-            border-top: 1px solid #e0e0e0;
-            box-shadow: 0 -2px 10px rgba(0,0,0,0.05);
+            padding: 6px 0 10px;
+            border-top: 1px solid #e2e8f0;
+            box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.05);
             z-index: 200;
         }
 
@@ -72,45 +96,52 @@
             display: flex;
             flex-direction: column;
             align-items: center;
-            font-size: 11px;
-            color: #888;
+            font-size: 10px;
+            color: var(--text-light);
             cursor: pointer;
             padding: 4px 12px;
             border: none;
             background: none;
             transition: all 0.2s;
             position: relative;
-        }
-
-        .nav-item.active {
-            color: #667eea;
+            min-width: 60px;
         }
 
         .nav-item .icon {
             font-size: 22px;
-            margin-bottom: 2px;
+            margin-bottom: 1px;
+        }
+
+        .nav-item .label {
+            font-size: 10px;
+            font-weight: 500;
+        }
+
+        .nav-item.active {
+            color: var(--primary);
         }
 
         .nav-item .badge {
             position: absolute;
-            top: -2px;
-            right: 4px;
-            background: #ff6b6b;
+            top: 0;
+            right: 8px;
+            background: var(--danger);
             color: white;
             border-radius: 50%;
             width: 18px;
             height: 18px;
-            font-size: 10px;
+            font-size: 9px;
             display: flex;
             align-items: center;
             justify-content: center;
+            font-weight: 700;
         }
 
         /* Main Content */
         .tab-content {
             display: none;
             padding: 16px;
-            animation: fadeIn 0.3s;
+            animation: fadeIn 0.25s ease;
         }
 
         .tab-content.active {
@@ -118,43 +149,127 @@
         }
 
         @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(8px); }
-            to { opacity: 1; transform: translateY(0); }
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Toast */
+        .toast {
+            position: fixed;
+            top: 80px;
+            left: 50%;
+            transform: translateX(-50%) translateY(-20px);
+            background: #1a202c;
+            color: white;
+            padding: 12px 24px;
+            border-radius: var(--radius);
+            font-size: 14px;
+            z-index: 300;
+            opacity: 0;
+            transition: all 0.3s ease;
+            pointer-events: none;
+            max-width: 90%;
+            text-align: center;
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
+        }
+
+        .toast.show {
+            opacity: 1;
+            transform: translateX(-50%) translateY(0);
+        }
+
+        /* Cards */
+        .card {
+            background: var(--card);
+            border-radius: var(--radius);
+            padding: 16px;
+            box-shadow: var(--shadow);
+            margin-bottom: 16px;
+        }
+
+        .card-title {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--text-light);
+            margin-bottom: 12px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
         }
 
         /* Dashboard */
-        .course-selector {
-            margin-bottom: 20px;
-        }
-
         .course-selector select {
             width: 100%;
             padding: 12px 16px;
-            border: 2px solid #e0e0e0;
-            border-radius: 10px;
-            font-size: 16px;
+            border: 2px solid #e2e8f0;
+            border-radius: var(--radius);
+            font-size: 15px;
             background: white;
             appearance: none;
             cursor: pointer;
+            font-weight: 500;
+            transition: border-color 0.2s;
+        }
+
+        .course-selector select:focus {
+            border-color: var(--primary);
+            outline: none;
+        }
+
+        .filter-row {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 16px;
+            flex-wrap: wrap;
+        }
+
+        .filter-row select,
+        .filter-row input {
+            flex: 1;
+            min-width: 120px;
+            padding: 10px 14px;
+            border: 2px solid #e2e8f0;
+            border-radius: var(--radius);
+            font-size: 14px;
+            background: white;
+            transition: border-color 0.2s;
+        }
+
+        .filter-row select:focus,
+        .filter-row input:focus {
+            border-color: var(--primary);
+            outline: none;
         }
 
         .battery-container {
-            background: white;
-            border-radius: 16px;
-            padding: 24px;
-            box-shadow: 0 2px 12px rgba(0,0,0,0.08);
-            margin-bottom: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px 0 12px;
+        }
+
+        .battery-wrapper {
+            display: flex;
+            align-items: center;
+            gap: 24px;
+            width: 100%;
+            justify-content: center;
         }
 
         .battery {
             position: relative;
-            width: 60px;
-            height: 200px;
-            margin: 0 auto 16px;
-            background: #f0f0f0;
-            border-radius: 30px;
-            border: 3px solid #333;
+            width: 56px;
+            height: 180px;
+            background: #edf2f7;
+            border-radius: 28px;
+            border: 3px solid #2d3748;
             overflow: hidden;
+            flex-shrink: 0;
         }
 
         .battery::after {
@@ -163,9 +278,9 @@
             top: -8px;
             left: 50%;
             transform: translateX(-50%);
-            width: 24px;
+            width: 22px;
             height: 10px;
-            background: #333;
+            background: #2d3748;
             border-radius: 4px 4px 0 0;
         }
 
@@ -175,70 +290,103 @@
             left: 0;
             right: 0;
             background: linear-gradient(to top, #51cf66, #69db7c);
-            transition: height 0.8s ease;
-            border-radius: 0 0 26px 26px;
+            transition: height 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+            border-radius: 0 0 24px 24px;
         }
 
         .battery-text {
-            text-align: center;
-            font-size: 24px;
+            font-size: 28px;
             font-weight: 700;
-            margin-top: 8px;
+            color: var(--text);
+        }
+
+        .battery-label {
+            font-size: 13px;
+            color: var(--text-light);
+            margin-top: 4px;
         }
 
         .stats-grid {
             display: grid;
             grid-template-columns: 1fr 1fr;
             gap: 12px;
-        }
-
-        .stat-card {
-            background: white;
-            border-radius: 12px;
-            padding: 16px;
-            text-align: center;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.06);
-        }
-
-        .stat-card .number {
-            font-size: 28px;
-            font-weight: 700;
-            color: #667eea;
-        }
-
-        .stat-card .label {
-            font-size: 13px;
-            color: #888;
             margin-top: 4px;
         }
 
-        /* Upload Tab */
-        .upload-form {
-            background: white;
-            border-radius: 16px;
-            padding: 20px;
-            box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+        .stat-card {
+            background: var(--card);
+            border-radius: var(--radius);
+            padding: 16px;
+            text-align: center;
+            box-shadow: var(--shadow);
+            border: 1px solid #edf2f7;
         }
 
+        .stat-card .number {
+            font-size: 26px;
+            font-weight: 700;
+            color: var(--primary);
+        }
+
+        .stat-card .number.green {
+            color: var(--success);
+        }
+        .stat-card .number.red {
+            color: var(--danger);
+        }
+
+        .stat-card .label {
+            font-size: 12px;
+            color: var(--text-light);
+            margin-top: 4px;
+            font-weight: 500;
+        }
+
+        .course-count-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            background: var(--primary);
+            color: white;
+            padding: 4px 14px;
+            border-radius: 20px;
+            font-size: 13px;
+            font-weight: 600;
+            margin-top: 8px;
+        }
+
+        /* Upload */
         .upload-form textarea {
             width: 100%;
-            height: 200px;
+            height: 180px;
             padding: 12px;
-            border: 2px solid #e0e0e0;
-            border-radius: 10px;
-            font-family: monospace;
-            font-size: 14px;
+            border: 2px solid #e2e8f0;
+            border-radius: var(--radius);
+            font-family: 'Courier New', monospace;
+            font-size: 13px;
             resize: vertical;
             margin-bottom: 12px;
+            transition: border-color 0.2s;
         }
 
-        .upload-form input {
+        .upload-form textarea:focus {
+            border-color: var(--primary);
+            outline: none;
+        }
+
+        .upload-form input[type="text"] {
             width: 100%;
             padding: 12px 16px;
-            border: 2px solid #e0e0e0;
-            border-radius: 10px;
-            font-size: 16px;
+            border: 2px solid #e2e8f0;
+            border-radius: var(--radius);
+            font-size: 15px;
             margin-bottom: 12px;
+            transition: border-color 0.2s;
+        }
+
+        .upload-form input[type="text"]:focus {
+            border-color: var(--primary);
+            outline: none;
         }
 
         .btn-group {
@@ -247,157 +395,223 @@
             gap: 10px;
         }
 
+        .btn-group .btn-full {
+            grid-column: 1 / -1;
+        }
+
         .btn {
             padding: 12px;
             border: none;
-            border-radius: 10px;
-            font-size: 15px;
+            border-radius: var(--radius);
+            font-size: 14px;
             font-weight: 600;
             cursor: pointer;
             transition: all 0.2s;
+            text-align: center;
+        }
+
+        .btn:active {
+            transform: scale(0.96);
         }
 
         .btn-primary {
-            background: #667eea;
+            background: var(--primary);
             color: white;
         }
 
         .btn-primary:hover {
-            transform: translateY(-2px);
+            background: var(--primary-dark);
             box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
         }
 
         .btn-success {
-            background: #51cf66;
+            background: var(--success);
             color: white;
         }
 
         .btn-success:hover {
-            transform: translateY(-2px);
             box-shadow: 0 4px 12px rgba(81, 207, 102, 0.4);
         }
 
         .btn-danger {
-            background: #ff6b6b;
+            background: var(--danger);
             color: white;
         }
 
         .btn-danger:hover {
-            transform: translateY(-2px);
             box-shadow: 0 4px 12px rgba(255, 107, 107, 0.4);
         }
 
         .btn-warning {
-            background: #ffd93d;
-            color: #333;
+            background: var(--warning);
+            color: #2d3748;
         }
 
         .btn-warning:hover {
-            transform: translateY(-2px);
             box-shadow: 0 4px 12px rgba(255, 217, 61, 0.4);
         }
 
         .btn-outline {
             background: transparent;
-            border: 2px solid #667eea;
-            color: #667eea;
+            border: 2px solid var(--primary);
+            color: var(--primary);
         }
 
         .btn-outline:hover {
-            background: #667eea;
+            background: var(--primary);
             color: white;
+        }
+
+        .btn-sm {
+            padding: 6px 12px;
+            font-size: 12px;
+        }
+
+        .saved-courses-list {
+            margin-top: 16px;
+        }
+
+        .saved-course-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 12px;
+            background: #f7fafc;
+            border-radius: 8px;
+            margin-bottom: 6px;
+            font-size: 14px;
+        }
+
+        .saved-course-item .name {
+            font-weight: 500;
+        }
+
+        .saved-course-item .count {
+            color: var(--text-light);
+            font-size: 12px;
         }
 
         /* Timetable */
         .timetable-controls {
             display: flex;
-            justify-content: space-between;
-            align-items: center;
+            gap: 10px;
             margin-bottom: 16px;
             flex-wrap: wrap;
-            gap: 10px;
         }
 
         .timetable-controls select {
-            padding: 8px 12px;
-            border: 2px solid #e0e0e0;
-            border-radius: 8px;
-            font-size: 14px;
-            flex: 1;
+            flex: 2;
             min-width: 120px;
+            padding: 10px 14px;
+            border: 2px solid #e2e8f0;
+            border-radius: var(--radius);
+            font-size: 14px;
+            background: white;
         }
 
-        .timetable-controls .nav-buttons {
+        .timetable-controls select:focus {
+            border-color: var(--primary);
+            outline: none;
+        }
+
+        .timetable-controls .nav-group {
             display: flex;
-            gap: 8px;
+            gap: 6px;
+            flex: 1;
+            min-width: 140px;
         }
 
-        .timetable-controls button {
-            padding: 8px 16px;
+        .timetable-controls .nav-group button {
+            padding: 8px 14px;
             border: none;
-            border-radius: 8px;
-            background: #667eea;
+            border-radius: var(--radius);
+            background: var(--primary);
             color: white;
             cursor: pointer;
             font-weight: 600;
+            font-size: 13px;
             transition: all 0.2s;
+            flex: 1;
         }
 
-        .timetable-controls button:hover {
-            transform: scale(1.05);
+        .timetable-controls .nav-group button:hover {
+            background: var(--primary-dark);
+        }
+
+        .timetable-controls .nav-group button:active {
+            transform: scale(0.95);
+        }
+
+        .month-label {
+            text-align: center;
+            font-weight: 700;
+            font-size: 18px;
+            margin-bottom: 12px;
+            color: var(--text);
         }
 
         .calendar-grid {
             display: grid;
             grid-template-columns: repeat(7, 1fr);
-            gap: 6px;
-            background: white;
-            padding: 12px;
-            border-radius: 16px;
-            box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+            gap: 4px;
+            background: var(--card);
+            padding: 10px;
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
             margin-bottom: 16px;
         }
 
         .calendar-header {
             text-align: center;
             font-weight: 600;
-            color: #888;
-            font-size: 12px;
-            padding: 4px;
+            color: var(--text-light);
+            font-size: 11px;
+            padding: 4px 0;
+            text-transform: uppercase;
         }
 
         .calendar-day {
             aspect-ratio: 1;
             display: flex;
+            flex-direction: column;
             align-items: center;
             justify-content: center;
             border-radius: 8px;
-            font-size: 14px;
+            font-size: 13px;
             font-weight: 500;
             cursor: pointer;
-            transition: all 0.2s;
-            background: #f8f9fa;
+            transition: all 0.15s;
+            background: #f7fafc;
             position: relative;
+            min-height: 32px;
         }
 
-        .calendar-day:hover {
-            transform: scale(1.05);
+        .calendar-day:active {
+            transform: scale(0.92);
         }
 
         .calendar-day.has-lecture {
-            background: #e3f0ff;
+            background: #ebf4ff;
+            font-weight: 600;
         }
 
         .calendar-day.completed {
-            background: #d3f9d8;
+            background: #d4edda;
+            color: #155724;
         }
 
         .calendar-day.pending {
-            background: #ffd8d8;
+            background: #cce5ff;
+            color: #004085;
+        }
+
+        .calendar-day.incomplete {
+            background: #f8d7da;
+            color: #721c24;
         }
 
         .calendar-day.today {
-            border: 2px solid #667eea;
+            border: 2px solid var(--primary);
         }
 
         .calendar-day.empty {
@@ -405,11 +619,37 @@
             cursor: default;
         }
 
+        .calendar-day .dot {
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            margin-top: 2px;
+        }
+
+        .calendar-day .dot.green {
+            background: var(--success);
+        }
+        .calendar-day .dot.blue {
+            background: var(--primary);
+        }
+        .calendar-day .dot.red {
+            background: var(--danger);
+        }
+
         .lecture-list {
-            background: white;
-            border-radius: 16px;
+            background: var(--card);
+            border-radius: var(--radius);
             padding: 16px;
-            box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+            box-shadow: var(--shadow);
+        }
+
+        .lecture-list .date-header {
+            font-weight: 600;
+            font-size: 15px;
+            margin-bottom: 12px;
+            color: var(--text);
+            padding-bottom: 8px;
+            border-bottom: 2px solid #edf2f7;
         }
 
         .lecture-item {
@@ -418,6 +658,7 @@
             padding: 10px 0;
             border-bottom: 1px solid #f0f0f0;
             gap: 12px;
+            transition: background 0.2s;
         }
 
         .lecture-item:last-child {
@@ -427,13 +668,14 @@
         .lecture-item input[type="checkbox"] {
             width: 20px;
             height: 20px;
-            accent-color: #51cf66;
+            accent-color: var(--success);
             cursor: pointer;
             flex-shrink: 0;
         }
 
         .lecture-item .info {
             flex: 1;
+            min-width: 0;
         }
 
         .lecture-item .info .title {
@@ -443,29 +685,47 @@
 
         .lecture-item .info .sub {
             font-size: 12px;
-            color: #888;
+            color: var(--text-light);
+        }
+
+        .lecture-item .info .sub .continuing {
+            color: var(--warning);
+            font-weight: 600;
+        }
+
+        .lecture-item.completed {
+            background: #f0fff4;
+            border-radius: 6px;
+            padding-left: 8px;
+            padding-right: 8px;
         }
 
         .lecture-item.completed .info .title {
-            color: #51cf66;
+            color: var(--success);
             text-decoration: line-through;
         }
 
         .lecture-item .status-badge {
-            font-size: 12px;
+            font-size: 11px;
             padding: 2px 10px;
             border-radius: 12px;
             font-weight: 600;
+            flex-shrink: 0;
         }
 
         .status-badge.done {
-            background: #d3f9d8;
-            color: #2b8a3e;
+            background: #d4edda;
+            color: #155724;
         }
 
         .status-badge.pending {
-            background: #ffd8d8;
-            color: #c92a2a;
+            background: #f8d7da;
+            color: #721c24;
+        }
+
+        .status-badge.in-progress {
+            background: #cce5ff;
+            color: #004085;
         }
 
         /* Edit Tab */
@@ -476,125 +736,167 @@
             flex-wrap: wrap;
         }
 
-        .edit-controls input {
-            flex: 1;
-            min-width: 100px;
-            padding: 8px 12px;
-            border: 2px solid #e0e0e0;
-            border-radius: 8px;
+        .edit-controls select {
+            flex: 2;
+            min-width: 120px;
+            padding: 10px 14px;
+            border: 2px solid #e2e8f0;
+            border-radius: var(--radius);
             font-size: 14px;
+            background: white;
         }
 
-        .edit-controls select {
-            padding: 8px 12px;
-            border: 2px solid #e0e0e0;
-            border-radius: 8px;
-            font-size: 14px;
+        .edit-controls select:focus {
+            border-color: var(--primary);
+            outline: none;
+        }
+
+        .edit-controls .speed-group {
+            display: flex;
+            gap: 6px;
             flex: 1;
-            min-width: 120px;
+            min-width: 140px;
+            align-items: center;
+        }
+
+        .edit-controls .speed-group input {
+            flex: 2;
+            padding: 10px 12px;
+            border: 2px solid #e2e8f0;
+            border-radius: var(--radius);
+            font-size: 14px;
+            min-width: 60px;
+        }
+
+        .edit-controls .speed-group input:focus {
+            border-color: var(--primary);
+            outline: none;
+        }
+
+        .edit-controls .speed-group .btn {
+            flex: 0;
+            padding: 10px 14px;
+            font-size: 12px;
+        }
+
+        .edit-controls input[type="date"] {
+            padding: 10px 14px;
+            border: 2px solid #e2e8f0;
+            border-radius: var(--radius);
+            font-size: 14px;
+            background: white;
+            flex: 1;
+            min-width: 130px;
+        }
+
+        .edit-controls input[type="date"]:focus {
+            border-color: var(--primary);
+            outline: none;
         }
 
         .edit-table {
-            background: white;
-            border-radius: 16px;
+            background: var(--card);
+            border-radius: var(--radius);
             overflow: hidden;
-            box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+            box-shadow: var(--shadow);
         }
 
         .edit-row {
             display: grid;
-            grid-template-columns: 50px 1fr 70px 80px 40px;
-            gap: 8px;
-            padding: 10px 12px;
+            grid-template-columns: 36px 1fr 60px 36px 30px;
+            gap: 6px;
+            padding: 8px 10px;
             align-items: center;
-            border-bottom: 1px solid #f0f0f0;
+            border-bottom: 1px solid #edf2f7;
             font-size: 13px;
+            transition: background 0.2s;
         }
 
         .edit-row.header {
-            background: #f8f9fa;
+            background: #f7fafc;
             font-weight: 600;
-            color: #666;
-            font-size: 12px;
+            color: var(--text-light);
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: 0.3px;
         }
 
         .edit-row.completed {
-            background: #f0fdf4;
+            background: #f0fff4;
         }
 
         .edit-row input[type="text"],
         .edit-row input[type="number"] {
-            padding: 4px 8px;
-            border: 1px solid #e0e0e0;
+            padding: 4px 6px;
+            border: 1px solid #e2e8f0;
             border-radius: 4px;
             font-size: 13px;
             width: 100%;
+            background: white;
+            transition: border-color 0.2s;
+        }
+
+        .edit-row input[type="text"]:focus,
+        .edit-row input[type="number"]:focus {
+            border-color: var(--primary);
+            outline: none;
         }
 
         .edit-row input[type="checkbox"] {
             width: 18px;
             height: 18px;
-            accent-color: #51cf66;
+            accent-color: var(--success);
             cursor: pointer;
+            justify-self: center;
         }
 
         .edit-row .delete-btn {
             background: none;
             border: none;
-            color: #ff6b6b;
+            color: var(--danger);
             font-size: 18px;
             cursor: pointer;
-            padding: 0 4px;
+            padding: 0;
+            transition: transform 0.2s;
+            line-height: 1;
         }
 
         .edit-row .delete-btn:hover {
             transform: scale(1.2);
         }
 
+        .edit-row .sr-no {
+            font-weight: 600;
+            color: var(--text-light);
+            font-size: 12px;
+            text-align: center;
+        }
+
         .summary-bar {
             display: flex;
             justify-content: space-between;
             padding: 12px 16px;
-            background: white;
-            border-radius: 12px;
+            background: var(--card);
+            border-radius: var(--radius);
             margin-top: 16px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+            box-shadow: var(--shadow);
             font-size: 14px;
             flex-wrap: wrap;
             gap: 8px;
         }
 
         .summary-bar .label {
-            color: #888;
+            color: var(--text-light);
         }
 
         .summary-bar .value {
             font-weight: 600;
-            color: #333;
+            color: var(--text);
         }
 
-        /* Toast */
-        .toast {
-            position: fixed;
-            top: 80px;
-            left: 50%;
-            transform: translateX(-50%);
-            background: #333;
-            color: white;
-            padding: 12px 24px;
-            border-radius: 10px;
-            font-size: 14px;
-            z-index: 300;
-            opacity: 0;
-            transition: all 0.3s;
-            pointer-events: none;
-            max-width: 90%;
-            text-align: center;
-        }
-
-        .toast.show {
-            opacity: 1;
-            transform: translateX(-50%) translateY(0);
+        .delete-course-btn {
+            margin-top: 12px;
+            width: 100%;
         }
 
         /* Modal */
@@ -605,11 +907,12 @@
             left: 0;
             right: 0;
             bottom: 0;
-            background: rgba(0,0,0,0.5);
+            background: rgba(0, 0, 0, 0.5);
             z-index: 400;
             align-items: center;
             justify-content: center;
             padding: 20px;
+            backdrop-filter: blur(4px);
         }
 
         .modal-overlay.show {
@@ -618,27 +921,41 @@
 
         .modal {
             background: white;
-            border-radius: 16px;
+            border-radius: var(--radius);
             padding: 24px;
             max-width: 500px;
             width: 100%;
             max-height: 80vh;
             overflow-y: auto;
+            animation: fadeIn 0.25s ease;
         }
 
         .modal h3 {
-            margin-bottom: 16px;
+            margin-bottom: 12px;
+            font-size: 18px;
+        }
+
+        .modal p {
+            color: var(--text-light);
+            font-size: 14px;
+            margin-bottom: 12px;
         }
 
         .modal textarea {
             width: 100%;
-            height: 150px;
+            height: 140px;
             padding: 12px;
-            border: 2px solid #e0e0e0;
+            border: 2px solid #e2e8f0;
             border-radius: 8px;
-            font-family: monospace;
+            font-family: 'Courier New', monospace;
             font-size: 13px;
             margin-bottom: 12px;
+            resize: vertical;
+        }
+
+        .modal textarea:focus {
+            border-color: var(--primary);
+            outline: none;
         }
 
         .modal .btn-group {
@@ -650,11 +967,12 @@
             flex: 1;
         }
 
+        /* Responsive */
         @media (max-width: 480px) {
             .edit-row {
-                grid-template-columns: 40px 1fr 60px 60px 30px;
+                grid-template-columns: 30px 1fr 50px 30px 26px;
                 font-size: 12px;
-                padding: 8px 8px;
+                padding: 6px 8px;
                 gap: 4px;
             }
 
@@ -665,33 +983,136 @@
             }
 
             .calendar-day {
-                font-size: 12px;
+                font-size: 11px;
+                min-height: 28px;
             }
 
             .battery {
-                width: 50px;
-                height: 160px;
+                width: 48px;
+                height: 150px;
             }
+
+            .stats-grid {
+                grid-template-columns: 1fr 1fr;
+                gap: 8px;
+            }
+
+            .stat-card .number {
+                font-size: 20px;
+            }
+
+            .header {
+                font-size: 16px;
+                padding: 12px 16px;
+            }
+
+            .header-actions button {
+                font-size: 12px;
+                padding: 4px 10px;
+            }
+
+            .btn-group {
+                grid-template-columns: 1fr 1fr;
+                gap: 8px;
+            }
+
+            .filter-row {
+                flex-direction: column;
+            }
+
+            .filter-row select,
+            .filter-row input {
+                min-width: unset;
+            }
+
+            .timetable-controls .nav-group button {
+                font-size: 12px;
+                padding: 6px 10px;
+            }
+
+            .edit-controls .speed-group {
+                min-width: unset;
+            }
+        }
+
+        @media (max-width: 380px) {
+            .calendar-day {
+                font-size: 10px;
+                min-height: 24px;
+                border-radius: 4px;
+            }
+
+            .calendar-grid {
+                padding: 6px;
+                gap: 3px;
+            }
+
+            .lecture-item {
+                padding: 8px 0;
+                gap: 8px;
+            }
+
+            .lecture-item .info .title {
+                font-size: 13px;
+            }
+        }
+
+        /* Scrollbar styling */
+        ::-webkit-scrollbar {
+            width: 4px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: #f1f1f1;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: var(--primary);
+            border-radius: 2px;
+        }
+
+        /* Utility */
+        .text-center {
+            text-align: center;
+        }
+        .mt-8 {
+            margin-top: 8px;
+        }
+        .mt-16 {
+            margin-top: 16px;
+        }
+        .flex {
+            display: flex;
+        }
+        .gap-8 {
+            gap: 8px;
+        }
+        .items-center {
+            align-items: center;
         }
     </style>
 </head>
 <body>
-    <div class="header">
-        <span>📚 Lecture Planner</span>
+    <!-- Header -->
+    <header class="header">
+        <div class="header-title">
+            <span>📚 Lecture Planner</span>
+        </div>
         <div class="header-actions">
             <button onclick="exportData()">📤 Export</button>
             <button onclick="showImportModal()">📥 Import</button>
         </div>
-    </div>
+    </header>
 
+    <!-- Toast -->
     <div id="toast" class="toast"></div>
 
     <!-- Import Modal -->
     <div id="importModal" class="modal-overlay">
         <div class="modal">
             <h3>📥 Import Backup</h3>
-            <p style="color:#666;font-size:14px;margin-bottom:12px;">Paste your JSON backup data below:</p>
-            <textarea id="importData" placeholder='{"courses":[...], "settings":{...}}'></textarea>
+            <p>Paste your JSON backup data below to restore all courses, settings, and progress.</p>
+            <textarea id="importData" placeholder='{"courses": {...}, "settings": {...}, "results": {...}}'></textarea>
             <div class="btn-group">
                 <button class="btn btn-primary" onclick="importData()">Import</button>
                 <button class="btn btn-outline" onclick="closeImportModal()">Cancel</button>
@@ -699,139 +1120,190 @@
         </div>
     </div>
 
-    <!-- Tab Content -->
+    <!-- ===== TAB 1: DASHBOARD ===== -->
     <div id="dashboardTab" class="tab-content active">
         <div class="course-selector">
             <select id="dashboardCourseSelect" onchange="updateDashboard()">
-                <option value="">Select a course...</option>
+                <option value="__all__">📊 Select All Courses</option>
             </select>
         </div>
+
+        <div class="filter-row">
+            <input type="date" id="dashboardDateFilter" onchange="updateDashboard()" />
+        </div>
+
         <div id="dashboardContent">
-            <div class="battery-container">
-                <div class="battery">
-                    <div class="battery-fill" id="batteryFill" style="height: 0%;"></div>
+            <div class="card">
+                <div class="battery-container">
+                    <div class="battery-wrapper">
+                        <div class="battery">
+                            <div class="battery-fill" id="batteryFill" style="height: 0%;"></div>
+                        </div>
+                        <div>
+                            <div class="battery-text" id="batteryText">0%</div>
+                            <div class="battery-label">Completion</div>
+                        </div>
+                    </div>
                 </div>
-                <div class="battery-text" id="batteryText">0%</div>
             </div>
+
             <div class="stats-grid">
                 <div class="stat-card">
                     <div class="number" id="totalLectures">0</div>
                     <div class="label">Total Lectures</div>
                 </div>
                 <div class="stat-card">
-                    <div class="number" id="completedLectures">0</div>
-                    <div class="label">Completed</div>
+                    <div class="number green" id="completedLectures">0</div>
+                    <div class="label">✅ Completed</div>
                 </div>
                 <div class="stat-card">
-                    <div class="number" id="pendingLectures">0</div>
-                    <div class="label">Pending</div>
+                    <div class="number red" id="pendingLectures">0</div>
+                    <div class="label">⏳ Pending</div>
                 </div>
                 <div class="stat-card">
                     <div class="number" id="totalDuration">0h</div>
                     <div class="label">Total Duration</div>
                 </div>
             </div>
-        </div>
-    </div>
 
-    <div id="uploadTab" class="tab-content">
-        <div class="upload-form">
-            <input type="text" id="courseName" placeholder="Course Name (e.g., Mathematics 101)" />
-            <textarea id="lectureData" placeholder="Paste lectures here...&#10;Format: sr_no Lecture_name duration_in_mins&#10;Example:&#10;1 Introduction 30&#10;2 Basics 45&#10;3 Advanced 60"></textarea>
-            <div class="btn-group">
-                <button class="btn btn-primary" onclick="uploadCourse()">📤 Upload Course</button>
-                <button class="btn btn-success" onclick="addDummyData()">🎲 Dummy Data</button>
-                <button class="btn btn-danger" onclick="removeDummyData()">🗑️ Remove Dummy</button>
-                <button class="btn btn-warning" onclick="clearAllData()">⚠️ Clear All</button>
+            <div class="text-center mt-8">
+                <span class="course-count-badge" id="courseCountBadge">📚 0 courses</span>
             </div>
         </div>
     </div>
 
+    <!-- ===== TAB 2: UPLOAD ===== -->
+    <div id="uploadTab" class="tab-content">
+        <div class="card">
+            <div class="card-title">📤 Upload New Course</div>
+            <div class="upload-form">
+                <input type="text" id="courseName" placeholder="Course Name (e.g., Mathematics 101)" />
+                <textarea id="lectureData" placeholder="Paste lectures here...&#10;Format: sr_no Lecture_name duration_in_mins&#10;&#10;Example:&#10;1 Introduction to Algebra 45&#10;2 Linear Equations 60&#10;3 Quadratic Equations 75"></textarea>
+                <div class="btn-group">
+                    <button class="btn btn-primary" onclick="uploadCourse()">📤 Upload</button>
+                    <button class="btn btn-success" onclick="addDummyData()">🎲 Dummy Data</button>
+                    <button class="btn btn-danger" onclick="removeDummyData()">🗑️ Remove Dummy</button>
+                    <button class="btn btn-warning" onclick="clearAllData()">⚠️ Clear All</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="card saved-courses-list" id="savedCoursesList">
+            <div class="card-title">📚 Saved Courses</div>
+            <div id="savedCoursesContainer">
+                <p style="color: var(--text-light); font-size: 14px;">No courses uploaded yet.</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- ===== TAB 3: TIMETABLE ===== -->
     <div id="timetableTab" class="tab-content">
         <div class="timetable-controls">
             <select id="timetableCourseSelect" onchange="updateTimetable()">
-                <option value="">Select a course...</option>
+                <option value="__all__">📊 Select All Courses</option>
             </select>
-            <div class="nav-buttons">
+            <div class="nav-group">
                 <button onclick="changeMonth(-1)">◀</button>
                 <button onclick="goToday()">Today</button>
                 <button onclick="changeMonth(1)">▶</button>
             </div>
         </div>
         <div id="timetableContent">
-            <div style="text-align:center;color:#888;padding:40px 0;">Select a course to view timetable</div>
+            <div class="text-center" style="color: var(--text-light); padding: 40px 0;">
+                <div style="font-size: 48px; margin-bottom: 12px;">📅</div>
+                <p>Select a course to view timetable</p>
+            </div>
         </div>
     </div>
 
+    <!-- ===== TAB 4: EDIT ===== -->
     <div id="editTab" class="tab-content">
         <div class="edit-controls">
             <select id="editCourseSelect" onchange="updateEditTab()">
-                <option value="">Select a course...</option>
+                <option value="__all__">📊 Select All Courses</option>
             </select>
-            <input type="number" id="editSpeed" placeholder="Daily speed (mins)" onchange="updateSpeed()" />
+            <div class="speed-group">
+                <input type="number" id="editSpeed" placeholder="Speed (min/day)" onchange="updateSpeed()" />
+                <button class="btn btn-outline btn-sm" onclick="resetSpeed()">↺</button>
+            </div>
             <input type="date" id="editStartDate" onchange="updateStartDate()" />
         </div>
+
         <div id="editContent">
-            <div style="text-align:center;color:#888;padding:40px 0;">Select a course to edit</div>
+            <div class="text-center" style="color: var(--text-light); padding: 40px 0;">
+                <div style="font-size: 48px; margin-bottom: 12px;">✏️</div>
+                <p>Select a course to edit</p>
+            </div>
         </div>
+
         <div class="summary-bar" id="editSummary">
             <span><span class="label">Total Duration:</span> <span class="value" id="editTotalDuration">0h</span></span>
             <span><span class="label">Lectures:</span> <span class="value" id="editTotalCount">0</span></span>
+            <span><span class="label">Completed:</span> <span class="value" id="editCompletedCount">0</span></span>
         </div>
+
+        <button class="btn btn-danger delete-course-btn" onclick="deleteCurrentCourse()">🗑️ Delete This Course</button>
     </div>
 
     <!-- Bottom Navigation -->
-    <div class="bottom-nav">
+    <nav class="bottom-nav">
         <button class="nav-item active" data-tab="dashboardTab">
             <span class="icon">🏠</span>
-            <span>Dashboard</span>
+            <span class="label">Dashboard</span>
         </button>
         <button class="nav-item" data-tab="uploadTab">
             <span class="icon">📤</span>
-            <span>Upload</span>
+            <span class="label">Upload</span>
         </button>
         <button class="nav-item" data-tab="timetableTab">
             <span class="icon">📅</span>
-            <span>Timetable</span>
+            <span class="label">Timetable</span>
             <span class="badge" id="timetableBadge" style="display:none;">!</span>
         </button>
         <button class="nav-item" data-tab="editTab">
             <span class="icon">✏️</span>
-            <span>Edit</span>
+            <span class="label">Edit</span>
         </button>
-    </div>
+    </nav>
 
     <script>
-        // App State
+        // ============================================================
+        // APP STATE
+        // ============================================================
         let appState = {
-            courses: {},
-            settings: {},
-            results: {}
+            courses: {}, // { courseName: { lectures: [{sr_no, name, duration}] } }
+            settings: {}, // { courseName: { speed, startDate } }
+            results: {} // { courseName: { "sr_no_name": true/false } }
         };
 
-        // Load from localStorage
+        const DEFAULT_SPEED = 120;
+
+        // ============================================================
+        // PERSISTENCE
+        // ============================================================
         function loadState() {
             try {
-                const saved = localStorage.getItem('lecturePlannerState');
+                const saved = localStorage.getItem('lecturePlannerPro');
                 if (saved) {
                     const parsed = JSON.parse(saved);
                     appState = parsed;
                 }
             } catch (e) {
-                console.error('Error loading state:', e);
+                console.error('Load error:', e);
             }
         }
 
-        // Save to localStorage
         function saveState() {
             try {
-                localStorage.setItem('lecturePlannerState', JSON.stringify(appState));
+                localStorage.setItem('lecturePlannerPro', JSON.stringify(appState));
             } catch (e) {
-                console.error('Error saving state:', e);
+                console.error('Save error:', e);
             }
         }
 
-        // Toast notification
+        // ============================================================
+        // TOAST
+        // ============================================================
         function showToast(msg, duration = 2500) {
             const toast = document.getElementById('toast');
             toast.textContent = msg;
@@ -840,7 +1312,9 @@
             toast._timeout = setTimeout(() => toast.classList.remove('show'), duration);
         }
 
-        // Navigation
+        // ============================================================
+        // NAVIGATION
+        // ============================================================
         document.querySelectorAll('.nav-item').forEach(item => {
             item.addEventListener('click', function() {
                 document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
@@ -855,12 +1329,25 @@
             });
         });
 
-        // Parse lectures from text
+        // ============================================================
+        // UTILITY FUNCTIONS
+        // ============================================================
+        function getCourseNames() {
+            return Object.keys(appState.courses);
+        }
+
+        function getCourseCount() {
+            return getCourseNames().length;
+        }
+
+        function getLectureKey(lecture) {
+            return `${lecture.sr_no}_${lecture.name}`;
+        }
+
         function parseLectures(text) {
             const lines = text.trim().split('\n').filter(l => l.trim());
             const lectures = [];
             for (const line of lines) {
-                // Try to match: "sr_no Lecture_name duration"
                 const match = line.match(/^(\d+)\s+(.+?)\s+(\d+)$/);
                 if (match) {
                     lectures.push({
@@ -873,16 +1360,67 @@
             return lectures;
         }
 
-        // Generate timetable for a course
+        function isLectureCompleted(courseName, lecture) {
+            const key = getLectureKey(lecture);
+            return appState.results[courseName]?.[key] || false;
+        }
+
+        function getCourseCompletion(courseName) {
+            const course = appState.courses[courseName];
+            if (!course) return { total: 0, completed: 0, pct: 0 };
+            const total = course.lectures.length;
+            let completed = 0;
+            for (const lecture of course.lectures) {
+                if (isLectureCompleted(courseName, lecture)) completed++;
+            }
+            return { total, completed, pct: total > 0 ? Math.round((completed / total) * 100) : 0 };
+        }
+
+        function getCombinedCompletion() {
+            const names = getCourseNames();
+            let total = 0,
+                completed = 0;
+            for (const name of names) {
+                const c = getCourseCompletion(name);
+                total += c.total;
+                completed += c.completed;
+            }
+            return { total, completed, pct: total > 0 ? Math.round((completed / total) * 100) : 0 };
+        }
+
+        function getCourseTotalDuration(courseName) {
+            const course = appState.courses[courseName];
+            if (!course) return 0;
+            return course.lectures.reduce((sum, l) => sum + l.duration, 0);
+        }
+
+        function formatDuration(minutes) {
+            const h = Math.floor(minutes / 60);
+            const m = minutes % 60;
+            if (h === 0) return `${m}m`;
+            if (m === 0) return `${h}h`;
+            return `${h}h ${m}m`;
+        }
+
+        function getDateStr(date) {
+            return date.toISOString().split('T')[0];
+        }
+
+        function getTodayStr() {
+            return getDateStr(new Date());
+        }
+
+        // ============================================================
+        // TIMETABLE GENERATION
+        // ============================================================
         function generateTimetable(courseName) {
             const course = appState.courses[courseName];
             if (!course) return null;
 
-            const speed = appState.settings[courseName]?.speed || 120;
-            const startDate = appState.settings[courseName]?.startDate || new Date().toISOString().split('T')[0];
-            const results = appState.results[courseName] || {};
+            const settings = appState.settings[courseName] || {};
+            const speed = settings.speed || DEFAULT_SPEED;
+            const startDate = settings.startDate || getTodayStr();
 
-            // Group lectures into days
             const schedule = [];
             let currentDay = new Date(startDate);
             let currentDayMinutes = 0;
@@ -909,7 +1447,8 @@
                         dayMinutes: taken,
                         isContinuing: isContinuing,
                         isStart: isFirst,
-                        isEnd: remaining - taken <= 0
+                        isEnd: remaining - taken <= 0,
+                        completed: isLectureCompleted(courseName, lecture)
                     });
 
                     currentDayMinutes += taken;
@@ -924,54 +1463,70 @@
                 }
             }
 
-            // Mark completion status
-            for (const day of schedule) {
-                for (const lecture of day.lectures) {
-                    const key = `${lecture.sr_no}_${lecture.name}`;
-                    lecture.completed = results[key] || false;
-                }
-            }
-
             return {
                 schedule,
                 speed,
                 startDate,
                 totalLectures: course.lectures.length,
-                completed: Object.values(results).filter(v => v).length
+                completed: getCourseCompletion(courseName).completed
             };
         }
 
-        // Upload course
+        // ============================================================
+        // DASHBOARD
+        // ============================================================
+        function updateDashboard() {
+            const select = document.getElementById('dashboardCourseSelect');
+            const courseName = select.value;
+            const dateFilter = document.getElementById('dashboardDateFilter').value || getTodayStr();
+
+            let completion;
+            let totalDuration = 0;
+            let courseCount = getCourseCount();
+
+            if (courseName === '__all__' || !courseName) {
+                completion = getCombinedCompletion();
+                const names = getCourseNames();
+                for (const name of names) {
+                    totalDuration += getCourseTotalDuration(name);
+                }
+            } else {
+                completion = getCourseCompletion(courseName);
+                totalDuration = getCourseTotalDuration(courseName);
+            }
+
+            document.getElementById('batteryFill').style.height = completion.pct + '%';
+            document.getElementById('batteryText').textContent = completion.pct + '%';
+            document.getElementById('totalLectures').textContent = completion.total;
+            document.getElementById('completedLectures').textContent = completion.completed;
+            document.getElementById('pendingLectures').textContent = completion.total - completion.completed;
+            document.getElementById('totalDuration').textContent = formatDuration(totalDuration);
+            document.getElementById('courseCountBadge').textContent = `📚 ${courseCount} course${courseCount !== 1 ? 's' : ''}`;
+        }
+
+        // ============================================================
+        // UPLOAD
+        // ============================================================
         function uploadCourse() {
             const name = document.getElementById('courseName').value.trim();
             const text = document.getElementById('lectureData').value;
 
-            if (!name) {
-                showToast('Please enter a course name');
-                return;
-            }
-            if (!text.trim()) {
-                showToast('Please paste lecture data');
-                return;
-            }
+            if (!name) { showToast('Please enter a course name'); return; }
+            if (!text.trim()) { showToast('Please paste lecture data'); return; }
 
             const lectures = parseLectures(text);
             if (lectures.length === 0) {
-                showToast('Invalid format. Use: sr_no Lecture_name duration_in_mins');
+                showToast('❌ Invalid format. Use: sr_no Lecture_name duration_in_mins');
                 return;
             }
 
-            // Check if course exists
             if (appState.courses[name]) {
                 if (!confirm(`Course "${name}" already exists. Overwrite?`)) return;
             }
 
             appState.courses[name] = { lectures };
             if (!appState.settings[name]) {
-                appState.settings[name] = {
-                    speed: 120,
-                    startDate: new Date().toISOString().split('T')[0]
-                };
+                appState.settings[name] = { speed: DEFAULT_SPEED, startDate: getTodayStr() };
             }
             if (!appState.results[name]) {
                 appState.results[name] = {};
@@ -979,12 +1534,12 @@
 
             saveState();
             updateAllSelectors();
-            showToast(`✅ Course "${name}" uploaded with ${lectures.length} lectures`);
+            updateSavedCoursesList();
+            showToast(`✅ "${name}" uploaded with ${lectures.length} lectures`);
             document.getElementById('lectureData').value = '';
             document.getElementById('courseName').value = '';
         }
 
-        // Dummy data - exactly 2 courses only
         function addDummyData() {
             const dummyCourses = {
                 'Mathematics 101': {
@@ -1017,16 +1572,12 @@
                 }
             };
 
-            // Only add if not already present
             let added = 0;
             for (const [name, data] of Object.entries(dummyCourses)) {
                 if (!appState.courses[name]) {
                     appState.courses[name] = data;
                     if (!appState.settings[name]) {
-                        appState.settings[name] = {
-                            speed: 120,
-                            startDate: new Date().toISOString().split('T')[0]
-                        };
+                        appState.settings[name] = { speed: DEFAULT_SPEED, startDate: getTodayStr() };
                     }
                     if (!appState.results[name]) {
                         appState.results[name] = {};
@@ -1038,13 +1589,13 @@
             if (added > 0) {
                 saveState();
                 updateAllSelectors();
+                updateSavedCoursesList();
                 showToast(`✅ Added ${added} dummy course(s)`);
             } else {
                 showToast('Dummy courses already exist');
             }
         }
 
-        // Remove dummy data
         function removeDummyData() {
             const dummyNames = ['Mathematics 101', 'Physics 101'];
             let removed = 0;
@@ -1059,98 +1610,48 @@
             if (removed > 0) {
                 saveState();
                 updateAllSelectors();
+                updateSavedCoursesList();
                 showToast(`🗑️ Removed ${removed} dummy course(s)`);
             } else {
                 showToast('No dummy courses found');
             }
         }
 
-        // Clear all data
         function clearAllData() {
             if (confirm('⚠️ Delete ALL courses and data? This cannot be undone!')) {
                 appState = { courses: {}, settings: {}, results: {} };
                 saveState();
                 updateAllSelectors();
+                updateSavedCoursesList();
                 updateDashboard();
                 showToast('🗑️ All data cleared');
             }
         }
 
-        // Update all selectors
-        function updateAllSelectors() {
-            const selectors = ['dashboardCourseSelect', 'timetableCourseSelect', 'editCourseSelect'];
-            const courseNames = Object.keys(appState.courses);
-
-            for (const id of selectors) {
-                const select = document.getElementById(id);
-                const currentValue = select.value;
-                select.innerHTML = '<option value="">Select a course...</option>';
-                for (const name of courseNames) {
-                    const option = document.createElement('option');
-                    option.value = name;
-                    option.textContent = name;
-                    select.appendChild(option);
-                }
-                if (courseNames.includes(currentValue)) {
-                    select.value = currentValue;
-                }
+        function updateSavedCoursesList() {
+            const container = document.getElementById('savedCoursesContainer');
+            const names = getCourseNames();
+            if (names.length === 0) {
+                container.innerHTML = '<p style="color: var(--text-light); font-size: 14px;">No courses uploaded yet.</p>';
+                return;
             }
-
-            // Update edit speed and start date
-            const editSelect = document.getElementById('editCourseSelect');
-            const courseName = editSelect.value;
-            if (courseName && appState.settings[courseName]) {
-                document.getElementById('editSpeed').value = appState.settings[courseName].speed || 120;
-                document.getElementById('editStartDate').value = appState.settings[courseName].startDate || new Date()
-                .toISOString().split('T')[0];
-            }
-
-            // Update timetable badge
-            const badge = document.getElementById('timetableBadge');
-            const hasCourses = courseNames.length > 0;
-            badge.style.display = hasCourses ? 'flex' : 'none';
-        }
-
-        // Dashboard
-        function updateDashboard() {
-            const select = document.getElementById('dashboardCourseSelect');
-            const courseName = select.value;
-            const content = document.getElementById('dashboardContent');
-
-            if (!courseName || !appState.courses[courseName]) {
-                content.innerHTML = `
-                    <div style="text-align:center;color:#888;padding:40px 0;">
-                        <div style="font-size:48px;margin-bottom:16px;">📚</div>
-                        <p>Select a course to see progress</p>
+            let html = '';
+            for (const name of names) {
+                const count = appState.courses[name].lectures.length;
+                const comp = getCourseCompletion(name);
+                html += `
+                    <div class="saved-course-item">
+                        <span class="name">${name}</span>
+                        <span class="count">${count} lectures · ${comp.pct}% done</span>
                     </div>
                 `;
-                return;
             }
-
-            const timetable = generateTimetable(courseName);
-            if (!timetable) {
-                content.innerHTML = '<p style="color:#888;">No data available</p>';
-                return;
-            }
-
-            const total = timetable.totalLectures;
-            const completed = timetable.completed;
-            const pending = total - completed;
-            const pct = total > 0 ? Math.round((completed / total) * 100) : 0;
-
-            const totalDuration = appState.courses[courseName].lectures.reduce((sum, l) => sum + l.duration, 0);
-            const hours = Math.floor(totalDuration / 60);
-            const mins = totalDuration % 60;
-
-            document.getElementById('batteryFill').style.height = pct + '%';
-            document.getElementById('batteryText').textContent = pct + '%';
-            document.getElementById('totalLectures').textContent = total;
-            document.getElementById('completedLectures').textContent = completed;
-            document.getElementById('pendingLectures').textContent = pending;
-            document.getElementById('totalDuration').textContent = hours > 0 ? `${hours}h ${mins}m` : `${mins}m`;
+            container.innerHTML = html;
         }
 
-        // Timetable
+        // ============================================================
+        // TIMETABLE
+        // ============================================================
         let currentMonth = new Date().getMonth();
         let currentYear = new Date().getFullYear();
 
@@ -1159,39 +1660,171 @@
             const courseName = select.value;
             const content = document.getElementById('timetableContent');
 
-            if (!courseName || !appState.courses[courseName]) {
-                content.innerHTML =
-                `<div style="text-align:center;color:#888;padding:40px 0;">Select a course to view timetable</div>`;
+            if (!courseName) {
+                content.innerHTML = `
+                    <div class="text-center" style="color: var(--text-light); padding: 40px 0;">
+                        <div style="font-size: 48px; margin-bottom: 12px;">📅</div>
+                        <p>Select a course to view timetable</p>
+                    </div>
+                `;
+                return;
+            }
+
+            // Check if "Select All"
+            if (courseName === '__all__') {
+                renderCombinedTimetable(content);
                 return;
             }
 
             const timetable = generateTimetable(courseName);
             if (!timetable || timetable.schedule.length === 0) {
-                content.innerHTML = `<div style="text-align:center;color:#888;padding:40px 0;">No schedule generated</div>`;
+                content.innerHTML = `
+                    <div class="text-center" style="color: var(--text-light); padding: 30px 0;">
+                        <p>No schedule generated for this course.</p>
+                        <p style="font-size: 13px;">Try uploading lectures or adjusting the start date.</p>
+                    </div>
+                `;
                 return;
             }
 
-            // Build calendar
+            renderTimetableForCourse(content, courseName, timetable);
+        }
+
+        function renderCombinedTimetable(content) {
+            const names = getCourseNames();
+            if (names.length === 0) {
+                content.innerHTML = `
+                    <div class="text-center" style="color: var(--text-light); padding: 40px 0;">
+                        <div style="font-size: 48px; margin-bottom: 12px;">📚</div>
+                        <p>No courses available</p>
+                    </div>
+                `;
+                return;
+            }
+
+            // Build combined schedule
+            const allSchedule = [];
+            const allDates = new Map();
+
+            for (const name of names) {
+                const t = generateTimetable(name);
+                if (!t) continue;
+                for (const day of t.schedule) {
+                    const dateStr = getDateStr(day.date);
+                    if (!allDates.has(dateStr)) {
+                        allDates.set(dateStr, { date: day.date, lectures: [], courses: [] });
+                    }
+                    const entry = allDates.get(dateStr);
+                    for (const lecture of day.lectures) {
+                        entry.lectures.push({ ...lecture, course: name });
+                    }
+                    if (!entry.courses.includes(name)) entry.courses.push(name);
+                }
+            }
+
+            const sortedDates = Array.from(allDates.keys()).sort();
+            if (sortedDates.length === 0) {
+                content.innerHTML = `<div class="text-center" style="color: var(--text-light); padding: 30px 0;"><p>No schedules found.</p></div>`;
+                return;
+            }
+
+            // Render calendar
             const firstDay = new Date(currentYear, currentMonth, 1);
             const lastDay = new Date(currentYear, currentMonth + 1, 0);
             const startDay = firstDay.getDay();
+            const today = getTodayStr();
 
-            let html = `<div style="text-align:center;font-weight:600;font-size:18px;margin-bottom:12px;">
-                ${firstDay.toLocaleString('default', { month: 'long' })} ${currentYear}
-            </div>`;
-
+            let html = `<div class="month-label">${firstDay.toLocaleString('default', { month: 'long' })} ${currentYear}</div>`;
             html += `<div class="calendar-grid">`;
             const weekDays = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
             for (const day of weekDays) {
                 html += `<div class="calendar-header">${day}</div>`;
             }
 
-            // Create a map of dates with lectures
-            const scheduleMap = {};
-            const today = new Date().toISOString().split('T')[0];
+            for (let i = 0; i < startDay; i++) {
+                html += `<div class="calendar-day empty"></div>`;
+            }
 
+            const selectedDate = document.getElementById('_selectedDate')?.value || today;
+
+            for (let d = 1; d <= lastDay.getDate(); d++) {
+                const dateObj = new Date(currentYear, currentMonth, d);
+                const dateStr = getDateStr(dateObj);
+                const isToday = dateStr === today;
+                const info = allDates.get(dateStr);
+
+                let classes = 'calendar-day';
+                if (isToday) classes += ' today';
+                if (info) {
+                    classes += ' has-lecture';
+                    const allDone = info.lectures.every(l => l.completed);
+                    const hasPending = info.lectures.some(l => !l.completed);
+                    if (allDone) classes += ' completed';
+                    else if (hasPending) classes += ' pending';
+                    else classes += ' incomplete';
+                }
+
+                let dotHtml = '';
+                if (info) {
+                    const allDone = info.lectures.every(l => l.completed);
+                    const hasPending = info.lectures.some(l => !l.completed);
+                    const dotClass = allDone ? 'green' : (hasPending ? 'blue' : 'red');
+                    dotHtml = `<div class="dot ${dotClass}"></div>`;
+                }
+
+                const isSelected = dateStr === selectedDate;
+                if (isSelected) classes += ' today';
+
+                html += `<div class="${classes}" onclick="showDayLecturesCombined('${dateStr}')">
+                    ${d}${dotHtml}
+                </div>`;
+            }
+
+            html += `</div>`;
+
+            // Show selected day lectures
+            const selectedInfo = allDates.get(selectedDate);
+            if (selectedInfo) {
+                html += `<div class="lecture-list">
+                    <div class="date-header">📅 ${new Date(selectedDate).toLocaleDateString('en-US', { weekday: 'long', month: 'short', day: 'numeric' })}</div>`;
+                for (const lecture of selectedInfo.lectures) {
+                    const isCompleted = lecture.completed;
+                    const key = getLectureKey(lecture);
+                    html += `
+                        <div class="lecture-item ${isCompleted ? 'completed' : ''}">
+                            <input type="checkbox" ${isCompleted ? 'checked' : ''} 
+                                onchange="toggleLectureCombined('${lecture.course}','${key}',this.checked,'${selectedDate}')" />
+                            <div class="info">
+                                <div class="title">${lecture.sr_no}. ${lecture.name} <span style="font-size:11px;color:var(--text-light);">(${lecture.course})</span></div>
+                                <div class="sub">${lecture.duration}min ${lecture.isContinuing ? '<span class="continuing">· continuing</span>' : ''}</div>
+                            </div>
+                            <span class="status-badge ${isCompleted ? 'done' : 'pending'}">${isCompleted ? '✅ Done' : '⏳ Pending'}</span>
+                        </div>
+                    `;
+                }
+                html += `</div>`;
+            } else {
+                const dateObj = new Date(selectedDate);
+                if (dateObj.getMonth() === currentMonth && dateObj.getFullYear() === currentYear) {
+                    html += `<div class="lecture-list" style="text-align:center;color:var(--text-light);padding:20px;">
+                        No lectures on ${dateObj.toLocaleDateString('en-US', { weekday: 'long', month: 'short', day: 'numeric' })}
+                    </div>`;
+                }
+            }
+
+            html += `<input type="hidden" id="_selectedDate" value="${selectedDate}" />`;
+            content.innerHTML = html;
+        }
+
+        function renderTimetableForCourse(content, courseName, timetable) {
+            const firstDay = new Date(currentYear, currentMonth, 1);
+            const lastDay = new Date(currentYear, currentMonth + 1, 0);
+            const startDay = firstDay.getDay();
+            const today = getTodayStr();
+
+            const scheduleMap = {};
             for (const day of timetable.schedule) {
-                const dateStr = day.date.toISOString().split('T')[0];
+                const dateStr = getDateStr(day.date);
                 const allCompleted = day.lectures.every(l => l.completed);
                 const hasPending = day.lectures.some(l => !l.completed);
                 scheduleMap[dateStr] = {
@@ -1202,14 +1835,22 @@
                 };
             }
 
-            // Fill days
+            let html = `<div class="month-label">${firstDay.toLocaleString('default', { month: 'long' })} ${currentYear}</div>`;
+            html += `<div class="calendar-grid">`;
+            const weekDays = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+            for (const day of weekDays) {
+                html += `<div class="calendar-header">${day}</div>`;
+            }
+
             for (let i = 0; i < startDay; i++) {
                 html += `<div class="calendar-day empty"></div>`;
             }
 
+            const selectedDate = document.getElementById('_selectedDate')?.value || today;
+
             for (let d = 1; d <= lastDay.getDate(); d++) {
                 const dateObj = new Date(currentYear, currentMonth, d);
-                const dateStr = dateObj.toISOString().split('T')[0];
+                const dateStr = getDateStr(dateObj);
                 const isToday = dateStr === today;
                 const info = scheduleMap[dateStr];
 
@@ -1219,29 +1860,32 @@
                     classes += ' has-lecture';
                     if (info.completed) classes += ' completed';
                     else if (info.pending) classes += ' pending';
+                    else classes += ' incomplete';
                 }
 
-                const dayContent = info ?
-                    `<div style="font-size:8px;margin-top:2px;">${info.completed ? '✅' : '📖'}</div>` :
-                    '';
+                let dotHtml = '';
+                if (info) {
+                    const dotClass = info.completed ? 'green' : (info.pending ? 'blue' : 'red');
+                    dotHtml = `<div class="dot ${dotClass}"></div>`;
+                }
+
+                const isSelected = dateStr === selectedDate;
+                if (isSelected) classes += ' today';
 
                 html += `<div class="${classes}" onclick="showDayLectures('${courseName}','${dateStr}')">
-                    ${d}${dayContent}
+                    ${d}${dotHtml}
                 </div>`;
             }
 
             html += `</div>`;
 
             // Show selected day lectures
-            const selectedDate = document.getElementById('_selectedDate')?.value || today;
             const dayInfo = scheduleMap[selectedDate];
             if (dayInfo) {
                 html += `<div class="lecture-list">
-                    <div style="font-weight:600;margin-bottom:12px;">
-                        📅 ${new Date(selectedDate).toLocaleDateString('en-US', { weekday: 'long', month: 'short', day: 'numeric' })}
-                    </div>`;
+                    <div class="date-header">📅 ${new Date(selectedDate).toLocaleDateString('en-US', { weekday: 'long', month: 'short', day: 'numeric' })}</div>`;
                 for (const lecture of dayInfo.lectures) {
-                    const key = `${lecture.sr_no}_${lecture.name}`;
+                    const key = getLectureKey(lecture);
                     const isCompleted = lecture.completed;
                     html += `
                         <div class="lecture-item ${isCompleted ? 'completed' : ''}">
@@ -1249,7 +1893,7 @@
                                 onchange="toggleLecture('${courseName}','${key}',this.checked,'${selectedDate}')" />
                             <div class="info">
                                 <div class="title">${lecture.sr_no}. ${lecture.name}</div>
-                                <div class="sub">${lecture.duration}min ${lecture.isContinuing ? '· continuing' : ''}</div>
+                                <div class="sub">${lecture.duration}min ${lecture.isContinuing ? '<span class="continuing">· continuing</span>' : ''}</div>
                             </div>
                             <span class="status-badge ${isCompleted ? 'done' : 'pending'}">${isCompleted ? '✅ Done' : '⏳ Pending'}</span>
                         </div>
@@ -1259,39 +1903,47 @@
             } else {
                 const dateObj = new Date(selectedDate);
                 if (dateObj.getMonth() === currentMonth && dateObj.getFullYear() === currentYear) {
-                    html += `<div class="lecture-list" style="text-align:center;color:#888;padding:20px;">
+                    html += `<div class="lecture-list" style="text-align:center;color:var(--text-light);padding:20px;">
                         No lectures on ${dateObj.toLocaleDateString('en-US', { weekday: 'long', month: 'short', day: 'numeric' })}
                     </div>`;
                 }
             }
 
-            // Store selected date
             html += `<input type="hidden" id="_selectedDate" value="${selectedDate}" />`;
-
             content.innerHTML = html;
         }
 
-        // Show lectures for a specific day
+        // ============================================================
+        // TIMETABLE INTERACTIONS
+        // ============================================================
         function showDayLectures(courseName, dateStr) {
             document.getElementById('_selectedDate').value = dateStr;
             updateTimetable();
         }
 
-        // Toggle lecture completion from timetable
+        function showDayLecturesCombined(dateStr) {
+            document.getElementById('_selectedDate').value = dateStr;
+            updateTimetable();
+        }
+
         function toggleLecture(courseName, key, checked, dateStr) {
             if (!appState.results[courseName]) appState.results[courseName] = {};
             appState.results[courseName][key] = checked;
             saveState();
-            // Update the view
             updateTimetable();
-            // Update dashboard if on dashboard tab
-            if (document.getElementById('dashboardTab').classList.contains('active')) {
-                updateDashboard();
-            }
+            if (document.getElementById('dashboardTab').classList.contains('active')) updateDashboard();
             showToast(checked ? '✅ Marked complete' : '↩️ Marked pending');
         }
 
-        // Month navigation
+        function toggleLectureCombined(courseName, key, checked, dateStr) {
+            if (!appState.results[courseName]) appState.results[courseName] = {};
+            appState.results[courseName][key] = checked;
+            saveState();
+            updateTimetable();
+            if (document.getElementById('dashboardTab').classList.contains('active')) updateDashboard();
+            showToast(checked ? '✅ Marked complete' : '↩️ Marked pending');
+        }
+
         function changeMonth(delta) {
             currentMonth += delta;
             if (currentMonth > 11) { currentMonth = 0;
@@ -1305,52 +1957,72 @@
             const today = new Date();
             currentMonth = today.getMonth();
             currentYear = today.getFullYear();
-            document.getElementById('_selectedDate').value = today.toISOString().split('T')[0];
+            document.getElementById('_selectedDate').value = getTodayStr();
             updateTimetable();
         }
 
-        // Edit Tab
+        // ============================================================
+        // EDIT TAB
+        // ============================================================
+        let currentEditCourse = null;
+
         function updateEditTab() {
             const select = document.getElementById('editCourseSelect');
             const courseName = select.value;
             const content = document.getElementById('editContent');
 
-            if (!courseName || !appState.courses[courseName]) {
-                content.innerHTML = `<div style="text-align:center;color:#888;padding:40px 0;">Select a course to edit</div>`;
+            if (!courseName || courseName === '__all__') {
+                content.innerHTML = `
+                    <div class="text-center" style="color: var(--text-light); padding: 40px 0;">
+                        <div style="font-size: 48px; margin-bottom: 12px;">✏️</div>
+                        <p>Select a specific course to edit</p>
+                    </div>
+                `;
                 document.getElementById('editTotalDuration').textContent = '0h';
                 document.getElementById('editTotalCount').textContent = '0';
+                document.getElementById('editCompletedCount').textContent = '0';
+                document.getElementById('editSpeed').value = '';
+                document.getElementById('editStartDate').value = '';
+                currentEditCourse = null;
                 return;
             }
 
+            currentEditCourse = courseName;
             const course = appState.courses[courseName];
-            const results = appState.results[courseName] || {};
-            const settings = appState.settings[courseName] || {};
+            if (!course) {
+                content.innerHTML = `<p style="color: var(--text-light);">Course not found</p>`;
+                return;
+            }
 
-            // Update speed and date inputs
-            document.getElementById('editSpeed').value = settings.speed || 120;
-            document.getElementById('editStartDate').value = settings.startDate || new Date().toISOString().split('T')[0];
+            const settings = appState.settings[courseName] || {};
+            document.getElementById('editSpeed').value = settings.speed || DEFAULT_SPEED;
+            document.getElementById('editStartDate').value = settings.startDate || getTodayStr();
+
+            const results = appState.results[courseName] || {};
+            let totalDuration = 0;
+            let completedCount = 0;
 
             let html = `<div class="edit-table">`;
             html += `<div class="edit-row header">
                 <span>#</span>
                 <span>Lecture</span>
                 <span>Min</span>
-                <span>Status</span>
+                <span>Done</span>
                 <span></span>
             </div>`;
 
-            let totalDuration = 0;
             for (const lecture of course.lectures) {
-                const key = `${lecture.sr_no}_${lecture.name}`;
+                const key = getLectureKey(lecture);
                 const isCompleted = results[key] || false;
                 totalDuration += lecture.duration;
+                if (isCompleted) completedCount++;
 
                 html += `
                     <div class="edit-row ${isCompleted ? 'completed' : ''}">
-                        <span>${lecture.sr_no}</span>
+                        <span class="sr-no">${lecture.sr_no}</span>
                         <input type="text" value="${lecture.name}" 
                             onchange="updateLectureName('${courseName}',${lecture.sr_no},this.value)" />
-                        <input type="number" value="${lecture.duration}" 
+                        <input type="number" value="${lecture.duration}" min="1"
                             onchange="updateLectureDuration('${courseName}',${lecture.sr_no},this.value)" />
                         <input type="checkbox" ${isCompleted ? 'checked' : ''} 
                             onchange="toggleLectureEdit('${courseName}','${key}',this.checked)" />
@@ -1362,41 +2034,39 @@
             html += `</div>`;
             content.innerHTML = html;
 
-            const hours = Math.floor(totalDuration / 60);
-            const mins = totalDuration % 60;
-            document.getElementById('editTotalDuration').textContent = hours > 0 ? `${hours}h ${mins}m` : `${mins}m`;
+            document.getElementById('editTotalDuration').textContent = formatDuration(totalDuration);
             document.getElementById('editTotalCount').textContent = course.lectures.length;
+            document.getElementById('editCompletedCount').textContent = completedCount;
         }
 
         // Edit functions
         function updateSpeed() {
-            const select = document.getElementById('editCourseSelect');
-            const courseName = select.value;
-            if (!courseName) return;
-
+            if (!currentEditCourse) return;
             const speed = parseInt(document.getElementById('editSpeed').value);
-            if (!speed || speed < 1) {
-                showToast('Please enter a valid speed (minutes/day)');
-                return;
-            }
-
-            if (!appState.settings[courseName]) appState.settings[courseName] = {};
-            appState.settings[courseName].speed = speed;
+            if (!speed || speed < 1) { showToast('Please enter a valid speed (min/day)'); return; }
+            if (!appState.settings[currentEditCourse]) appState.settings[currentEditCourse] = {};
+            appState.settings[currentEditCourse].speed = speed;
             saveState();
             showToast(`✅ Speed updated to ${speed} min/day`);
             updateTimetable();
         }
 
-        function updateStartDate() {
-            const select = document.getElementById('editCourseSelect');
-            const courseName = select.value;
-            if (!courseName) return;
+        function resetSpeed() {
+            if (!currentEditCourse) return;
+            if (!appState.settings[currentEditCourse]) appState.settings[currentEditCourse] = {};
+            appState.settings[currentEditCourse].speed = DEFAULT_SPEED;
+            document.getElementById('editSpeed').value = DEFAULT_SPEED;
+            saveState();
+            showToast(`↺ Speed reset to ${DEFAULT_SPEED} min/day`);
+            updateTimetable();
+        }
 
+        function updateStartDate() {
+            if (!currentEditCourse) return;
             const date = document.getElementById('editStartDate').value;
             if (!date) return;
-
-            if (!appState.settings[courseName]) appState.settings[courseName] = {};
-            appState.settings[courseName].startDate = date;
+            if (!appState.settings[currentEditCourse]) appState.settings[currentEditCourse] = {};
+            appState.settings[currentEditCourse].startDate = date;
             saveState();
             showToast(`✅ Start date updated to ${new Date(date).toLocaleDateString()}`);
             updateTimetable();
@@ -1408,6 +2078,7 @@
             saveState();
             updateEditTab();
             updateDashboard();
+            updateTimetable();
         }
 
         function updateLectureName(courseName, srNo, newName) {
@@ -1415,10 +2086,9 @@
             if (!course) return;
             const lecture = course.lectures.find(l => l.sr_no === srNo);
             if (lecture) {
-                const oldKey = `${srNo}_${lecture.name}`;
+                const oldKey = getLectureKey(lecture);
                 lecture.name = newName.trim() || lecture.name;
-                // Update results key
-                const newKey = `${srNo}_${lecture.name}`;
+                const newKey = getLectureKey(lecture);
                 if (appState.results[courseName] && appState.results[courseName][oldKey] !== undefined) {
                     appState.results[courseName][newKey] = appState.results[courseName][oldKey];
                     delete appState.results[courseName][oldKey];
@@ -1453,7 +2123,6 @@
             const course = appState.courses[courseName];
             if (!course) return;
             course.lectures = course.lectures.filter(l => l.sr_no !== srNo);
-            // Remove from results
             if (appState.results[courseName]) {
                 for (const key of Object.keys(appState.results[courseName])) {
                     if (key.startsWith(`${srNo}_`)) {
@@ -1461,7 +2130,6 @@
                     }
                 }
             }
-            // Renumber
             course.lectures.forEach((l, i) => l.sr_no = i + 1);
             saveState();
             updateEditTab();
@@ -1470,14 +2138,40 @@
             showToast('🗑️ Lecture deleted');
         }
 
-        // Export/Import
+        function deleteCurrentCourse() {
+            if (!currentEditCourse) { showToast('Select a course first'); return; }
+            if (!confirm(`Delete entire course "${currentEditCourse}"? This cannot be undone!`)) return;
+            delete appState.courses[currentEditCourse];
+            delete appState.settings[currentEditCourse];
+            delete appState.results[currentEditCourse];
+            saveState();
+            updateAllSelectors();
+            updateSavedCoursesList();
+            updateDashboard();
+            updateTimetable();
+            document.getElementById('editContent').innerHTML = `
+                <div class="text-center" style="color: var(--text-light); padding: 40px 0;">
+                    <div style="font-size: 48px; margin-bottom: 12px;">🗑️</div>
+                    <p>Course deleted</p>
+                </div>
+            `;
+            document.getElementById('editTotalDuration').textContent = '0h';
+            document.getElementById('editTotalCount').textContent = '0';
+            document.getElementById('editCompletedCount').textContent = '0';
+            currentEditCourse = null;
+            showToast(`🗑️ "${currentEditCourse}" deleted`);
+        }
+
+        // ============================================================
+        // EXPORT / IMPORT
+        // ============================================================
         function exportData() {
             const data = JSON.stringify(appState, null, 2);
             const blob = new Blob([data], { type: 'application/json' });
             const url = URL.createObjectURL(blob);
             const a = document.createElement('a');
             a.href = url;
-            a.download = `lecture_planner_backup_${new Date().toISOString().split('T')[0]}.json`;
+            a.download = `lecture_planner_backup_${getTodayStr()}.json`;
             a.click();
             URL.revokeObjectURL(url);
             showToast('📤 Backup exported');
@@ -1494,21 +2188,20 @@
 
         function importData() {
             const text = document.getElementById('importData').value.trim();
-            if (!text) {
-                showToast('Please paste backup data');
-                return;
-            }
+            if (!text) { showToast('Please paste backup data'); return; }
             try {
                 const data = JSON.parse(text);
                 if (!data.courses || !data.settings || !data.results) {
-                    showToast('Invalid backup format');
+                    showToast('❌ Invalid backup format');
                     return;
                 }
                 if (!confirm('This will replace ALL current data. Continue?')) return;
                 appState = data;
                 saveState();
                 updateAllSelectors();
+                updateSavedCoursesList();
                 updateDashboard();
+                updateTimetable();
                 closeImportModal();
                 showToast('✅ Backup imported successfully');
             } catch (e) {
@@ -1516,18 +2209,72 @@
             }
         }
 
-        // Close modal on overlay click
-        document.getElementById('importModal').addEventListener('click', function(e) {
-            if (e.target === this) closeImportModal();
-        });
+        // ============================================================
+        // UPDATE SELECTORS
+        // ============================================================
+        function updateAllSelectors() {
+            const selectors = ['dashboardCourseSelect', 'timetableCourseSelect', 'editCourseSelect'];
+            const courseNames = getCourseNames();
 
-        // Initialize
-        loadState();
-        updateAllSelectors();
-        updateDashboard();
+            for (const id of selectors) {
+                const select = document.getElementById(id);
+                const currentValue = select.value;
+                select.innerHTML = '<option value="__all__">📊 Select All Courses</option>';
+                for (const name of courseNames) {
+                    const option = document.createElement('option');
+                    option.value = name;
+                    option.textContent = name;
+                    select.appendChild(option);
+                }
+                if (courseNames.includes(currentValue)) {
+                    select.value = currentValue;
+                } else if (currentValue === '__all__') {
+                    select.value = '__all__';
+                }
+            }
 
-        // Auto-save any changes (periodic)
-        setInterval(saveState, 30000);
+            // Update badge
+            const badge = document.getElementById('timetableBadge');
+            badge.style.display = courseNames.length > 0 ? 'flex' : 'none';
+            if (courseNames.length > 0) badge.textContent = courseNames.length;
+
+            // Update dashboard date filter
+            if (!document.getElementById('dashboardDateFilter').value) {
+                document.getElementById('dashboardDateFilter').value = getTodayStr();
+            }
+
+            updateSavedCoursesList();
+        }
+
+        // ============================================================
+        // INITIALIZATION
+        // ============================================================
+        function init() {
+            loadState();
+
+            // Ensure all courses have settings and results
+            for (const name of getCourseNames()) {
+                if (!appState.settings[name]) {
+                    appState.settings[name] = { speed: DEFAULT_SPEED, startDate: getTodayStr() };
+                }
+                if (!appState.results[name]) {
+                    appState.results[name] = {};
+                }
+            }
+
+            saveState();
+            updateAllSelectors();
+            updateDashboard();
+
+            // Set today's date in dashboard filter
+            document.getElementById('dashboardDateFilter').value = getTodayStr();
+
+            // Set default selected date in timetable
+            document.getElementById('_selectedDate')?.setAttribute('value', getTodayStr());
+
+            console.log('📚 Lecture Planner Pro initialized');
+            console.log(`📊 ${getCourseCount()} courses loaded`);
+        }
 
         // Keyboard shortcut: Ctrl+S to export
         document.addEventListener('keydown', function(e) {
@@ -1537,8 +2284,16 @@
             }
         });
 
-        console.log('📚 Lecture Planner initialized');
-        console.log(`📊 ${Object.keys(appState.courses).length} courses loaded`);
+        // Close modal on overlay click
+        document.getElementById('importModal').addEventListener('click', function(e) {
+            if (e.target === this) closeImportModal();
+        });
+
+        // Auto-save periodically
+        setInterval(saveState, 30000);
+
+        // Start the app
+        init();
     </script>
 </body>
 </html>
