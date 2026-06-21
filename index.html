@@ -7,7 +7,6 @@
     <script src="https://cdn.sheetjs.com/xlsx-0.20.2/package/dist/xlsx.full.min.js">
     </script>
     <style>
-        /* ===== RESET & BASE ===== */
         * {
             margin: 0;
             padding: 0;
@@ -1391,6 +1390,76 @@
             color: white;
         }
 
+        /* ===== DAILY TICK SHEET ===== */
+        .daily-tick-section {
+            background: white;
+            border-radius: 10px;
+            padding: 10px;
+            border: 1px solid #f0f0f0;
+            margin-top: 10px;
+        }
+
+        .daily-tick-section h3 {
+            font-size: 12px;
+            color: #1a202c;
+            margin-bottom: 6px;
+        }
+
+        .daily-tick-item {
+            display: flex;
+            align-items: center;
+            padding: 4px 6px;
+            background: #fafbfc;
+            border-radius: 4px;
+            margin-bottom: 3px;
+            gap: 8px;
+            border: 1px solid transparent;
+            font-size: 11px;
+        }
+
+        .daily-tick-item .tick-checkbox {
+            width: 18px;
+            height: 18px;
+            border: 2px solid #d1d5db;
+            border-radius: 4px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            font-size: 12px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .daily-tick-item .tick-checkbox.checked {
+            background: #059669;
+            border-color: #059669;
+            color: white;
+        }
+
+        .daily-tick-item .tick-name {
+            flex: 1;
+            font-size: 11px;
+            color: #1a202c;
+        }
+
+        .daily-tick-item .tick-status {
+            font-size: 9px;
+            padding: 1px 8px;
+            border-radius: 10px;
+            font-weight: 500;
+        }
+
+        .daily-tick-item .tick-status.done {
+            background: #d1fae5;
+            color: #065f46;
+        }
+
+        .daily-tick-item .tick-status.pending {
+            background: #fef2f2;
+            color: #dc2626;
+        }
+
         /* ===== PASTE AREA ===== */
         .paste-area {
             background: white;
@@ -2241,6 +2310,15 @@
             .focus-task-done-date {
                 font-size: 7px;
             }
+            .daily-tick-item {
+                font-size: 10px;
+                padding: 3px 4px;
+            }
+            .daily-tick-item .tick-checkbox {
+                width: 14px;
+                height: 14px;
+                font-size: 10px;
+            }
         }
 
         /* ===== SCROLLBAR ===== */
@@ -2399,6 +2477,18 @@
                         <div class="focus-no-tasks">
                             <span class="emoji">📭</span>
                             Select a sheet to view tasks
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ===== DAILY TICK SHEET ===== -->
+                <div class="daily-tick-section">
+                    <h3>✅ Daily Habits</h3>
+                    <div id="dailyTickList">
+                        <div class="empty-state">
+                            <div class="icon">📭</div>
+                            <h3>No habits added</h3>
+                            <p>Go to Settings → Add Sample Data to create habits</p>
                         </div>
                     </div>
                 </div>
@@ -2629,6 +2719,7 @@
             dateSpeedOverrides: {},
             dateNotes: {},
             taskAllocations: {},
+            dailyHabits: [],
             sampleDataAdded: false,
             hasChanges: false
         };
@@ -2727,6 +2818,7 @@
             updateStatusDot();
             updateFocusTasks();
             updateThreeBatteries();
+            updateDailyHabits();
         }
 
         function changeDate(days) {
@@ -2898,10 +2990,8 @@
             const startDateStr = sheet.startDate || new Date().toISOString().split('T')[0];
             const startDate = new Date(startDateStr);
 
-            // Get speed for this sheet (from tracker)
             const speedMinutes = (sheet.speed || appData.defaultSpeed) * 60;
 
-            // Calculate total duration
             let totalDuration = 0;
             sheet.data.forEach(row => {
                 totalDuration += parseFloat(row.duration) || 0;
@@ -2909,14 +2999,11 @@
 
             if (totalDuration === 0 || speedMinutes === 0) return {};
 
-            // Calculate days needed
             const daysNeeded = Math.max(1, Math.ceil(totalDuration / speedMinutes));
 
-            // Group rows into balanced groups
             const groups = [];
             const targetPerDay = totalDuration / daysNeeded;
 
-            // Sort rows by duration (descending) for better balancing
             const sortedRows = sheet.data.map((row, idx) => ({ ...row, index: idx }))
                 .sort((a, b) => (parseFloat(b.duration) || 0) - (parseFloat(a.duration) || 0));
 
@@ -2926,7 +3013,6 @@
                 let dayDuration = 0;
                 let dayRows = [];
 
-                // Try to fill this day
                 for (let i = 0; i < sortedRows.length; i++) {
                     if (allocated[sortedRows[i].index]) continue;
                     const dur = parseFloat(sortedRows[i].duration) || 0;
@@ -2937,7 +3023,6 @@
                     }
                 }
 
-                // If no rows could fit, add the smallest remaining
                 if (dayRows.length === 0) {
                     for (let i = sortedRows.length - 1; i >= 0; i--) {
                         if (!allocated[sortedRows[i].index]) {
@@ -2954,7 +3039,6 @@
                 }
             }
 
-            // Handle any remaining rows
             for (let i = 0; i < sortedRows.length; i++) {
                 if (!allocated[sortedRows[i].index]) {
                     if (groups.length === 0) {
@@ -2965,7 +3049,6 @@
                 }
             }
 
-            // Map to dates
             const allocations = {};
             groups.forEach((group, index) => {
                 const date = new Date(startDate);
@@ -2986,7 +3069,6 @@
         function getTasksForDate(sheet, dateStr) {
             if (!sheet) return [];
 
-            // Ensure allocations exist
             if (!appData.taskAllocations[sheet.name] || Object.keys(appData.taskAllocations[sheet.name]).length === 0) {
                 appData.taskAllocations[sheet.name] = allocateTasksToDates(sheet);
                 saveData();
@@ -3001,7 +3083,6 @@
             const result = taskIndices.map(idx => ({ ...sheet.data[idx], index: idx }))
                 .filter(t => t !== undefined);
 
-            // Sort by serial number
             result.sort((a, b) => (a.sr || a.index + 1) - (b.sr || b.index + 1));
 
             return result;
@@ -3013,7 +3094,6 @@
         function getTaskStatus(sheet, taskIndex, dateStr) {
             const today = new Date().toISOString().split('T')[0];
 
-            // Check if permanently done
             const isPermanent = appData.history.some(h =>
                 h.sheetName === sheet.name &&
                 h.taskIndex === taskIndex &&
@@ -3033,7 +3113,6 @@
                 return { status: 'done', label: '✅ Done', color: 'done' };
             }
 
-            // Check if temp done
             const isTemp = appData.history.some(h =>
                 h.sheetName === sheet.name &&
                 h.taskIndex === taskIndex &&
@@ -3045,18 +3124,94 @@
                 return { status: 'pending', label: '⏳ Pending', color: 'pending' };
             }
 
-            // Check if future date
             if (dateStr > today) {
                 return { status: 'future', label: '🔮 Future', color: 'future' };
             }
 
-            // Check if backlog (past due)
             if (dateStr < today) {
                 return { status: 'pending', label: '📌 Backlog', color: 'pending' };
             }
 
-            // Today, not done yet
             return { status: 'pending', label: '⏳ Pending', color: 'pending' };
+        }
+
+        // ============================================================
+        // DAILY HABITS
+        // ============================================================
+        function updateDailyHabits() {
+            const container = document.getElementById('dailyTickList');
+
+            if (appData.dailyHabits.length === 0) {
+                container.innerHTML = `
+                        <div class="empty-state">
+                            <div class="icon">📭</div>
+                            <h3>No habits added</h3>
+                            <p>Go to Settings → Add Sample Data to create habits</p>
+                        </div>
+                    `;
+                return;
+            }
+
+            const today = selectedDate.toISOString().split('T')[0];
+
+            let html = '';
+            appData.dailyHabits.forEach((habit, index) => {
+                const isDone = appData.history.some(h =>
+                    h.sheetName === 'daily_habit' &&
+                    h.taskIndex === index &&
+                    h.date === today &&
+                    h.permanent === true
+                );
+
+                html += `
+                        <div class="daily-tick-item">
+                            <div class="tick-checkbox ${isDone ? 'checked' : ''}" 
+                                 onclick="toggleDailyHabit(${index})">
+                                ${isDone ? '✓' : ''}
+                            </div>
+                            <span class="tick-name">${habit}</span>
+                            <span class="tick-status ${isDone ? 'done' : 'pending'}">
+                                ${isDone ? '✅ Done' : '⏳ Pending'}
+                            </span>
+                        </div>
+                    `;
+            });
+
+            container.innerHTML = html;
+        }
+
+        function toggleDailyHabit(index) {
+            if (appData.isLocked) {
+                alert('🔒 App is locked. Tap "Unlock" at the bottom.');
+                return;
+            }
+
+            const today = selectedDate.toISOString().split('T')[0];
+
+            const existingIndex = appData.history.findIndex(h =>
+                h.sheetName === 'daily_habit' &&
+                h.taskIndex === index &&
+                h.date === today &&
+                h.permanent === true
+            );
+
+            if (existingIndex >= 0) {
+                appData.history.splice(existingIndex, 1);
+            } else {
+                appData.history.push({
+                    date: today,
+                    sheetName: 'daily_habit',
+                    taskIndex: index,
+                    taskRef: appData.dailyHabits[index],
+                    taskDuration: 5,
+                    timestamp: new Date().toISOString(),
+                    permanent: true
+                });
+            }
+
+            saveData();
+            updateDailyHabits();
+            updateHistory();
         }
 
         // ============================================================
@@ -3072,7 +3227,7 @@
         }
 
         // ============================================================
-        // UPDATE ALLOCATIONS FOR ALL SHEETS
+        // UPDATE ALL ALLOCATIONS
         // ============================================================
         function updateAllAllocations() {
             appData.sheets.forEach(sheet => {
@@ -3087,9 +3242,9 @@
         function init() {
             loadData();
 
-            // Ensure all sheets have allocations
             appData.sheets.forEach(sheet => {
-                if (!appData.taskAllocations[sheet.name] || Object.keys(appData.taskAllocations[sheet.name]).length === 0) {
+                if (!appData.taskAllocations[sheet.name] || Object.keys(appData.taskAllocations[sheet.name]).length ===
+                    0) {
                     appData.taskAllocations[sheet.name] = allocateTasksToDates(sheet);
                 }
             });
@@ -3124,6 +3279,7 @@
             updateExecuteButton();
             updateStatusDot();
             updateThreeBatteries();
+            updateDailyHabits();
             checkDailySync();
         }
 
@@ -3224,11 +3380,19 @@
             sheet2.startDate = new Date().toISOString().split('T')[0];
             appData.sheets.push(sheet2);
 
+            // Add daily habits
+            appData.dailyHabits = [
+                'Morning Exercise',
+                'Meditation',
+                'Read 30 mins',
+                'Drink 8 glasses water',
+                'Journal writing'
+            ];
+
             appData.currentSheetIndex = 0;
             appData.focusSheetIndex = 0;
             appData.sampleDataAdded = true;
 
-            // Allocate tasks for both sheets
             appData.sheets.forEach(sheet => {
                 appData.taskAllocations[sheet.name] = allocateTasksToDates(sheet);
             });
@@ -3242,6 +3406,7 @@
             updateFocusTasks();
             updateHistory();
             updateThreeBatteries();
+            updateDailyHabits();
 
             alert('✅ Sample data added! Two sheets created with example tasks.');
         }
@@ -3342,6 +3507,7 @@
                 updateDateDisplay();
                 updateStatusDot();
                 updateThreeBatteries();
+                updateDailyHabits();
             }
             if (pageName === 'history') updateHistory();
             if (pageName === 'results') updateResults();
@@ -3576,7 +3742,6 @@
                 return;
             }
 
-            // Ensure allocations exist
             if (!appData.taskAllocations[sheet.name] || Object.keys(appData.taskAllocations[sheet.name]).length === 0) {
                 appData.taskAllocations[sheet.name] = allocateTasksToDates(sheet);
                 saveData();
@@ -3598,16 +3763,13 @@
                 return;
             }
 
-            // Get tasks for this date
             const tasksForDate = getTasksForDate(sheet, dateStr);
 
-            // Get permanently completed
             const permanentlyCompleted = appData.history.filter(h =>
                 h.sheetName === sheet.name &&
                 h.permanent === true
             ).map(h => h.taskIndex);
 
-            // Build task list
             let tasksToShow = [];
             let totalTaskDuration = 0;
             const today = new Date().toISOString().split('T')[0];
@@ -3633,7 +3795,6 @@
                 return;
             }
 
-            // Count completed
             let completedCount = 0;
             tasksToShow.forEach(task => {
                 if (task.status.status === 'done' || task.status.status === 'advance') {
@@ -3661,7 +3822,6 @@
                 const durationDisplay = task.duration >= 60 ? (task.duration / 60).toFixed(1) + 'h' : (task.duration || 0) +
                     'm';
 
-                // Get done date if completed
                 let doneDate = '';
                 if (isCompleted) {
                     const historyEntry = appData.history.find(h =>
@@ -3675,7 +3835,6 @@
                     }
                 }
 
-                // Get allocated date
                 const allocatedDate = appData.taskAllocations[sheet.name]?.[task.index] || '';
                 const allocDisplay = allocatedDate ? new Date(allocatedDate + 'T00:00:00').toLocaleDateString('en-US', {
                     month: 'short',
@@ -3926,7 +4085,6 @@
                 return;
             }
 
-            // Group by date
             const grouped = {};
             permanentHistory.forEach(h => {
                 if (!grouped[h.date]) grouped[h.date] = [];
@@ -4160,7 +4318,6 @@
                 }
             }
 
-            // Calculate required speed based on completion till current time
             const today = new Date();
             const todayStr = today.toISOString().split('T')[0];
             const completedTillToday = appData.history.filter(h =>
@@ -4271,7 +4428,6 @@
             const speed = parseFloat(document.getElementById('trackerSpeed').value) || appData.defaultSpeed;
             appData.sheets[sheetIndex].speed = speed;
 
-            // Re-allocate tasks
             const sheet = appData.sheets[sheetIndex];
             appData.taskAllocations[sheet.name] = allocateTasksToDates(sheet);
 
@@ -4291,7 +4447,6 @@
             appData.sheets[sheetIndex].startDate = document.getElementById('trackerStartDate').value;
             appData.sheets[sheetIndex].targetDate = document.getElementById('trackerTargetDate').value;
 
-            // Re-allocate tasks
             const sheet = appData.sheets[sheetIndex];
             appData.taskAllocations[sheet.name] = allocateTasksToDates(sheet);
 
@@ -4382,7 +4537,6 @@
             const speedHours = parseFloat(document.getElementById('speedEditInput').value) || appData.defaultSpeed;
             appData.dateSpeedOverrides[dateStr] = speedHours * 60;
 
-            // Re-allocate tasks
             const sheet = getSelectedSheet();
             if (sheet) {
                 appData.taskAllocations[sheet.name] = allocateTasksToDates(sheet);
@@ -4449,7 +4603,6 @@
                 current.setDate(current.getDate() + 1);
             }
 
-            // Re-allocate tasks
             appData.taskAllocations[sheet.name] = allocateTasksToDates(sheet);
 
             appData.hasChanges = true;
@@ -4517,7 +4670,6 @@
                 if (name && name.trim()) {
                     appData.sheets.push(createNewSheet(name.trim()));
                     appData.currentSheetIndex = appData.sheets.length - 1;
-                    // Allocate tasks
                     const sheet = appData.sheets[appData.currentSheetIndex];
                     appData.taskAllocations[sheet.name] = allocateTasksToDates(sheet);
                     saveData();
@@ -4539,7 +4691,6 @@
                 if (name && name.trim()) {
                     const oldName = sheet.name;
                     sheet.name = name.trim();
-                    // Update task allocations key
                     if (appData.taskAllocations[oldName]) {
                         appData.taskAllocations[name.trim()] = appData.taskAllocations[oldName];
                         delete appData.taskAllocations[oldName];
@@ -4659,7 +4810,6 @@
             while (sheet.completed.length < sheet.data.length) {
                 sheet.completed.push(false);
             }
-            // Re-allocate tasks
             appData.taskAllocations[sheet.name] = allocateTasksToDates(sheet);
             appData.hasChanges = true;
             updateExecuteButton();
@@ -4687,7 +4837,6 @@
                     }
                 });
 
-                // Re-allocate tasks
                 appData.taskAllocations[sheet.name] = allocateTasksToDates(sheet);
 
                 appData.hasChanges = true;
@@ -4713,7 +4862,6 @@
             const sheet = appData.sheets[appData.currentSheetIndex];
             sheet.data.push({ sr: sheet.data.length + 1, reference: '', duration: '' });
             sheet.completed.push(false);
-            // Re-allocate tasks
             appData.taskAllocations[sheet.name] = allocateTasksToDates(sheet);
             appData.hasChanges = true;
             updateExecuteButton();
@@ -4961,7 +5109,6 @@
                     const imported = JSON.parse(e.target.result);
                     showModal('Import Data', 'This will replace all current data. Continue?', false, () => {
                         appData = { ...appData, ...imported };
-                        // Re-allocate tasks for all sheets
                         appData.sheets.forEach(sheet => {
                             appData.taskAllocations[sheet.name] = allocateTasksToDates(sheet);
                         });
@@ -4976,6 +5123,7 @@
                         updateResults();
                         updateTracker();
                         updateThreeBatteries();
+                        updateDailyHabits();
                         document.getElementById('defaultSpeedInput').value = appData.defaultSpeed;
                         updateExecuteButton();
                         updateStatusDot();
@@ -5068,6 +5216,7 @@
                         dateSpeedOverrides: appData.dateSpeedOverrides || {},
                         dateNotes: appData.dateNotes || {},
                         taskAllocations: appData.taskAllocations || {},
+                        dailyHabits: appData.dailyHabits || [],
                         lastUpdated: new Date().toISOString()
                     }
                 }
