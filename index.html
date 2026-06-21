@@ -311,66 +311,158 @@
             color: white;
         }
 
-        .battery-container {
+        /* Dashboard Date Navigation */
+        .dashboard-nav {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 16px;
+        }
+
+        .dashboard-nav button {
+            padding: 8px 16px;
+            border: none;
+            border-radius: var(--radius);
+            background: var(--primary);
+            color: white;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 14px;
+            transition: all 0.2s;
+        }
+
+        .dashboard-nav button:hover {
+            background: var(--primary-dark);
+        }
+
+        .dashboard-nav button:active {
+            transform: scale(0.95);
+        }
+
+        .dashboard-nav .date-label {
+            font-weight: 600;
+            font-size: 15px;
+            min-width: 120px;
+            text-align: center;
+            color: var(--text);
+        }
+
+        /* Battery Grid */
+        .battery-grid {
+            display: flex;
+            justify-content: center;
+            align-items: flex-end;
+            gap: 8px;
+            padding: 16px 0;
+            min-height: 200px;
+        }
+
+        .battery-item {
             display: flex;
             flex-direction: column;
             align-items: center;
-            padding: 20px 0 12px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            flex: 1;
+            max-width: 80px;
         }
 
-        .battery-wrapper {
-            display: flex;
-            align-items: center;
-            gap: 24px;
-            width: 100%;
-            justify-content: center;
+        .battery-item.small {
+            transform: scale(0.7);
+            max-width: 60px;
         }
 
-        .battery {
+        .battery-item.small:hover {
+            transform: scale(0.75);
+        }
+
+        .battery-item.large {
+            transform: scale(1);
+            max-width: 80px;
+        }
+
+        .battery-item .battery-container {
             position: relative;
-            width: 56px;
-            height: 180px;
+            width: 100%;
             background: #edf2f7;
-            border-radius: 28px;
-            border: 3px solid #2d3748;
+            border-radius: 12px 12px 4px 4px;
+            border: 2px solid #2d3748;
             overflow: hidden;
-            flex-shrink: 0;
+            aspect-ratio: 0.5;
         }
 
-        .battery::after {
+        .battery-item .battery-container::after {
             content: '';
             position: absolute;
-            top: -8px;
+            top: -6px;
             left: 50%;
             transform: translateX(-50%);
-            width: 22px;
-            height: 10px;
+            width: 30%;
+            height: 6px;
             background: #2d3748;
-            border-radius: 4px 4px 0 0;
+            border-radius: 3px 3px 0 0;
         }
 
-        .battery-fill {
+        .battery-item .battery-fill {
             position: absolute;
             bottom: 0;
             left: 0;
             right: 0;
-            background: linear-gradient(to top, #51cf66, #69db7c);
             transition: height 0.8s cubic-bezier(0.4, 0, 0.2, 1);
-            border-radius: 0 0 24px 24px;
+            border-radius: 0 0 4px 4px;
         }
 
-        .battery-text {
-            font-size: 28px;
+        .battery-item .battery-fill.green {
+            background: linear-gradient(to top, #51cf66, #69db7c);
+        }
+
+        .battery-item .battery-fill.yellow {
+            background: linear-gradient(to top, #ffd93d, #fbbf24);
+        }
+
+        .battery-item .battery-fill.red {
+            background: linear-gradient(to top, #ff6b6b, #f87171);
+        }
+
+        .battery-item .battery-percent {
+            font-size: 12px;
             font-weight: 700;
+            margin-top: 4px;
             color: var(--text);
         }
 
-        .battery-label {
-            font-size: 13px;
+        .battery-item .battery-date {
+            font-size: 10px;
             color: var(--text-light);
-            margin-top: 4px;
+            text-align: center;
         }
 
+        .battery-item .battery-day {
+            font-size: 9px;
+            color: var(--text-light);
+            text-align: center;
+            font-weight: 500;
+        }
+
+        .battery-item.large .battery-percent {
+            font-size: 16px;
+        }
+
+        .battery-item.large .battery-date {
+            font-size: 12px;
+        }
+
+        .battery-item.large .battery-day {
+            font-size: 11px;
+        }
+
+        .battery-item.active .battery-container {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.3);
+        }
+
+        /* Stats Grid */
         .stats-grid {
             display: grid;
             grid-template-columns: 1fr 1fr;
@@ -1223,9 +1315,19 @@
                 min-height: 28px;
             }
 
-            .battery {
-                width: 48px;
-                height: 150px;
+            .battery-grid {
+                gap: 4px;
+                min-height: 150px;
+            }
+
+            .battery-item.small {
+                transform: scale(0.6);
+                max-width: 45px;
+            }
+
+            .battery-item.large {
+                transform: scale(0.9);
+                max-width: 65px;
             }
 
             .stats-grid {
@@ -1298,6 +1400,20 @@
                 width: 60px;
                 font-size: 12px;
             }
+
+            .dashboard-nav {
+                gap: 6px;
+            }
+
+            .dashboard-nav button {
+                padding: 6px 12px;
+                font-size: 12px;
+            }
+
+            .dashboard-nav .date-label {
+                font-size: 13px;
+                min-width: 80px;
+            }
         }
 
         @media (max-width: 380px) {
@@ -1319,6 +1435,16 @@
 
             .lecture-item .info .title {
                 font-size: 13px;
+            }
+
+            .battery-item.small {
+                transform: scale(0.5);
+                max-width: 35px;
+            }
+
+            .battery-item.large {
+                transform: scale(0.8);
+                max-width: 55px;
             }
         }
 
@@ -1397,25 +1523,24 @@
         </div>
 
         <div class="filter-row">
-            <input type="date" id="dashboardDateFilter" onchange="updateDashboard()" />
             <div class="view-toggle">
                 <button id="viewDate" class="active" onclick="setBatteryView('date')">📅 By Date</button>
                 <button id="viewOverall" onclick="setBatteryView('overall')">📊 Overall</button>
             </div>
         </div>
 
+        <!-- Date Navigation -->
+        <div class="dashboard-nav">
+            <button onclick="changeDashboardDate(-1)">◀</button>
+            <span class="date-label" id="dashboardDateLabel">Today</span>
+            <button onclick="changeDashboardDate(1)">▶</button>
+            <button onclick="resetDashboardDate()">📅 Today</button>
+        </div>
+
         <div id="dashboardContent">
             <div class="card">
-                <div class="battery-container">
-                    <div class="battery-wrapper">
-                        <div class="battery">
-                            <div class="battery-fill" id="batteryFill" style="height: 0%;"></div>
-                        </div>
-                        <div>
-                            <div class="battery-text" id="batteryText">0%</div>
-                            <div class="battery-label" id="batteryLabel">Overall Completion</div>
-                        </div>
-                    </div>
+                <div class="battery-grid" id="batteryGrid">
+                    <!-- Batteries will be rendered here -->
                 </div>
             </div>
 
@@ -1559,7 +1684,8 @@
             copies: {},
             dateSpeeds: {},
             focusCourse: null,
-            batteryView: 'date'
+            batteryView: 'date',
+            dashboardDate: null // Current date for dashboard
         };
 
         const DEFAULT_SPEED = 120;
@@ -1575,6 +1701,7 @@
                     appState = parsed;
                     if (!appState.copies) appState.copies = {};
                     if (!appState.dateSpeeds) appState.dateSpeeds = {};
+                    if (!appState.dashboardDate) appState.dashboardDate = getTodayStr();
                 }
             } catch (e) {
                 console.error('Load error:', e);
@@ -1658,6 +1785,24 @@
             updateDashboard();
             updateTimetable();
             updateEditTab();
+        }
+
+        // ============================================================
+        // DASHBOARD DATE NAVIGATION
+        // ============================================================
+        function changeDashboardDate(delta) {
+            if (!appState.dashboardDate) appState.dashboardDate = getTodayStr();
+            const date = new Date(appState.dashboardDate);
+            date.setDate(date.getDate() + delta);
+            appState.dashboardDate = getDateStr(date);
+            saveState();
+            updateDashboard();
+        }
+
+        function resetDashboardDate() {
+            appState.dashboardDate = getTodayStr();
+            saveState();
+            updateDashboard();
         }
 
         // ============================================================
@@ -1854,7 +1999,6 @@
 
                 while (remaining > 0) {
                     const dateStr = getDateStr(currentDay);
-                    // Get speed for this date (custom or default)
                     const speed = getDateSpeed(courseName, dateStr) || defaultSpeed;
                     const available = speed - currentDayMinutes;
                     const taken = Math.min(remaining, available);
@@ -1864,7 +2008,6 @@
                         dateMap.set(dateStr, { date: new Date(currentDay), lectures: [], speed: speed });
                     }
                     const day = dateMap.get(dateStr);
-                    // Update speed if changed
                     day.speed = speed;
                     
                     day.lectures.push({
@@ -1874,7 +2017,8 @@
                         isContinuing: isContinuing,
                         isStart: isFirst,
                         isEnd: remaining - taken <= 0,
-                        isCopy: false
+                        isCopy: false,
+                        originalDate: dateStr // Track original allocated date
                     });
 
                     currentDayMinutes += taken;
@@ -1896,10 +2040,14 @@
                 }
                 const day = dateMap.get(dateStr);
                 for (const copy of copyLectures) {
+                    // Check if this copy is on its original date (remove tag if it is)
+                    const isOriginal = copy.sourceDate === dateStr;
                     day.lectures.push({
                         ...copy,
                         isCopy: true,
-                        sourceDate: dateStr
+                        sourceDate: copy.sourceDate,
+                        isOriginal: isOriginal,
+                        completed: isLectureCompleted(courseName, copy)
                     });
                 }
             }
@@ -2004,7 +2152,6 @@
                 return;
             }
             
-            // Move all data to new name
             appState.courses[newName] = appState.courses[oldName];
             delete appState.courses[oldName];
             
@@ -2056,45 +2203,99 @@
         function updateDashboard() {
             const select = document.getElementById('dashboardCourseSelect');
             const courseName = select.value;
-            const dateFilter = document.getElementById('dashboardDateFilter').value || getTodayStr();
             const view = appState.batteryView || 'date';
+            const today = getTodayStr();
+            const selectedDate = appState.dashboardDate || today;
 
-            let completion;
-            let totalDuration = 0;
-            let courseCount = getCourseCount();
-            let labelText = '';
+            // Update date label
+            const dateObj = new Date(selectedDate);
+            document.getElementById('dashboardDateLabel').textContent = 
+                dateObj.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' });
 
+            // Get completion for 5 days (2 before, current, 2 after)
+            const dates = [];
+            for (let i = -2; i <= 2; i++) {
+                const d = new Date(selectedDate);
+                d.setDate(d.getDate() + i);
+                dates.push(getDateStr(d));
+            }
+
+            // Render batteries
+            let batteryHtml = '';
+            for (let i = 0; i < dates.length; i++) {
+                const dateStr = dates[i];
+                const isCenter = i === 2;
+                const sizeClass = isCenter ? 'large' : 'small';
+                const isActive = dateStr === selectedDate;
+                
+                let completion;
+                if (view === 'date') {
+                    if (courseName === '__all__' || !courseName) {
+                        completion = getCombinedDateCompletion(dateStr);
+                    } else {
+                        completion = getDateCompletion(courseName, dateStr);
+                    }
+                } else {
+                    if (courseName === '__all__' || !courseName) {
+                        completion = getCombinedCompletion();
+                    } else {
+                        completion = getCourseCompletion(courseName);
+                    }
+                }
+
+                const pct = completion.pct || 0;
+                const colorClass = pct >= 70 ? 'green' : (pct >= 40 ? 'yellow' : 'red');
+                const dateDisplay = new Date(dateStr).toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+                const dayDisplay = new Date(dateStr).toLocaleDateString('en-US', { weekday: 'short' });
+                const isToday = dateStr === today;
+
+                batteryHtml += `
+                    <div class="battery-item ${sizeClass} ${isActive ? 'active' : ''}" onclick="selectDashboardDate('${dateStr}')">
+                        <div class="battery-container">
+                            <div class="battery-fill ${colorClass}" style="height: ${pct}%;"></div>
+                        </div>
+                        <div class="battery-percent">${pct}%</div>
+                        <div class="battery-date">${dateDisplay}${isToday ? ' ★' : ''}</div>
+                        <div class="battery-day">${dayDisplay}</div>
+                    </div>
+                `;
+            }
+
+            document.getElementById('batteryGrid').innerHTML = batteryHtml;
+
+            // Update stats for selected date
+            let stats;
             if (courseName === '__all__' || !courseName) {
                 if (view === 'date') {
-                    completion = getCombinedDateCompletion(dateFilter);
-                    labelText = `Completion for ${new Date(dateFilter).toLocaleDateString()}`;
+                    stats = getCombinedDateCompletion(selectedDate);
                 } else {
-                    completion = getCombinedCompletion();
-                    labelText = 'Overall Course Completion';
+                    stats = getCombinedCompletion();
                 }
                 const names = getCourseNames();
+                let totalDuration = 0;
                 for (const name of names) {
                     totalDuration += getCourseTotalDuration(name);
                 }
+                document.getElementById('totalDuration').textContent = formatDuration(totalDuration);
             } else {
                 if (view === 'date') {
-                    completion = getDateCompletion(courseName, dateFilter);
-                    labelText = `Completion for ${new Date(dateFilter).toLocaleDateString()}`;
+                    stats = getDateCompletion(courseName, selectedDate);
                 } else {
-                    completion = getCourseCompletion(courseName);
-                    labelText = `${courseName} - Overall Completion`;
+                    stats = getCourseCompletion(courseName);
                 }
-                totalDuration = getCourseTotalDuration(courseName);
+                document.getElementById('totalDuration').textContent = formatDuration(getCourseTotalDuration(courseName));
             }
 
-            document.getElementById('batteryFill').style.height = completion.pct + '%';
-            document.getElementById('batteryText').textContent = completion.pct + '%';
-            document.getElementById('batteryLabel').textContent = labelText;
-            document.getElementById('totalLectures').textContent = completion.total;
-            document.getElementById('completedLectures').textContent = completion.completed;
-            document.getElementById('pendingLectures').textContent = completion.total - completion.completed;
-            document.getElementById('totalDuration').textContent = formatDuration(totalDuration);
-            document.getElementById('courseCountBadge').textContent = `📚 ${courseCount} course${courseCount !== 1 ? 's' : ''}`;
+            document.getElementById('totalLectures').textContent = stats.total;
+            document.getElementById('completedLectures').textContent = stats.completed;
+            document.getElementById('pendingLectures').textContent = stats.total - stats.completed;
+            document.getElementById('courseCountBadge').textContent = `📚 ${getCourseCount()} course${getCourseCount() !== 1 ? 's' : ''}`;
+        }
+
+        function selectDashboardDate(dateStr) {
+            appState.dashboardDate = dateStr;
+            saveState();
+            updateDashboard();
         }
 
         // ============================================================
@@ -2232,7 +2433,7 @@
 
         function clearAllData() {
             if (confirm('⚠️ Delete ALL courses and data? This cannot be undone!')) {
-                appState = { courses: {}, settings: {}, results: {}, copies: {}, dateSpeeds: {}, focusCourse: null, batteryView: appState.batteryView || 'date' };
+                appState = { courses: {}, settings: {}, results: {}, copies: {}, dateSpeeds: {}, focusCourse: null, batteryView: appState.batteryView || 'date', dashboardDate: getTodayStr() };
                 saveState();
                 updateAllSelectors();
                 updateSavedCoursesList();
@@ -2384,7 +2585,6 @@
                     dotHtml = `<div class="dot ${dotClass}"></div>`;
                 }
 
-                // Show speed indicator if custom speed is set
                 let speedIndicator = '';
                 if (info && info.speed) {
                     const defaultSpeed = getCourseNames().length > 0 ? (appState.settings[getCourseNames()[0]]?.speed || DEFAULT_SPEED) : DEFAULT_SPEED;
@@ -2405,11 +2605,10 @@
 
             const selectedInfo = allDates.get(selectedDate);
             if (selectedInfo) {
-                // Calculate duration summary
                 let allocatedTotal = 0;
                 let copiedTotal = 0;
                 for (const lecture of selectedInfo.lectures) {
-                    if (lecture.isCopy) {
+                    if (lecture.isCopy && !lecture.isOriginal) {
                         copiedTotal += lecture.duration;
                     } else {
                         allocatedTotal += lecture.duration;
@@ -2418,34 +2617,34 @@
                 const totalDuration = allocatedTotal + copiedTotal;
 
                 html += `<div class="lecture-list">
-                    <div class="date-header">📅 ${new Date(selectedDate).toLocaleDateString('en-US', { weekday: 'long', month: 'short', day: 'numeric' })}</div>`;
-
-                // Show speed control for combined view (only if single course selected in dropdown)
-                // For combined view, we show it simpler
-                html += `<div class="date-speed-control">
-                    <span class="label">⚡ Speed:</span>
-                    <span class="default-speed">Default: ${selectedInfo.speed || DEFAULT_SPEED} mins</span>
-                </div>`;
-
-                html += `<div class="duration-summary">
-                    <span class="total">Total: ${formatDuration(totalDuration)}</span>
-                    <span class="breakdown">
-                        <span class="allocated">Allocated: ${formatDuration(allocatedTotal)}</span>
-                        ${copiedTotal > 0 ? ` + <span class="copied">Copied: ${formatDuration(copiedTotal)}</span>` : ''}
-                    </span>
-                </div>`;
+                    <div class="date-header">📅 ${new Date(selectedDate).toLocaleDateString('en-US', { weekday: 'long', month: 'short', day: 'numeric' })}</div>
+                    <div class="date-speed-control">
+                        <span class="label">⚡ Speed:</span>
+                        <span class="default-speed">Default: ${selectedInfo.speed || DEFAULT_SPEED} mins</span>
+                    </div>
+                    <div class="duration-summary">
+                        <span class="total">Total: ${formatDuration(totalDuration)}</span>
+                        <span class="breakdown">
+                            <span class="allocated">Allocated: ${formatDuration(allocatedTotal)}</span>
+                            ${copiedTotal > 0 ? ` + <span class="copied">Copied: ${formatDuration(copiedTotal)}</span>` : ''}
+                        </span>
+                    </div>`;
 
                 for (const lecture of selectedInfo.lectures) {
                     const isCompleted = lecture.completed;
                     const key = getLectureKey(lecture);
                     let copyTag = '';
                     if (lecture.isCopy) {
-                        copyTag = `<span class="copy-tag dest">📋 Copied from ${lecture.sourceDate}</span>`;
+                        // Only show "Copied from" if not on original date
+                        if (!lecture.isOriginal) {
+                            copyTag = `<span class="copy-tag dest">📋 Copied from ${lecture.sourceDate}</span>`;
+                        }
                     } else {
                         // Check if this lecture has been copied to other dates
                         const copies = getLectureCopies(lecture.course, lecture);
-                        if (copies.length > 0) {
-                            copyTag = `<span class="copy-tag source">📋 Copied to ${copies.join(', ')}</span>`;
+                        const validCopies = copies.filter(d => d !== selectedDate);
+                        if (validCopies.length > 0) {
+                            copyTag = `<span class="copy-tag source">📋 Copied to ${validCopies.join(', ')}</span>`;
                         }
                     }
                     
@@ -2537,7 +2736,6 @@
                     dotHtml = `<div class="dot ${dotClass}"></div>`;
                 }
 
-                // Show speed indicator if custom speed is set
                 let speedIndicator = '';
                 if (info && info.speed && info.speed !== timetable.defaultSpeed) {
                     speedIndicator = `<span class="speed-indicator">⚡</span>`;
@@ -2555,11 +2753,10 @@
 
             const dayInfo = scheduleMap[selectedDate];
             if (dayInfo) {
-                // Calculate duration summary
                 let allocatedTotal = 0;
                 let copiedTotal = 0;
                 for (const lecture of dayInfo.lectures) {
-                    if (lecture.isCopy) {
+                    if (lecture.isCopy && !lecture.isOriginal) {
                         copiedTotal += lecture.duration;
                     } else {
                         allocatedTotal += lecture.duration;
@@ -2571,37 +2768,38 @@
                 const isCustomSpeed = currentSpeed !== defaultSpeed;
 
                 html += `<div class="lecture-list">
-                    <div class="date-header">📅 ${new Date(selectedDate).toLocaleDateString('en-US', { weekday: 'long', month: 'short', day: 'numeric' })}</div>`;
-
-                // Date-specific speed control
-                html += `<div class="date-speed-control">
-                    <span class="label">⚡ Speed for this date:</span>
-                    <span class="default-speed">Default: ${defaultSpeed} mins</span>
-                    <input type="number" id="speedInput_${selectedDate}" value="${currentSpeed}" min="1" 
-                        onchange="updateDateSpeed('${courseName}','${selectedDate}',this.value)" />
-                    <button class="btn btn-outline btn-sm" onclick="document.getElementById('speedInput_${selectedDate}').value='';updateDateSpeed('${courseName}','${selectedDate}','')">↺ Reset</button>
-                    ${isCustomSpeed ? `<span class="custom-badge">⚡ Custom: ${currentSpeed} mins</span>` : ''}
-                </div>`;
-
-                html += `<div class="duration-summary">
-                    <span class="total">Total: ${formatDuration(totalDuration)}</span>
-                    <span class="breakdown">
-                        <span class="allocated">Allocated: ${formatDuration(allocatedTotal)}</span>
-                        ${copiedTotal > 0 ? ` + <span class="copied">Copied: ${formatDuration(copiedTotal)}</span>` : ''}
-                    </span>
-                </div>`;
+                    <div class="date-header">📅 ${new Date(selectedDate).toLocaleDateString('en-US', { weekday: 'long', month: 'short', day: 'numeric' })}</div>
+                    <div class="date-speed-control">
+                        <span class="label">⚡ Speed for this date:</span>
+                        <span class="default-speed">Default: ${defaultSpeed} mins</span>
+                        <input type="number" id="speedInput_${selectedDate}" value="${currentSpeed}" min="1" 
+                            onchange="updateDateSpeed('${courseName}','${selectedDate}',this.value)" />
+                        <button class="btn btn-outline btn-sm" onclick="document.getElementById('speedInput_${selectedDate}').value='';updateDateSpeed('${courseName}','${selectedDate}','')">↺ Reset</button>
+                        ${isCustomSpeed ? `<span class="custom-badge">⚡ Custom: ${currentSpeed} mins</span>` : ''}
+                    </div>
+                    <div class="duration-summary">
+                        <span class="total">Total: ${formatDuration(totalDuration)}</span>
+                        <span class="breakdown">
+                            <span class="allocated">Allocated: ${formatDuration(allocatedTotal)}</span>
+                            ${copiedTotal > 0 ? ` + <span class="copied">Copied: ${formatDuration(copiedTotal)}</span>` : ''}
+                        </span>
+                    </div>`;
 
                 for (const lecture of dayInfo.lectures) {
                     const key = getLectureKey(lecture);
                     const isCompleted = lecture.completed;
                     let copyTag = '';
                     if (lecture.isCopy) {
-                        copyTag = `<span class="copy-tag dest">📋 Copied from ${lecture.sourceDate}</span>`;
+                        // Only show "Copied from" if not on original date
+                        if (!lecture.isOriginal) {
+                            copyTag = `<span class="copy-tag dest">📋 Copied from ${lecture.sourceDate}</span>`;
+                        }
                     } else {
                         // Check if this lecture has been copied to other dates
                         const copies = getLectureCopies(courseName, lecture);
-                        if (copies.length > 0) {
-                            copyTag = `<span class="copy-tag source">📋 Copied to ${copies.join(', ')}</span>`;
+                        const validCopies = copies.filter(d => d !== selectedDate);
+                        if (validCopies.length > 0) {
+                            copyTag = `<span class="copy-tag source">📋 Copied to ${validCopies.join(', ')}</span>`;
                         }
                     }
                     
@@ -2772,7 +2970,6 @@
             if (!speed || speed < 1) { showToast('Please enter a valid speed (min/day)'); return; }
             if (!appState.settings[currentEditCourse]) appState.settings[currentEditCourse] = {};
             appState.settings[currentEditCourse].speed = speed;
-            // Clear date-specific speeds when default changes
             appState.dateSpeeds[currentEditCourse] = {};
             saveState();
             showToast(`✅ Default speed updated to ${speed} min/day`);
@@ -2784,7 +2981,6 @@
             if (!appState.settings[currentEditCourse]) appState.settings[currentEditCourse] = {};
             appState.settings[currentEditCourse].speed = DEFAULT_SPEED;
             document.getElementById('editSpeed').value = DEFAULT_SPEED;
-            // Clear date-specific speeds
             appState.dateSpeeds[currentEditCourse] = {};
             saveState();
             showToast(`↺ Default speed reset to ${DEFAULT_SPEED} min/day`);
@@ -2797,7 +2993,6 @@
             if (!date) return;
             if (!appState.settings[currentEditCourse]) appState.settings[currentEditCourse] = {};
             appState.settings[currentEditCourse].startDate = date;
-            // Clear date-specific speeds when start date changes
             appState.dateSpeeds[currentEditCourse] = {};
             saveState();
             showToast(`✅ Start date updated to ${new Date(date).toLocaleDateString()}`);
@@ -2946,6 +3141,7 @@
                 appState = data;
                 if (!appState.copies) appState.copies = {};
                 if (!appState.dateSpeeds) appState.dateSpeeds = {};
+                if (!appState.dashboardDate) appState.dashboardDate = getTodayStr();
                 if (appState.focusCourse && !getCourseNames().includes(appState.focusCourse)) {
                     appState.focusCourse = getCourseNames()[0] || null;
                 }
@@ -2992,10 +3188,6 @@
             badge.style.display = courseNames.length > 0 ? 'flex' : 'none';
             if (courseNames.length > 0) badge.textContent = courseNames.length;
 
-            if (!document.getElementById('dashboardDateFilter').value) {
-                document.getElementById('dashboardDateFilter').value = getTodayStr();
-            }
-
             updateSavedCoursesList();
         }
 
@@ -3004,6 +3196,10 @@
         // ============================================================
         function init() {
             loadState();
+
+            if (!appState.dashboardDate) {
+                appState.dashboardDate = getTodayStr();
+            }
 
             for (const name of getCourseNames()) {
                 if (!appState.settings[name]) {
@@ -3028,16 +3224,14 @@
             updateAllSelectors();
             updateDashboard();
 
-            document.getElementById('dashboardDateFilter').value = getTodayStr();
-            document.getElementById('_selectedDate')?.setAttribute('value', getTodayStr());
-
             const view = appState.batteryView || 'date';
             document.getElementById('viewDate').classList.toggle('active', view === 'date');
             document.getElementById('viewOverall').classList.toggle('active', view === 'overall');
 
-            console.log('📚 Lecture Planner Pro initialized with all features');
+            console.log('📚 Lecture Planner Pro initialized with Enhanced Dashboard & Smart Copy Tags');
             console.log(`📊 ${getCourseCount()} courses loaded`);
             console.log(`🎯 Focus: ${appState.focusCourse || 'None'}`);
+            console.log(`📅 Dashboard Date: ${appState.dashboardDate}`);
         }
 
         // Keyboard shortcut: Ctrl+S to export
