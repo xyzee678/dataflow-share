@@ -1439,6 +1439,13 @@
             border-color: #4f46e5;
         }
 
+        .results-table .status-checkbox {
+            width: 18px;
+            height: 18px;
+            cursor: pointer;
+            accent-color: #059669;
+        }
+
         /* ===== ENTRY ===== */
         .sheet-tabs-container {
             background: white;
@@ -4508,9 +4515,15 @@
                             <td>${row.sr || i + 1}</td>
                             <td>${row.reference || '-'}</td>
                             <td>${row.duration || 0}</td>
-                            <td>${isCompleted ? '✅' : '⏳'}</td>
-                            <td>${displayAlloc}</td>
-                            <td>${doneDate}</td>
+                            <td>
+                                <input type="checkbox" class="status-checkbox" 
+                                       ${isCompleted ? 'checked' : ''}
+                                       onchange="toggleResultStatus(${selectedIndex}, ${i}, this.checked)">
+                            </td>
+                            <td><input type="text" value="${displayAlloc}" size="8" 
+                                      onchange="updateAllocationDate(${selectedIndex}, ${i}, this.value)" /></td>
+                            <td><input type="text" value="${doneDate}" size="8" 
+                                      onchange="updateDoneDate(${selectedIndex}, ${i}, this.value)" /></td>
                         </tr>
                     `;
             });
@@ -4521,6 +4534,215 @@
                 `;
 
             container.innerHTML = html;
+        }
+
+        // ============================================================
+        // TOGGLE RESULT STATUS
+        // ============================================================
+        function toggleResultStatus(sheetIndex, taskIndex, checked) {
+            if (appData.isLocked) {
+                showToast('🔒 App is locked. Tap "Unlock" at the bottom.');
+                return;
+            }
+
+            const sheet = appData.sheets[sheetIndex];
+            const dateStr = selectedDate.toISOString().split('T')[0];
+
+            if (checked) {
+                // Mark as completed
+                const existingIndex = appData.history.findIndex(h =>
+                    h.sheetName === sheet.name &&
+                    h.taskIndex === taskIndex &&
+                    h.permanent === true
+                );
+
+                if (existingIndex < 0) {
+                    appData.history.push({
+                        date: dateStr,
+                        sheetName: sheet.name,
+                        taskIndex: taskIndex,
+                        taskRef: sheet.data[taskIndex].reference || 'Task',
+                        taskDuration: sheet.data[taskIndex].duration || 0,
+                        timestamp: new Date().toISOString(),
+                        permanent: true,
+                        completedDate: dateStr
+                    });
+                    appData.hasChanges = true;
+                    updateExecuteButton();
+                    showToast(`✅ Completed task #${taskIndex + 1}`);
+                }
+            } else {
+                // Unmark as completed
+                const existingIndex = appData.history.findIndex(h =>
+                    h.sheetName === sheet.name &&
+                    h.taskIndex === taskIndex &&
+                    h.permanent === true
+                );
+
+                if (existingIndex >= 0) {
+                    appData.history.splice(existingIndex, 1);
+                    appData.hasChanges = true;
+                    updateExecuteButton();
+                    showToast(`↩️ Unmarked task #${taskIndex + 1}`);
+                }
+            }
+
+            saveData();
+            updateResults();
+            updateFocusTasks();
+            updateFocusDashboard();
+            updateFocusBattery();
+            updateHistory();
+            updateDailyTasks();
+            updateStatusDot();
+            updateThreeBatteries();
+        }
+
+        // ============================================================
+        // UPDATE ALLOCATION DATE
+        // ============================================================
+        function updateAllocationDate(sheetIndex, taskIndex, value) {
+            if (appData.isLocked) {
+                showToast('🔒 App is locked. Tap "Unlock" at the bottom.');
+                return;
+            }
+
+            const sheet = appData.sheets[sheetIndex];
+            const dateStr = value.trim();
+
+            if (!dateStr || dateStr === '-') {
+                // Remove allocation
+                if (appData.taskAllocations[sheet.name]) {
+                    delete appData.taskAllocations[sheet.name][taskIndex];
+                }
+                showToast(`🗑️ Removed allocation for task #${taskIndex + 1}`);
+            } else {
+                // Parse the date
+                const parsed = parseDateString(dateStr);
+                if (parsed) {
+                    if (!appData.taskAllocations[sheet.name]) {
+                        appData.taskAllocations[sheet.name] = {};
+                    }
+                    appData.taskAllocations[sheet.name][taskIndex] = parsed;
+                    showToast(`📅 Updated allocation to ${parsed}`);
+                } else {
+                    showToast('❌ Invalid date format. Use MM/DD or YYYY-MM-DD');
+                    return;
+                }
+            }
+
+            appData.hasChanges = true;
+            updateExecuteButton();
+            saveData();
+            updateResults();
+            updateFocusTasks();
+            updateDailyTasks();
+        }
+
+        // ============================================================
+        // UPDATE DONE DATE
+        // ============================================================
+        function updateDoneDate(sheetIndex, taskIndex, value) {
+            if (appData.isLocked) {
+                showToast('🔒 App is locked. Tap "Unlock" at the bottom.');
+                return;
+            }
+
+            const sheet = appData.sheets[sheetIndex];
+            const existing = appData.history.find(h =>
+                h.sheetName === sheet.name &&
+                h.taskIndex === taskIndex &&
+                h.permanent === true
+            );
+
+            const dateStr = value.trim();
+
+            if (!dateStr || dateStr === '-') {
+                if (existing) {
+                    appData.history.splice(appData.history.indexOf(existing), 1);
+                    showToast(`🗑️ Removed completion for task #${taskIndex + 1}`);
+                }
+            } else {
+                const parsed = parseDateString(dateStr);
+                if (parsed) {
+                    if (existing) {
+                        existing.date = parsed;
+                        existing.completedDate = parsed;
+                    } else {
+                        appData.history.push({
+                            date: parsed,
+                            sheetName: sheet.name,
+                            taskIndex: taskIndex,
+                            taskRef: sheet.data[taskIndex].reference || 'Task',
+                            taskDuration: sheet.data[taskIndex].duration || 0,
+                            timestamp: new Date().toISOString(),
+                            permanent: true,
+                            completedDate: parsed
+                        });
+                    }
+                    showToast(`✅ Updated done date to ${parsed}`);
+                } else {
+                    showToast('❌ Invalid date format. Use MM/DD or YYYY-MM-DD');
+                    return;
+                }
+            }
+
+            appData.hasChanges = true;
+            updateExecuteButton();
+            saveData();
+            updateResults();
+            updateFocusTasks();
+            updateDailyTasks();
+            updateFocusDashboard();
+            updateFocusBattery();
+            updateHistory();
+            updateStatusDot();
+            updateThreeBatteries();
+        }
+
+        // ============================================================
+        // PARSE DATE STRING
+        // ============================================================
+        function parseDateString(str) {
+            str = str.trim();
+
+            // Check for YYYY-MM-DD
+            if (/^\d{4}-\d{2}-\d{2}$/.test(str)) {
+                const d = new Date(str + 'T00:00:00');
+                if (!isNaN(d.getTime())) return str;
+            }
+
+            // Check for MM/DD/YYYY or M/D/YYYY
+            const parts = str.split(/[/-]/);
+            if (parts.length === 3) {
+                let month = parseInt(parts[0]);
+                let day = parseInt(parts[1]);
+                let year = parseInt(parts[2]);
+
+                if (!isNaN(month) && !isNaN(day) && !isNaN(year)) {
+                    if (year < 100) year += 2000;
+                    const d = new Date(year, month - 1, day);
+                    if (!isNaN(d.getTime())) {
+                        return d.toISOString().split('T')[0];
+                    }
+                }
+            }
+
+            // Check for MM/DD or M/D (assume current year)
+            if (parts.length === 2) {
+                let month = parseInt(parts[0]);
+                let day = parseInt(parts[1]);
+
+                if (!isNaN(month) && !isNaN(day)) {
+                    const year = new Date().getFullYear();
+                    const d = new Date(year, month - 1, day);
+                    if (!isNaN(d.getTime())) {
+                        return d.toISOString().split('T')[0];
+                    }
+                }
+            }
+
+            return null;
         }
 
         // ============================================================
