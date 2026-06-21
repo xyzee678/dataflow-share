@@ -37,8 +37,8 @@
         .header {
             background: linear-gradient(135deg, var(--primary) 0%, #764ba2 100%);
             color: white;
-            padding: 16px 20px;
-            font-size: 18px;
+            padding: 14px 20px;
+            font-size: 17px;
             font-weight: 600;
             position: sticky;
             top: 0;
@@ -57,16 +57,16 @@
 
         .header-actions {
             display: flex;
-            gap: 8px;
+            gap: 6px;
         }
 
         .header-actions button {
             background: rgba(255, 255, 255, 0.2);
             border: none;
             color: white;
-            padding: 6px 12px;
+            padding: 5px 12px;
             border-radius: 6px;
-            font-size: 13px;
+            font-size: 12px;
             cursor: pointer;
             transition: all 0.2s;
             font-weight: 500;
@@ -226,6 +226,7 @@
             gap: 10px;
             margin-bottom: 16px;
             flex-wrap: wrap;
+            align-items: center;
         }
 
         .filter-row select,
@@ -244,6 +245,32 @@
         .filter-row input:focus {
             border-color: var(--primary);
             outline: none;
+        }
+
+        .filter-row .view-toggle {
+            display: flex;
+            gap: 6px;
+            flex: 1;
+            min-width: 140px;
+        }
+
+        .filter-row .view-toggle button {
+            flex: 1;
+            padding: 8px 12px;
+            border: 2px solid #e2e8f0;
+            border-radius: var(--radius);
+            background: white;
+            cursor: pointer;
+            font-size: 12px;
+            font-weight: 600;
+            transition: all 0.2s;
+            color: var(--text-light);
+        }
+
+        .filter-row .view-toggle button.active {
+            border-color: var(--primary);
+            background: var(--primary);
+            color: white;
         }
 
         .battery-container {
@@ -1090,6 +1117,9 @@
         .items-center {
             align-items: center;
         }
+        .hidden {
+            display: none !important;
+        }
     </style>
 </head>
 <body>
@@ -1123,13 +1153,17 @@
     <!-- ===== TAB 1: DASHBOARD ===== -->
     <div id="dashboardTab" class="tab-content active">
         <div class="course-selector">
-            <select id="dashboardCourseSelect" onchange="updateDashboard()">
+            <select id="dashboardCourseSelect" onchange="onCourseChange('dashboard')">
                 <option value="__all__">📊 Select All Courses</option>
             </select>
         </div>
 
         <div class="filter-row">
             <input type="date" id="dashboardDateFilter" onchange="updateDashboard()" />
+            <div class="view-toggle">
+                <button id="viewDate" class="active" onclick="setBatteryView('date')">📅 By Date</button>
+                <button id="viewOverall" onclick="setBatteryView('overall')">📊 Overall</button>
+            </div>
         </div>
 
         <div id="dashboardContent">
@@ -1141,7 +1175,7 @@
                         </div>
                         <div>
                             <div class="battery-text" id="batteryText">0%</div>
-                            <div class="battery-label">Completion</div>
+                            <div class="battery-label" id="batteryLabel">Overall Completion</div>
                         </div>
                     </div>
                 </div>
@@ -1199,7 +1233,7 @@
     <!-- ===== TAB 3: TIMETABLE ===== -->
     <div id="timetableTab" class="tab-content">
         <div class="timetable-controls">
-            <select id="timetableCourseSelect" onchange="updateTimetable()">
+            <select id="timetableCourseSelect" onchange="onCourseChange('timetable')">
                 <option value="__all__">📊 Select All Courses</option>
             </select>
             <div class="nav-group">
@@ -1219,7 +1253,7 @@
     <!-- ===== TAB 4: EDIT ===== -->
     <div id="editTab" class="tab-content">
         <div class="edit-controls">
-            <select id="editCourseSelect" onchange="updateEditTab()">
+            <select id="editCourseSelect" onchange="onCourseChange('edit')">
                 <option value="__all__">📊 Select All Courses</option>
             </select>
             <div class="speed-group">
@@ -1271,9 +1305,11 @@
         // APP STATE
         // ============================================================
         let appState = {
-            courses: {}, // { courseName: { lectures: [{sr_no, name, duration}] } }
-            settings: {}, // { courseName: { speed, startDate } }
-            results: {} // { courseName: { "sr_no_name": true/false } }
+            courses: {},
+            settings: {},
+            results: {},
+            focusCourse: null, // Current focus course
+            batteryView: 'date' // 'date' or 'overall'
         };
 
         const DEFAULT_SPEED = 120;
@@ -1330,6 +1366,52 @@
         });
 
         // ============================================================
+        // SMART DEFAULT SELECTION - CURRENT FOCUS
+        // ============================================================
+        function getFocusCourse() {
+            const names = getCourseNames();
+            if (appState.focusCourse && names.includes(appState.focusCourse)) {
+                return appState.focusCourse;
+            }
+            // If focus is not set or invalid, use first course or null
+            return names.length > 0 ? names[0] : null;
+        }
+
+        function setFocusCourse(courseName) {
+            if (courseName && courseName !== '__all__' && getCourseNames().includes(courseName)) {
+                appState.focusCourse = courseName;
+            } else {
+                appState.focusCourse = null;
+            }
+            saveState();
+            updateAllSelectors();
+        }
+
+        function onCourseChange(source) {
+            const selectMap = {
+                'dashboard': 'dashboardCourseSelect',
+                'timetable': 'timetableCourseSelect',
+                'edit': 'editCourseSelect'
+            };
+            const select = document.getElementById(selectMap[source]);
+            if (!select) return;
+            
+            const value = select.value;
+            if (value !== '__all__') {
+                setFocusCourse(value);
+            } else {
+                appState.focusCourse = null;
+                saveState();
+                updateAllSelectors();
+            }
+            
+            // Refresh all tabs
+            updateDashboard();
+            updateTimetable();
+            updateEditTab();
+        }
+
+        // ============================================================
         // UTILITY FUNCTIONS
         // ============================================================
         function getCourseNames() {
@@ -1376,12 +1458,36 @@
             return { total, completed, pct: total > 0 ? Math.round((completed / total) * 100) : 0 };
         }
 
+        function getDateCompletion(courseName, dateStr) {
+            const timetable = generateTimetable(courseName);
+            if (!timetable) return { total: 0, completed: 0, pct: 0 };
+            
+            const dayInfo = timetable.schedule.find(d => getDateStr(d.date) === dateStr);
+            if (!dayInfo) return { total: 0, completed: 0, pct: 0 };
+            
+            const total = dayInfo.lectures.length;
+            const completed = dayInfo.lectures.filter(l => l.completed).length;
+            return { total, completed, pct: total > 0 ? Math.round((completed / total) * 100) : 0 };
+        }
+
         function getCombinedCompletion() {
             const names = getCourseNames();
             let total = 0,
                 completed = 0;
             for (const name of names) {
                 const c = getCourseCompletion(name);
+                total += c.total;
+                completed += c.completed;
+            }
+            return { total, completed, pct: total > 0 ? Math.round((completed / total) * 100) : 0 };
+        }
+
+        function getCombinedDateCompletion(dateStr) {
+            const names = getCourseNames();
+            let total = 0,
+                completed = 0;
+            for (const name of names) {
+                const c = getDateCompletion(name, dateStr);
                 total += c.total;
                 completed += c.completed;
             }
@@ -1473,30 +1579,56 @@
         }
 
         // ============================================================
+        // BATTERY VIEW
+        // ============================================================
+        function setBatteryView(view) {
+            appState.batteryView = view;
+            saveState();
+            document.getElementById('viewDate').classList.toggle('active', view === 'date');
+            document.getElementById('viewOverall').classList.toggle('active', view === 'overall');
+            updateDashboard();
+        }
+
+        // ============================================================
         // DASHBOARD
         // ============================================================
         function updateDashboard() {
             const select = document.getElementById('dashboardCourseSelect');
             const courseName = select.value;
             const dateFilter = document.getElementById('dashboardDateFilter').value || getTodayStr();
+            const view = appState.batteryView || 'date';
 
             let completion;
             let totalDuration = 0;
             let courseCount = getCourseCount();
+            let labelText = '';
 
             if (courseName === '__all__' || !courseName) {
-                completion = getCombinedCompletion();
+                if (view === 'date') {
+                    completion = getCombinedDateCompletion(dateFilter);
+                    labelText = `Completion for ${new Date(dateFilter).toLocaleDateString()}`;
+                } else {
+                    completion = getCombinedCompletion();
+                    labelText = 'Overall Course Completion';
+                }
                 const names = getCourseNames();
                 for (const name of names) {
                     totalDuration += getCourseTotalDuration(name);
                 }
             } else {
-                completion = getCourseCompletion(courseName);
+                if (view === 'date') {
+                    completion = getDateCompletion(courseName, dateFilter);
+                    labelText = `Completion for ${new Date(dateFilter).toLocaleDateString()}`;
+                } else {
+                    completion = getCourseCompletion(courseName);
+                    labelText = `${courseName} - Overall Completion`;
+                }
                 totalDuration = getCourseTotalDuration(courseName);
             }
 
             document.getElementById('batteryFill').style.height = completion.pct + '%';
             document.getElementById('batteryText').textContent = completion.pct + '%';
+            document.getElementById('batteryLabel').textContent = labelText;
             document.getElementById('totalLectures').textContent = completion.total;
             document.getElementById('completedLectures').textContent = completion.completed;
             document.getElementById('pendingLectures').textContent = completion.total - completion.completed;
@@ -1531,6 +1663,9 @@
             if (!appState.results[name]) {
                 appState.results[name] = {};
             }
+
+            // Auto-set as focus
+            setFocusCourse(name);
 
             saveState();
             updateAllSelectors();
@@ -1587,6 +1722,9 @@
             }
 
             if (added > 0) {
+                // Set focus to first added course
+                const firstAdded = Object.keys(dummyCourses).find(name => appState.courses[name]);
+                if (firstAdded) setFocusCourse(firstAdded);
                 saveState();
                 updateAllSelectors();
                 updateSavedCoursesList();
@@ -1608,6 +1746,10 @@
                 }
             }
             if (removed > 0) {
+                // Reset focus if current focus was removed
+                if (appState.focusCourse && dummyNames.includes(appState.focusCourse)) {
+                    appState.focusCourse = getCourseNames()[0] || null;
+                }
                 saveState();
                 updateAllSelectors();
                 updateSavedCoursesList();
@@ -1619,7 +1761,7 @@
 
         function clearAllData() {
             if (confirm('⚠️ Delete ALL courses and data? This cannot be undone!')) {
-                appState = { courses: {}, settings: {}, results: {} };
+                appState = { courses: {}, settings: {}, results: {}, focusCourse: null, batteryView: appState.batteryView || 'date' };
                 saveState();
                 updateAllSelectors();
                 updateSavedCoursesList();
@@ -1639,9 +1781,10 @@
             for (const name of names) {
                 const count = appState.courses[name].lectures.length;
                 const comp = getCourseCompletion(name);
+                const isFocus = name === appState.focusCourse;
                 html += `
-                    <div class="saved-course-item">
-                        <span class="name">${name}</span>
+                    <div class="saved-course-item" style="${isFocus ? 'border-left: 3px solid var(--primary);' : ''}">
+                        <span class="name">${name} ${isFocus ? '⭐' : ''}</span>
                         <span class="count">${count} lectures · ${comp.pct}% done</span>
                     </div>
                 `;
@@ -1670,7 +1813,6 @@
                 return;
             }
 
-            // Check if "Select All"
             if (courseName === '__all__') {
                 renderCombinedTimetable(content);
                 return;
@@ -1702,10 +1844,7 @@
                 return;
             }
 
-            // Build combined schedule
-            const allSchedule = [];
             const allDates = new Map();
-
             for (const name of names) {
                 const t = generateTimetable(name);
                 if (!t) continue;
@@ -1728,7 +1867,6 @@
                 return;
             }
 
-            // Render calendar
             const firstDay = new Date(currentYear, currentMonth, 1);
             const lastDay = new Date(currentYear, currentMonth + 1, 0);
             const startDay = firstDay.getDay();
@@ -1782,7 +1920,6 @@
 
             html += `</div>`;
 
-            // Show selected day lectures
             const selectedInfo = allDates.get(selectedDate);
             if (selectedInfo) {
                 html += `<div class="lecture-list">
@@ -1879,7 +2016,6 @@
 
             html += `</div>`;
 
-            // Show selected day lectures
             const dayInfo = scheduleMap[selectedDate];
             if (dayInfo) {
                 html += `<div class="lecture-list">
@@ -2141,9 +2277,16 @@
         function deleteCurrentCourse() {
             if (!currentEditCourse) { showToast('Select a course first'); return; }
             if (!confirm(`Delete entire course "${currentEditCourse}"? This cannot be undone!`)) return;
+            const deletedName = currentEditCourse;
             delete appState.courses[currentEditCourse];
             delete appState.settings[currentEditCourse];
             delete appState.results[currentEditCourse];
+            
+            // Reset focus if needed
+            if (appState.focusCourse === deletedName) {
+                appState.focusCourse = getCourseNames()[0] || null;
+            }
+            
             saveState();
             updateAllSelectors();
             updateSavedCoursesList();
@@ -2159,7 +2302,7 @@
             document.getElementById('editTotalCount').textContent = '0';
             document.getElementById('editCompletedCount').textContent = '0';
             currentEditCourse = null;
-            showToast(`🗑️ "${currentEditCourse}" deleted`);
+            showToast(`🗑️ "${deletedName}" deleted`);
         }
 
         // ============================================================
@@ -2197,6 +2340,10 @@
                 }
                 if (!confirm('This will replace ALL current data. Continue?')) return;
                 appState = data;
+                // Ensure focus course exists
+                if (appState.focusCourse && !getCourseNames().includes(appState.focusCourse)) {
+                    appState.focusCourse = getCourseNames()[0] || null;
+                }
                 saveState();
                 updateAllSelectors();
                 updateSavedCoursesList();
@@ -2215,6 +2362,7 @@
         function updateAllSelectors() {
             const selectors = ['dashboardCourseSelect', 'timetableCourseSelect', 'editCourseSelect'];
             const courseNames = getCourseNames();
+            const focus = getFocusCourse();
 
             for (const id of selectors) {
                 const select = document.getElementById(id);
@@ -2223,12 +2371,18 @@
                 for (const name of courseNames) {
                     const option = document.createElement('option');
                     option.value = name;
-                    option.textContent = name;
+                    option.textContent = name + (name === focus ? ' ⭐' : '');
                     select.appendChild(option);
                 }
-                if (courseNames.includes(currentValue)) {
+                
+                // Set value: prioritize focus, then current, then first
+                if (focus && courseNames.includes(focus)) {
+                    select.value = focus;
+                } else if (courseNames.includes(currentValue)) {
                     select.value = currentValue;
-                } else if (currentValue === '__all__') {
+                } else if (courseNames.length > 0) {
+                    select.value = courseNames[0];
+                } else {
                     select.value = '__all__';
                 }
             }
@@ -2262,6 +2416,11 @@
                 }
             }
 
+            // Validate focus course
+            if (appState.focusCourse && !getCourseNames().includes(appState.focusCourse)) {
+                appState.focusCourse = getCourseNames()[0] || null;
+            }
+
             saveState();
             updateAllSelectors();
             updateDashboard();
@@ -2272,8 +2431,14 @@
             // Set default selected date in timetable
             document.getElementById('_selectedDate')?.setAttribute('value', getTodayStr());
 
-            console.log('📚 Lecture Planner Pro initialized');
+            // Set battery view buttons
+            const view = appState.batteryView || 'date';
+            document.getElementById('viewDate').classList.toggle('active', view === 'date');
+            document.getElementById('viewOverall').classList.toggle('active', view === 'overall');
+
+            console.log('📚 Lecture Planner Pro initialized with Smart Default Selection');
             console.log(`📊 ${getCourseCount()} courses loaded`);
+            console.log(`🎯 Focus: ${appState.focusCourse || 'None'}`);
         }
 
         // Keyboard shortcut: Ctrl+S to export
