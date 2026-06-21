@@ -1072,11 +1072,16 @@
             border-radius: 4px;
             min-width: 60px;
             text-align: center;
+            cursor: pointer;
         }
 
         .daily-tick-item .tick-completed.pending {
             color: #dc2626;
             background: #fef2f2;
+        }
+
+        .daily-tick-item .tick-completed:hover {
+            background: #dbeafe;
         }
 
         /* ===== SPEED EDIT MODAL ===== */
@@ -3320,13 +3325,16 @@
 
             let html = '';
             tasksForDate.forEach((task, index) => {
+                // Check if this task is completed
                 const isCompleted = appData.history.some(h =>
                     h.sheetName === sheet.name &&
                     h.taskIndex === task.index &&
                     h.permanent === true
                 );
 
+                // Get completed date
                 let completedDate = '-';
+                let completedDateRaw = '';
                 if (isCompleted) {
                     const historyEntry = appData.history.find(h =>
                         h.sheetName === sheet.name &&
@@ -3336,6 +3344,7 @@
                     if (historyEntry) {
                         const d = new Date(historyEntry.date + 'T00:00:00');
                         completedDate = d.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+                        completedDateRaw = historyEntry.date;
                     }
                 }
 
@@ -3349,7 +3358,10 @@
                             <span class="tick-sr">#${task.sr || index + 1}</span>
                             <span class="tick-name">${task.reference || 'Task'}</span>
                             <span class="tick-allocated">📅 ${allocDisplay}</span>
-                            <span class="tick-completed ${isCompleted ? '' : 'pending'}">${isCompleted ? '✅ ' + completedDate : '⏳ Pending'}</span>
+                            <span class="tick-completed ${isCompleted ? '' : 'pending'}" 
+                                  onclick="event.stopPropagation();editCompletedDate(${task.index})">
+                                ${isCompleted ? '✅ ' + completedDate : '⏳ Pending'}
+                            </span>
                         </div>
                     `;
             });
@@ -3357,6 +3369,9 @@
             container.innerHTML = html;
         }
 
+        // ============================================================
+        // TOGGLE DAILY TASK
+        // ============================================================
         function toggleDailyTask(taskIndex) {
             if (appData.isLocked) {
                 showToast('🔒 App is locked. Tap "Unlock" at the bottom.');
@@ -3378,9 +3393,11 @@
             );
 
             if (existingIndex >= 0) {
+                // Uncomplete - remove from history
                 appData.history.splice(existingIndex, 1);
                 showToast(`↩️ Unmarked task #${taskIndex + 1}`);
             } else {
+                // Complete - add to history with today's date
                 appData.history.push({
                     date: dateStr,
                     sheetName: sheet.name,
@@ -3402,6 +3419,65 @@
             updateHistory();
             updateThreeBatteries();
             updateStatusDot();
+        }
+
+        // ============================================================
+        // EDIT COMPLETED DATE
+        // ============================================================
+        function editCompletedDate(taskIndex) {
+            if (appData.isLocked) {
+                showToast('🔒 App is locked. Tap "Unlock" at the bottom.');
+                return;
+            }
+
+            const sheet = getSelectedSheet();
+            if (!sheet) {
+                showToast('⚠️ Select a sheet first.');
+                return;
+            }
+
+            const existingIndex = appData.history.findIndex(h =>
+                h.sheetName === sheet.name &&
+                h.taskIndex === taskIndex &&
+                h.permanent === true
+            );
+
+            if (existingIndex < 0) {
+                showToast('⚠️ Task is not completed yet.');
+                return;
+            }
+
+            const currentDate = appData.history[existingIndex].date;
+            const newDate = prompt('Enter new completion date (YYYY-MM-DD):', currentDate);
+
+            if (!newDate) return;
+
+            // Validate date format
+            const dateRegex = /^\d{4}-\d{2}-\d{2}$/;
+            if (!dateRegex.test(newDate)) {
+                showToast('❌ Invalid date format. Use YYYY-MM-DD.');
+                return;
+            }
+
+            // Check if date is valid
+            const testDate = new Date(newDate + 'T00:00:00');
+            if (isNaN(testDate.getTime())) {
+                showToast('❌ Invalid date.');
+                return;
+            }
+
+            appData.history[existingIndex].date = newDate;
+            appData.history[existingIndex].completedDate = newDate;
+
+            saveData();
+            updateDailyTasks();
+            updateFocusTasks();
+            updateFocusDashboard();
+            updateFocusBattery();
+            updateHistory();
+            updateThreeBatteries();
+            updateStatusDot();
+            showToast(`✅ Updated completed date to ${newDate}`);
         }
 
         // ============================================================
@@ -3529,6 +3605,7 @@
 
             appData.sheets = [];
 
+            // Sheet 1: Workout Plan
             const sheet1 = createNewSheet('Workout Plan');
             const workoutData = [
                 { sr: 1, reference: 'Push-ups', duration: 10 },
@@ -3546,6 +3623,7 @@
             sheet1.startDate = new Date().toISOString().split('T')[0];
             appData.sheets.push(sheet1);
 
+            // Sheet 2: Course Material
             const sheet2 = createNewSheet('Course Material');
             const courseData = [
                 { sr: 1, reference: 'Chapter 1', duration: 45 },
