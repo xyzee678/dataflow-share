@@ -24,6 +24,7 @@
             --text-light: #718096;
             --shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
             --radius: 12px;
+            --sunday-pink: #f8d7da;
         }
 
         body {
@@ -265,24 +266,6 @@
             margin-bottom: 16px;
             flex-wrap: wrap;
             align-items: center;
-        }
-
-        .filter-row select,
-        .filter-row input {
-            flex: 1;
-            min-width: 120px;
-            padding: 10px 14px;
-            border: 2px solid #e2e8f0;
-            border-radius: var(--radius);
-            font-size: 14px;
-            background: white;
-            transition: border-color 0.2s;
-        }
-
-        .filter-row select:focus,
-        .filter-row input:focus {
-            border-color: var(--primary);
-            outline: none;
         }
 
         .filter-row .view-toggle {
@@ -552,10 +535,6 @@
             gap: 10px;
         }
 
-        .btn-group .btn-full {
-            grid-column: 1 / -1;
-        }
-
         .btn {
             padding: 12px;
             border: none;
@@ -671,6 +650,48 @@
 
         .btn-rename:hover {
             transform: scale(1.2);
+        }
+
+        .btn-clear-copy {
+            background: none;
+            border: none;
+            color: var(--danger);
+            cursor: pointer;
+            font-size: 14px;
+            padding: 0 4px;
+            transition: transform 0.2s;
+        }
+
+        .btn-clear-copy:hover {
+            transform: scale(1.2);
+        }
+
+        .btn-batch {
+            padding: 4px 12px;
+            border: none;
+            border-radius: 4px;
+            font-size: 11px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .btn-batch.tick-all {
+            background: var(--success);
+            color: white;
+        }
+
+        .btn-batch.tick-all:hover {
+            transform: scale(1.05);
+        }
+
+        .btn-batch.untick-all {
+            background: var(--danger);
+            color: white;
+        }
+
+        .btn-batch.untick-all:hover {
+            transform: scale(1.05);
         }
 
         .saved-courses-list {
@@ -828,6 +849,26 @@
             cursor: default;
         }
 
+        .calendar-day.sunday {
+            background: var(--sunday-pink);
+        }
+
+        .calendar-day.sunday.has-lecture {
+            background: #f5c8cb;
+        }
+
+        .calendar-day.sunday.completed {
+            background: #e8c8cc;
+        }
+
+        .calendar-day.sunday.pending {
+            background: #f0c8cc;
+        }
+
+        .calendar-day.sunday.incomplete {
+            background: #f5c8cb;
+        }
+
         .calendar-day .dot {
             width: 6px;
             height: 6px;
@@ -867,6 +908,16 @@
             color: var(--text);
             padding-bottom: 8px;
             border-bottom: 2px solid #edf2f7;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+
+        .lecture-list .batch-controls {
+            display: flex;
+            gap: 6px;
         }
 
         .date-speed-control {
@@ -918,6 +969,12 @@
             font-size: 11px;
         }
 
+        .date-speed-control .speed-warning {
+            color: var(--danger);
+            font-size: 12px;
+            font-weight: 600;
+        }
+
         .duration-summary {
             background: #f7fafc;
             border-radius: 8px;
@@ -947,6 +1004,19 @@
 
         .duration-summary .breakdown .copied {
             color: var(--primary);
+        }
+
+        .duration-summary .speed-match {
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .duration-summary .speed-match.match {
+            color: var(--success);
+        }
+
+        .duration-summary .speed-match.mismatch {
+            color: var(--danger);
         }
 
         .lecture-item {
@@ -1015,6 +1085,20 @@
             font-weight: 500;
         }
 
+        .lecture-item .info .sub .date-tag {
+            font-size: 11px;
+            color: var(--text-light);
+            margin-left: 4px;
+        }
+
+        .lecture-item .info .sub .date-tag .allocated {
+            color: var(--primary);
+        }
+
+        .lecture-item .info .sub .date-tag .done {
+            color: var(--success);
+        }
+
         .lecture-item.completed {
             background: #f0fff4;
             border-radius: 6px;
@@ -1045,15 +1129,29 @@
             color: #721c24;
         }
 
-        .status-badge.in-progress {
-            background: #cce5ff;
-            color: #004085;
-        }
-
         .lecture-item .copy-buttons {
             display: flex;
             gap: 4px;
             flex-shrink: 0;
+        }
+
+        .lecture-item .clear-copy-btn {
+            flex-shrink: 0;
+        }
+
+        .done-date-input {
+            width: 90px;
+            padding: 2px 4px;
+            border: 1px solid #e2e8f0;
+            border-radius: 4px;
+            font-size: 11px;
+            background: white;
+            cursor: pointer;
+        }
+
+        .done-date-input:focus {
+            border-color: var(--primary);
+            outline: none;
         }
 
         /* Edit Tab */
@@ -1414,6 +1512,15 @@
                 font-size: 13px;
                 min-width: 80px;
             }
+
+            .done-date-input {
+                width: 70px;
+                font-size: 10px;
+            }
+
+            .lecture-item .info .sub .date-tag {
+                font-size: 10px;
+            }
         }
 
         @media (max-width: 380px) {
@@ -1506,7 +1613,7 @@
         <div class="modal">
             <h3>📥 Import Backup</h3>
             <p>Paste your JSON backup data below to restore all courses, settings, and progress.</p>
-            <textarea id="importData" placeholder='{"courses": {...}, "settings": {...}, "results": {...}, "copies": {...}, "dateSpeeds": {...}}'></textarea>
+            <textarea id="importData" placeholder='{"courses": {...}, "settings": {...}, "results": {...}, "copies": {...}, "dateSpeeds": {...}, "doneDates": {...}}'></textarea>
             <div class="btn-group">
                 <button class="btn btn-primary" onclick="importData()">Import</button>
                 <button class="btn btn-outline" onclick="closeImportModal()">Cancel</button>
@@ -1683,9 +1790,10 @@
             results: {},
             copies: {},
             dateSpeeds: {},
+            doneDates: {},
             focusCourse: null,
             batteryView: 'date',
-            dashboardDate: null // Current date for dashboard
+            dashboardDate: null
         };
 
         const DEFAULT_SPEED = 120;
@@ -1701,6 +1809,7 @@
                     appState = parsed;
                     if (!appState.copies) appState.copies = {};
                     if (!appState.dateSpeeds) appState.dateSpeeds = {};
+                    if (!appState.doneDates) appState.doneDates = {};
                     if (!appState.dashboardDate) appState.dashboardDate = getTodayStr();
                 }
             } catch (e) {
@@ -1846,6 +1955,22 @@
             return appState.copies[courseName]?.[key] || [];
         }
 
+        function getLectureDoneDate(courseName, lecture) {
+            const key = getLectureKey(lecture);
+            return appState.doneDates[courseName]?.[key] || null;
+        }
+
+        function setLectureDoneDate(courseName, lecture, date) {
+            if (!appState.doneDates[courseName]) appState.doneDates[courseName] = {};
+            const key = getLectureKey(lecture);
+            if (date) {
+                appState.doneDates[courseName][key] = date;
+            } else {
+                delete appState.doneDates[courseName][key];
+            }
+            saveState();
+        }
+
         function addLectureCopy(courseName, lecture, targetDate) {
             if (!appState.copies[courseName]) appState.copies[courseName] = {};
             const key = getLectureKey(lecture);
@@ -1867,6 +1992,13 @@
                     delete appState.copies[courseName][key];
                 }
             }
+            saveState();
+        }
+
+        function clearAllCopiesForLecture(courseName, lecture) {
+            if (!appState.copies[courseName]) return;
+            const key = getLectureKey(lecture);
+            delete appState.copies[courseName][key];
             saveState();
         }
 
@@ -1957,8 +2089,13 @@
             return result;
         }
 
+        function isSunday(dateStr) {
+            const date = new Date(dateStr);
+            return date.getDay() === 0;
+        }
+
         // ============================================================
-        // TIMETABLE GENERATION WITH COPIES & DATE-SPECIFIC SPEEDS
+        // TIMETABLE GENERATION WITH ALL FEATURES
         // ============================================================
         function generateTimetable(courseName) {
             const course = appState.courses[courseName];
@@ -1968,11 +2105,10 @@
             const defaultSpeed = settings.speed || DEFAULT_SPEED;
             const startDate = settings.startDate || getTodayStr();
 
-            // Build schedule with copies
             const schedule = [];
             const copyMap = new Map();
 
-            // First, collect all copies
+            // Collect all copies
             for (const lecture of course.lectures) {
                 const copies = getLectureCopies(courseName, lecture);
                 for (const copyDate of copies) {
@@ -1983,23 +2119,28 @@
                         ...lecture,
                         isCopy: true,
                         sourceDate: copyDate,
-                        completed: isLectureCompleted(courseName, lecture)
+                        completed: isLectureCompleted(courseName, lecture),
+                        doneDate: getLectureDoneDate(courseName, lecture)
                     });
                 }
             }
 
-            // Build normal schedule with date-specific speeds
+            // Build normal schedule
             let currentDay = new Date(startDate);
             let currentDayMinutes = 0;
             const dateMap = new Map();
 
+            // Safety: If speed is too low (1 min), prevent infinite loop
+            const effectiveSpeed = Math.max(defaultSpeed, 1);
+
             for (const lecture of course.lectures) {
                 let remaining = lecture.duration;
                 let isFirst = true;
+                let lectureStartDate = new Date(currentDay);
 
                 while (remaining > 0) {
                     const dateStr = getDateStr(currentDay);
-                    const speed = getDateSpeed(courseName, dateStr) || defaultSpeed;
+                    const speed = Math.max(getDateSpeed(courseName, dateStr) || defaultSpeed, 1);
                     const available = speed - currentDayMinutes;
                     const taken = Math.min(remaining, available);
                     const isContinuing = !isFirst || taken < lecture.duration;
@@ -2018,7 +2159,8 @@
                         isStart: isFirst,
                         isEnd: remaining - taken <= 0,
                         isCopy: false,
-                        originalDate: dateStr // Track original allocated date
+                        allocatedDate: dateStr,
+                        doneDate: getLectureDoneDate(courseName, lecture)
                     });
 
                     currentDayMinutes += taken;
@@ -2032,22 +2174,21 @@
                 }
             }
 
-            // Merge copies into schedule
+            // Merge copies
             for (const [dateStr, copyLectures] of copyMap) {
                 if (!dateMap.has(dateStr)) {
-                    const speed = getDateSpeed(courseName, dateStr) || defaultSpeed;
+                    const speed = Math.max(getDateSpeed(courseName, dateStr) || defaultSpeed, 1);
                     dateMap.set(dateStr, { date: new Date(dateStr), lectures: [], speed: speed });
                 }
                 const day = dateMap.get(dateStr);
                 for (const copy of copyLectures) {
-                    // Check if this copy is on its original date (remove tag if it is)
-                    const isOriginal = copy.sourceDate === dateStr;
                     day.lectures.push({
                         ...copy,
                         isCopy: true,
                         sourceDate: copy.sourceDate,
-                        isOriginal: isOriginal,
-                        completed: isLectureCompleted(courseName, copy)
+                        completed: isLectureCompleted(courseName, copy),
+                        allocatedDate: copy.sourceDate,
+                        doneDate: getLectureDoneDate(courseName, copy)
                     });
                 }
             }
@@ -2058,7 +2199,7 @@
                 schedule.push(dateMap.get(dateStr));
             }
 
-            // Sort lectures within each day by sr_no
+            // Sort lectures within each day
             for (const day of schedule) {
                 day.lectures.sort((a, b) => a.sr_no - b.sr_no);
             }
@@ -2076,7 +2217,6 @@
         // COPY LECTURE FUNCTION
         // ============================================================
         function copyLecture(courseName, lecture, direction) {
-            // Get current date from the lecture in the schedule
             const timetable = generateTimetable(courseName);
             if (!timetable) return;
 
@@ -2097,27 +2237,90 @@
                 return;
             }
 
-            // Calculate target date
             const dateObj = new Date(currentDate);
             dateObj.setDate(dateObj.getDate() + direction);
             const targetDate = getDateStr(dateObj);
 
-            // Check if copy already exists
             const existingCopies = getLectureCopies(courseName, lecture);
             if (existingCopies.includes(targetDate)) {
                 showToast(`⚠️ Copy already exists on ${targetDate}`);
                 return;
             }
 
-            // Add copy
             addLectureCopy(courseName, lecture, targetDate);
-
             saveState();
             updateTimetable();
             updateDashboard();
             
             const dirText = direction === 1 ? 'next' : 'previous';
             showToast(`📋 Copied "${lecture.name}" to ${dirText} day (${targetDate})`);
+        }
+
+        // ============================================================
+        // CLEAR COPY STAMP
+        // ============================================================
+        function clearCopyStamp(courseName, lecture) {
+            if (!confirm(`Clear all copy stamps for "${lecture.name}"?`)) return;
+            clearAllCopiesForLecture(courseName, lecture);
+            saveState();
+            updateTimetable();
+            updateDashboard();
+            showToast(`✅ Cleared copy stamps for "${lecture.name}"`);
+        }
+
+        // ============================================================
+        // BATCH OPERATIONS
+        // ============================================================
+        function tickAllLectures(courseName, dateStr) {
+            const timetable = generateTimetable(courseName);
+            if (!timetable) return;
+
+            const dayInfo = timetable.schedule.find(d => getDateStr(d.date) === dateStr);
+            if (!dayInfo) return;
+
+            for (const lecture of dayInfo.lectures) {
+                const key = getLectureKey(lecture);
+                if (!appState.results[courseName]) appState.results[courseName] = {};
+                appState.results[courseName][key] = true;
+                setLectureDoneDate(courseName, lecture, getTodayStr());
+            }
+            saveState();
+            updateTimetable();
+            updateDashboard();
+            showToast(`✅ Marked all lectures complete for ${dateStr}`);
+        }
+
+        function untickAllLectures(courseName, dateStr) {
+            const timetable = generateTimetable(courseName);
+            if (!timetable) return;
+
+            const dayInfo = timetable.schedule.find(d => getDateStr(d.date) === dateStr);
+            if (!dayInfo) return;
+
+            for (const lecture of dayInfo.lectures) {
+                const key = getLectureKey(lecture);
+                if (!appState.results[courseName]) appState.results[courseName] = {};
+                appState.results[courseName][key] = false;
+                setLectureDoneDate(courseName, lecture, null);
+            }
+            saveState();
+            updateTimetable();
+            updateDashboard();
+            showToast(`↩️ Marked all lectures pending for ${dateStr}`);
+        }
+
+        // ============================================================
+        // DONE DATE EDIT
+        // ============================================================
+        function updateDoneDate(courseName, lecture, newDate) {
+            if (newDate) {
+                setLectureDoneDate(courseName, lecture, newDate);
+            } else {
+                setLectureDoneDate(courseName, lecture, null);
+            }
+            saveState();
+            updateTimetable();
+            updateDashboard();
         }
 
         // ============================================================
@@ -2175,6 +2378,11 @@
                 delete appState.dateSpeeds[oldName];
             }
             
+            if (appState.doneDates[oldName]) {
+                appState.doneDates[newName] = appState.doneDates[oldName];
+                delete appState.doneDates[oldName];
+            }
+            
             if (appState.focusCourse === oldName) {
                 appState.focusCourse = newName;
             }
@@ -2207,12 +2415,10 @@
             const today = getTodayStr();
             const selectedDate = appState.dashboardDate || today;
 
-            // Update date label
             const dateObj = new Date(selectedDate);
             document.getElementById('dashboardDateLabel').textContent = 
                 dateObj.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' });
 
-            // Get completion for 5 days (2 before, current, 2 after)
             const dates = [];
             for (let i = -2; i <= 2; i++) {
                 const d = new Date(selectedDate);
@@ -2220,7 +2426,6 @@
                 dates.push(getDateStr(d));
             }
 
-            // Render batteries
             let batteryHtml = '';
             for (let i = 0; i < dates.length; i++) {
                 const dateStr = dates[i];
@@ -2263,7 +2468,6 @@
 
             document.getElementById('batteryGrid').innerHTML = batteryHtml;
 
-            // Update stats for selected date
             let stats;
             if (courseName === '__all__' || !courseName) {
                 if (view === 'date') {
@@ -2331,6 +2535,9 @@
             if (!appState.dateSpeeds[name]) {
                 appState.dateSpeeds[name] = {};
             }
+            if (!appState.doneDates[name]) {
+                appState.doneDates[name] = {};
+            }
 
             setFocusCourse(name);
             saveState();
@@ -2389,6 +2596,9 @@
                     if (!appState.dateSpeeds[name]) {
                         appState.dateSpeeds[name] = {};
                     }
+                    if (!appState.doneDates[name]) {
+                        appState.doneDates[name] = {};
+                    }
                     added++;
                 }
             }
@@ -2415,6 +2625,7 @@
                     delete appState.results[name];
                     delete appState.copies[name];
                     delete appState.dateSpeeds[name];
+                    delete appState.doneDates[name];
                     removed++;
                 }
             }
@@ -2433,7 +2644,7 @@
 
         function clearAllData() {
             if (confirm('⚠️ Delete ALL courses and data? This cannot be undone!')) {
-                appState = { courses: {}, settings: {}, results: {}, copies: {}, dateSpeeds: {}, focusCourse: null, batteryView: appState.batteryView || 'date', dashboardDate: getTodayStr() };
+                appState = { courses: {}, settings: {}, results: {}, copies: {}, dateSpeeds: {}, doneDates: {}, focusCourse: null, batteryView: appState.batteryView || 'date', dashboardDate: getTodayStr() };
                 saveState();
                 updateAllSelectors();
                 updateSavedCoursesList();
@@ -2565,9 +2776,11 @@
                 const dateStr = getDateStr(dateObj);
                 const isToday = dateStr === today;
                 const info = allDates.get(dateStr);
+                const isSun = isSunday(dateStr);
 
                 let classes = 'calendar-day';
                 if (isToday) classes += ' today';
+                if (isSun) classes += ' sunday';
                 if (info) {
                     classes += ' has-lecture';
                     const allDone = info.lectures.every(l => l.completed);
@@ -2608,16 +2821,24 @@
                 let allocatedTotal = 0;
                 let copiedTotal = 0;
                 for (const lecture of selectedInfo.lectures) {
-                    if (lecture.isCopy && !lecture.isOriginal) {
+                    if (lecture.isCopy) {
                         copiedTotal += lecture.duration;
                     } else {
                         allocatedTotal += lecture.duration;
                     }
                 }
                 const totalDuration = allocatedTotal + copiedTotal;
+                const speed = selectedInfo.speed || DEFAULT_SPEED;
+                const isMatch = Math.abs(totalDuration - speed) < 5;
 
                 html += `<div class="lecture-list">
-                    <div class="date-header">📅 ${new Date(selectedDate).toLocaleDateString('en-US', { weekday: 'long', month: 'short', day: 'numeric' })}</div>
+                    <div class="date-header">
+                        <span>📅 ${new Date(selectedDate).toLocaleDateString('en-US', { weekday: 'long', month: 'short', day: 'numeric' })} ${isSunday(selectedDate) ? '🌸' : ''}</span>
+                        <div class="batch-controls">
+                            <button class="btn-batch tick-all" onclick="tickAllLecturesCombined('${selectedDate}')">✅ Tick All</button>
+                            <button class="btn-batch untick-all" onclick="untickAllLecturesCombined('${selectedDate}')">⭕ Untick All</button>
+                        </div>
+                    </div>
                     <div class="date-speed-control">
                         <span class="label">⚡ Speed:</span>
                         <span class="default-speed">Default: ${selectedInfo.speed || DEFAULT_SPEED} mins</span>
@@ -2628,23 +2849,24 @@
                             <span class="allocated">Allocated: ${formatDuration(allocatedTotal)}</span>
                             ${copiedTotal > 0 ? ` + <span class="copied">Copied: ${formatDuration(copiedTotal)}</span>` : ''}
                         </span>
+                        <span class="speed-match ${isMatch ? 'match' : 'mismatch'}">
+                            ${isMatch ? '✅ Matches speed' : `⚠️ Mismatch (Speed: ${speed} mins)`}
+                        </span>
                     </div>`;
 
                 for (const lecture of selectedInfo.lectures) {
                     const isCompleted = lecture.completed;
                     const key = getLectureKey(lecture);
+                    const doneDate = lecture.doneDate || '';
+                    const allocatedDate = lecture.allocatedDate || '';
+                    
                     let copyTag = '';
                     if (lecture.isCopy) {
-                        // Only show "Copied from" if not on original date
-                        if (!lecture.isOriginal) {
-                            copyTag = `<span class="copy-tag dest">📋 Copied from ${lecture.sourceDate}</span>`;
-                        }
+                        copyTag = `<span class="copy-tag dest">📋 Copied from ${lecture.sourceDate}</span>`;
                     } else {
-                        // Check if this lecture has been copied to other dates
                         const copies = getLectureCopies(lecture.course, lecture);
-                        const validCopies = copies.filter(d => d !== selectedDate);
-                        if (validCopies.length > 0) {
-                            copyTag = `<span class="copy-tag source">📋 Copied to ${validCopies.join(', ')}</span>`;
+                        if (copies.length > 0) {
+                            copyTag = `<span class="copy-tag source">📋 Copied to ${copies.join(', ')}</span>`;
                         }
                     }
                     
@@ -2654,8 +2876,14 @@
                                 onchange="toggleLectureCombined('${lecture.course}','${key}',this.checked,'${selectedDate}')" />
                             <div class="info">
                                 <div class="title">${lecture.sr_no}. ${lecture.name} <span class="course-name">(${lecture.course})</span></div>
-                                <div class="sub">${lecture.duration}min ${lecture.isContinuing ? '<span class="continuing">· continuing</span>' : ''}
-                                ${copyTag}</div>
+                                <div class="sub">
+                                    ${lecture.duration}min ${lecture.isContinuing ? '<span class="continuing">· continuing</span>' : ''}
+                                    ${copyTag}
+                                    <span class="date-tag">
+                                        <span class="allocated">📌 Allocated: ${allocatedDate}</span>
+                                        ${doneDate ? ` · <span class="done">✅ Done: ${doneDate}</span>` : ''}
+                                    </span>
+                                </div>
                             </div>
                             <span class="status-badge ${isCompleted ? 'done' : 'pending'}">${isCompleted ? '✅ Done' : '⏳ Pending'}</span>
                             ${!lecture.isCopy ? `
@@ -2663,6 +2891,9 @@
                                 <button class="btn-copy prev" onclick="event.stopPropagation();copyLectureCombined('${lecture.course}',${JSON.stringify(lecture).replace(/"/g, '&quot;')},-1)">← Copy</button>
                                 <button class="btn-copy next" onclick="event.stopPropagation();copyLectureCombined('${lecture.course}',${JSON.stringify(lecture).replace(/"/g, '&quot;')},1)">Copy →</button>
                             </div>` : ''}
+                            <div class="clear-copy-btn">
+                                <button class="btn-clear-copy" onclick="event.stopPropagation();clearCopyStampCombined('${lecture.course}',${JSON.stringify(lecture).replace(/"/g, '&quot;')})" title="Clear copy stamps">🧹</button>
+                            </div>
                         </div>
                     `;
                 }
@@ -2687,7 +2918,6 @@
             const today = getTodayStr();
 
             const scheduleMap = {};
-            const speedMap = {};
             for (const day of timetable.schedule) {
                 const dateStr = getDateStr(day.date);
                 const allCompleted = day.lectures.every(l => l.completed);
@@ -2699,7 +2929,6 @@
                     lectures: day.lectures,
                     speed: day.speed || timetable.defaultSpeed
                 };
-                speedMap[dateStr] = day.speed || timetable.defaultSpeed;
             }
 
             let html = `<div class="month-label">${firstDay.toLocaleString('default', { month: 'long' })} ${currentYear}</div>`;
@@ -2720,9 +2949,11 @@
                 const dateStr = getDateStr(dateObj);
                 const isToday = dateStr === today;
                 const info = scheduleMap[dateStr];
+                const isSun = isSunday(dateStr);
 
                 let classes = 'calendar-day';
                 if (isToday) classes += ' today';
+                if (isSun) classes += ' sunday';
                 if (info) {
                     classes += ' has-lecture';
                     if (info.completed) classes += ' completed';
@@ -2756,7 +2987,7 @@
                 let allocatedTotal = 0;
                 let copiedTotal = 0;
                 for (const lecture of dayInfo.lectures) {
-                    if (lecture.isCopy && !lecture.isOriginal) {
+                    if (lecture.isCopy) {
                         copiedTotal += lecture.duration;
                     } else {
                         allocatedTotal += lecture.duration;
@@ -2766,9 +2997,16 @@
                 const currentSpeed = dayInfo.speed || timetable.defaultSpeed;
                 const defaultSpeed = timetable.defaultSpeed;
                 const isCustomSpeed = currentSpeed !== defaultSpeed;
+                const isMatch = Math.abs(totalDuration - currentSpeed) < 5;
 
                 html += `<div class="lecture-list">
-                    <div class="date-header">📅 ${new Date(selectedDate).toLocaleDateString('en-US', { weekday: 'long', month: 'short', day: 'numeric' })}</div>
+                    <div class="date-header">
+                        <span>📅 ${new Date(selectedDate).toLocaleDateString('en-US', { weekday: 'long', month: 'short', day: 'numeric' })} ${isSunday(selectedDate) ? '🌸' : ''}</span>
+                        <div class="batch-controls">
+                            <button class="btn-batch tick-all" onclick="tickAllLectures('${courseName}','${selectedDate}')">✅ Tick All</button>
+                            <button class="btn-batch untick-all" onclick="untickAllLectures('${courseName}','${selectedDate}')">⭕ Untick All</button>
+                        </div>
+                    </div>
                     <div class="date-speed-control">
                         <span class="label">⚡ Speed for this date:</span>
                         <span class="default-speed">Default: ${defaultSpeed} mins</span>
@@ -2776,6 +3014,7 @@
                             onchange="updateDateSpeed('${courseName}','${selectedDate}',this.value)" />
                         <button class="btn btn-outline btn-sm" onclick="document.getElementById('speedInput_${selectedDate}').value='';updateDateSpeed('${courseName}','${selectedDate}','')">↺ Reset</button>
                         ${isCustomSpeed ? `<span class="custom-badge">⚡ Custom: ${currentSpeed} mins</span>` : ''}
+                        ${!isMatch ? `<span class="speed-warning">⚠️ Mismatch: ${formatDuration(totalDuration)} vs ${currentSpeed} mins</span>` : ''}
                     </div>
                     <div class="duration-summary">
                         <span class="total">Total: ${formatDuration(totalDuration)}</span>
@@ -2783,23 +3022,24 @@
                             <span class="allocated">Allocated: ${formatDuration(allocatedTotal)}</span>
                             ${copiedTotal > 0 ? ` + <span class="copied">Copied: ${formatDuration(copiedTotal)}</span>` : ''}
                         </span>
+                        <span class="speed-match ${isMatch ? 'match' : 'mismatch'}">
+                            ${isMatch ? '✅ Matches speed' : `⚠️ Mismatch (Speed: ${currentSpeed} mins)`}
+                        </span>
                     </div>`;
 
                 for (const lecture of dayInfo.lectures) {
                     const key = getLectureKey(lecture);
                     const isCompleted = lecture.completed;
+                    const doneDate = lecture.doneDate || '';
+                    const allocatedDate = lecture.allocatedDate || '';
+                    
                     let copyTag = '';
                     if (lecture.isCopy) {
-                        // Only show "Copied from" if not on original date
-                        if (!lecture.isOriginal) {
-                            copyTag = `<span class="copy-tag dest">📋 Copied from ${lecture.sourceDate}</span>`;
-                        }
+                        copyTag = `<span class="copy-tag dest">📋 Copied from ${lecture.sourceDate}</span>`;
                     } else {
-                        // Check if this lecture has been copied to other dates
                         const copies = getLectureCopies(courseName, lecture);
-                        const validCopies = copies.filter(d => d !== selectedDate);
-                        if (validCopies.length > 0) {
-                            copyTag = `<span class="copy-tag source">📋 Copied to ${validCopies.join(', ')}</span>`;
+                        if (copies.length > 0) {
+                            copyTag = `<span class="copy-tag source">📋 Copied to ${copies.join(', ')}</span>`;
                         }
                     }
                     
@@ -2809,8 +3049,14 @@
                                 onchange="toggleLecture('${courseName}','${key}',this.checked,'${selectedDate}')" />
                             <div class="info">
                                 <div class="title">${lecture.sr_no}. ${lecture.name} <span class="course-name">(${courseName})</span></div>
-                                <div class="sub">${lecture.duration}min ${lecture.isContinuing ? '<span class="continuing">· continuing</span>' : ''}
-                                ${copyTag}</div>
+                                <div class="sub">
+                                    ${lecture.duration}min ${lecture.isContinuing ? '<span class="continuing">· continuing</span>' : ''}
+                                    ${copyTag}
+                                    <span class="date-tag">
+                                        <span class="allocated">📌 Allocated: ${allocatedDate}</span>
+                                        ${doneDate ? ` · <span class="done">✅ Done: ${doneDate}</span>` : ''}
+                                    </span>
+                                </div>
                             </div>
                             <span class="status-badge ${isCompleted ? 'done' : 'pending'}">${isCompleted ? '✅ Done' : '⏳ Pending'}</span>
                             ${!lecture.isCopy ? `
@@ -2818,6 +3064,12 @@
                                 <button class="btn-copy prev" onclick="event.stopPropagation();copyLecture('${courseName}',${JSON.stringify(lecture).replace(/"/g, '&quot;')},-1)">← Copy</button>
                                 <button class="btn-copy next" onclick="event.stopPropagation();copyLecture('${courseName}',${JSON.stringify(lecture).replace(/"/g, '&quot;')},1)">Copy →</button>
                             </div>` : ''}
+                            <div class="clear-copy-btn">
+                                <button class="btn-clear-copy" onclick="event.stopPropagation();clearCopyStamp('${courseName}',${JSON.stringify(lecture).replace(/"/g, '&quot;')})" title="Clear copy stamps">🧹</button>
+                            </div>
+                            <input type="date" class="done-date-input" value="${doneDate}" 
+                                onchange="updateDoneDate('${courseName}',${JSON.stringify(lecture).replace(/"/g, '&quot;')},this.value)" 
+                                title="Edit done date" />
                         </div>
                     `;
                 }
@@ -2851,6 +3103,33 @@
         function toggleLecture(courseName, key, checked, dateStr) {
             if (!appState.results[courseName]) appState.results[courseName] = {};
             appState.results[courseName][key] = checked;
+            if (checked) {
+                // Find lecture to set done date
+                const timetable = generateTimetable(courseName);
+                if (timetable) {
+                    for (const day of timetable.schedule) {
+                        for (const lecture of day.lectures) {
+                            if (getLectureKey(lecture) === key) {
+                                setLectureDoneDate(courseName, lecture, getTodayStr());
+                                break;
+                            }
+                        }
+                    }
+                }
+            } else {
+                // Find lecture to clear done date
+                const timetable = generateTimetable(courseName);
+                if (timetable) {
+                    for (const day of timetable.schedule) {
+                        for (const lecture of day.lectures) {
+                            if (getLectureKey(lecture) === key) {
+                                setLectureDoneDate(courseName, lecture, null);
+                                break;
+                            }
+                        }
+                    }
+                }
+            }
             saveState();
             updateTimetable();
             if (document.getElementById('dashboardTab').classList.contains('active')) updateDashboard();
@@ -2860,6 +3139,31 @@
         function toggleLectureCombined(courseName, key, checked, dateStr) {
             if (!appState.results[courseName]) appState.results[courseName] = {};
             appState.results[courseName][key] = checked;
+            if (checked) {
+                const timetable = generateTimetable(courseName);
+                if (timetable) {
+                    for (const day of timetable.schedule) {
+                        for (const lecture of day.lectures) {
+                            if (getLectureKey(lecture) === key) {
+                                setLectureDoneDate(courseName, lecture, getTodayStr());
+                                break;
+                            }
+                        }
+                    }
+                }
+            } else {
+                const timetable = generateTimetable(courseName);
+                if (timetable) {
+                    for (const day of timetable.schedule) {
+                        for (const lecture of day.lectures) {
+                            if (getLectureKey(lecture) === key) {
+                                setLectureDoneDate(courseName, lecture, null);
+                                break;
+                            }
+                        }
+                    }
+                }
+            }
             saveState();
             updateTimetable();
             if (document.getElementById('dashboardTab').classList.contains('active')) updateDashboard();
@@ -2868,6 +3172,24 @@
 
         function copyLectureCombined(courseName, lecture, direction) {
             copyLecture(courseName, lecture, direction);
+        }
+
+        function clearCopyStampCombined(courseName, lecture) {
+            clearCopyStamp(courseName, lecture);
+        }
+
+        function tickAllLecturesCombined(dateStr) {
+            const names = getCourseNames();
+            for (const name of names) {
+                tickAllLectures(name, dateStr);
+            }
+        }
+
+        function untickAllLecturesCombined(dateStr) {
+            const names = getCourseNames();
+            for (const name of names) {
+                untickAllLectures(name, dateStr);
+            }
         }
 
         function changeMonth(delta) {
@@ -3024,6 +3346,10 @@
                     appState.copies[courseName][newKey] = appState.copies[courseName][oldKey];
                     delete appState.copies[courseName][oldKey];
                 }
+                if (appState.doneDates[courseName] && appState.doneDates[courseName][oldKey] !== undefined) {
+                    appState.doneDates[courseName][newKey] = appState.doneDates[courseName][oldKey];
+                    delete appState.doneDates[courseName][oldKey];
+                }
                 saveState();
                 updateEditTab();
                 updateTimetable();
@@ -3062,6 +3388,7 @@
                 const key = getLectureKey(lecture);
                 if (appState.results[courseName]) delete appState.results[courseName][key];
                 if (appState.copies[courseName]) delete appState.copies[courseName][key];
+                if (appState.doneDates[courseName]) delete appState.doneDates[courseName][key];
             }
             course.lectures = course.lectures.filter(l => l.sr_no !== srNo);
             course.lectures.forEach((l, i) => l.sr_no = i + 1);
@@ -3081,6 +3408,7 @@
             delete appState.results[currentEditCourse];
             delete appState.copies[currentEditCourse];
             delete appState.dateSpeeds[currentEditCourse];
+            delete appState.doneDates[currentEditCourse];
             
             if (appState.focusCourse === deletedName) {
                 appState.focusCourse = getCourseNames()[0] || null;
@@ -3141,6 +3469,7 @@
                 appState = data;
                 if (!appState.copies) appState.copies = {};
                 if (!appState.dateSpeeds) appState.dateSpeeds = {};
+                if (!appState.doneDates) appState.doneDates = {};
                 if (!appState.dashboardDate) appState.dashboardDate = getTodayStr();
                 if (appState.focusCourse && !getCourseNames().includes(appState.focusCourse)) {
                     appState.focusCourse = getCourseNames()[0] || null;
@@ -3214,6 +3543,9 @@
                 if (!appState.dateSpeeds[name]) {
                     appState.dateSpeeds[name] = {};
                 }
+                if (!appState.doneDates[name]) {
+                    appState.doneDates[name] = {};
+                }
             }
 
             if (appState.focusCourse && !getCourseNames().includes(appState.focusCourse)) {
@@ -3228,7 +3560,7 @@
             document.getElementById('viewDate').classList.toggle('active', view === 'date');
             document.getElementById('viewOverall').classList.toggle('active', view === 'overall');
 
-            console.log('📚 Lecture Planner Pro initialized with Enhanced Dashboard & Smart Copy Tags');
+            console.log('📚 Lecture Planner Pro initialized with all features');
             console.log(`📊 ${getCourseCount()} courses loaded`);
             console.log(`🎯 Focus: ${appState.focusCourse || 'None'}`);
             console.log(`📅 Dashboard Date: ${appState.dashboardDate}`);
