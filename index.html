@@ -941,6 +941,144 @@
             margin-left: 2px;
         }
 
+        /* ===== DAILY TASKS (Allocated by Speed) ===== */
+        .daily-tick-section {
+            background: white;
+            border-radius: 10px;
+            padding: 10px;
+            border: 1px solid #f0f0f0;
+            margin-top: 10px;
+        }
+
+        .daily-tick-section h3 {
+            font-size: 12px;
+            color: #1a202c;
+            margin-bottom: 6px;
+        }
+
+        .daily-tick-header {
+            display: flex;
+            font-size: 9px;
+            color: #6b7280;
+            padding: 4px 6px;
+            border-bottom: 1px solid #e5e7eb;
+            margin-bottom: 4px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .daily-tick-header span {
+            display: inline-block;
+        }
+
+        .daily-tick-header .h-sr {
+            width: 30px;
+            text-align: center;
+        }
+        .daily-tick-header .h-task {
+            flex: 1;
+            padding-left: 4px;
+        }
+        .daily-tick-header .h-allocated {
+            width: 70px;
+            text-align: center;
+        }
+        .daily-tick-header .h-completed {
+            width: 70px;
+            text-align: center;
+        }
+
+        .daily-tick-item {
+            display: flex;
+            align-items: center;
+            padding: 6px 8px;
+            background: #fafbfc;
+            border-radius: 4px;
+            margin-bottom: 3px;
+            gap: 6px;
+            border: 2px solid transparent;
+            font-size: 11px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .daily-tick-item:hover {
+            background: #f3f4f6;
+        }
+
+        .daily-tick-item.pending {
+            border-color: #fecaca;
+            background: #fef2f2;
+        }
+
+        .daily-tick-item.completed {
+            border-color: #86efac;
+            background: #ecfdf5;
+        }
+
+        .daily-tick-item .tick-sr {
+            font-size: 10px;
+            color: #9ca3af;
+            min-width: 30px;
+            text-align: center;
+        }
+
+        .daily-tick-item .tick-checkbox {
+            width: 18px;
+            height: 18px;
+            border-radius: 4px;
+            border: 2px solid #d1d5db;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            font-size: 12px;
+            transition: all 0.2s;
+        }
+
+        .daily-tick-item.completed .tick-checkbox {
+            background: #059669;
+            border-color: #059669;
+            color: white;
+        }
+
+        .daily-tick-item.pending .tick-checkbox {
+            border-color: #dc2626;
+        }
+
+        .daily-tick-item .tick-name {
+            flex: 1;
+            font-size: 11px;
+            color: #1a202c;
+            font-weight: 500;
+        }
+
+        .daily-tick-item .tick-allocated {
+            font-size: 9px;
+            color: #6b7280;
+            background: #f3f4f6;
+            padding: 1px 6px;
+            border-radius: 4px;
+            min-width: 60px;
+            text-align: center;
+        }
+
+        .daily-tick-item .tick-completed {
+            font-size: 9px;
+            color: #059669;
+            background: #d1fae5;
+            padding: 1px 6px;
+            border-radius: 4px;
+            min-width: 60px;
+            text-align: center;
+        }
+
+        .daily-tick-item .tick-completed.pending {
+            color: #dc2626;
+            background: #fef2f2;
+        }
+
         /* ===== SPEED EDIT MODAL ===== */
         .speed-edit-overlay {
             position: fixed;
@@ -1388,76 +1526,6 @@
         .btn-delete-sheet {
             background: #ef4444;
             color: white;
-        }
-
-        /* ===== DAILY TICK SHEET ===== */
-        .daily-tick-section {
-            background: white;
-            border-radius: 10px;
-            padding: 10px;
-            border: 1px solid #f0f0f0;
-            margin-top: 10px;
-        }
-
-        .daily-tick-section h3 {
-            font-size: 12px;
-            color: #1a202c;
-            margin-bottom: 6px;
-        }
-
-        .daily-tick-item {
-            display: flex;
-            align-items: center;
-            padding: 4px 6px;
-            background: #fafbfc;
-            border-radius: 4px;
-            margin-bottom: 3px;
-            gap: 8px;
-            border: 1px solid transparent;
-            font-size: 11px;
-        }
-
-        .daily-tick-item .tick-checkbox {
-            width: 18px;
-            height: 18px;
-            border: 2px solid #d1d5db;
-            border-radius: 4px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            flex-shrink: 0;
-            font-size: 12px;
-            cursor: pointer;
-            transition: all 0.2s;
-        }
-
-        .daily-tick-item .tick-checkbox.checked {
-            background: #059669;
-            border-color: #059669;
-            color: white;
-        }
-
-        .daily-tick-item .tick-name {
-            flex: 1;
-            font-size: 11px;
-            color: #1a202c;
-        }
-
-        .daily-tick-item .tick-status {
-            font-size: 9px;
-            padding: 1px 8px;
-            border-radius: 10px;
-            font-weight: 500;
-        }
-
-        .daily-tick-item .tick-status.done {
-            background: #d1fae5;
-            color: #065f46;
-        }
-
-        .daily-tick-item .tick-status.pending {
-            background: #fef2f2;
-            color: #dc2626;
         }
 
         /* ===== PASTE AREA ===== */
@@ -2045,6 +2113,31 @@
             }
         }
 
+        /* ===== TOAST ===== */
+        .toast {
+            position: fixed;
+            bottom: 100px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: #1a202c;
+            color: white;
+            padding: 8px 20px;
+            border-radius: 10px;
+            font-size: 13px;
+            font-weight: 500;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            pointer-events: none;
+            z-index: 9999;
+            max-width: 90%;
+            text-align: center;
+        }
+
+        .toast.show {
+            opacity: 1;
+        }
+
         /* ===== MODAL ===== */
         .modal-overlay {
             position: fixed;
@@ -2312,12 +2405,33 @@
             }
             .daily-tick-item {
                 font-size: 10px;
-                padding: 3px 4px;
+                padding: 4px 6px;
             }
             .daily-tick-item .tick-checkbox {
                 width: 14px;
                 height: 14px;
                 font-size: 10px;
+            }
+            .daily-tick-item .tick-sr {
+                min-width: 24px;
+                font-size: 9px;
+            }
+            .daily-tick-item .tick-allocated {
+                min-width: 50px;
+                font-size: 8px;
+            }
+            .daily-tick-item .tick-completed {
+                min-width: 50px;
+                font-size: 8px;
+            }
+            .daily-tick-header .h-sr {
+                width: 24px;
+            }
+            .daily-tick-header .h-allocated {
+                width: 50px;
+            }
+            .daily-tick-header .h-completed {
+                width: 50px;
             }
         }
 
@@ -2481,14 +2595,20 @@
                     </div>
                 </div>
 
-                <!-- ===== DAILY TICK SHEET ===== -->
+                <!-- ===== DAILY TASKS (Allocated by Speed) ===== -->
                 <div class="daily-tick-section">
-                    <h3>✅ Daily Habits</h3>
+                    <h3>📋 Daily Tasks</h3>
+                    <div class="daily-tick-header">
+                        <span class="h-sr">#</span>
+                        <span class="h-task">Task</span>
+                        <span class="h-allocated">Allocated</span>
+                        <span class="h-completed">Completed</span>
+                    </div>
                     <div id="dailyTickList">
                         <div class="empty-state">
                             <div class="icon">📭</div>
-                            <h3>No habits added</h3>
-                            <p>Go to Settings → Add Sample Data to create habits</p>
+                            <h3>No tasks allocated</h3>
+                            <p>Select a sheet and set speed in Tracker section</p>
                         </div>
                     </div>
                 </div>
@@ -2654,6 +2774,9 @@
         </main>
     </div>
 
+    <!-- ===== TOAST ===== -->
+    <div class="toast" id="toast"></div>
+
     <!-- ===== SPEED EDIT MODAL ===== -->
     <div class="speed-edit-overlay" id="speedEditModal">
         <div class="speed-edit-box">
@@ -2719,7 +2842,6 @@
             dateSpeedOverrides: {},
             dateNotes: {},
             taskAllocations: {},
-            dailyHabits: [],
             sampleDataAdded: false,
             hasChanges: false
         };
@@ -2818,7 +2940,7 @@
             updateStatusDot();
             updateFocusTasks();
             updateThreeBatteries();
-            updateDailyHabits();
+            updateDailyTasks();
         }
 
         function changeDate(days) {
@@ -3136,85 +3258,6 @@
         }
 
         // ============================================================
-        // DAILY HABITS
-        // ============================================================
-        function updateDailyHabits() {
-            const container = document.getElementById('dailyTickList');
-
-            if (appData.dailyHabits.length === 0) {
-                container.innerHTML = `
-                        <div class="empty-state">
-                            <div class="icon">📭</div>
-                            <h3>No habits added</h3>
-                            <p>Go to Settings → Add Sample Data to create habits</p>
-                        </div>
-                    `;
-                return;
-            }
-
-            const today = selectedDate.toISOString().split('T')[0];
-
-            let html = '';
-            appData.dailyHabits.forEach((habit, index) => {
-                const isDone = appData.history.some(h =>
-                    h.sheetName === 'daily_habit' &&
-                    h.taskIndex === index &&
-                    h.date === today &&
-                    h.permanent === true
-                );
-
-                html += `
-                        <div class="daily-tick-item">
-                            <div class="tick-checkbox ${isDone ? 'checked' : ''}" 
-                                 onclick="toggleDailyHabit(${index})">
-                                ${isDone ? '✓' : ''}
-                            </div>
-                            <span class="tick-name">${habit}</span>
-                            <span class="tick-status ${isDone ? 'done' : 'pending'}">
-                                ${isDone ? '✅ Done' : '⏳ Pending'}
-                            </span>
-                        </div>
-                    `;
-            });
-
-            container.innerHTML = html;
-        }
-
-        function toggleDailyHabit(index) {
-            if (appData.isLocked) {
-                alert('🔒 App is locked. Tap "Unlock" at the bottom.');
-                return;
-            }
-
-            const today = selectedDate.toISOString().split('T')[0];
-
-            const existingIndex = appData.history.findIndex(h =>
-                h.sheetName === 'daily_habit' &&
-                h.taskIndex === index &&
-                h.date === today &&
-                h.permanent === true
-            );
-
-            if (existingIndex >= 0) {
-                appData.history.splice(existingIndex, 1);
-            } else {
-                appData.history.push({
-                    date: today,
-                    sheetName: 'daily_habit',
-                    taskIndex: index,
-                    taskRef: appData.dailyHabits[index],
-                    taskDuration: 5,
-                    timestamp: new Date().toISOString(),
-                    permanent: true
-                });
-            }
-
-            saveData();
-            updateDailyHabits();
-            updateHistory();
-        }
-
-        // ============================================================
         // GET SELECTED SHEET
         // ============================================================
         function getSelectedSheet() {
@@ -3234,6 +3277,148 @@
                 appData.taskAllocations[sheet.name] = allocateTasksToDates(sheet);
             });
             saveData();
+        }
+
+        // ============================================================
+        // DAILY TASKS (Allocated by Speed)
+        // ============================================================
+        function updateDailyTasks() {
+            const container = document.getElementById('dailyTickList');
+
+            const sheet = getSelectedSheet();
+            if (!sheet || sheet.data.length === 0) {
+                container.innerHTML = `
+                        <div class="empty-state">
+                            <div class="icon">📭</div>
+                            <h3>No tasks allocated</h3>
+                            <p>Select a sheet and set speed in Tracker section</p>
+                        </div>
+                    `;
+                return;
+            }
+
+            if (!appData.taskAllocations[sheet.name] || Object.keys(appData.taskAllocations[sheet.name]).length === 0) {
+                appData.taskAllocations[sheet.name] = allocateTasksToDates(sheet);
+                saveData();
+            }
+
+            const allocations = appData.taskAllocations[sheet.name] || {};
+            const dateStr = selectedDate.toISOString().split('T')[0];
+
+            const tasksForDate = getTasksForDate(sheet, dateStr);
+
+            if (tasksForDate.length === 0) {
+                container.innerHTML = `
+                        <div class="empty-state">
+                            <div class="icon">📭</div>
+                            <h3>No tasks for ${dateStr}</h3>
+                            <p>Check another date or add more rows to the sheet</p>
+                        </div>
+                    `;
+                return;
+            }
+
+            let html = '';
+            tasksForDate.forEach((task, index) => {
+                const isCompleted = appData.history.some(h =>
+                    h.sheetName === sheet.name &&
+                    h.taskIndex === task.index &&
+                    h.permanent === true
+                );
+
+                let completedDate = '-';
+                if (isCompleted) {
+                    const historyEntry = appData.history.find(h =>
+                        h.sheetName === sheet.name &&
+                        h.taskIndex === task.index &&
+                        h.permanent === true
+                    );
+                    if (historyEntry) {
+                        const d = new Date(historyEntry.date + 'T00:00:00');
+                        completedDate = d.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+                    }
+                }
+
+                const statusClass = isCompleted ? 'completed' : 'pending';
+                const allocDate = new Date(dateStr + 'T00:00:00');
+                const allocDisplay = allocDate.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+
+                html += `
+                        <div class="daily-tick-item ${statusClass}" onclick="toggleDailyTask(${task.index})">
+                            <div class="tick-checkbox">${isCompleted ? '✓' : ''}</div>
+                            <span class="tick-sr">#${task.sr || index + 1}</span>
+                            <span class="tick-name">${task.reference || 'Task'}</span>
+                            <span class="tick-allocated">📅 ${allocDisplay}</span>
+                            <span class="tick-completed ${isCompleted ? '' : 'pending'}">${isCompleted ? '✅ ' + completedDate : '⏳ Pending'}</span>
+                        </div>
+                    `;
+            });
+
+            container.innerHTML = html;
+        }
+
+        function toggleDailyTask(taskIndex) {
+            if (appData.isLocked) {
+                showToast('🔒 App is locked. Tap "Unlock" at the bottom.');
+                return;
+            }
+
+            const sheet = getSelectedSheet();
+            if (!sheet) {
+                showToast('⚠️ Select a sheet first.');
+                return;
+            }
+
+            const dateStr = selectedDate.toISOString().split('T')[0];
+
+            const existingIndex = appData.history.findIndex(h =>
+                h.sheetName === sheet.name &&
+                h.taskIndex === taskIndex &&
+                h.permanent === true
+            );
+
+            if (existingIndex >= 0) {
+                appData.history.splice(existingIndex, 1);
+                showToast(`↩️ Unmarked task #${taskIndex + 1}`);
+            } else {
+                appData.history.push({
+                    date: dateStr,
+                    sheetName: sheet.name,
+                    taskIndex: taskIndex,
+                    taskRef: sheet.data[taskIndex].reference || 'Task',
+                    taskDuration: sheet.data[taskIndex].duration || 0,
+                    timestamp: new Date().toISOString(),
+                    permanent: true,
+                    completedDate: dateStr
+                });
+                showToast(`✅ Completed task #${taskIndex + 1}`);
+            }
+
+            saveData();
+            updateDailyTasks();
+            updateFocusTasks();
+            updateFocusDashboard();
+            updateFocusBattery();
+            updateHistory();
+            updateThreeBatteries();
+            updateStatusDot();
+        }
+
+        // ============================================================
+        // TOAST
+        // ============================================================
+        function showToast(message) {
+            const toast = document.getElementById('toast');
+            if (toast) {
+                toast.textContent = message;
+                toast.className = 'toast show';
+                clearTimeout(toast._hide);
+                toast._hide = setTimeout(() => {
+                    toast.classList.remove('show');
+                }, 2500);
+            } else {
+                alert(message);
+            }
         }
 
         // ============================================================
@@ -3279,7 +3464,7 @@
             updateExecuteButton();
             updateStatusDot();
             updateThreeBatteries();
-            updateDailyHabits();
+            updateDailyTasks();
             checkDailySync();
         }
 
@@ -3380,15 +3565,6 @@
             sheet2.startDate = new Date().toISOString().split('T')[0];
             appData.sheets.push(sheet2);
 
-            // Add daily habits
-            appData.dailyHabits = [
-                'Morning Exercise',
-                'Meditation',
-                'Read 30 mins',
-                'Drink 8 glasses water',
-                'Journal writing'
-            ];
-
             appData.currentSheetIndex = 0;
             appData.focusSheetIndex = 0;
             appData.sampleDataAdded = true;
@@ -3406,7 +3582,7 @@
             updateFocusTasks();
             updateHistory();
             updateThreeBatteries();
-            updateDailyHabits();
+            updateDailyTasks();
 
             alert('✅ Sample data added! Two sheets created with example tasks.');
         }
@@ -3477,7 +3653,7 @@
         // ============================================================
         function switchPage(pageName) {
             if (appData.isLocked) {
-                alert('🔒 App is locked. Tap "Unlock" at the bottom.');
+                showToast('🔒 App is locked. Tap "Unlock" at the bottom.');
                 return;
             }
 
@@ -3507,7 +3683,7 @@
                 updateDateDisplay();
                 updateStatusDot();
                 updateThreeBatteries();
-                updateDailyHabits();
+                updateDailyTasks();
             }
             if (pageName === 'history') updateHistory();
             if (pageName === 'results') updateResults();
@@ -3520,7 +3696,7 @@
 
         function confirmEntry() {
             if (appData.isLocked) {
-                alert('🔒 App is locked. Tap "Unlock" at the bottom.');
+                showToast('🔒 App is locked. Tap "Unlock" at the bottom.');
                 return;
             }
             showModal(
@@ -3612,7 +3788,7 @@
 
         function selectFocusSheet(index) {
             if (appData.isLocked) {
-                alert('🔒 App is locked. Tap "Unlock" at the bottom.');
+                showToast('🔒 App is locked. Tap "Unlock" at the bottom.');
                 return;
             }
             appData.focusSheetIndex = index;
@@ -3624,6 +3800,7 @@
             updateTracker();
             updateStatusDot();
             updateThreeBatteries();
+            updateDailyTasks();
             saveData();
         }
 
@@ -3860,7 +4037,7 @@
 
         function focusToggleTask(sheetIndex, taskIndex) {
             if (appData.isLocked) {
-                alert('🔒 App is locked. Tap "Unlock" at the bottom.');
+                showToast('🔒 App is locked. Tap "Unlock" at the bottom.');
                 return;
             }
 
@@ -3874,7 +4051,7 @@
             );
 
             if (permanentIndex >= 0) {
-                alert('✅ This task is already permanently completed. Cannot undo.');
+                showToast('✅ This task is already permanently completed. Cannot undo.');
                 return;
             }
 
@@ -3912,13 +4089,13 @@
 
         function focusExecute() {
             if (appData.isLocked) {
-                alert('🔒 App is locked. Tap "Unlock" at the bottom.');
+                showToast('🔒 App is locked. Tap "Unlock" at the bottom.');
                 return;
             }
 
             const sheet = getSelectedSheet();
             if (!sheet) {
-                alert('⚠️ Select a sheet first.');
+                showToast('⚠️ Select a sheet first.');
                 return;
             }
 
@@ -3928,7 +4105,7 @@
             );
 
             if (tempCompletions.length === 0) {
-                alert('⚠️ No pending tasks to execute.');
+                showToast('⚠️ No pending tasks to execute.');
                 return;
             }
 
@@ -3948,18 +4125,18 @@
             updateResults();
             updateStatusDot();
             updateThreeBatteries();
-            alert(`✅ Executed ${tempCompletions.length} tasks permanently!`);
+            showToast(`✅ Executed ${tempCompletions.length} tasks permanently!`);
         }
 
         function focusSelectAll() {
             if (appData.isLocked) {
-                alert('🔒 App is locked. Tap "Unlock" at the bottom.');
+                showToast('🔒 App is locked. Tap "Unlock" at the bottom.');
                 return;
             }
 
             const sheet = getSelectedSheet();
             if (!sheet) {
-                alert('⚠️ Select a sheet first.');
+                showToast('⚠️ Select a sheet first.');
                 return;
             }
 
@@ -3967,7 +4144,7 @@
             const startDate = sheet.startDate || new Date().toISOString().split('T')[0];
 
             if (dateStr < startDate) {
-                alert('⚠️ Cannot select tasks before start date.');
+                showToast('⚠️ Cannot select tasks before start date.');
                 return;
             }
 
@@ -4015,18 +4192,18 @@
             updateHistory();
             updateStatusDot();
             updateThreeBatteries();
-            alert(`✅ Selected ${added} tasks for execution`);
+            showToast(`✅ Selected ${added} tasks for execution`);
         }
 
         function focusDeselectAll() {
             if (appData.isLocked) {
-                alert('🔒 App is locked. Tap "Unlock" at the bottom.');
+                showToast('🔒 App is locked. Tap "Unlock" at the bottom.');
                 return;
             }
 
             const sheet = getSelectedSheet();
             if (!sheet) {
-                alert('⚠️ Select a sheet first.');
+                showToast('⚠️ Select a sheet first.');
                 return;
             }
 
@@ -4054,12 +4231,12 @@
             updateHistory();
             updateStatusDot();
             updateThreeBatteries();
-            alert(`❌ Deselected ${removed} tasks`);
+            showToast(`❌ Deselected ${removed} tasks`);
         }
 
         function focusToggleView() {
             if (appData.isLocked) {
-                alert('🔒 App is locked. Tap "Unlock" at the bottom.');
+                showToast('🔒 App is locked. Tap "Unlock" at the bottom.');
                 return;
             }
             focusShowAllTasks = !focusShowAllTasks;
@@ -4551,7 +4728,8 @@
             updateResults();
             updateStatusDot();
             updateThreeBatteries();
-            alert(`✅ Speed set to ${speedHours.toFixed(2)} hrs/day for ${dateStr}`);
+            updateDailyTasks();
+            showToast(`✅ Speed set to ${speedHours.toFixed(2)} hrs/day for ${dateStr}`);
         }
 
         // ============================================================
@@ -4560,7 +4738,7 @@
         function openBulkSpeed() {
             const sheet = getSelectedSheet();
             if (!sheet) {
-                alert('⚠️ Select a sheet first in Focus tab.');
+                showToast('⚠️ Select a sheet first in Focus tab.');
                 return;
             }
             document.getElementById('bulkSpeedModal').classList.add('active');
@@ -4573,7 +4751,7 @@
         function saveBulkSpeed() {
             const sheet = getSelectedSheet();
             if (!sheet) {
-                alert('⚠️ Select a sheet first.');
+                showToast('⚠️ Select a sheet first.');
                 closeBulkSpeed();
                 return;
             }
@@ -4583,12 +4761,12 @@
             const speed = parseFloat(document.getElementById('bulkSpeedValue').value);
 
             if (!startDate || !endDate || !speed) {
-                alert('⚠️ Please fill all fields.');
+                showToast('⚠️ Please fill all fields.');
                 return;
             }
 
             if (speed < 0.5 || speed > 24) {
-                alert('⚠️ Speed must be between 0.5 and 24 hours/day.');
+                showToast('⚠️ Speed must be between 0.5 and 24 hours/day.');
                 return;
             }
 
@@ -4613,7 +4791,8 @@
             updateFocusBattery();
             updateResults();
             updateThreeBatteries();
-            alert(`✅ Applied ${speed.toFixed(2)} hrs/day to ${count} dates`);
+            updateDailyTasks();
+            showToast(`✅ Applied ${speed.toFixed(2)} hrs/day to ${count} dates`);
         }
 
         // ============================================================
@@ -4652,7 +4831,7 @@
 
         function switchSheet(index) {
             if (appData.isLocked) {
-                alert('🔒 App is locked. Tap "Unlock" at the bottom.');
+                showToast('🔒 App is locked. Tap "Unlock" at the bottom.');
                 return;
             }
             appData.currentSheetIndex = index;
@@ -4663,7 +4842,7 @@
 
         function addNewSheet() {
             if (appData.isLocked) {
-                alert('🔒 App is locked. Tap "Unlock" at the bottom.');
+                showToast('🔒 App is locked. Tap "Unlock" at the bottom.');
                 return;
             }
             showModal('Add New Sheet', 'Enter a name for the new sheet:', true, (name) => {
@@ -4677,13 +4856,14 @@
                     renderSpreadsheet();
                     updateAllSelectors();
                     updateFocusDashboard();
+                    updateDailyTasks();
                 }
             }, `Sheet ${appData.sheets.length + 1}`);
         }
 
         function editCurrentSheet() {
             if (appData.isLocked) {
-                alert('🔒 App is locked. Tap "Unlock" at the bottom.');
+                showToast('🔒 App is locked. Tap "Unlock" at the bottom.');
                 return;
             }
             const sheet = appData.sheets[appData.currentSheetIndex];
@@ -4701,17 +4881,18 @@
                     updateFocusDashboard();
                     updateFocusBattery();
                     updateFocusTasks();
+                    updateDailyTasks();
                 }
             }, sheet.name);
         }
 
         function deleteCurrentSheet() {
             if (appData.isLocked) {
-                alert('🔒 App is locked. Tap "Unlock" at the bottom.');
+                showToast('🔒 App is locked. Tap "Unlock" at the bottom.');
                 return;
             }
             if (appData.sheets.length <= 1) {
-                alert('⚠️ Cannot delete the last sheet');
+                showToast('⚠️ Cannot delete the last sheet');
                 return;
             }
 
@@ -4736,6 +4917,7 @@
                 updateHistory();
                 updateResults();
                 updateThreeBatteries();
+                updateDailyTasks();
             });
 
             document.getElementById('modalConfirmBtn').className = 'btn-danger';
@@ -4818,7 +5000,7 @@
 
         function deleteRow(index) {
             if (appData.isLocked) {
-                alert('🔒 App is locked. Tap "Unlock" at the bottom.');
+                showToast('🔒 App is locked. Tap "Unlock" at the bottom.');
                 return;
             }
 
@@ -4851,12 +5033,13 @@
                 updateResults();
                 updateStatusDot();
                 updateThreeBatteries();
+                updateDailyTasks();
             }
         }
 
         function addRow() {
             if (appData.isLocked) {
-                alert('🔒 App is locked. Tap "Unlock" at the bottom.');
+                showToast('🔒 App is locked. Tap "Unlock" at the bottom.');
                 return;
             }
             const sheet = appData.sheets[appData.currentSheetIndex];
@@ -4868,11 +5051,12 @@
             saveData();
             renderSpreadsheet();
             updateAllSelectors();
+            updateDailyTasks();
         }
 
         function clearSpreadsheet() {
             if (appData.isLocked) {
-                alert('🔒 App is locked. Tap "Unlock" at the bottom.');
+                showToast('🔒 App is locked. Tap "Unlock" at the bottom.');
                 return;
             }
             showModal('Clear All', 'Are you sure you want to clear all data in this sheet?', false, () => {
@@ -4894,12 +5078,13 @@
                 updateHistory();
                 updateFocusTasks();
                 updateAllSelectors();
+                updateDailyTasks();
             });
         }
 
         function executeSpreadsheet() {
             if (appData.isLocked) {
-                alert('🔒 App is locked. Tap "Unlock" at the bottom.');
+                showToast('🔒 App is locked. Tap "Unlock" at the bottom.');
                 return;
             }
 
@@ -4925,9 +5110,10 @@
             updateResults();
             updateStatusDot();
             updateThreeBatteries();
+            updateDailyTasks();
 
             const removed = originalLength - sheet.data.length;
-            alert(`✅ Saved ${sheet.data.length} rows${removed > 0 ? ` (${removed} empty rows removed)` : ''}`);
+            showToast(`✅ Saved ${sheet.data.length} rows${removed > 0 ? ` (${removed} empty rows removed)` : ''}`);
         }
 
         // ============================================================
@@ -4939,13 +5125,13 @@
 
         function pasteData() {
             if (appData.isLocked) {
-                alert('🔒 App is locked. Tap "Unlock" at the bottom.');
+                showToast('🔒 App is locked. Tap "Unlock" at the bottom.');
                 return;
             }
 
             const text = document.getElementById('pasteInput').value.trim();
             if (!text) {
-                alert('⚠️ Please paste some data first.');
+                showToast('⚠️ Please paste some data first.');
                 return;
             }
 
@@ -4982,19 +5168,20 @@
             renderSpreadsheet();
             updateAllSelectors();
             updateFocusDashboard();
+            updateDailyTasks();
             document.getElementById('pasteInput').value = '';
-            alert(`✅ Pasted ${rows.length} rows successfully!`);
+            showToast(`✅ Pasted ${rows.length} rows successfully!`);
         }
 
         function pasteExcelData() {
             if (appData.isLocked) {
-                alert('🔒 App is locked. Tap "Unlock" at the bottom.');
+                showToast('🔒 App is locked. Tap "Unlock" at the bottom.');
                 return;
             }
 
             const text = document.getElementById('pasteInput').value.trim();
             if (!text) {
-                alert('⚠️ Please paste Excel data first.');
+                showToast('⚠️ Please paste Excel data first.');
                 return;
             }
 
@@ -5043,8 +5230,9 @@
             renderSpreadsheet();
             updateAllSelectors();
             updateFocusDashboard();
+            updateDailyTasks();
             document.getElementById('pasteInput').value = '';
-            alert(`✅ Smart pasted ${rowCount} rows from Excel!`);
+            showToast(`✅ Smart pasted ${rowCount} rows from Excel!`);
         }
 
         // ============================================================
@@ -5082,7 +5270,7 @@
             const speed = parseFloat(document.getElementById('defaultSpeedInput').value) || 3;
             appData.defaultSpeed = speed;
             saveData();
-            alert(`✅ Default speed set to ${speed.toFixed(2)} hrs/day`);
+            showToast(`✅ Default speed set to ${speed.toFixed(2)} hrs/day`);
         }
 
         function exportAllData() {
@@ -5096,7 +5284,7 @@
             a.click();
 
             URL.revokeObjectURL(url);
-            alert('💾 Data exported successfully!');
+            showToast('💾 Data exported successfully!');
         }
 
         function importAllData(event) {
@@ -5123,14 +5311,14 @@
                         updateResults();
                         updateTracker();
                         updateThreeBatteries();
-                        updateDailyHabits();
+                        updateDailyTasks();
                         document.getElementById('defaultSpeedInput').value = appData.defaultSpeed;
                         updateExecuteButton();
                         updateStatusDot();
-                        alert('📂 Data imported successfully!');
+                        showToast('📂 Data imported successfully!');
                     });
                 } catch (err) {
-                    alert('❌ Invalid file format');
+                    showToast('❌ Invalid file format');
                 }
             };
             reader.readAsText(file);
@@ -5147,7 +5335,7 @@
             appData.github.userID = document.getElementById('githubUserID').value.trim();
             saveData();
             updateGitHubStatus();
-            alert('✅ GitHub settings saved!');
+            showToast('✅ GitHub settings saved!');
         }
 
         function updateGitHubStatus() {
@@ -5166,7 +5354,7 @@
         function syncToGitHub() {
             const g = appData.github;
             if (!g.username || !g.repo || !g.token) {
-                alert('⚠️ Please configure GitHub settings first (Settings → GitHub Sync)');
+                showToast('⚠️ Please configure GitHub settings first (Settings → GitHub Sync)');
                 return;
             }
 
@@ -5216,7 +5404,6 @@
                         dateSpeedOverrides: appData.dateSpeedOverrides || {},
                         dateNotes: appData.dateNotes || {},
                         taskAllocations: appData.taskAllocations || {},
-                        dailyHabits: appData.dailyHabits || [],
                         lastUpdated: new Date().toISOString()
                     }
                 }
@@ -5274,14 +5461,14 @@
                 setTimeout(() => {
                     updateGitHubStatus();
                 }, 3000);
-                alert(`✅ Synced ${appData.sheets.length} sheets and ${appData.history.filter(h=>h.permanent).length} history entries!`);
+                showToast(`✅ Synced ${appData.sheets.length} sheets and ${appData.history.filter(h=>h.permanent).length} history entries!`);
                 return response;
             })
             .catch(error => {
                 dot.className = 'dot offline';
                 text.textContent = '❌ Sync failed';
                 console.error('GitHub sync error:', error);
-                alert('❌ Sync failed: ' + error.message + '\nCheck your GitHub settings.');
+                showToast('❌ Sync failed: ' + error.message + '\nCheck your GitHub settings.');
             });
         }
 
