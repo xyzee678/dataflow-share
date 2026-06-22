@@ -24,7 +24,7 @@
             --text-light: #718096;
             --shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
             --radius: 12px;
-            --monday-pink: #f8d7da;
+            --sunday-pink: #f8d7da;
         }
 
         body {
@@ -91,47 +91,50 @@
             border-top: 1px solid #e2e8f0;
             box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.05);
             z-index: 200;
+            overflow-x: auto;
         }
 
         .nav-item {
             display: flex;
             flex-direction: column;
             align-items: center;
-            font-size: 10px;
+            font-size: 9px;
             color: var(--text-light);
             cursor: pointer;
-            padding: 4px 12px;
+            padding: 4px 8px;
             border: none;
             background: none;
             transition: all 0.2s;
             position: relative;
-            min-width: 60px;
+            min-width: 50px;
+            border-bottom: 3px solid transparent;
         }
 
         .nav-item .icon {
-            font-size: 22px;
+            font-size: 20px;
             margin-bottom: 1px;
         }
 
         .nav-item .label {
-            font-size: 10px;
+            font-size: 9px;
             font-weight: 500;
         }
 
         .nav-item.active {
             color: var(--primary);
+            border-bottom-color: var(--primary);
         }
 
         .nav-item .badge {
             position: absolute;
             top: 0;
-            right: 8px;
+            right: 4px;
             background: var(--danger);
             color: white;
             border-radius: 50%;
-            width: 18px;
-            height: 18px;
-            font-size: 9px;
+            width: 16px;
+            height: 16px;
+            font-size: 8px;
             display: flex;
             align-items: center;
             justify-content: center;
@@ -849,23 +852,23 @@
             cursor: default;
         }
 
-        .calendar-day.monday {
-            background: var(--monday-pink);
+        .calendar-day.sunday {
+            background: var(--sunday-pink);
         }
 
-        .calendar-day.monday.has-lecture {
+        .calendar-day.sunday.has-lecture {
             background: #f5c8cb;
         }
 
-        .calendar-day.monday.completed {
+        .calendar-day.sunday.completed {
             background: #e8c8cc;
         }
 
-        .calendar-day.monday.pending {
+        .calendar-day.sunday.pending {
             background: #f0c8cc;
         }
 
-        .calendar-day.monday.incomplete {
+        .calendar-day.sunday.incomplete {
             background: #f5c8cb;
         }
 
@@ -1432,6 +1435,187 @@
             background: #ff6b6b;
         }
 
+        /* History Tab */
+        .history-controls {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 16px;
+            flex-wrap: wrap;
+        }
+
+        .history-controls select,
+        .history-controls input {
+            flex: 1;
+            min-width: 120px;
+            padding: 10px 14px;
+            border: 2px solid #e2e8f0;
+            border-radius: var(--radius);
+            font-size: 14px;
+            background: white;
+        }
+
+        .history-controls select:focus,
+        .history-controls input:focus {
+            border-color: var(--primary);
+            outline: none;
+        }
+
+        .history-table {
+            background: var(--card);
+            border-radius: var(--radius);
+            overflow: hidden;
+            box-shadow: var(--shadow);
+            margin-bottom: 16px;
+        }
+
+        .history-row {
+            display: grid;
+            grid-template-columns: 100px 100px 1fr 60px 80px;
+            gap: 8px;
+            padding: 8px 12px;
+            align-items: center;
+            border-bottom: 1px solid #edf2f7;
+            font-size: 13px;
+        }
+
+        .history-row.header {
+            background: #f7fafc;
+            font-weight: 600;
+            color: var(--text-light);
+            font-size: 11px;
+            text-transform: uppercase;
+        }
+
+        .history-row .allocated-date {
+            color: var(--primary);
+            font-weight: 500;
+        }
+
+        .history-row .done-date {
+            color: var(--success);
+            font-weight: 500;
+        }
+
+        .history-row .done-date input {
+            width: 90px;
+            padding: 2px 4px;
+            border: 1px solid #e2e8f0;
+            border-radius: 4px;
+            font-size: 11px;
+            background: white;
+        }
+
+        .history-row .done-date input:focus {
+            border-color: var(--primary);
+            outline: none;
+        }
+
+        .history-stats {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr 1fr;
+            gap: 8px;
+            margin-top: 16px;
+        }
+
+        .history-stat {
+            background: var(--card);
+            border-radius: var(--radius);
+            padding: 12px;
+            text-align: center;
+            box-shadow: var(--shadow);
+        }
+
+        .history-stat .number {
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--primary);
+        }
+
+        .history-stat .label {
+            font-size: 10px;
+            color: var(--text-light);
+            margin-top: 2px;
+        }
+
+        /* Habits Tab */
+        .habit-form {
+            background: var(--card);
+            border-radius: var(--radius);
+            padding: 16px;
+            margin-bottom: 16px;
+            box-shadow: var(--shadow);
+        }
+
+        .habit-form input,
+        .habit-form select {
+            width: 100%;
+            padding: 10px 14px;
+            border: 2px solid #e2e8f0;
+            border-radius: var(--radius);
+            font-size: 14px;
+            margin-bottom: 10px;
+            background: white;
+        }
+
+        .habit-form input:focus,
+        .habit-form select:focus {
+            border-color: var(--primary);
+            outline: none;
+        }
+
+        .habit-form .form-row {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .habit-form .form-row > * {
+            flex: 1;
+            min-width: 100px;
+        }
+
+        .habit-item {
+            background: var(--card);
+            border-radius: var(--radius);
+            padding: 12px 16px;
+            margin-bottom: 8px;
+            box-shadow: var(--shadow);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+
+        .habit-item .info {
+            flex: 1;
+        }
+
+        .habit-item .info .name {
+            font-weight: 600;
+            font-size: 14px;
+        }
+
+        .habit-item .info .details {
+            font-size: 12px;
+            color: var(--text-light);
+        }
+
+        .habit-item .habit-checkbox {
+            width: 22px;
+            height: 22px;
+            accent-color: var(--success);
+            cursor: pointer;
+        }
+
+        .habit-item .habit-delete {
+            background: none;
+            border: none;
+            color: var(--danger);
+            font-size: 18px;
+            cursor: pointer;
+            padding: 0 4px;
+        }
+
         /* Modal */
         .modal-overlay {
             display: none;
@@ -1474,21 +1658,12 @@
             margin-bottom: 12px;
         }
 
-        .modal textarea {
+        .modal input[type="file"] {
             width: 100%;
-            height: 140px;
-            padding: 12px;
-            border: 2px solid #e2e8f0;
-            border-radius: 8px;
-            font-family: 'Courier New', monospace;
-            font-size: 13px;
+            padding: 10px;
+            border: 2px dashed #e2e8f0;
+            border-radius: var(--radius);
             margin-bottom: 12px;
-            resize: vertical;
-        }
-
-        .modal textarea:focus {
-            border-color: var(--primary);
-            outline: none;
         }
 
         .modal .btn-group {
@@ -1632,6 +1807,49 @@
             .analytics-stat .number {
                 font-size: 16px;
             }
+
+            .history-row {
+                grid-template-columns: 70px 70px 1fr 50px 60px;
+                font-size: 11px;
+                padding: 6px 8px;
+                gap: 4px;
+            }
+
+            .history-stats {
+                grid-template-columns: 1fr 1fr;
+            }
+
+            .habit-item {
+                padding: 10px 12px;
+                gap: 8px;
+            }
+
+            .habit-item .info .name {
+                font-size: 13px;
+            }
+
+            .bottom-nav {
+                padding: 4px 0 8px;
+            }
+
+            .nav-item {
+                min-width: 40px;
+                padding: 2px 4px;
+            }
+
+            .nav-item .icon {
+                font-size: 16px;
+            }
+
+            .nav-item .label {
+                font-size: 7px;
+            }
+
+            .nav-item .badge {
+                width: 14px;
+                height: 14px;
+                font-size: 7px;
+            }
         }
 
         @media (max-width: 380px) {
@@ -1663,6 +1881,13 @@
             .battery-item.large {
                 transform: scale(0.8);
                 max-width: 55px;
+            }
+
+            .history-row {
+                grid-template-columns: 60px 60px 1fr 40px 50px;
+                font-size: 10px;
+                padding: 4px 6px;
+                gap: 3px;
             }
         }
 
@@ -1723,8 +1948,8 @@
     <div id="importModal" class="modal-overlay">
         <div class="modal">
             <h3>📥 Import Backup</h3>
-            <p>Paste your JSON backup data below to restore all courses, settings, and progress.</p>
-            <textarea id="importData" placeholder='{"courses": {...}, "settings": {...}, "results": {...}, "copies": {...}, "dateSpeeds": {...}, "doneDates": {...}}'></textarea>
+            <p>Select your JSON backup file to restore all courses, settings, and progress.</p>
+            <input type="file" id="importFile" accept=".json" />
             <div class="btn-group">
                 <button class="btn btn-primary" onclick="importData()">Import</button>
                 <button class="btn btn-outline" onclick="closeImportModal()">Cancel</button>
@@ -1882,6 +2107,54 @@
         </div>
     </div>
 
+    <!-- ===== TAB 6: HISTORY ===== -->
+    <div id="historyTab" class="tab-content">
+        <div class="history-controls">
+            <select id="historyCourseSelect" onchange="updateHistory()">
+                <option value="__all__">📊 All Courses</option>
+            </select>
+            <input type="date" id="historyStartDate" onchange="updateHistory()" />
+            <input type="date" id="historyEndDate" onchange="updateHistory()" />
+        </div>
+        <div id="historyContent">
+            <div class="text-center" style="color: var(--text-light); padding: 40px 0;">
+                <div style="font-size: 48px; margin-bottom: 12px;">📋</div>
+                <p>Select a course and date range to view history</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- ===== TAB 7: HABITS ===== -->
+    <div id="habitsTab" class="tab-content">
+        <div class="habit-form">
+            <div class="card-title">➕ Add New Habit</div>
+            <input type="text" id="habitName" placeholder="Habit Name (e.g., Morning Exercise)" />
+            <div class="form-row">
+                <input type="time" id="habitTime" value="09:00" />
+                <input type="number" id="habitDuration" placeholder="Duration (mins)" min="1" value="30" />
+            </div>
+            <div class="form-row">
+                <select id="habitPattern">
+                    <option value="daily">Daily</option>
+                    <option value="weekly">Weekly</option>
+                    <option value="monthly">Monthly</option>
+                    <option value="custom">Custom (X days)</option>
+                </select>
+                <input type="number" id="habitInterval" placeholder="Interval (days)" min="1" value="2" />
+            </div>
+            <div class="form-row">
+                <input type="date" id="habitStartDate" />
+                <input type="date" id="habitEndDate" />
+            </div>
+            <button class="btn btn-primary" onclick="addHabit()">➕ Add Habit</button>
+        </div>
+        <div id="habitsList">
+            <div class="text-center" style="color: var(--text-light); padding: 20px 0;">
+                <p>No habits added yet</p>
+            </div>
+        </div>
+    </div>
+
     <!-- Bottom Navigation -->
     <nav class="bottom-nav">
         <button class="nav-item active" data-tab="dashboardTab">
@@ -1905,6 +2178,14 @@
             <span class="icon">📊</span>
             <span class="label">Analytics</span>
         </button>
+        <button class="nav-item" data-tab="historyTab">
+            <span class="icon">📋</span>
+            <span class="label">History</span>
+        </button>
+        <button class="nav-item" data-tab="habitsTab">
+            <span class="icon">🔄</span>
+            <span class="label">Habits</span>
+        </button>
     </nav>
 
     <script>
@@ -1918,6 +2199,8 @@
             copies: {},
             dateSpeeds: {},
             doneDates: {},
+            habits: {},
+            habitResults: {},
             focusCourse: null,
             batteryView: 'date',
             dashboardDate: null
@@ -1937,6 +2220,8 @@
                     if (!appState.copies) appState.copies = {};
                     if (!appState.dateSpeeds) appState.dateSpeeds = {};
                     if (!appState.doneDates) appState.doneDates = {};
+                    if (!appState.habits) appState.habits = {};
+                    if (!appState.habitResults) appState.habitResults = {};
                     if (!appState.dashboardDate) appState.dashboardDate = getTodayStr();
                 }
             } catch (e) {
@@ -1962,14 +2247,12 @@
             
             let timeToNoon = noon - now;
             if (timeToNoon < 0) {
-                // If it's past noon today, schedule for tomorrow
                 noon.setDate(noon.getDate() + 1);
                 timeToNoon = noon - now;
             }
             
             setTimeout(() => {
                 autoExportData();
-                // Then run every 24 hours
                 setInterval(autoExportData, 86400000);
             }, timeToNoon);
         }
@@ -2011,6 +2294,8 @@
                 if (tabId === 'timetableTab') updateTimetable();
                 if (tabId === 'editTab') updateEditTab();
                 if (tabId === 'analyticsTab') refreshAnalytics();
+                if (tabId === 'historyTab') updateHistory();
+                if (tabId === 'habitsTab') updateHabits();
             });
         });
 
@@ -2180,23 +2465,271 @@
 
         function resetCourseProgress(courseName) {
             if (!courseName || !appState.courses[courseName]) return;
-            
-            // Clear all results (completion status)
             appState.results[courseName] = {};
-            
-            // Clear all copies
             appState.copies[courseName] = {};
-            
-            // Clear all done dates
             appState.doneDates[courseName] = {};
-            
-            // Clear date-specific speeds
             appState.dateSpeeds[courseName] = {};
-            
             saveState();
             showToast(`🔄 Course "${courseName}" has been reset to fresh state`);
         }
 
+        // ============================================================
+        // HABITS FUNCTIONS
+        // ============================================================
+        function addHabit() {
+            const name = document.getElementById('habitName').value.trim();
+            const time = document.getElementById('habitTime').value;
+            const duration = parseInt(document.getElementById('habitDuration').value);
+            const pattern = document.getElementById('habitPattern').value;
+            const interval = parseInt(document.getElementById('habitInterval').value);
+            const startDate = document.getElementById('habitStartDate').value || getTodayStr();
+            const endDate = document.getElementById('habitEndDate').value || '';
+
+            if (!name) { showToast('Please enter a habit name'); return; }
+            if (!duration || duration < 1) { showToast('Please enter a valid duration'); return; }
+
+            if (appState.habits[name]) {
+                showToast(`⚠️ Habit "${name}" already exists`);
+                return;
+            }
+
+            appState.habits[name] = { time, duration, pattern, interval, startDate, endDate };
+            if (!appState.habitResults[name]) appState.habitResults[name] = {};
+            saveState();
+            updateHabits();
+            showToast(`✅ Habit "${name}" added`);
+            
+            // Clear form
+            document.getElementById('habitName').value = '';
+            document.getElementById('habitDuration').value = '30';
+            document.getElementById('habitInterval').value = '2';
+        }
+
+        function deleteHabit(name) {
+            if (!confirm(`Delete habit "${name}"?`)) return;
+            delete appState.habits[name];
+            delete appState.habitResults[name];
+            saveState();
+            updateHabits();
+            showToast(`🗑️ Habit "${name}" deleted`);
+        }
+
+        function toggleHabit(name, dateStr, checked) {
+            if (!appState.habitResults[name]) appState.habitResults[name] = {};
+            appState.habitResults[name][dateStr] = checked;
+            saveState();
+            updateHabits();
+        }
+
+        function updateHabits() {
+            const container = document.getElementById('habitsList');
+            const habitNames = Object.keys(appState.habits);
+            
+            if (habitNames.length === 0) {
+                container.innerHTML = `<div class="text-center" style="color: var(--text-light); padding: 20px 0;"><p>No habits added yet</p></div>`;
+                return;
+            }
+
+            let html = '';
+            const today = getTodayStr();
+            
+            for (const name of habitNames) {
+                const habit = appState.habits[name];
+                const isDone = appState.habitResults[name]?.[today] || false;
+                const doneDate = appState.habitResults[name]?.[today] ? today : '';
+                
+                html += `
+                    <div class="habit-item">
+                        <input type="checkbox" class="habit-checkbox" ${isDone ? 'checked' : ''} 
+                            onchange="toggleHabit('${name}','${today}',this.checked)" />
+                        <div class="info">
+                            <div class="name">${name}</div>
+                            <div class="details">
+                                ⏰ ${habit.time} · ${habit.duration}min · ${habit.pattern} 
+                                ${habit.pattern === 'custom' ? `(every ${habit.interval} days)` : ''}
+                                ${isDone ? ` · ✅ Done on ${doneDate}` : ''}
+                            </div>
+                        </div>
+                        <button class="habit-delete" onclick="deleteHabit('${name}')">✕</button>
+                    </div>
+                `;
+            }
+            container.innerHTML = html;
+        }
+
+        // ============================================================
+        // HISTORY FUNCTIONS
+        // ============================================================
+        function updateHistory() {
+            const select = document.getElementById('historyCourseSelect');
+            const courseName = select.value;
+            const startDate = document.getElementById('historyStartDate').value || '';
+            const endDate = document.getElementById('historyEndDate').value || '';
+            const container = document.getElementById('historyContent');
+
+            if (!courseName) {
+                container.innerHTML = `
+                    <div class="text-center" style="color: var(--text-light); padding: 40px 0;">
+                        <div style="font-size: 48px; margin-bottom: 12px;">📋</div>
+                        <p>Select a course to view history</p>
+                    </div>
+                `;
+                return;
+            }
+
+            // Get all lectures with their allocated and done dates
+            let allLectures = [];
+            let totalExpected = 0;
+            let totalActual = 0;
+            let completedCount = 0;
+            let totalCount = 0;
+
+            if (courseName === '__all__') {
+                const names = getCourseNames();
+                for (const name of names) {
+                    const timetable = generateTimetable(name);
+                    if (!timetable) continue;
+                    for (const day of timetable.schedule) {
+                        for (const lecture of day.lectures) {
+                            const dateStr = getDateStr(day.date);
+                            if (startDate && dateStr < startDate) continue;
+                            if (endDate && dateStr > endDate) continue;
+                            const doneDate = lecture.doneDate || '';
+                            allLectures.push({
+                                name: lecture.name,
+                                duration: lecture.duration,
+                                allocatedDate: lecture.allocatedDate || dateStr,
+                                doneDate: doneDate,
+                                course: name,
+                                completed: lecture.completed
+                            });
+                            totalExpected += lecture.duration;
+                            if (lecture.completed) {
+                                totalActual += lecture.duration;
+                                completedCount++;
+                            }
+                            totalCount++;
+                        }
+                    }
+                }
+            } else {
+                const timetable = generateTimetable(courseName);
+                if (!timetable) {
+                    container.innerHTML = `<div class="text-center" style="color: var(--text-light); padding: 20px 0;"><p>No schedule found for this course</p></div>`;
+                    return;
+                }
+                for (const day of timetable.schedule) {
+                    const dateStr = getDateStr(day.date);
+                    if (startDate && dateStr < startDate) continue;
+                    if (endDate && dateStr > endDate) continue;
+                    for (const lecture of day.lectures) {
+                        const doneDate = lecture.doneDate || '';
+                        allLectures.push({
+                            name: lecture.name,
+                            duration: lecture.duration,
+                            allocatedDate: lecture.allocatedDate || dateStr,
+                            doneDate: doneDate,
+                            course: courseName,
+                            completed: lecture.completed
+                        });
+                        totalExpected += lecture.duration;
+                        if (lecture.completed) {
+                            totalActual += lecture.duration;
+                            completedCount++;
+                        }
+                        totalCount++;
+                    }
+                }
+            }
+
+            if (allLectures.length === 0) {
+                container.innerHTML = `<div class="text-center" style="color: var(--text-light); padding: 20px 0;"><p>No lectures found for the selected filters</p></div>`;
+                return;
+            }
+
+            const pct = totalCount > 0 ? Math.round((completedCount / totalCount) * 100) : 0;
+
+            let html = `
+                <div class="history-stats">
+                    <div class="history-stat">
+                        <div class="number">${formatDuration(totalExpected)}</div>
+                        <div class="label">📌 Expected Hours</div>
+                    </div>
+                    <div class="history-stat">
+                        <div class="number" style="color: var(--success)">${formatDuration(totalActual)}</div>
+                        <div class="label">✅ Actual Hours</div>
+                    </div>
+                    <div class="history-stat">
+                        <div class="number" style="color: var(--primary)">${pct}%</div>
+                        <div class="label">📊 Completion</div>
+                    </div>
+                    <div class="history-stat">
+                        <div class="number">${allLectures.length}</div>
+                        <div class="label">📚 Total Lectures</div>
+                    </div>
+                </div>
+                <div class="card">
+                    <div class="battery-wrapper" style="display:flex;justify-content:center;align-items:center;gap:20px;padding:10px 0;">
+                        <div style="width:40px;height:140px;background:#edf2f7;border-radius:20px;border:2px solid #2d3748;overflow:hidden;position:relative;">
+                            <div style="position:absolute;top:-5px;left:50%;transform:translateX(-50%);width:16px;height:5px;background:#2d3748;border-radius:2px 2px 0 0;"></div>
+                            <div style="position:absolute;bottom:0;left:0;right:0;height:${pct}%;background:linear-gradient(to top,#51cf66,#69db7c);transition:height 0.8s ease;border-radius:0 0 18px 18px;"></div>
+                        </div>
+                        <div>
+                            <div style="font-size:32px;font-weight:700;">${pct}%</div>
+                            <div style="font-size:13px;color:var(--text-light);">Overall Completion</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="history-table">
+                    <div class="history-row header">
+                        <span>📌 Allocated</span>
+                        <span>✅ Done</span>
+                        <span>Lecture</span>
+                        <span>Min</span>
+                        <span>Status</span>
+                    </div>
+            `;
+
+            // Sort by allocated date
+            allLectures.sort((a, b) => a.allocatedDate.localeCompare(b.allocatedDate));
+
+            for (const lecture of allLectures) {
+                const isCompleted = lecture.completed;
+                const doneDate = lecture.doneDate || '';
+                html += `
+                    <div class="history-row" style="${isCompleted ? 'background:#f0fff4;' : ''}">
+                        <span class="allocated-date">${lecture.allocatedDate}</span>
+                        <span class="done-date">
+                            <input type="date" value="${doneDate}" 
+                                onchange="updateHistoryDoneDate('${lecture.course}','${lecture.name}',this.value)" />
+                        </span>
+                        <span>${lecture.name}</span>
+                        <span>${lecture.duration}</span>
+                        <span class="${isCompleted ? 'green' : 'red'}" style="font-weight:600;">${isCompleted ? '✅ Done' : '⏳ Pending'}</span>
+                    </div>
+                `;
+            }
+
+            html += `</div>`;
+            container.innerHTML = html;
+        }
+
+        function updateHistoryDoneDate(courseName, lectureName, newDate) {
+            // Find the lecture
+            const course = appState.courses[courseName];
+            if (!course) return;
+            const lecture = course.lectures.find(l => l.name === lectureName);
+            if (!lecture) return;
+            setLectureDoneDate(courseName, lecture, newDate || null);
+            saveState();
+            updateHistory();
+            updateDashboard();
+            showToast('✅ Done date updated');
+        }
+
+        // ============================================================
+        // COURSE COMPLETION FUNCTIONS
+        // ============================================================
         function getCourseCompletion(courseName) {
             const course = appState.courses[courseName];
             if (!course) return { total: 0, completed: 0, pct: 0 };
@@ -2211,10 +2744,8 @@
         function getDateCompletion(courseName, dateStr) {
             const timetable = generateTimetable(courseName);
             if (!timetable) return { total: 0, completed: 0, pct: 0 };
-            
             const dayInfo = timetable.schedule.find(d => getDateStr(d.date) === dateStr);
             if (!dayInfo) return { total: 0, completed: 0, pct: 0 };
-            
             const total = dayInfo.lectures.length;
             const completed = dayInfo.lectures.filter(l => l.completed).length;
             return { total, completed, pct: total > 0 ? Math.round((completed / total) * 100) : 0 };
@@ -2270,13 +2801,13 @@
             return result;
         }
 
-        function isMonday(dateStr) {
+        function isSunday(dateStr) {
             const date = new Date(dateStr);
-            return date.getDay() === 1;
+            return date.getDay() === 0;
         }
 
         // ============================================================
-        // TIMETABLE GENERATION WITH ALL FEATURES
+        // TIMETABLE GENERATION
         // ============================================================
         function generateTimetable(courseName) {
             const course = appState.courses[courseName];
@@ -2289,7 +2820,6 @@
             const schedule = [];
             const copyMap = new Map();
 
-            // Collect all copies
             for (const lecture of course.lectures) {
                 const copies = getLectureCopies(courseName, lecture);
                 for (const copyDate of copies) {
@@ -2306,18 +2836,13 @@
                 }
             }
 
-            // Build normal schedule
             let currentDay = new Date(startDate);
             let currentDayMinutes = 0;
             const dateMap = new Map();
 
-            // Safety: If speed is too low (1 min), prevent infinite loop
-            const effectiveSpeed = Math.max(defaultSpeed, 1);
-
             for (const lecture of course.lectures) {
                 let remaining = lecture.duration;
                 let isFirst = true;
-                let lectureStartDate = new Date(currentDay);
 
                 while (remaining > 0) {
                     const dateStr = getDateStr(currentDay);
@@ -2355,7 +2880,6 @@
                 }
             }
 
-            // Merge copies
             for (const [dateStr, copyLectures] of copyMap) {
                 if (!dateMap.has(dateStr)) {
                     const speed = Math.max(getDateSpeed(courseName, dateStr) || defaultSpeed, 1);
@@ -2374,13 +2898,11 @@
                 }
             }
 
-            // Convert to array and sort
             const sortedDates = Array.from(dateMap.keys()).sort();
             for (const dateStr of sortedDates) {
                 schedule.push(dateMap.get(dateStr));
             }
 
-            // Sort lectures within each day
             for (const day of schedule) {
                 day.lectures.sort((a, b) => a.sr_no - b.sr_no);
             }
@@ -2402,7 +2924,6 @@
             if (!timetable) return;
 
             let currentDate = null;
-
             for (const day of timetable.schedule) {
                 for (const l of day.lectures) {
                     if (l.sr_no === lecture.sr_no && l.name === lecture.name && !l.isCopy) {
@@ -2432,9 +2953,7 @@
             saveState();
             updateTimetable();
             updateDashboard();
-            
-            const dirText = direction === 1 ? 'next' : 'previous';
-            showToast(`📋 Copied "${lecture.name}" to ${dirText} day (${targetDate})`);
+            showToast(`📋 Copied "${lecture.name}" to ${direction === 1 ? 'next' : 'previous'} day (${targetDate})`);
         }
 
         // ============================================================
@@ -2463,7 +2982,6 @@
                 const key = getLectureKey(lecture);
                 if (!appState.results[courseName]) appState.results[courseName] = {};
                 appState.results[courseName][key] = true;
-                // Default done date to allocated date
                 const allocDate = lecture.allocatedDate || dateStr;
                 setLectureDoneDate(courseName, lecture, allocDate);
             }
@@ -2496,11 +3014,7 @@
         // DONE DATE EDIT
         // ============================================================
         function updateDoneDate(courseName, lecture, newDate) {
-            if (newDate) {
-                setLectureDoneDate(courseName, lecture, newDate);
-            } else {
-                setLectureDoneDate(courseName, lecture, null);
-            }
+            setLectureDoneDate(courseName, lecture, newDate || null);
             saveState();
             updateTimetable();
             updateDashboard();
@@ -2540,7 +3054,7 @@
         }
 
         // ============================================================
-        // RENAME COURSE FUNCTION
+        // RENAME COURSE
         // ============================================================
         function renameCourse(oldName) {
             if (!oldName || !appState.courses[oldName]) {
@@ -2558,36 +3072,29 @@
             
             appState.courses[newName] = appState.courses[oldName];
             delete appState.courses[oldName];
-            
             if (appState.settings[oldName]) {
                 appState.settings[newName] = appState.settings[oldName];
                 delete appState.settings[oldName];
             }
-            
             if (appState.results[oldName]) {
                 appState.results[newName] = appState.results[oldName];
                 delete appState.results[oldName];
             }
-            
             if (appState.copies[oldName]) {
                 appState.copies[newName] = appState.copies[oldName];
                 delete appState.copies[oldName];
             }
-            
             if (appState.dateSpeeds[oldName]) {
                 appState.dateSpeeds[newName] = appState.dateSpeeds[oldName];
                 delete appState.dateSpeeds[oldName];
             }
-            
             if (appState.doneDates[oldName]) {
                 appState.doneDates[newName] = appState.doneDates[oldName];
                 delete appState.doneDates[oldName];
             }
-            
             if (appState.focusCourse === oldName) {
                 appState.focusCourse = newName;
             }
-            
             saveState();
             updateAllSelectors();
             updateSavedCoursesList();
@@ -2845,7 +3352,7 @@
 
         function clearAllData() {
             if (confirm('⚠️ Delete ALL courses and data? This cannot be undone!')) {
-                appState = { courses: {}, settings: {}, results: {}, copies: {}, dateSpeeds: {}, doneDates: {}, focusCourse: null, batteryView: appState.batteryView || 'date', dashboardDate: getTodayStr() };
+                appState = { courses: {}, settings: {}, results: {}, copies: {}, dateSpeeds: {}, doneDates: {}, habits: {}, habitResults: {}, focusCourse: null, batteryView: appState.batteryView || 'date', dashboardDate: getTodayStr() };
                 saveState();
                 updateAllSelectors();
                 updateSavedCoursesList();
@@ -2977,11 +3484,11 @@
                 const dateStr = getDateStr(dateObj);
                 const isToday = dateStr === today;
                 const info = allDates.get(dateStr);
-                const isMon = isMonday(dateStr);
+                const isSun = isSunday(dateStr);
 
                 let classes = 'calendar-day';
                 if (isToday) classes += ' today';
-                if (isMon) classes += ' monday';
+                if (isSun) classes += ' sunday';
                 if (info) {
                     classes += ' has-lecture';
                     const allDone = info.lectures.every(l => l.completed);
@@ -3031,11 +3538,10 @@
                 const totalDuration = allocatedTotal + copiedTotal;
                 const speed = selectedInfo.speed || DEFAULT_SPEED;
                 const isMatch = Math.abs(totalDuration - speed) < 5;
-                const copiedHours = formatDuration(copiedTotal);
 
                 html += `<div class="lecture-list">
                     <div class="date-header">
-                        <span>📅 ${new Date(selectedDate).toLocaleDateString('en-US', { weekday: 'long', month: 'short', day: 'numeric' })} ${isMonday(selectedDate) ? '🌸' : ''}</span>
+                        <span>📅 ${new Date(selectedDate).toLocaleDateString('en-US', { weekday: 'long', month: 'short', day: 'numeric' })} ${isSunday(selectedDate) ? '🌸' : ''}</span>
                         <div class="batch-controls">
                             <button class="btn-batch tick-all" onclick="tickAllLecturesCombined('${selectedDate}')">✅ Tick All</button>
                             <button class="btn-batch untick-all" onclick="untickAllLecturesCombined('${selectedDate}')">⭕ Untick All</button>
@@ -3049,7 +3555,7 @@
                         <span class="total">Total: ${formatDuration(totalDuration)}</span>
                         <span class="breakdown">
                             <span class="allocated">Allocated: ${formatDuration(allocatedTotal)}</span>
-                            ${copiedTotal > 0 ? ` + <span class="copied">Copied: ${copiedHours}</span>` : ''}
+                            ${copiedTotal > 0 ? ` + <span class="copied">Copied: ${formatDuration(copiedTotal)}</span>` : ''}
                         </span>
                         <span class="speed-match ${isMatch ? 'match' : 'mismatch'}">
                             ${isMatch ? '✅ Matches speed' : `⚠️ Mismatch (Speed: ${speed} mins)`}
@@ -3064,8 +3570,7 @@
                     
                     let copyTag = '';
                     if (lecture.isCopy) {
-                        const copyDuration = lecture.duration || 0;
-                        copyTag = `<span class="copy-tag dest">📋 Copied from ${lecture.sourceDate} (${formatDuration(copyDuration)})</span>`;
+                        copyTag = `<span class="copy-tag dest">📋 Copied from ${lecture.sourceDate} (${formatDuration(lecture.duration)})</span>`;
                     } else {
                         const copies = getLectureCopies(lecture.course, lecture);
                         if (copies.length > 0) {
@@ -3156,11 +3661,11 @@
                 const dateStr = getDateStr(dateObj);
                 const isToday = dateStr === today;
                 const info = scheduleMap[dateStr];
-                const isMon = isMonday(dateStr);
+                const isSun = isSunday(dateStr);
 
                 let classes = 'calendar-day';
                 if (isToday) classes += ' today';
-                if (isMon) classes += ' monday';
+                if (isSun) classes += ' sunday';
                 if (info) {
                     classes += ' has-lecture';
                     if (info.completed) classes += ' completed';
@@ -3205,11 +3710,10 @@
                 const defaultSpeed = timetable.defaultSpeed;
                 const isCustomSpeed = currentSpeed !== defaultSpeed;
                 const isMatch = Math.abs(totalDuration - currentSpeed) < 5;
-                const copiedHours = formatDuration(copiedTotal);
 
                 html += `<div class="lecture-list">
                     <div class="date-header">
-                        <span>📅 ${new Date(selectedDate).toLocaleDateString('en-US', { weekday: 'long', month: 'short', day: 'numeric' })} ${isMonday(selectedDate) ? '🌸' : ''}</span>
+                        <span>📅 ${new Date(selectedDate).toLocaleDateString('en-US', { weekday: 'long', month: 'short', day: 'numeric' })} ${isSunday(selectedDate) ? '🌸' : ''}</span>
                         <div class="batch-controls">
                             <button class="btn-batch tick-all" onclick="tickAllLectures('${courseName}','${selectedDate}')">✅ Tick All</button>
                             <button class="btn-batch untick-all" onclick="untickAllLectures('${courseName}','${selectedDate}')">⭕ Untick All</button>
@@ -3228,7 +3732,7 @@
                         <span class="total">Total: ${formatDuration(totalDuration)}</span>
                         <span class="breakdown">
                             <span class="allocated">Allocated: ${formatDuration(allocatedTotal)}</span>
-                            ${copiedTotal > 0 ? ` + <span class="copied">Copied: ${copiedHours}</span>` : ''}
+                            ${copiedTotal > 0 ? ` + <span class="copied">Copied: ${formatDuration(copiedTotal)}</span>` : ''}
                         </span>
                         <span class="speed-match ${isMatch ? 'match' : 'mismatch'}">
                             ${isMatch ? '✅ Matches speed' : `⚠️ Mismatch (Speed: ${currentSpeed} mins)`}
@@ -3243,8 +3747,7 @@
                     
                     let copyTag = '';
                     if (lecture.isCopy) {
-                        const copyDuration = lecture.duration || 0;
-                        copyTag = `<span class="copy-tag dest">📋 Copied from ${lecture.sourceDate} (${formatDuration(copyDuration)})</span>`;
+                        copyTag = `<span class="copy-tag dest">📋 Copied from ${lecture.sourceDate} (${formatDuration(lecture.duration)})</span>`;
                     } else {
                         const copies = getLectureCopies(courseName, lecture);
                         if (copies.length > 0) {
@@ -3317,7 +3820,6 @@
             if (!appState.results[courseName]) appState.results[courseName] = {};
             appState.results[courseName][key] = checked;
             if (checked) {
-                // Default done date to allocated date
                 const timetable = generateTimetable(courseName);
                 if (timetable) {
                     for (const day of timetable.schedule) {
@@ -3350,38 +3852,7 @@
         }
 
         function toggleLectureCombined(courseName, key, checked, dateStr) {
-            if (!appState.results[courseName]) appState.results[courseName] = {};
-            appState.results[courseName][key] = checked;
-            if (checked) {
-                const timetable = generateTimetable(courseName);
-                if (timetable) {
-                    for (const day of timetable.schedule) {
-                        for (const lecture of day.lectures) {
-                            if (getLectureKey(lecture) === key) {
-                                const allocDate = lecture.allocatedDate || dateStr;
-                                setLectureDoneDate(courseName, lecture, allocDate);
-                                break;
-                            }
-                        }
-                    }
-                }
-            } else {
-                const timetable = generateTimetable(courseName);
-                if (timetable) {
-                    for (const day of timetable.schedule) {
-                        for (const lecture of day.lectures) {
-                            if (getLectureKey(lecture) === key) {
-                                setLectureDoneDate(courseName, lecture, null);
-                                break;
-                            }
-                        }
-                    }
-                }
-            }
-            saveState();
-            updateTimetable();
-            if (document.getElementById('dashboardTab').classList.contains('active')) updateDashboard();
-            showToast(checked ? '✅ Marked complete' : '↩️ Marked pending');
+            toggleLecture(courseName, key, checked, dateStr);
         }
 
         function copyLectureCombined(courseName, lecture, direction) {
@@ -3499,7 +3970,6 @@
             document.getElementById('editCompletedCount').textContent = completedCount;
         }
 
-        // Edit functions
         function updateSpeed() {
             if (!currentEditCourse) return;
             const speed = parseInt(document.getElementById('editSpeed').value);
@@ -3670,7 +4140,6 @@
             const pendingCount = totalLectures - completedCount;
             const pct = completion.pct;
 
-            // Calculate weekly progress
             const weeklyData = [];
             const today = new Date();
             for (let i = 6; i >= 0; i--) {
@@ -3737,8 +4206,8 @@
 
             container.innerHTML = html;
 
-            // Render Pie Chart
             setTimeout(() => {
+                // Pie Chart
                 const ctx = document.getElementById('pieChart');
                 if (ctx) {
                     const canvas = ctx.getContext('2d');
@@ -3747,10 +4216,7 @@
                     canvas.width = width;
                     canvas.height = height;
                     
-                    const completed = completedCount;
-                    const pending = pendingCount;
-                    const total = completed + pending;
-                    
+                    const total = completedCount + pendingCount;
                     if (total === 0) {
                         canvas.fillStyle = '#e2e8f0';
                         canvas.fillRect(0, 0, width, height);
@@ -3766,7 +4232,7 @@
                     const radius = Math.min(width, height) / 2 - 20;
                     
                     const colors = ['#51cf66', '#ff6b6b'];
-                    const data = [completed, pending];
+                    const data = [completedCount, pendingCount];
                     const labels = ['Completed', 'Pending'];
                     
                     let startAngle = -Math.PI / 2;
@@ -3779,7 +4245,6 @@
                         canvas.fillStyle = colors[i];
                         canvas.fill();
                         
-                        // Label
                         const midAngle = startAngle + sliceAngle / 2;
                         const labelRadius = radius * 0.65;
                         const lx = cx + Math.cos(midAngle) * labelRadius;
@@ -3794,7 +4259,6 @@
                         startAngle += sliceAngle;
                     }
                     
-                    // Legend
                     let legendY = 10;
                     for (let i = 0; i < data.length; i++) {
                         canvas.fillStyle = colors[i];
@@ -3808,7 +4272,7 @@
                     }
                 }
 
-                // Render Bar Chart
+                // Bar Chart
                 const barCtx = document.getElementById('barChart');
                 if (barCtx) {
                     const canvas = barCtx.getContext('2d');
@@ -3832,7 +4296,6 @@
                         canvas.fillStyle = color;
                         canvas.fillRect(x + 2, y, barWidth - 4, barHeight);
                         
-                        // Date label
                         canvas.fillStyle = '#718096';
                         canvas.font = '8px sans-serif';
                         canvas.textAlign = 'center';
@@ -3840,7 +4303,6 @@
                         const dateLabel = new Date(weeklyData[i].date).toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
                         canvas.fillText(dateLabel, x + barWidth/2, height - 16);
                         
-                        // Percentage
                         if (weeklyData[i].pct > 0) {
                             canvas.fillStyle = '#2d3748';
                             canvas.font = '9px sans-serif';
@@ -3850,7 +4312,7 @@
                     }
                 }
 
-                // Render Mini Batteries
+                // Mini Batteries
                 const miniGrid = document.getElementById('miniBatteryGrid');
                 if (miniGrid) {
                     let batteryHtml = '';
@@ -3866,7 +4328,7 @@
                     miniGrid.innerHTML = batteryHtml;
                 }
 
-                // Render Course Distribution Chart
+                // Course Distribution Chart
                 const courseCtx = document.getElementById('courseChart');
                 if (courseCtx) {
                     const canvas = courseCtx.getContext('2d');
@@ -3903,7 +4365,6 @@
                         canvas.fillStyle = colors[i % colors.length];
                         canvas.fillRect(x + 2, y, barWidth - 4, barHeight);
                         
-                        // Name label
                         canvas.fillStyle = '#718096';
                         canvas.font = '8px sans-serif';
                         canvas.textAlign = 'center';
@@ -3911,7 +4372,6 @@
                         const shortName = names[i].length > 8 ? names[i].substring(0, 6) + '..' : names[i];
                         canvas.fillText(shortName, x + barWidth/2, height - 16);
                         
-                        // Count
                         if (lectureCount > 0) {
                             canvas.fillStyle = '#2d3748';
                             canvas.font = '9px sans-serif';
@@ -3940,7 +4400,7 @@
 
         function showImportModal() {
             document.getElementById('importModal').classList.add('show');
-            document.getElementById('importData').value = '';
+            document.getElementById('importFile').value = '';
         }
 
         function closeImportModal() {
@@ -3948,45 +4408,60 @@
         }
 
         function importData() {
-            const text = document.getElementById('importData').value.trim();
-            if (!text) { showToast('Please paste backup data'); return; }
-            try {
-                const data = JSON.parse(text);
-                if (!data.courses || !data.settings || !data.results) {
-                    showToast('❌ Invalid backup format');
-                    return;
-                }
-                if (!confirm('This will replace ALL current data. Continue?')) return;
-                appState = data;
-                if (!appState.copies) appState.copies = {};
-                if (!appState.dateSpeeds) appState.dateSpeeds = {};
-                if (!appState.doneDates) appState.doneDates = {};
-                if (!appState.dashboardDate) appState.dashboardDate = getTodayStr();
-                if (appState.focusCourse && !getCourseNames().includes(appState.focusCourse)) {
-                    appState.focusCourse = getCourseNames()[0] || null;
-                }
-                saveState();
-                updateAllSelectors();
-                updateSavedCoursesList();
-                updateDashboard();
-                updateTimetable();
-                closeImportModal();
-                showToast('✅ Backup imported successfully');
-            } catch (e) {
-                showToast('❌ Invalid JSON data');
+            const fileInput = document.getElementById('importFile');
+            const file = fileInput.files[0];
+            
+            if (!file) {
+                showToast('Please select a JSON file');
+                return;
             }
+
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                try {
+                    const data = JSON.parse(e.target.result);
+                    if (!data.courses || !data.settings || !data.results) {
+                        showToast('❌ Invalid backup format');
+                        return;
+                    }
+                    if (!confirm('This will replace ALL current data. Continue?')) return;
+                    appState = data;
+                    if (!appState.copies) appState.copies = {};
+                    if (!appState.dateSpeeds) appState.dateSpeeds = {};
+                    if (!appState.doneDates) appState.doneDates = {};
+                    if (!appState.habits) appState.habits = {};
+                    if (!appState.habitResults) appState.habitResults = {};
+                    if (!appState.dashboardDate) appState.dashboardDate = getTodayStr();
+                    if (appState.focusCourse && !getCourseNames().includes(appState.focusCourse)) {
+                        appState.focusCourse = getCourseNames()[0] || null;
+                    }
+                    saveState();
+                    updateAllSelectors();
+                    updateSavedCoursesList();
+                    updateDashboard();
+                    updateTimetable();
+                    updateHistory();
+                    updateHabits();
+                    closeImportModal();
+                    showToast('✅ Backup imported successfully');
+                } catch (err) {
+                    showToast('❌ Invalid JSON file');
+                }
+            };
+            reader.readAsText(file);
         }
 
         // ============================================================
         // UPDATE SELECTORS
         // ============================================================
         function updateAllSelectors() {
-            const selectors = ['dashboardCourseSelect', 'timetableCourseSelect', 'editCourseSelect'];
+            const selectors = ['dashboardCourseSelect', 'timetableCourseSelect', 'editCourseSelect', 'historyCourseSelect'];
             const courseNames = getCourseNames();
             const focus = getFocusCourse();
 
             for (const id of selectors) {
                 const select = document.getElementById(id);
+                if (!select) continue;
                 select.innerHTML = '<option value="__all__">📊 Select All Courses</option>';
                 for (const name of courseNames) {
                     const option = document.createElement('option');
@@ -4043,6 +4518,14 @@
                 appState.focusCourse = getCourseNames()[0] || null;
             }
 
+            // Set default dates for history
+            const today = getTodayStr();
+            const thirtyDaysAgo = new Date();
+            thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
+            document.getElementById('historyStartDate').value = getDateStr(thirtyDaysAgo);
+            document.getElementById('historyEndDate').value = today;
+            document.getElementById('habitStartDate').value = today;
+
             saveState();
             updateAllSelectors();
             updateDashboard();
@@ -4051,7 +4534,6 @@
             document.getElementById('viewDate').classList.toggle('active', view === 'date');
             document.getElementById('viewOverall').classList.toggle('active', view === 'overall');
 
-            // Setup auto-export at 12pm daily
             setupAutoExport();
 
             console.log('📚 Lecture Planner Pro initialized with all features');
