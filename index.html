@@ -66,6 +66,28 @@
         body.dark .badge-warning {
             background: #d69e2e;
         }
+        body.dark .stat-card {
+            background: #374151;
+        }
+        body.dark .lecture-row {
+            background: #374151;
+        }
+        body.dark .lecture-row.done {
+            background: #2d4a3a;
+        }
+        body.dark .habit-row {
+            background: #374151;
+        }
+        body.dark .link-row {
+            background: #374151;
+        }
+        body.dark .calendar-grid .day-cell.sunday {
+            background: #4a2d2d;
+        }
+        body.dark .lecture-row .lec-duration {
+            background: #4a5568;
+            color: #a0aec0;
+        }
 
         /* ── Scrollbar ── */
         ::-webkit-scrollbar {
@@ -796,6 +818,15 @@
             background: rgba(255, 169, 77, 0.1);
             border-radius: 10px;
         }
+        .lecture-row .day-total {
+            font-size: 10px;
+            font-weight: 600;
+            color: #667eea;
+            padding: 1px 8px;
+            background: rgba(102, 126, 234, 0.08);
+            border-radius: 10px;
+            margin-left: auto;
+        }
 
         /* ── Habits ── */
         .habit-row {
@@ -1351,24 +1382,24 @@
         const STORAGE_KEY = 'lecturePlannerPro';
 
         let state = {
-            courses: {}, // { "Math": [ {sr, name, duration}, ... ] }
-            settings: {}, // { "Math": { speed, startDate } }
-            dateSpeeds: {}, // { "Math": { "2026-01-20": 180 } }
-            results: {}, // { "Math": { "1_Algebra": true } }
-            doneDates: {}, // { "Math": { "1_Algebra": "2026-01-15" } }
-            copies: {}, // { "Math": { "1_Algebra": ["2026-01-16"] } }
-            moves: {}, // { "Math": { "2_Geometry": "2026-01-17" } }
-            habits: {}, // { "Morning": { time, pattern, completed: { "2026-01-15": true }, streak: 5 } }
-            links: [], // [ { name, url, category } ]
+            courses: {},
+            settings: {},
+            dateSpeeds: {},
+            results: {},
+            doneDates: {},
+            copies: {},
+            moves: {},
+            habits: {},
+            links: [],
             focusCourse: null,
-            batteryView: 'date', // 'date' | 'overall'
+            batteryView: 'date',
             dashboardDate: null,
             darkMode: false,
         };
 
         let activeTab = 'dashboard';
-        let ttCurrentDate = new Date(); // for month navigation
-        let ttSelectedDate = null; // YYYY-MM-DD
+        let ttCurrentDate = new Date();
+        let ttSelectedDate = null;
         let ttCourse = null;
 
         // ── Helpers ──
@@ -1425,104 +1456,180 @@
             return { done, total: lecs.length, pct: Math.round((done / lecs.length) * 100) };
         }
 
-        function getDateCompletion(course, dateStr) {
-            const lecs = getLectures(course);
-            if (!lecs.length) return { done: 0, total: 0, pct: 0 };
-            const alloc = getAllocatedDates(course);
-            let done = 0,
-                total = 0;
-            const res = state.results[course] || {};
-            lecs.forEach(l => {
-                const key = getLectureKey(l);
-                const aDate = alloc[key];
-                if (aDate === dateStr) {
-                    total++;
-                    if (res[key]) done++;
-                }
-            });
-            return { done, total, pct: total > 0 ? Math.round((done / total) * 100) : 0 };
-        }
+        // ════════════════════════════════════════════════════════════════
+        //  CORE ALLOCATION ALGORITHM - FIXED
+        //  Distributes lectures across days so each day's total ≈ speed
+        // ════════════════════════════════════════════════════════════════
 
         function getAllocatedDates(course) {
             const lecs = getLectures(course);
+            if (!lecs.length) return {};
+
             const settings = state.settings[course] || { speed: 120, startDate: getDateStr(new Date()) };
-            const speed = settings.speed || 120;
+            const defaultSpeed = settings.speed || 120;
             const start = parseDate(settings.startDate || getDateStr(new Date()));
-            const result = {};
-            let cur = new Date(start);
-            let used = 0;
             const dateSpeeds = state.dateSpeeds[course] || {};
-            lecs.forEach(l => {
-                let remaining = l.duration;
-                let first = true;
+            const moves = state.moves[course] || {};
+
+            const result = {};
+            let currentDay = new Date(start);
+            let usedMinutes = 0;
+
+            lecs.forEach(lec => {
+                const key = getLectureKey(lec);
+
+                // If moved, skip allocation (moved lectures are handled separately)
+                if (moves[key]) return;
+
+                let remaining = lec.duration;
+                let firstDay = true;
+
                 while (remaining > 0) {
-                    const ds = getDateStr(cur);
-                    const spd = dateSpeeds[ds] || speed;
-                    const avail = spd - used;
-                    const take = Math.min(remaining, avail);
-                    const key = getLectureKey(l);
-                    if (first) {
-                        result[key] = ds;
-                        first = false;
+                    const dateStr = getDateStr(currentDay);
+                    const speed = dateSpeeds[dateStr] || defaultSpeed;
+                    const available = speed - usedMinutes;
+
+                    // If no space left today, move to next day
+                    if (available <= 0 && remaining > 0) {
+                        usedMinutes = 0;
+                        currentDay = addDays(currentDay, 1);
+                        continue;
                     }
-                    used += take;
+
+                    const take = Math.min(remaining, available);
+                    // Allocate the lecture (or part of it) to this day
+                    if (firstDay) {
+                        result[key] = dateStr;
+                        firstDay = false;
+                    }
+                    // Store the allocated amount for this day (for split lectures)
+                    // We store the total duration allocated to this day for this lecture
+                    // For continuing lectures, we track the part
+                    if (!result[`${key}_parts`]) result[`${key}_parts`] = {};
+                    result[`${key}_parts`][dateStr] = (result[`${key}_parts`][dateStr] || 0) + take;
+
+                    usedMinutes += take;
                     remaining -= take;
-                    if (used >= spd && remaining > 0) {
-                        used = 0;
-                        cur = addDays(cur, 1);
+
+                    // If day is full and still remaining, move to next day
+                    if (usedMinutes >= speed && remaining > 0) {
+                        usedMinutes = 0;
+                        currentDay = addDays(currentDay, 1);
                     }
                 }
             });
+
+            // Also handle moved lectures - they appear on the target date
+            Object.keys(moves).forEach(key => {
+                const targetDate = moves[key];
+                const lec = lecs.find(l => getLectureKey(l) === key);
+                if (lec) {
+                    // The moved lecture appears on the target date
+                    result[key] = targetDate;
+                    if (!result[`${key}_parts`]) result[`${key}_parts`] = {};
+                    result[`${key}_parts`][targetDate] = lec.duration;
+                }
+            });
+
             return result;
         }
 
+        // Get lectures for a specific date, including split/continuing lectures
         function getDateLectures(course, dateStr) {
             const lecs = getLectures(course);
+            if (!lecs.length) return [];
+
             const alloc = getAllocatedDates(course);
             const copies = state.copies[course] || {};
             const moves = state.moves[course] || {};
+            const res = state.results[course] || {};
+            const doneDates = state.doneDates[course] || {};
+
             const result = [];
             const added = new Set();
 
-            // Original + moved
-            lecs.forEach(l => {
-                const key = getLectureKey(l);
-                const aDate = alloc[key];
-                const moveTarget = moves[key];
-                if (moveTarget === dateStr) {
-                    // moved to this date
-                    const isContinuing = aDate !== dateStr;
-                    result.push({ ...l, key, allocatedDate: aDate, isContinuing, isCopy: false, isMove: true,
-                        moveSource: aDate });
+            // Process original lectures (including split ones)
+            lecs.forEach(lec => {
+                const key = getLectureKey(lec);
+                const allocDate = alloc[key];
+
+                // Skip if moved (handled separately)
+                if (moves[key]) return;
+
+                // Check if this lecture has any part on this date
+                const parts = alloc[`${key}_parts`] || {};
+                const partDuration = parts[dateStr] || 0;
+
+                // Check if it's allocated to this date as the main date
+                if (allocDate === dateStr || partDuration > 0) {
+                    const isContinuing = allocDate !== dateStr;
+                    const isDone = res[key] || false;
+                    const doneDate = doneDates[key] || null;
+
+                    result.push({
+                        ...lec,
+                        key,
+                        allocatedDate: allocDate,
+                        doneDate: doneDate,
+                        isDone: isDone,
+                        isContinuing: isContinuing,
+                        partDuration: partDuration || lec.duration,
+                        isCopy: false,
+                        isMove: false,
+                        course: course
+                    });
                     added.add(key);
-                } else if (!moves[key] && aDate === dateStr) {
-                    // not moved, allocated here
-                    result.push({ ...l, key, allocatedDate: aDate, isContinuing: false, isCopy: false, isMove: false });
-                    added.add(key);
-                } else if (aDate !== dateStr && !moves[key]) {
-                    // continuing lecture (spans multiple days)
-                    // We need to check if this lecture appears on this date due to splitting
-                    // We'll detect by checking if the lecture is partially allocated here
-                    // For simplicity, we'll use the allocation algorithm to find if any part falls on this date
-                    // But for now, we'll use a simpler approach: check if it's continuing
-                    const allocParts = getAllocatedParts(course, l, dateStr);
-                    if (allocParts > 0) {
-                        result.push({ ...l, key, allocatedDate: aDate, isContinuing: true, isCopy: false, isMove: false,
-                            partDuration: allocParts });
-                        added.add(key);
-                    }
                 }
             });
 
-            // Copies
+            // Process copies
             Object.keys(copies).forEach(key => {
                 const dates = copies[key];
                 if (dates && dates.includes(dateStr)) {
                     const lec = lecs.find(l => getLectureKey(l) === key);
                     if (lec && !added.has(key)) {
-                        const aDate = alloc[key] || dateStr;
-                        result.push({ ...lec, key, allocatedDate: aDate, isContinuing: false, isCopy: true,
-                            copySource: aDate });
+                        const allocDate = alloc[key] || dateStr;
+                        const isDone = res[key] || false;
+                        const doneDate = doneDates[key] || null;
+                        result.push({
+                            ...lec,
+                            key,
+                            allocatedDate: allocDate,
+                            doneDate: doneDate,
+                            isDone: isDone,
+                            isContinuing: false,
+                            partDuration: lec.duration,
+                            isCopy: true,
+                            isMove: false,
+                            copySource: allocDate,
+                            course: course
+                        });
+                        added.add(key);
+                    }
+                }
+            });
+
+            // Process moved lectures
+            Object.keys(moves).forEach(key => {
+                if (moves[key] === dateStr) {
+                    const lec = lecs.find(l => getLectureKey(l) === key);
+                    if (lec && !added.has(key)) {
+                        const allocDate = alloc[key] || dateStr;
+                        const isDone = res[key] || false;
+                        const doneDate = doneDates[key] || null;
+                        result.push({
+                            ...lec,
+                            key,
+                            allocatedDate: allocDate,
+                            doneDate: doneDate,
+                            isDone: isDone,
+                            isContinuing: false,
+                            partDuration: lec.duration,
+                            isCopy: false,
+                            isMove: true,
+                            moveSource: allocDate,
+                            course: course
+                        });
                         added.add(key);
                     }
                 }
@@ -1531,46 +1638,25 @@
             return result;
         }
 
-        function getAllocatedParts(course, lec, dateStr) {
-            // Simplified: return 0 or duration if on date
-            const alloc = getAllocatedDates(course);
-            const key = getLectureKey(lec);
-            if (alloc[key] === dateStr) return lec.duration;
-            // Check if split
-            const settings = state.settings[course] || { speed: 120, startDate: getDateStr(new Date()) };
-            const speed = settings.speed || 120;
-            const start = parseDate(settings.startDate || getDateStr(new Date()));
-            const dateSpeeds = state.dateSpeeds[course] || {};
-            let cur = new Date(start);
-            let used = 0;
-            let found = false;
-            let remaining = lec.duration;
-            while (remaining > 0) {
-                const ds = getDateStr(cur);
-                const spd = dateSpeeds[ds] || speed;
-                const avail = spd - used;
-                const take = Math.min(remaining, avail);
-                if (ds === dateStr) {
-                    return take;
-                }
-                used += take;
-                remaining -= take;
-                if (used >= spd && remaining > 0) {
-                    used = 0;
-                    cur = addDays(cur, 1);
-                }
-            }
-            return 0;
+        // Get total duration for a specific date (including split lectures)
+        function getDateTotalDuration(course, dateStr) {
+            const lecs = getDateLectures(course, dateStr);
+            return lecs.reduce((sum, l) => sum + (l.partDuration || l.duration || 0), 0);
         }
 
-        function getDoneDate(course, key) {
-            return (state.doneDates[course] || {})[key] || null;
+        // Get completion for a specific date
+        function getDateCompletion(course, dateStr) {
+            const lecs = getDateLectures(course, dateStr);
+            let total = 0,
+                done = 0;
+            lecs.forEach(l => {
+                total += l.partDuration || l.duration || 0;
+                if (l.isDone) done += l.partDuration || l.duration || 0;
+            });
+            return { done, total, pct: total > 0 ? Math.round((done / total) * 100) : 0 };
         }
 
-        function isDone(course, key) {
-            return (state.results[course] || {})[key] || false;
-        }
-
+        // Get combined completion across all courses for a date
         function getCombinedDateCompletion(dateStr) {
             const names = getCourseNames();
             let total = 0,
@@ -1583,6 +1669,7 @@
             return { done, total, pct: total > 0 ? Math.round((done / total) * 100) : 0 };
         }
 
+        // Get combined overall completion
         function getCombinedOverall() {
             const names = getCourseNames();
             let total = 0,
@@ -1595,6 +1682,7 @@
             return { done, total, pct: total > 0 ? Math.round((done / total) * 100) : 0 };
         }
 
+        // ── Habits ──
         function getHabitsToday() {
             const today = getDateStr(new Date());
             const names = Object.keys(state.habits);
@@ -1635,7 +1723,6 @@
                 if (raw) {
                     const parsed = JSON.parse(raw);
                     state = parsed;
-                    // Ensure all fields exist
                     if (!state.courses) state.courses = {};
                     if (!state.settings) state.settings = {};
                     if (!state.dateSpeeds) state.dateSpeeds = {};
@@ -1646,9 +1733,7 @@
                     if (!state.habits) state.habits = {};
                     if (!state.links) state.links = [];
                     if (!state.batteryView) state.batteryView = 'date';
-                    if (!state.dashboardDate) {
-                        state.dashboardDate = getDateStr(new Date());
-                    }
+                    if (!state.dashboardDate) state.dashboardDate = getDateStr(new Date());
                     if (state.darkMode === undefined) state.darkMode = false;
                     return true;
                 }
@@ -1665,10 +1750,9 @@
             el._timer = setTimeout(() => { el.className = ''; }, 2500);
         }
 
-        // ── Init default ──
+        // ── Init ──
         function initDefaultState() {
             if (!loadState()) {
-                // Fresh start
                 state.courses = {};
                 state.settings = {};
                 state.dateSpeeds = {};
@@ -1684,18 +1768,12 @@
                 state.darkMode = false;
                 saveState();
             }
-            // Apply dark mode
-            if (state.darkMode) {
-                document.body.classList.add('dark');
-            } else {
-                document.body.classList.remove('dark');
-            }
-            // Set dashboard date
+            if (state.darkMode) document.body.classList.add('dark');
+            else document.body.classList.remove('dark');
             if (!state.dashboardDate) {
                 state.dashboardDate = getDateStr(new Date());
                 saveState();
             }
-            // Ensure focus
             const focus = getFocus();
             if (focus) state.focusCourse = focus;
             else {
@@ -1703,7 +1781,6 @@
                 if (names.length) state.focusCourse = names[0];
                 saveState();
             }
-            // Ensure habits have streak
             Object.keys(state.habits).forEach(n => {
                 if (state.habits[n].streak === undefined) {
                     state.habits[n].streak = calculateStreak(n);
@@ -1728,7 +1805,6 @@
             renderNavBadge();
         }
 
-        // ── Nav Badge ──
         function renderNavBadge() {
             const badge = document.getElementById('courseBadge');
             const count = getCourseNames().length;
@@ -1773,7 +1849,6 @@
             const dateStr = state.dashboardDate || getDateStr(new Date());
             document.getElementById('dashDateLabel').textContent = formatDateLabel(dateStr, isOverall);
 
-            // Batteries
             const container = document.getElementById('dashBatteries');
             if (isOverall) {
                 const comp = getCourseCompletion(course);
@@ -1825,14 +1900,12 @@
                 });
             }
 
-            // Stats
             const comp = isOverall ? getCourseCompletion(course) : getDateCompletion(course, dateStr);
             document.getElementById('dashTotal').textContent = comp.total;
             document.getElementById('dashDone').textContent = comp.done;
             document.getElementById('dashPending').textContent = comp.total - comp.done;
             const dur = getLectures(course).reduce((sum, l) => sum + l.duration, 0);
             document.getElementById('dashDuration').textContent = formatDuration(dur);
-
             document.getElementById('dashCourseCount').textContent = `📚 ${names.length} courses`;
         }
 
@@ -1942,7 +2015,6 @@
                 opt.textContent = n + (n === focus ? ' ⭐' : '');
                 select.appendChild(opt);
             });
-            // Add "Select All"
             const allOpt = document.createElement('option');
             allOpt.value = '__all__';
             allOpt.textContent = '📚 Select All';
@@ -1953,20 +2025,14 @@
             else select.value = '__all__';
             ttCourse = select.value === '__all__' ? null : select.value;
 
-            // Month label
             const monthNames = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September',
                 'October', 'November', 'December'
             ];
             document.getElementById('ttMonthLabel').textContent =
                 `${monthNames[ttCurrentDate.getMonth()]} ${ttCurrentDate.getFullYear()}`;
 
-            // Calendar
             renderCalendar();
-
-            // If no selected date, use today
-            if (!ttSelectedDate) {
-                ttSelectedDate = getDateStr(new Date());
-            }
+            if (!ttSelectedDate) ttSelectedDate = getDateStr(new Date());
             renderDayDetail();
         }
 
@@ -2015,8 +2081,8 @@
                 if (isToday) classes += ' today';
                 if (isSelected) classes += ' selected';
 
-                const speedIcon = (state.dateSpeeds[course] && state.dateSpeeds[course][ds]) ? '<span class="speed-icon">⚡</span>' :
-                    '';
+                const speedIcon = (course && state.dateSpeeds[course] && state.dateSpeeds[course][ds]) ?
+                    '<span class="speed-icon">⚡</span>' : '';
 
                 html += `
               <div class="${classes}" data-date="${ds}">
@@ -2044,7 +2110,6 @@
             const course = ttCourse;
             const isAll = course === null;
 
-            // Speed control
             const speedCtrl = document.getElementById('ttSpeedControl');
             if (!isAll && course) {
                 speedCtrl.style.display = 'block';
@@ -2059,14 +2124,12 @@
                 speedCtrl.style.display = 'none';
             }
 
-            // Day title
             const d = parseDate(dateStr);
             const days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
             const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
             document.getElementById('ttDayTitle').textContent =
                 `${days[d.getDay()]}, ${months[d.getMonth()]} ${d.getDate()}, ${d.getFullYear()}`;
 
-            // Get lectures
             let lectures = [];
             let totalDuration = 0;
             let allocatedDur = 0;
@@ -2074,7 +2137,6 @@
             let movedDur = 0;
 
             if (isAll) {
-                // Combine all courses
                 const names = getCourseNames();
                 names.forEach(c => {
                     const lecs = getDateLectures(c, dateStr);
@@ -2098,11 +2160,19 @@
                 });
             }
 
-            // Summary
-            document.getElementById('ttDurationSummary').textContent =
-                `Total: ${formatDuration(totalDuration)}  (Alloc: ${formatDuration(allocatedDur)}  Copy: ${formatDuration(copiedDur)}  Move: ${formatDuration(movedDur)})`;
+            // Show speed comparison
+            let speedInfo = '';
+            if (!isAll && course) {
+                const settings = state.settings[course] || { speed: 120 };
+                const defSpeed = settings.speed || 120;
+                const custom = (state.dateSpeeds[course] || {})[dateStr] || defSpeed;
+                const pct = Math.round((totalDuration / custom) * 100);
+                speedInfo = ` | Speed: ${custom}min (${pct}%)`;
+            }
 
-            // Lecture list
+            document.getElementById('ttDurationSummary').textContent =
+                `Total: ${formatDuration(totalDuration)}  (Alloc: ${formatDuration(allocatedDur)}  Copy: ${formatDuration(copiedDur)}  Move: ${formatDuration(movedDur)})${speedInfo}`;
+
             const list = document.getElementById('ttLectureList');
             if (!lectures.length) {
                 list.innerHTML = '<div class="text-muted">No lectures on this date.</div>';
@@ -2113,10 +2183,9 @@
             let html = '';
             lectures.forEach((l, idx) => {
                 const key = l.key;
-                const done = isAll ? ((state.results[l.course] || {})[key] || false) : (isDone(course, key) || false);
-                const doneDate = isAll ? ((state.doneDates[l.course] || {})[key] || null) : (getDoneDate(course, key) ||
-                    null);
-                const courseName = isAll ? l.course : course;
+                const done = l.isDone || false;
+                const doneDate = l.doneDate || null;
+                const courseName = l.course;
 
                 const statusClass = done ? 'done' : '';
                 const strikeClass = done ? 'strike' : '';
@@ -2125,12 +2194,15 @@
 
                 const copyStamp = getCopyStamp(courseName, key, dateStr);
                 const moveStamp = getMoveStamp(courseName, key, dateStr);
+                const durDisplay = l.partDuration && l.partDuration !== l.duration ?
+                    `${formatDuration(l.partDuration)} (of ${formatDuration(l.duration)})` :
+                    formatDuration(l.duration);
 
                 html += `
               <div class="lecture-row ${statusClass}" data-key="${key}" data-course="${courseName}">
                 <input type="checkbox" class="lec-check" ${done ? 'checked' : ''} />
                 <span class="lec-name ${strikeClass}">${l.sr}. ${l.name}</span>
-                <span class="lec-duration">${formatDuration(l.duration)}</span>
+                <span class="lec-duration">${durDisplay}</span>
                 <span class="lec-dates">
                   <span class="alloc">Alloc: ${l.allocatedDate || dateStr}</span>
                   ${doneDate ? `<span class="done">Done: ${doneDate}</span>` : ''}
@@ -2153,7 +2225,7 @@
             });
             list.innerHTML = html;
 
-            // ── Event listeners ──
+            // Event listeners
             list.querySelectorAll('.lec-check').forEach((cb, idx) => {
                 cb.addEventListener('change', () => {
                     const row = cb.closest('.lecture-row');
@@ -2266,11 +2338,9 @@
             const copies = state.copies[course] || {};
             const dates = copies[key] || [];
             if (dates.includes(dateStr)) {
-                // This is a destination
                 const src = dates.find(d => d !== dateStr) || 'unknown';
                 return `<span class="copy-stamp">📋 Copied from ${src}</span>`;
             }
-            // Check if this is a source
             for (const [k, dList] of Object.entries(copies)) {
                 if (k === key && dList.includes(dateStr)) {
                     const target = dList.find(d => d !== dateStr);
@@ -2283,13 +2353,10 @@
         function getMoveStamp(course, key, dateStr) {
             const moves = state.moves[course] || {};
             if (moves[key] === dateStr) {
-                // This is a destination (moved to this date)
-                // Find source
                 const alloc = getAllocatedDates(course);
                 const src = alloc[key] || 'unknown';
                 return `<span class="move-stamp">📦 Moved from ${src}</span>`;
             }
-            // Check if this is a source (moved away)
             const alloc = getAllocatedDates(course);
             if (alloc[key] === dateStr && moves[key] && moves[key] !== dateStr) {
                 return `<span class="move-stamp">📦 Moved to ${moves[key]}</span>`;
@@ -2312,7 +2379,6 @@
                 return;
             }
             state.copies[course][key].push(targetStr);
-            // Also add to results so it appears
             if (!state.results[course]) state.results[course] = {};
             state.results[course][key] = false;
             saveState();
@@ -2335,7 +2401,6 @@
             }
             if (!state.moves[course]) state.moves[course] = {};
             state.moves[course][key] = targetStr;
-            // Remove from original date in results? Keep but mark as moved.
             saveState();
             renderDayDetail();
             renderCalendar();
@@ -2393,7 +2458,6 @@
             document.getElementById('editSummary').textContent =
                 `📊 ${formatDuration(totalDur)}  📚 ${lecs.length} lectures  ✅ ${doneCount} completed`;
 
-            // Event listeners
             document.querySelectorAll('.edit-lecture-name').forEach(inp => {
                 inp.addEventListener('change', () => {
                     const key = inp.dataset.key;
@@ -2452,9 +2516,7 @@
                     const idx = lecs.findIndex(l => getLectureKey(l) === key);
                     if (idx > -1) {
                         lecs.splice(idx, 1);
-                        // Renumber
                         lecs.forEach((l, i) => l.sr = i + 1);
-                        // Clean up data
                         if (state.results[course]) delete state.results[course][key];
                         if (state.doneDates[course]) delete state.doneDates[course][key];
                         if (state.copies[course]) delete state.copies[course][key];
@@ -2492,7 +2554,6 @@
             const from = document.getElementById('histFrom').value || '2026-01-01';
             const to = document.getElementById('histTo').value || getDateStr(new Date());
 
-            // Stats
             let total = 0,
                 done = 0;
             const rows = [];
@@ -2523,7 +2584,6 @@
                     }
                 });
             } else {
-                // Select All
                 names.forEach(c => {
                     const lecs = getLectures(c);
                     const alloc = getAllocatedDates(c);
@@ -2558,7 +2618,6 @@
             document.getElementById('histPending').textContent = total - done;
             document.getElementById('histPct').textContent = total > 0 ? Math.round((done / total) * 100) + '%' : '0%';
 
-            // Table
             const tbody = document.getElementById('histTableBody');
             if (!rows.length) {
                 tbody.innerHTML = '<tr><td colspan="8" class="text-muted">No data in this range</td></tr>';
@@ -2585,7 +2644,6 @@
                 tbody.innerHTML = html;
             }
 
-            // Batteries
             const batts = document.getElementById('histBatteries');
             const dFrom = parseDate(from);
             const dTo = parseDate(to);
@@ -2727,7 +2785,6 @@
             const habitsToday = getHabitsToday();
             document.getElementById('ovHabits').textContent = `${habitsToday.done}/${habitsToday.total}`;
 
-            // Course progress
             const cContainer = document.getElementById('overviewCourses');
             if (!names.length) {
                 cContainer.innerHTML = '<div class="text-muted">No courses</div>';
@@ -2747,7 +2804,6 @@
                 cContainer.innerHTML = html;
             }
 
-            // Mini batteries
             const bContainer = document.getElementById('overviewBatteries');
             let bHtml = '<div class="text-muted" style="font-size:11px;font-weight:600;">Last 7 Days</div><div class="flex flex-wrap gap-8 mt-8">';
             const d = new Date();
@@ -2766,7 +2822,6 @@
             bHtml += '</div>';
             bContainer.innerHTML = bHtml;
 
-            // Habits
             const hContainer = document.getElementById('overviewHabits');
             const hNames = Object.keys(state.habits);
             if (hNames.length) {
@@ -2781,12 +2836,10 @@
                 hContainer.innerHTML = '<div class="text-muted">No habits</div>';
             }
 
-            // Weekly chart
             const chartContainer = document.getElementById('overviewChart');
             const weekDays = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
             let chartHtml = '<div class="text-muted" style="font-size:11px;font-weight:600;">Weekly Pattern</div><div class="chart-bar">';
             const todayDate = new Date();
-            const maxPct = 100;
             for (let i = 6; i >= 0; i--) {
                 const dd = addDays(todayDate, -i);
                 const ds = getDateStr(dd);
@@ -2937,7 +2990,6 @@
 
         // ── General Event Listeners ──
         function setupGeneralEvents() {
-            // Navigation
             document.querySelectorAll('.nav-bottom .tab').forEach(btn => {
                 btn.addEventListener('click', () => {
                     document.querySelectorAll('.nav-bottom .tab').forEach(b => b.classList.remove('active'));
@@ -2946,12 +2998,10 @@
                     activeTab = tab;
                     document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
                     document.getElementById('tab-' + tab).classList.add('active');
-                    // Re-render
                     renderAll();
                 });
             });
 
-            // Dashboard events
             document.getElementById('dashCourse').addEventListener('change', () => {
                 const val = document.getElementById('dashCourse').value;
                 if (val) {
@@ -2988,7 +3038,6 @@
                 renderDashboard();
             });
 
-            // Upload events
             document.getElementById('uploadBtn').addEventListener('click', () => {
                 const name = document.getElementById('uploadCourseName').value.trim();
                 const data = document.getElementById('uploadLectures').value.trim();
@@ -3015,7 +3064,6 @@
                     lectures.push({ sr, name: parts[1], duration });
                 });
                 if (!valid) return;
-                // Renumber
                 lectures.forEach((l, i) => l.sr = i + 1);
                 state.courses[name] = lectures;
                 state.settings[name] = { speed: 120, startDate: getDateStr(new Date()) };
@@ -3042,12 +3090,16 @@
                     { sr: 3, name: 'Quadratic_Equations', duration: 50 },
                     { sr: 4, name: 'Polynomials', duration: 55 },
                     { sr: 5, name: 'Functions', duration: 40 },
+                    { sr: 6, name: 'Trigonometry_Basics', duration: 70 },
+                    { sr: 7, name: 'Statistics', duration: 45 },
+                    { sr: 8, name: 'Probability', duration: 50 },
                 ];
                 const physics = [
                     { sr: 1, name: 'Newton_Laws', duration: 50 },
                     { sr: 2, name: 'Kinematics', duration: 60 },
                     { sr: 3, name: 'Energy_Work', duration: 45 },
                     { sr: 4, name: 'Momentum', duration: 55 },
+                    { sr: 5, name: 'Thermodynamics', duration: 65 },
                 ];
                 state.courses['Mathematics 101'] = math;
                 state.settings['Mathematics 101'] = { speed: 120, startDate: getDateStr(new Date()) };
@@ -3111,7 +3163,6 @@
                 renderAll();
             });
 
-            // Edit events
             document.getElementById('editCourse').addEventListener('change', renderEdit);
             document.getElementById('editSpeed').addEventListener('change', () => {
                 const course = document.getElementById('editCourse').value;
@@ -3205,13 +3256,11 @@
                 toast(`📤 Course "${course}" exported`);
             });
 
-            // History events
             document.getElementById('histRefresh').addEventListener('click', renderHistory);
             document.getElementById('histCourse').addEventListener('change', renderHistory);
             document.getElementById('histFrom').addEventListener('change', renderHistory);
             document.getElementById('histTo').addEventListener('change', renderHistory);
 
-            // Habits
             document.getElementById('habitAdd').addEventListener('click', () => {
                 const name = document.getElementById('habitName').value.trim();
                 const time = document.getElementById('habitTime').value || '09:00';
@@ -3231,7 +3280,6 @@
                 toast(`✅ Habit "${name}" added`);
             });
 
-            // Links
             document.getElementById('linkAdd').addEventListener('click', () => {
                 const name = document.getElementById('linkName').value.trim();
                 let url = document.getElementById('linkUrl').value.trim();
@@ -3250,10 +3298,8 @@
                 toast(`🔗 Link "${name}" added`);
             });
 
-            // Overview
             document.getElementById('overviewRefresh').addEventListener('click', renderOverview);
 
-            // Header
             document.getElementById('exportBtn').addEventListener('click', () => {
                 const blob = new Blob([JSON.stringify(state, null, 2)], { type: 'application/json' });
                 const url = URL.createObjectURL(blob);
@@ -3275,7 +3321,6 @@
                 reader.onload = (ev) => {
                     try {
                         const data = JSON.parse(ev.target.result);
-                        // Validate
                         if (data.courses && typeof data.courses === 'object') {
                             state = data;
                             if (!state.dateSpeeds) state.dateSpeeds = {};
@@ -3305,7 +3350,6 @@
                 toast(state.darkMode ? '🌙 Dark mode on' : '☀️ Light mode on');
             });
 
-            // Keyboard shortcuts
             document.addEventListener('keydown', (e) => {
                 if (e.ctrlKey && e.key === 's') {
                     e.preventDefault();
@@ -3338,7 +3382,7 @@
                 a.click();
                 URL.revokeObjectURL(url);
                 toast('📤 Auto-export completed');
-                setupAutoExport(); // re-schedule
+                setupAutoExport();
             }, delay);
         }
 
@@ -3346,14 +3390,12 @@
         function init() {
             initDefaultState();
 
-            // Set default dates for history
             const d = new Date();
             const from = new Date(d);
             from.setDate(from.getDate() - 30);
             document.getElementById('histFrom').value = getDateStr(from);
             document.getElementById('histTo').value = getDateStr(d);
 
-            // Setup TT current date
             ttCurrentDate = new Date();
             ttSelectedDate = getDateStr(ttCurrentDate);
 
@@ -3362,10 +3404,8 @@
             renderAll();
             setupAutoExport();
 
-            // Auto-save interval
             setInterval(() => { saveState(); }, 30000);
 
-            // Save on page hide
             document.addEventListener('visibilitychange', () => {
                 if (document.hidden) saveState();
             });
