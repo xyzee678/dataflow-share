@@ -3383,6 +3383,3355 @@
         document.addEventListener('DOMContentLoaded', init);
     </script>
 </body>
+</html>        }
+        body.dark .nav-bottom .tab-label {
+            color: #a0aec0;
+        }
+        body.dark .nav-bottom .tab.active .tab-label {
+            color: #a78bfa;
+        }
+        body.dark .nav-bottom .tab.active {
+            background: rgba(102, 126, 234, 0.15);
+        }
+        body.dark input,
+        body.dark select,
+        body.dark textarea {
+            background: #4a5568;
+            color: #e2e8f0;
+            border-color: #4a5568;
+        }
+        body.dark input:focus,
+        body.dark select:focus,
+        body.dark textarea:focus {
+            border-color: #667eea;
+        }
+        body.dark .badge-danger {
+            background: #e53e3e;
+        }
+        body.dark .badge-success {
+            background: #38a169;
+        }
+        body.dark .badge-warning {
+            background: #d69e2e;
+        }
+        ::-webkit-scrollbar {
+            width: 4px;
+            height: 4px;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #667eea;
+            border-radius: 4px;
+        }
+        .header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 60px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 16px;
+            z-index: 1000;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+        }
+        .header .title {
+            color: #fff;
+            font-size: 17px;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .header .title .emoji {
+            font-size: 20px;
+        }
+        .header .actions {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .header .actions button {
+            background: rgba(255, 255, 255, 0.18);
+            border: none;
+            color: #fff;
+            padding: 6px 12px;
+            border-radius: 8px;
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.2s;
+            white-space: nowrap;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+        .header .actions button:hover {
+            background: rgba(255, 255, 255, 0.3);
+        }
+        .header .actions #darkToggle {
+            background: rgba(255, 255, 255, 0.18);
+            border: none;
+            color: #fff;
+            padding: 6px 10px;
+            border-radius: 8px;
+            font-size: 16px;
+            cursor: pointer;
+        }
+        #fileInput {
+            display: none;
+        }
+        .nav-bottom {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 68px;
+            background: #fff;
+            border-top: 1px solid #e2e8f0;
+            display: flex;
+            align-items: stretch;
+            justify-content: space-around;
+            z-index: 1000;
+            overflow-x: auto;
+            padding: 0 4px;
+            transition: background 0.3s, border-color 0.3s;
+        }
+        .nav-bottom .tab {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 4px 6px;
+            min-width: 44px;
+            flex: 1 0 auto;
+            border: none;
+            background: transparent;
+            cursor: pointer;
+            position: relative;
+            border-radius: 12px 12px 0 0;
+            transition: background 0.2s;
+            gap: 1px;
+        }
+        .nav-bottom .tab .tab-icon {
+            font-size: 20px;
+            line-height: 1.2;
+        }
+        .nav-bottom .tab .tab-label {
+            font-size: 8px;
+            font-weight: 600;
+            color: #888;
+            text-transform: uppercase;
+            letter-spacing: 0.3px;
+            transition: color 0.2s;
+        }
+        .nav-bottom .tab.active .tab-label {
+            color: #667eea;
+        }
+        .nav-bottom .tab.active .tab-icon {
+            color: #667eea;
+        }
+        .nav-bottom .tab.active {
+            background: rgba(102, 126, 234, 0.08);
+        }
+        .nav-bottom .tab .badge {
+            position: absolute;
+            top: 2px;
+            right: 2px;
+            background: #ff6b6b;
+            color: #fff;
+            font-size: 8px;
+            font-weight: 700;
+            padding: 1px 5px;
+            border-radius: 10px;
+            min-width: 16px;
+            text-align: center;
+            line-height: 14px;
+        }
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 12px 14px;
+        }
+        .tab-content {
+            display: none;
+            animation: fadeUp 0.25s ease;
+        }
+        .tab-content.active {
+            display: block;
+        }
+        @keyframes fadeUp {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        .card {
+            background: #fff;
+            border-radius: 12px;
+            padding: 16px;
+            margin-bottom: 14px;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06);
+            transition: background 0.3s, color 0.3s;
+        }
+        .card .card-title {
+            font-size: 14px;
+            font-weight: 700;
+            color: #1a1a2e;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        body.dark .card .card-title {
+            color: #e2e8f0;
+        }
+        .card .muted {
+            color: #718096;
+            font-size: 12px;
+        }
+        .row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            align-items: center;
+        }
+        .row.gap-4 {
+            gap: 4px;
+        }
+        .flex-1 {
+            flex: 1;
+            min-width: 120px;
+        }
+        .flex-2 {
+            flex: 2;
+            min-width: 160px;
+        }
+        .grid-2 {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+        }
+        .grid-4 {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 10px;
+        }
+        @media (max-width: 600px) {
+            .grid-4 {
+                grid-template-columns: 1fr 1fr;
+            }
+            .grid-2 {
+                grid-template-columns: 1fr;
+            }
+            .row {
+                flex-direction: column;
+                align-items: stretch;
+            }
+            .row .flex-1,
+            .row .flex-2 {
+                min-width: unset;
+            }
+        }
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 4px;
+            padding: 8px 16px;
+            border: none;
+            border-radius: 8px;
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            white-space: nowrap;
+            min-height: 40px;
+        }
+        .btn:active {
+            transform: scale(0.96);
+        }
+        .btn-primary {
+            background: #667eea;
+            color: #fff;
+        }
+        .btn-primary:hover {
+            background: #5a6fd6;
+        }
+        .btn-success {
+            background: #51cf66;
+            color: #fff;
+        }
+        .btn-success:hover {
+            background: #45b85a;
+        }
+        .btn-danger {
+            background: #ff6b6b;
+            color: #fff;
+        }
+        .btn-danger:hover {
+            background: #e55a5a;
+        }
+        .btn-warning {
+            background: #ffd93d;
+            color: #1a1a2e;
+        }
+        .btn-warning:hover {
+            background: #ecc82e;
+        }
+        .btn-outline {
+            background: transparent;
+            border: 1.5px solid #667eea;
+            color: #667eea;
+        }
+        .btn-outline:hover {
+            background: #667eea;
+            color: #fff;
+        }
+        .btn-sm {
+            padding: 4px 10px;
+            font-size: 11px;
+            min-height: 28px;
+        }
+        .btn-xs {
+            padding: 2px 8px;
+            font-size: 10px;
+            min-height: 22px;
+            border-radius: 6px;
+        }
+        .btn-block {
+            width: 100%;
+            justify-content: center;
+        }
+        input,
+        select,
+        textarea {
+            font-family: inherit;
+            font-size: 13px;
+            padding: 8px 12px;
+            border: 1.5px solid #e2e8f0;
+            border-radius: 8px;
+            background: #fff;
+            color: #1a1a2e;
+            transition: border-color 0.2s, background 0.3s, color 0.3s;
+            width: 100%;
+            outline: none;
+        }
+        input:focus,
+        select:focus,
+        textarea:focus {
+            border-color: #667eea;
+        }
+        textarea {
+            resize: vertical;
+            font-family: 'Courier New', monospace;
+            font-size: 13px;
+            min-height: 160px;
+        }
+        input[type="date"] {
+            min-height: 40px;
+        }
+        input[type="checkbox"] {
+            width: 20px;
+            height: 20px;
+            min-height: 20px;
+            accent-color: #667eea;
+            cursor: pointer;
+            flex-shrink: 0;
+        }
+        select {
+            appearance: auto;
+            min-height: 40px;
+        }
+        .badge {
+            display: inline-block;
+            padding: 2px 10px;
+            border-radius: 12px;
+            font-size: 10px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.3px;
+        }
+        .badge-success {
+            background: #d4edda;
+            color: #155724;
+        }
+        .badge-danger {
+            background: #f8d7da;
+            color: #721c24;
+        }
+        .badge-warning {
+            background: #fff3cd;
+            color: #856404;
+        }
+        .badge-primary {
+            background: #dbe4ff;
+            color: #3a5bd1;
+        }
+        .badge-purple {
+            background: #667eea;
+            color: #fff;
+        }
+        .badge-copy {
+            background: #ff6b6b;
+            color: #fff;
+        }
+        body.dark .badge-success {
+            background: #2d4a3a;
+            color: #8fdf9f;
+        }
+        body.dark .badge-danger {
+            background: #4a2d2d;
+            color: #f8a0a0;
+        }
+        body.dark .badge-warning {
+            background: #4a442d;
+            color: #f0d060;
+        }
+        body.dark .badge-primary {
+            background: #2d3a6a;
+            color: #a0b8f0;
+        }
+        body.dark .badge-copy {
+            background: #6b2d2d;
+            color: #ff8a8a;
+        }
+        .battery-container {
+            display: flex;
+            align-items: flex-end;
+            justify-content: center;
+            gap: 8px;
+            padding: 10px 0;
+            flex-wrap: wrap;
+        }
+        .battery-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 4px;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+        .battery-item:active {
+            transform: scale(0.94);
+        }
+        .battery {
+            position: relative;
+            width: 48px;
+            height: 72px;
+            background: #e2e8f0;
+            border-radius: 8px 8px 4px 4px;
+            border: 2px solid #4a5568;
+            overflow: hidden;
+            transition: all 0.3s;
+        }
+        .battery.large {
+            width: 64px;
+            height: 90px;
+        }
+        .battery .fill {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: #51cf66;
+            transition: height 0.8s cubic-bezier(0.22, 1, 0.36, 1), background 0.3s;
+            border-radius: 0 0 4px 4px;
+        }
+        .battery .fill.low {
+            background: #ff6b6b;
+        }
+        .battery .fill.medium {
+            background: #ffd93d;
+        }
+        .battery .fill.high {
+            background: #51cf66;
+        }
+        .battery .pct {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 11px;
+            font-weight: 700;
+            color: #1a1a2e;
+            text-shadow: 0 0 4px rgba(255, 255, 255, 0.6);
+            z-index: 2;
+            pointer-events: none;
+        }
+        .battery .cap {
+            position: absolute;
+            top: -6px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 14px;
+            height: 6px;
+            background: #4a5568;
+            border-radius: 2px 2px 0 0;
+        }
+        .battery-label {
+            font-size: 10px;
+            font-weight: 600;
+            text-align: center;
+            color: #4a5568;
+        }
+        body.dark .battery-label {
+            color: #a0aec0;
+        }
+        .battery-label .day {
+            font-weight: 400;
+            font-size: 9px;
+            color: #718096;
+        }
+        .battery-mini {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            padding: 2px 8px 2px 4px;
+            border-radius: 12px;
+            font-size: 10px;
+            font-weight: 600;
+        }
+        .battery-mini .bar {
+            width: 16px;
+            height: 12px;
+            background: #e2e8f0;
+            border-radius: 2px;
+            overflow: hidden;
+            border: 1px solid #4a5568;
+        }
+        .battery-mini .bar .fill {
+            height: 100%;
+            border-radius: 1px;
+        }
+        .stat-card {
+            text-align: center;
+            padding: 12px 8px;
+            background: #f8fafc;
+            border-radius: 10px;
+            transition: background 0.3s;
+        }
+        body.dark .stat-card {
+            background: #374151;
+        }
+        .stat-card .number {
+            font-size: 24px;
+            font-weight: 700;
+            color: #1a1a2e;
+        }
+        body.dark .stat-card .number {
+            color: #e2e8f0;
+        }
+        .stat-card .label {
+            font-size: 11px;
+            color: #718096;
+            margin-top: 2px;
+        }
+        .stat-card .number.green {
+            color: #51cf66;
+        }
+        .stat-card .number.red {
+            color: #ff6b6b;
+        }
+        .stat-card .number.purple {
+            color: #667eea;
+        }
+        .calendar-grid {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 2px;
+            margin-top: 8px;
+        }
+        .calendar-grid .day-header {
+            text-align: center;
+            font-size: 10px;
+            font-weight: 700;
+            color: #718096;
+            padding: 6px 0;
+            text-transform: uppercase;
+        }
+        .calendar-grid .day-cell {
+            aspect-ratio: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            border-radius: 8px;
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.2s, transform 0.15s;
+            background: transparent;
+            position: relative;
+            min-height: 40px;
+        }
+        .calendar-grid .day-cell:active {
+            transform: scale(0.92);
+        }
+        .calendar-grid .day-cell.empty {
+            cursor: default;
+            opacity: 0.3;
+        }
+        .calendar-grid .day-cell.sunday {
+            background: #f8d7da;
+        }
+        body.dark .calendar-grid .day-cell.sunday {
+            background: #4a2d2d;
+        }
+        .calendar-grid .day-cell .dot {
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            margin-top: 2px;
+        }
+        .calendar-grid .day-cell .dot.green {
+            background: #51cf66;
+        }
+        .calendar-grid .day-cell .dot.blue {
+            background: #667eea;
+        }
+        .calendar-grid .day-cell .dot.red {
+            background: #ff6b6b;
+        }
+        .calendar-grid .day-cell.today {
+            border: 2px solid #667eea;
+            border-radius: 8px;
+        }
+        .calendar-grid .day-cell .speed-icon {
+            position: absolute;
+            top: 0;
+            right: 2px;
+            font-size: 8px;
+        }
+        .calendar-grid .day-cell.selected {
+            background: rgba(102, 126, 234, 0.2);
+        }
+        .lecture-row {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            gap: 6px;
+            padding: 8px 10px;
+            border-radius: 8px;
+            background: #f8fafc;
+            margin-bottom: 6px;
+            transition: background 0.3s;
+            border-left: 4px solid transparent;
+        }
+        body.dark .lecture-row {
+            background: #374151;
+        }
+        .lecture-row.done {
+            background: #d4edda;
+            border-left-color: #51cf66;
+        }
+        .lecture-row.done-copy {
+            background: #f8d7da;
+            border-left-color: #ff6b6b;
+        }
+        .lecture-row.done-copy .lec-name {
+            color: #dc3545;
+        }
+        .lecture-row.yellow {
+            background: #fff3cd;
+            border-left-color: #ffd93d;
+        }
+        body.dark .lecture-row.done {
+            background: #2d4a3a;
+        }
+        body.dark .lecture-row.done-copy {
+            background: #4a2d2d;
+        }
+        body.dark .lecture-row.yellow {
+            background: #4a442d;
+        }
+        body.dark .lecture-row.done-copy .lec-name {
+            color: #ff8a8a;
+        }
+        .lecture-row .lec-check {
+            flex-shrink: 0;
+        }
+        .lecture-row .lec-name {
+            flex: 1;
+            min-width: 80px;
+            font-weight: 500;
+            font-size: 13px;
+        }
+        .lecture-row .lec-name.strike {
+            text-decoration: line-through;
+            opacity: 0.7;
+        }
+        .lecture-row .lec-duration {
+            font-size: 11px;
+            font-weight: 600;
+            color: #718096;
+            padding: 1px 8px;
+            background: #e2e8f0;
+            border-radius: 12px;
+        }
+        body.dark .lecture-row .lec-duration {
+            background: #4a5568;
+            color: #a0aec0;
+        }
+        .lecture-row .lec-dates {
+            font-size: 11px;
+            color: #718096;
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+        .lecture-row .lec-dates .alloc {
+            color: #667eea;
+        }
+        .lecture-row .lec-dates .done {
+            color: #51cf66;
+        }
+        .lecture-row .lec-status {
+            font-size: 10px;
+            font-weight: 700;
+        }
+        .lecture-row .lec-actions {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 4px;
+            align-items: center;
+        }
+        .lecture-row .continuing {
+            font-size: 9px;
+            background: #ffd93d;
+            padding: 1px 8px;
+            border-radius: 10px;
+            font-weight: 700;
+        }
+        body.dark .lecture-row .continuing {
+            background: #d69e2e;
+            color: #1a1a2e;
+        }
+        .lecture-row .copy-stamp {
+            font-size: 10px;
+            color: #ff6b6b;
+            padding: 1px 8px;
+            background: rgba(255, 107, 107, 0.15);
+            border-radius: 10px;
+            font-weight: 600;
+        }
+        .lecture-row .move-stamp {
+            font-size: 10px;
+            color: #ffa94d;
+            padding: 1px 8px;
+            background: rgba(255, 169, 77, 0.15);
+            border-radius: 10px;
+        }
+        .habit-row {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            gap: 8px;
+            padding: 10px 12px;
+            border-radius: 8px;
+            background: #f8fafc;
+            margin-bottom: 6px;
+        }
+        body.dark .habit-row {
+            background: #374151;
+        }
+        .habit-row .habit-name {
+            flex: 1;
+            font-weight: 500;
+            font-size: 13px;
+        }
+        .habit-row .habit-meta {
+            font-size: 11px;
+            color: #718096;
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+        .habit-row .habit-streak {
+            font-size: 12px;
+            font-weight: 700;
+            color: #ffa94d;
+        }
+        .link-row {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 12px;
+            border-radius: 8px;
+            background: #f8fafc;
+            margin-bottom: 6px;
+        }
+        body.dark .link-row {
+            background: #374151;
+        }
+        .link-row .link-name {
+            font-weight: 500;
+            font-size: 13px;
+            min-width: 60px;
+        }
+        .link-row .link-url {
+            flex: 1;
+            font-size: 12px;
+            color: #667eea;
+            word-break: break-all;
+            cursor: pointer;
+            min-width: 80px;
+        }
+        .link-row .link-url:hover {
+            text-decoration: underline;
+        }
+        .link-row .link-cat {
+            font-size: 10px;
+            background: #e2e8f0;
+            padding: 1px 10px;
+            border-radius: 12px;
+        }
+        .progress-bar {
+            height: 8px;
+            border-radius: 4px;
+            background: #e2e8f0;
+            overflow: hidden;
+            flex: 1;
+            min-width: 60px;
+        }
+        .progress-bar .fill {
+            height: 100%;
+            border-radius: 4px;
+            transition: width 0.6s ease;
+        }
+        #toast {
+            position: fixed;
+            top: 70px;
+            left: 50%;
+            transform: translateX(-50%);
+            padding: 10px 20px;
+            border-radius: 10px;
+            font-weight: 600;
+            font-size: 13px;
+            color: #fff;
+            z-index: 9999;
+            opacity: 0;
+            transition: opacity 0.3s, transform 0.3s;
+            pointer-events: none;
+            max-width: 90%;
+            text-align: center;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+        }
+        #toast.show {
+            opacity: 1;
+            transform: translateX(-50%) translateY(0);
+        }
+        #toast.success {
+            background: #51cf66;
+        }
+        #toast.error {
+            background: #ff6b6b;
+        }
+        #toast.warning {
+            background: #ffd93d;
+            color: #1a1a2e;
+        }
+        #toast.info {
+            background: #2d3748;
+        }
+        .text-center {
+            text-align: center;
+        }
+        .text-muted {
+            color: #718096;
+            font-size: 12px;
+        }
+        .mt-8 {
+            margin-top: 8px;
+        }
+        .mt-12 {
+            margin-top: 12px;
+        }
+        .mb-8 {
+            margin-bottom: 8px;
+        }
+        .gap-4 {
+            gap: 4px;
+        }
+        .gap-8 {
+            gap: 8px;
+        }
+        .flex-wrap {
+            flex-wrap: wrap;
+        }
+        .items-center {
+            align-items: center;
+        }
+        .flex {
+            display: flex;
+        }
+        .flex-col {
+            flex-direction: column;
+        }
+        .w-full {
+            width: 100%;
+        }
+        .font-mono {
+            font-family: 'Courier New', monospace;
+        }
+        .chart-bar {
+            display: flex;
+            align-items: flex-end;
+            gap: 6px;
+            height: 100px;
+            padding: 8px 0;
+        }
+        .chart-bar .bar-item {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 2px;
+        }
+        .chart-bar .bar-item .bar {
+            width: 100%;
+            max-width: 32px;
+            border-radius: 4px 4px 0 0;
+            min-height: 4px;
+            transition: height 0.6s ease;
+        }
+        .chart-bar .bar-item .bar-label {
+            font-size: 9px;
+            color: #718096;
+            font-weight: 600;
+        }
+        .table-wrap {
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+        }
+        .table-wrap table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 12px;
+        }
+        .table-wrap th {
+            text-align: left;
+            padding: 6px 8px;
+            font-weight: 700;
+            color: #718096;
+            font-size: 10px;
+            text-transform: uppercase;
+            border-bottom: 2px solid #e2e8f0;
+            white-space: nowrap;
+        }
+        .table-wrap td {
+            padding: 6px 8px;
+            border-bottom: 1px solid #e2e8f0;
+            white-space: nowrap;
+        }
+        body.dark .table-wrap th {
+            color: #a0aec0;
+            border-bottom-color: #4a5568;
+        }
+        body.dark .table-wrap td {
+            border-bottom-color: #4a5568;
+        }
+        .table-wrap .on-time {
+            border-left: 3px solid #667eea;
+        }
+        .table-wrap .early {
+            border-left: 3px solid #51cf66;
+        }
+        .table-wrap .late {
+            border-left: 3px solid #ff6b6b;
+        }
+        .saved-course-item {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 12px;
+            border-radius: 8px;
+            background: #f8fafc;
+            margin-bottom: 6px;
+            border-left: 3px solid transparent;
+        }
+        body.dark .saved-course-item {
+            background: #374151;
+        }
+        .saved-course-item.focus {
+            border-left-color: #667eea;
+        }
+        @media (max-width: 480px) {
+            .battery {
+                width: 36px;
+                height: 56px;
+            }
+            .battery.large {
+                width: 48px;
+                height: 68px;
+            }
+            .battery .pct {
+                font-size: 9px;
+            }
+            .battery-label {
+                font-size: 8px;
+            }
+            .header .title {
+                font-size: 14px;
+            }
+            .header .actions button {
+                padding: 4px 8px;
+                font-size: 11px;
+            }
+            .stat-card .number {
+                font-size: 18px;
+            }
+            .calendar-grid .day-cell {
+                font-size: 11px;
+                min-height: 32px;
+            }
+            .lecture-row {
+                padding: 6px 8px;
+                font-size: 12px;
+            }
+            .btn {
+                font-size: 11px;
+                padding: 6px 12px;
+                min-height: 34px;
+            }
+            .nav-bottom .tab .tab-icon {
+                font-size: 16px;
+            }
+            .nav-bottom .tab .tab-label {
+                font-size: 7px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div id="toast"></div>
+
+    <header class="header">
+        <div class="title"><span class="emoji">📚</span> Lecture Planner</div>
+        <div class="actions">
+            <button id="darkToggle">🌓</button>
+            <button id="exportBtn">📤 Export</button>
+            <button id="importBtn">📥 Import</button>
+            <input type="file" id="fileInput" accept=".json" />
+        </div>
+    </header>
+
+    <nav class="nav-bottom" id="bottomNav">
+        <button class="tab active" data-tab="dashboard"><span class="tab-icon">🏠</span><span class="tab-label">Dash</span></button>
+        <button class="tab" data-tab="upload"><span class="tab-icon">📤</span><span class="tab-label">Upload</span></button>
+        <button class="tab" data-tab="timetable"><span class="tab-icon">📅</span><span class="tab-label">Time</span><span class="badge" id="courseBadge" style="display:none;">0</span></button>
+        <button class="tab" data-tab="edit"><span class="tab-icon">✏️</span><span class="tab-label">Edit</span></button>
+        <button class="tab" data-tab="history"><span class="tab-icon">📊</span><span class="tab-label">Hist</span></button>
+        <button class="tab" data-tab="habits"><span class="tab-icon">✅</span><span class="tab-label">Habits</span></button>
+        <button class="tab" data-tab="links"><span class="tab-icon">🔗</span><span class="tab-label">Links</span></button>
+        <button class="tab" data-tab="overview"><span class="tab-icon">📈</span><span class="tab-label">Overview</span></button>
+    </nav>
+
+    <div class="container">
+
+        <!-- DASHBOARD -->
+        <div class="tab-content active" id="tab-dashboard">
+            <div class="card">
+                <div class="card-title">🏠 Dashboard</div>
+                <div class="row">
+                    <div class="flex-1">
+                        <select id="dashCourse" style="min-height:40px;"></select>
+                    </div>
+                    <div class="flex" style="gap:4px;">
+                        <button class="btn btn-sm btn-primary" id="dashViewDate">📅 By Date</button>
+                        <button class="btn btn-sm btn-outline" id="dashViewOverall">📊 Overall</button>
+                    </div>
+                </div>
+                <div class="row mt-8" style="justify-content:space-between;">
+                    <button class="btn btn-sm btn-outline" id="dashPrev">◀</button>
+                    <button class="btn btn-sm btn-primary" id="dashToday">📅 Today</button>
+                    <button class="btn btn-sm btn-outline" id="dashNext">▶</button>
+                    <span id="dashDateLabel" style="font-weight:600;font-size:13px;min-width:120px;text-align:center;"></span>
+                </div>
+                <div class="battery-container" id="dashBatteries"></div>
+                <div class="grid-4 mt-8" id="dashStats">
+                    <div class="stat-card"><div class="number purple" id="dashTotal">0</div><div class="label">Total</div></div>
+                    <div class="stat-card"><div class="number green" id="dashDone">0</div><div class="label">✅ Done</div></div>
+                    <div class="stat-card"><div class="number red" id="dashPending">0</div><div class="label">⏳ Pending</div></div>
+                    <div class="stat-card"><div class="number purple" id="dashDuration">0h</div><div class="label">Duration</div></div>
+                </div>
+                <div class="text-muted text-center" id="dashCourseCount">📚 0 courses</div>
+            </div>
+
+            <!-- Saved Courses moved to Dashboard -->
+            <div class="card">
+                <div class="card-title">📚 Saved Courses</div>
+                <div id="savedCoursesList"></div>
+            </div>
+        </div>
+
+        <!-- UPLOAD -->
+        <div class="tab-content" id="tab-upload">
+            <div class="card">
+                <div class="card-title">📤 Upload New Course</div>
+                <div class="row">
+                    <div class="flex-1">
+                        <input type="text" id="uploadCourseName" placeholder="Course Name (e.g. Mathematics 101)" />
+                    </div>
+                </div>
+                <div class="text-muted mt-8" style="font-size:11px;">
+                    <strong>Format:</strong> sr_no Lecture_name duration_in_mins<br />
+                    <span class="font-mono">1 Introduction_to_Algebra 45</span><br />
+                    <span style="color:#ff6b6b;">⚠️ Use spaces only · No decimals · No spaces in names (use _)</span>
+                </div>
+                <textarea id="uploadLectures" placeholder="1 Introduction_to_Algebra 45&#10;2 Linear_Equations 60&#10;3 Quadratic_Equations 75"></textarea>
+                <div class="grid-2 mt-8">
+                    <button class="btn btn-primary" id="uploadBtn">📤 Upload</button>
+                    <button class="btn btn-warning" id="dummyBtn">🎲 Dummy Data</button>
+                    <button class="btn btn-danger" id="removeDummyBtn">🗑️ Remove Dummy</button>
+                    <button class="btn btn-danger" id="clearAllBtn">⚠️ Clear All</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- TIMETABLE -->
+        <div class="tab-content" id="tab-timetable">
+            <div class="card">
+                <div class="card-title">📅 Timetable</div>
+                <div class="row">
+                    <div class="flex-1">
+                        <select id="ttCourse" style="min-height:40px;"></select>
+                    </div>
+                    <div class="flex" style="gap:4px;">
+                        <button class="btn btn-sm btn-outline" id="ttPrevMonth">◀</button>
+                        <button class="btn btn-sm btn-primary" id="ttToday">📅 Today</button>
+                        <button class="btn btn-sm btn-outline" id="ttNextMonth">▶</button>
+                    </div>
+                </div>
+                <div style="text-align:center;font-weight:700;font-size:15px;padding:4px 0;" id="ttMonthLabel">January 2026</div>
+                <div class="calendar-grid" id="ttCalendar"></div>
+                <div class="mt-8" id="ttSpeedControl" style="display:none;">
+                    <div class="row">
+                        <span class="text-muted" style="font-size:12px;">⚡ Speed: Default <span id="ttDefaultSpeed">120</span> mins</span>
+                        <input type="number" id="ttCustomSpeed" placeholder="Custom" style="width:80px;min-height:32px;" />
+                        <button class="btn btn-sm btn-outline" id="ttResetSpeed">↺ Reset</button>
+                        <span id="ttSpeedStatus" style="font-size:12px;"></span>
+                    </div>
+                </div>
+                <div class="mt-8" id="ttDayDetail" style="display:none;">
+                    <div class="row" style="justify-content:space-between;">
+                        <span id="ttDayTitle" style="font-weight:700;font-size:14px;"></span>
+                        <span id="ttDurationSummary" style="font-size:12px;color:#718096;"></span>
+                    </div>
+                    <div class="row mt-8">
+                        <button class="btn btn-sm btn-success" id="ttTickAll">✅ Tick All</button>
+                        <button class="btn btn-sm btn-outline" id="ttUntickAll">⭕ Untick All</button>
+                        <button class="btn btn-sm btn-primary" id="ttSetDoneAll">📅 Set Done Date All</button>
+                    </div>
+                    <div id="ttLectureList" class="mt-8"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- EDIT -->
+        <div class="tab-content" id="tab-edit">
+            <div class="card">
+                <div class="card-title">✏️ Edit Course</div>
+                <select id="editCourse" style="min-height:40px;"></select>
+                <div class="row mt-8">
+                    <div class="flex-1">
+                        <label class="text-muted" style="font-size:11px;">Speed (min/day)</label>
+                        <input type="number" id="editSpeed" value="120" min="1" />
+                    </div>
+                    <button class="btn btn-sm btn-outline" id="editResetSpeed">↺ Reset</button>
+                    <div class="flex-1">
+                        <label class="text-muted" style="font-size:11px;">Start Date</label>
+                        <input type="date" id="editStartDate" />
+                    </div>
+                </div>
+                <div class="table-wrap mt-8">
+                    <table>
+                        <thead><tr><th>#</th><th>Lecture</th><th>Min</th><th>Done</th><th></th></tr></thead>
+                        <tbody id="editTableBody"></tbody>
+                    </table>
+                </div>
+                <div class="row mt-8">
+                    <span id="editSummary" style="font-size:13px;font-weight:600;"></span>
+                </div>
+                <div class="grid-2 mt-12">
+                    <button class="btn btn-danger" id="editDeleteCourse">🗑️ Delete Course</button>
+                    <button class="btn btn-warning" id="editResetCourse">🔄 Reset Course</button>
+                    <button class="btn btn-primary" id="editExportCourse">📤 Export This Course</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- HISTORY -->
+        <div class="tab-content" id="tab-history">
+            <div class="card">
+                <div class="card-title">📊 History</div>
+                <div class="row">
+                    <div class="flex-1">
+                        <select id="histCourse" style="min-height:40px;"></select>
+                    </div>
+                    <div class="flex-1">
+                        <label class="text-muted" style="font-size:11px;">From</label>
+                        <input type="date" id="histFrom" />
+                    </div>
+                    <div class="flex-1">
+                        <label class="text-muted" style="font-size:11px;">To</label>
+                        <input type="date" id="histTo" />
+                    </div>
+                    <button class="btn btn-primary" id="histRefresh">🔄 Refresh</button>
+                </div>
+                <div class="grid-4 mt-8" id="histStats">
+                    <div class="stat-card"><div class="number purple" id="histTotal">0</div><div class="label">Total</div></div>
+                    <div class="stat-card"><div class="number green" id="histDone">0</div><div class="label">✅ Done</div></div>
+                    <div class="stat-card"><div class="number red" id="histPending">0</div><div class="label">⏳ Pending</div></div>
+                    <div class="stat-card"><div class="number purple" id="histPct">0%</div><div class="label">Completion</div></div>
+                </div>
+                <div class="table-wrap mt-8">
+                    <table>
+                        <thead><tr><th>Lecture</th><th>Course</th><th>Allocated</th><th>Done Date</th><th>Status</th><th>Expected</th><th>Actual</th><th>Diff</th></tr></thead>
+                        <tbody id="histTableBody"></tbody>
+                    </table>
+                </div>
+                <div class="mt-8" id="histBatteries"></div>
+            </div>
+        </div>
+
+        <!-- HABITS -->
+        <div class="tab-content" id="tab-habits">
+            <div class="card">
+                <div class="card-title">✅ Habits</div>
+                <div class="row">
+                    <div class="flex-1">
+                        <input type="text" id="habitName" placeholder="Habit name (e.g. Morning Study)" />
+                    </div>
+                    <div style="min-width:80px;">
+                        <input type="time" id="habitTime" value="09:00" />
+                    </div>
+                    <div style="min-width:80px;">
+                        <select id="habitPattern" style="min-height:40px;">
+                            <option value="daily">Daily</option>
+                            <option value="weekly">Weekly</option>
+                            <option value="monthly">Monthly</option>
+                        </select>
+                    </div>
+                    <button class="btn btn-primary" id="habitAdd">➕ Add</button>
+                </div>
+                <div id="habitsList" class="mt-8"></div>
+            </div>
+        </div>
+
+        <!-- LINKS -->
+        <div class="tab-content" id="tab-links">
+            <div class="card">
+                <div class="card-title">🔗 Links</div>
+                <div class="row">
+                    <div class="flex-1">
+                        <input type="text" id="linkName" placeholder="Link name" />
+                    </div>
+                    <div class="flex-2">
+                        <input type="url" id="linkUrl" placeholder="https://example.com" />
+                    </div>
+                    <div style="min-width:80px;">
+                        <input type="text" id="linkCategory" placeholder="Category" />
+                    </div>
+                    <button class="btn btn-primary" id="linkAdd">➕ Add</button>
+                </div>
+                <div id="linksList" class="mt-8"></div>
+            </div>
+        </div>
+
+        <!-- OVERVIEW -->
+        <div class="tab-content" id="tab-overview">
+            <div class="card">
+                <div class="card-title">📈 Progress Overview</div>
+                <button class="btn btn-primary" id="overviewRefresh" style="margin-bottom:12px;">🔄 Refresh Overview</button>
+                <div class="grid-4" id="overviewStats">
+                    <div class="stat-card"><div class="number purple" id="ovCourses">0</div><div class="label">📚 Courses</div></div>
+                    <div class="stat-card"><div class="number green" id="ovOverall">0%</div><div class="label">📊 Overall</div></div>
+                    <div class="stat-card"><div class="number purple" id="ovTodayPct">0%</div><div class="label">📅 Today</div></div>
+                    <div class="stat-card"><div class="number green" id="ovHabits">0/0</div><div class="label">✅ Habits Today</div></div>
+                </div>
+                <div id="overviewCourses" class="mt-8"></div>
+                <div id="overviewBatteries" class="mt-8"></div>
+                <div id="overviewHabits" class="mt-8"></div>
+                <div id="overviewChart" class="mt-8"></div>
+            </div>
+        </div>
+
+    </div>
+
+    <script>
+        const STORAGE_KEY = 'lecturePlannerPro';
+
+        let state = {
+            courses: {},
+            settings: {},
+            dateSpeeds: {},
+            results: {},
+            doneDates: {},
+            copies: {},
+            moves: {},
+            habits: {},
+            links: [],
+            focusCourse: null,
+            batteryView: 'date',
+            dashboardDate: null,
+            darkMode: false,
+        };
+
+        let activeTab = 'dashboard';
+        let ttCurrentDate = new Date();
+        let ttSelectedDate = null;
+        let ttCourse = null;
+
+        function getDateStr(d) {
+            const y = d.getFullYear();
+            const m = String(d.getMonth() + 1).padStart(2, '0');
+            const day = String(d.getDate()).padStart(2, '0');
+            return `${y}-${m}-${day}`;
+        }
+
+        function parseDate(str) {
+            const parts = str.split('-');
+            return new Date(parseInt(parts[0]), parseInt(parts[1]) - 1, parseInt(parts[2]));
+        }
+
+        function addDays(d, n) {
+            const r = new Date(d);
+            r.setDate(r.getDate() + n);
+            return r;
+        }
+
+        function formatDuration(min) {
+            const h = Math.floor(min / 60);
+            const m = min % 60;
+            if (h === 0) return `${m}m`;
+            if (m === 0) return `${h}h`;
+            return `${h}h ${m}m`;
+        }
+
+        function getCourseNames() {
+            return Object.keys(state.courses);
+        }
+
+        function getFocus() {
+            const names = getCourseNames();
+            if (state.focusCourse && names.includes(state.focusCourse)) return state.focusCourse;
+            return names.length > 0 ? names[0] : null;
+        }
+
+        function getLectures(course) {
+            return state.courses[course] || [];
+        }
+
+        function getLectureKey(lec) {
+            return `${lec.sr}_${lec.name}`;
+        }
+
+        function getCourseCompletion(course) {
+            const lecs = getLectures(course);
+            if (!lecs.length) return { done: 0, total: 0, pct: 0 };
+            let done = 0;
+            const res = state.results[course] || {};
+            lecs.forEach(l => { if (res[getLectureKey(l)]) done++; });
+            return { done, total: lecs.length, pct: Math.round((done / lecs.length) * 100) };
+        }
+
+        function getAllocatedDates(course) {
+            const lecs = getLectures(course);
+            if (!lecs.length) return {};
+            const settings = state.settings[course] || { speed: 120, startDate: getDateStr(new Date()) };
+            const speed = settings.speed || 120;
+            const start = parseDate(settings.startDate || getDateStr(new Date()));
+            const result = {};
+            const dateSpeeds = state.dateSpeeds[course] || {};
+            const moves = state.moves[course] || {};
+
+            // Sort lectures by sr
+            const sorted = [...lecs].sort((a, b) => a.sr - b.sr);
+
+            // Track which lectures are moved
+            const movedKeys = new Set(Object.keys(moves));
+
+            let cur = new Date(start);
+            let used = 0;
+
+            sorted.forEach(l => {
+                const key = getLectureKey(l);
+                // If moved, skip allocation (it will be placed manually)
+                if (movedKeys.has(key)) {
+                    result[key] = moves[key];
+                    return;
+                }
+
+                let remaining = l.duration;
+                let first = true;
+                while (remaining > 0) {
+                    const ds = getDateStr(cur);
+                    const spd = dateSpeeds[ds] || speed;
+                    const avail = spd - used;
+                    const take = Math.min(remaining, avail);
+                    if (first) {
+                        result[key] = ds;
+                        first = false;
+                    }
+                    used += take;
+                    remaining -= take;
+                    if (used >= spd && remaining > 0) {
+                        used = 0;
+                        cur = addDays(cur, 1);
+                    }
+                }
+            });
+
+            return result;
+        }
+
+        function getDateLectures(course, dateStr) {
+            const lecs = getLectures(course);
+            if (!lecs.length) return [];
+            const alloc = getAllocatedDates(course);
+            const copies = state.copies[course] || {};
+            const moves = state.moves[course] || {};
+            const results = [];
+            const added = new Set();
+
+            // Sort lectures by sr
+            const sorted = [...lecs].sort((a, b) => a.sr - b.sr);
+
+            // Add allocated and moved lectures
+            sorted.forEach(l => {
+                const key = getLectureKey(l);
+                const aDate = alloc[key];
+                const moveTarget = moves[key];
+
+                if (moveTarget === dateStr) {
+                    // Moved TO this date
+                    results.push({
+                        ...l,
+                        key,
+                        allocatedDate: aDate || dateStr,
+                        isContinuing: false,
+                        isCopy: false,
+                        isMove: true,
+                        moveSource: aDate || dateStr
+                    });
+                    added.add(key);
+                } else if (!moveTarget && aDate === dateStr) {
+                    // Allocated here, not moved
+                    results.push({
+                        ...l,
+                        key,
+                        allocatedDate: aDate,
+                        isContinuing: false,
+                        isCopy: false,
+                        isMove: false
+                    });
+                    added.add(key);
+                } else if (aDate && aDate !== dateStr && !moveTarget) {
+                    // Check if lecture spans to this date (continuing)
+                    const parts = getAllocatedParts(course, l, dateStr);
+                    if (parts > 0) {
+                        results.push({
+                            ...l,
+                            key,
+                            allocatedDate: aDate,
+                            isContinuing: true,
+                            isCopy: false,
+                            isMove: false,
+                            partDuration: parts
+                        });
+                        added.add(key);
+                    }
+                }
+            });
+
+            // Add copies
+            Object.keys(copies).forEach(key => {
+                const dates = copies[key];
+                if (dates && dates.includes(dateStr)) {
+                    const lec = lecs.find(l => getLectureKey(l) === key);
+                    if (lec && !added.has(key)) {
+                        const aDate = alloc[key] || dateStr;
+                        results.push({
+                            ...lec,
+                            key,
+                            allocatedDate: aDate,
+                            isContinuing: false,
+                            isCopy: true,
+                            copySource: aDate,
+                            isMove: false
+                        });
+                        added.add(key);
+                    }
+                }
+            });
+
+            // Sort by sr
+            return results.sort((a, b) => a.sr - b.sr);
+        }
+
+        function getAllocatedParts(course, lec, dateStr) {
+            const settings = state.settings[course] || { speed: 120, startDate: getDateStr(new Date()) };
+            const speed = settings.speed || 120;
+            const start = parseDate(settings.startDate || getDateStr(new Date()));
+            const dateSpeeds = state.dateSpeeds[course] || {};
+            let cur = new Date(start);
+            let used = 0;
+            let remaining = lec.duration;
+            while (remaining > 0) {
+                const ds = getDateStr(cur);
+                const spd = dateSpeeds[ds] || speed;
+                const avail = spd - used;
+                const take = Math.min(remaining, avail);
+                if (ds === dateStr) return take;
+                used += take;
+                remaining -= take;
+                if (used >= spd && remaining > 0) {
+                    used = 0;
+                    cur = addDays(cur, 1);
+                }
+            }
+            return 0;
+        }
+
+        function getDateCompletion(course, dateStr) {
+            const lecs = getDateLectures(course, dateStr);
+            if (!lecs.length) return { done: 0, total: 0, pct: 0 };
+            let done = 0;
+            const res = state.results[course] || {};
+            lecs.forEach(l => {
+                const key = l.key;
+                if (res[key]) done++;
+            });
+            return { done, total: lecs.length, pct: Math.round((done / lecs.length) * 100) };
+        }
+
+        function getCombinedDateCompletion(dateStr) {
+            const names = getCourseNames();
+            let total = 0,
+                done = 0;
+            names.forEach(c => {
+                const d = getDateCompletion(c, dateStr);
+                total += d.total;
+                done += d.done;
+            });
+            return { done, total, pct: total > 0 ? Math.round((done / total) * 100) : 0 };
+        }
+
+        function getCombinedOverall() {
+            const names = getCourseNames();
+            let total = 0,
+                done = 0;
+            names.forEach(c => {
+                const d = getCourseCompletion(c);
+                total += d.total;
+                done += d.done;
+            });
+            return { done, total, pct: total > 0 ? Math.round((done / total) * 100) : 0 };
+        }
+
+        function getHabitsToday() {
+            const today = getDateStr(new Date());
+            const names = Object.keys(state.habits);
+            let done = 0,
+                total = names.length;
+            names.forEach(n => {
+                if (state.habits[n].completed && state.habits[n].completed[today]) done++;
+            });
+            return { done, total };
+        }
+
+        function calculateStreak(name) {
+            const habit = state.habits[name];
+            if (!habit) return 0;
+            let streak = 0;
+            let d = new Date();
+            d.setHours(0, 0, 0, 0);
+            while (true) {
+                const ds = getDateStr(d);
+                if (habit.completed && habit.completed[ds]) {
+                    streak++;
+                    d.setDate(d.getDate() - 1);
+                } else break;
+            }
+            return streak;
+        }
+
+        function getDoneDate(course, key) {
+            return (state.doneDates[course] || {})[key] || null;
+        }
+
+        function isDone(course, key) {
+            return (state.results[course] || {})[key] || false;
+        }
+
+        function isCopy(course, key) {
+            return (state.copies[course] || {})[key] ? true : false;
+        }
+
+        function getCopyInfo(course, key, dateStr) {
+            const copies = state.copies[course] || {};
+            const dates = copies[key] || [];
+            if (dates.includes(dateStr)) {
+                // This is a destination
+                const src = dates.find(d => d !== dateStr) || 'unknown';
+                return { type: 'to', source: src };
+            }
+            // Check if this is a source
+            for (const [k, dList] of Object.entries(copies)) {
+                if (k === key && dList.includes(dateStr)) {
+                    const target = dList.find(d => d !== dateStr);
+                    if (target) return { type: 'from', target: target };
+                }
+            }
+            return null;
+        }
+
+        function getMoveInfo(course, key, dateStr) {
+            const moves = state.moves[course] || {};
+            if (moves[key] === dateStr) {
+                const alloc = getAllocatedDates(course);
+                const src = alloc[key] || 'unknown';
+                return { type: 'to', source: src };
+            }
+            const alloc = getAllocatedDates(course);
+            if (alloc[key] === dateStr && moves[key] && moves[key] !== dateStr) {
+                return { type: 'from', target: moves[key] };
+            }
+            return null;
+        }
+
+        function saveState() {
+            try {
+                localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+            } catch (e) { console.warn('Save error', e); }
+        }
+
+        function loadState() {
+            try {
+                const raw = localStorage.getItem(STORAGE_KEY);
+                if (raw) {
+                    const parsed = JSON.parse(raw);
+                    state = parsed;
+                    if (!state.courses) state.courses = {};
+                    if (!state.settings) state.settings = {};
+                    if (!state.dateSpeeds) state.dateSpeeds = {};
+                    if (!state.results) state.results = {};
+                    if (!state.doneDates) state.doneDates = {};
+                    if (!state.copies) state.copies = {};
+                    if (!state.moves) state.moves = {};
+                    if (!state.habits) state.habits = {};
+                    if (!state.links) state.links = [];
+                    if (!state.batteryView) state.batteryView = 'date';
+                    if (!state.dashboardDate) state.dashboardDate = getDateStr(new Date());
+                    if (state.darkMode === undefined) state.darkMode = false;
+                    return true;
+                }
+            } catch (e) { console.warn('Load error', e); }
+            return false;
+        }
+
+        function toast(msg, type = 'info') {
+            const el = document.getElementById('toast');
+            el.textContent = msg;
+            el.className = type + ' show';
+            clearTimeout(el._timer);
+            el._timer = setTimeout(() => { el.className = ''; }, 2500);
+        }
+
+        function initDefaultState() {
+            if (!loadState()) {
+                state.courses = {};
+                state.settings = {};
+                state.dateSpeeds = {};
+                state.results = {};
+                state.doneDates = {};
+                state.copies = {};
+                state.moves = {};
+                state.habits = {};
+                state.links = [];
+                state.focusCourse = null;
+                state.batteryView = 'date';
+                state.dashboardDate = getDateStr(new Date());
+                state.darkMode = false;
+                saveState();
+            }
+            if (state.darkMode) {
+                document.body.classList.add('dark');
+            } else {
+                document.body.classList.remove('dark');
+            }
+            if (!state.dashboardDate) {
+                state.dashboardDate = getDateStr(new Date());
+                saveState();
+            }
+            const focus = getFocus();
+            if (focus) state.focusCourse = focus;
+            else {
+                const names = getCourseNames();
+                if (names.length) state.focusCourse = names[0];
+                saveState();
+            }
+            Object.keys(state.habits).forEach(n => {
+                if (state.habits[n].streak === undefined) {
+                    state.habits[n].streak = calculateStreak(n);
+                }
+            });
+            saveState();
+        }
+
+        // ── RENDER FUNCTIONS ──
+
+        function renderAll() {
+            renderDashboard();
+            renderUpload();
+            renderTimetable();
+            renderEdit();
+            renderHistory();
+            renderHabits();
+            renderLinks();
+            renderOverview();
+            renderNavBadge();
+        }
+
+        function renderNavBadge() {
+            const badge = document.getElementById('courseBadge');
+            const count = getCourseNames().length;
+            if (count > 0) {
+                badge.textContent = count;
+                badge.style.display = 'block';
+            } else {
+                badge.style.display = 'none';
+            }
+        }
+
+        function getBatteryClass(pct) {
+            if (pct >= 70) return 'high';
+            if (pct >= 40) return 'medium';
+            return 'low';
+        }
+
+        function formatDateShort(dateStr) {
+            const d = parseDate(dateStr);
+            const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+            return `${months[d.getMonth()]} ${d.getDate()}`;
+        }
+
+        function formatDay(dateStr) {
+            const d = parseDate(dateStr);
+            const days = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+            return days[d.getDay()];
+        }
+
+        function formatDateLabel(dateStr, overall) {
+            if (overall) return '📊 Overall Progress';
+            const d = parseDate(dateStr);
+            const days = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+            const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+            return `${days[d.getDay()]}, ${months[d.getMonth()]} ${d.getDate()}, ${d.getFullYear()}`;
+        }
+
+        // ── DASHBOARD ──
+
+        function renderDashboard() {
+            const select = document.getElementById('dashCourse');
+            const names = getCourseNames();
+            const focus = getFocus();
+            select.innerHTML = '';
+            names.forEach(n => {
+                const opt = document.createElement('option');
+                opt.value = n;
+                opt.textContent = n + (n === focus ? ' ⭐' : '');
+                select.appendChild(opt);
+            });
+            if (focus && names.includes(focus)) select.value = focus;
+            else if (names.length) select.value = names[0];
+
+            const isOverall = state.batteryView === 'overall';
+            document.getElementById('dashViewDate').className = 'btn btn-sm ' + (isOverall ? 'btn-outline' : 'btn-primary');
+            document.getElementById('dashViewOverall').className = 'btn btn-sm ' + (isOverall ? 'btn-primary' : 'btn-outline');
+
+            const course = select.value;
+            if (!course) {
+                document.getElementById('dashBatteries').innerHTML = '<div class="text-muted">No courses</div>';
+                document.getElementById('dashTotal').textContent = '0';
+                document.getElementById('dashDone').textContent = '0';
+                document.getElementById('dashPending').textContent = '0';
+                document.getElementById('dashDuration').textContent = '0h';
+                document.getElementById('dashCourseCount').textContent = '📚 0 courses';
+                renderSavedCourses();
+                return;
+            }
+
+            const dateStr = state.dashboardDate || getDateStr(new Date());
+            document.getElementById('dashDateLabel').textContent = formatDateLabel(dateStr, isOverall);
+
+            const container = document.getElementById('dashBatteries');
+            if (isOverall) {
+                const comp = getCourseCompletion(course);
+                container.innerHTML = `
+              <div class="battery-item">
+                <div class="battery large">
+                  <div class="cap"></div>
+                  <div class="fill ${getBatteryClass(comp.pct)}" style="height:${comp.pct}%;"></div>
+                  <div class="pct">${comp.pct}%</div>
+                </div>
+                <div class="battery-label">Overall</div>
+              </div>
+            `;
+            } else {
+                let html = '';
+                const dates = [];
+                const d = parseDate(dateStr);
+                for (let i = -2; i <= 2; i++) {
+                    const dd = addDays(d, i);
+                    dates.push(getDateStr(dd));
+                }
+                dates.forEach((ds, idx) => {
+                    const comp = getDateCompletion(course, ds);
+                    const isCenter = idx === 2;
+                    const cls = isCenter ? 'battery large' : 'battery';
+                    const label = formatDateShort(ds);
+                    const day = formatDay(ds);
+                    html += `
+                <div class="battery-item" data-date="${ds}">
+                  <div class="${cls}">
+                    <div class="cap"></div>
+                    <div class="fill ${getBatteryClass(comp.pct)}" style="height:${comp.pct}%;"></div>
+                    <div class="pct">${comp.pct}%</div>
+                  </div>
+                  <div class="battery-label">${label}<br/><span class="day">${day}</span></div>
+                </div>
+              `;
+                });
+                container.innerHTML = html;
+                container.querySelectorAll('.battery-item').forEach(el => {
+                    el.addEventListener('click', () => {
+                        const ds = el.dataset.date;
+                        if (ds) {
+                            state.dashboardDate = ds;
+                            saveState();
+                            renderDashboard();
+                        }
+                    });
+                });
+            }
+
+            const comp = isOverall ? getCourseCompletion(course) : getDateCompletion(course, dateStr);
+            document.getElementById('dashTotal').textContent = comp.total;
+            document.getElementById('dashDone').textContent = comp.done;
+            document.getElementById('dashPending').textContent = comp.total - comp.done;
+            const dur = getLectures(course).reduce((sum, l) => sum + l.duration, 0);
+            document.getElementById('dashDuration').textContent = formatDuration(dur);
+            document.getElementById('dashCourseCount').textContent = `📚 ${names.length} courses`;
+
+            renderSavedCourses();
+        }
+
+        function renderSavedCourses() {
+            const container = document.getElementById('savedCoursesList');
+            const names = getCourseNames();
+            const focus = getFocus();
+            if (!names.length) {
+                container.innerHTML = '<div class="text-muted">No courses saved yet.</div>';
+                return;
+            }
+            let html = '';
+            names.forEach(n => {
+                const comp = getCourseCompletion(n);
+                const pctClass = comp.pct >= 70 ? 'badge-success' : comp.pct >= 40 ? 'badge-warning' : 'badge-danger';
+                const focusClass = n === focus ? 'focus' : '';
+                html += `
+              <div class="saved-course-item ${focusClass}">
+                <span style="font-weight:600;flex:1;">${n} ${n === focus ? '⭐' : ''}</span>
+                <span class="badge badge-primary">${getLectures(n).length} lectures</span>
+                <span class="badge ${pctClass}">${comp.pct}%</span>
+                <button class="btn btn-sm btn-outline rename-btn" data-course="${n}">✏️</button>
+                <button class="btn btn-sm btn-danger delete-course-btn" data-course="${n}">🗑️</button>
+              </div>
+            `;
+            });
+            container.innerHTML = html;
+
+            container.querySelectorAll('.rename-btn').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    const oldName = btn.dataset.course;
+                    const newName = prompt('Rename course to:', oldName);
+                    if (newName && newName.trim() && newName.trim() !== oldName) {
+                        const trimmed = newName.trim();
+                        if (state.courses[trimmed]) {
+                            toast('Course already exists!', 'error');
+                            return;
+                        }
+                        state.courses[trimmed] = state.courses[oldName];
+                        delete state.courses[oldName];
+                        if (state.settings[oldName]) {
+                            state.settings[trimmed] = state.settings[oldName];
+                            delete state.settings[oldName];
+                        }
+                        if (state.dateSpeeds[oldName]) {
+                            state.dateSpeeds[trimmed] = state.dateSpeeds[oldName];
+                            delete state.dateSpeeds[oldName];
+                        }
+                        if (state.results[oldName]) {
+                            state.results[trimmed] = state.results[oldName];
+                            delete state.results[oldName];
+                        }
+                        if (state.doneDates[oldName]) {
+                            state.doneDates[trimmed] = state.doneDates[oldName];
+                            delete state.doneDates[oldName];
+                        }
+                        if (state.copies[oldName]) {
+                            state.copies[trimmed] = state.copies[oldName];
+                            delete state.copies[oldName];
+                        }
+                        if (state.moves[oldName]) {
+                            state.moves[trimmed] = state.moves[oldName];
+                            delete state.moves[oldName];
+                        }
+                        if (state.focusCourse === oldName) state.focusCourse = trimmed;
+                        saveState();
+                        renderAll();
+                        toast(`✅ Renamed to "${trimmed}"`);
+                    }
+                });
+            });
+
+            container.querySelectorAll('.delete-course-btn').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    const course = btn.dataset.course;
+                    if (!confirm(`Delete course "${course}" and all its data?`)) return;
+                    delete state.courses[course];
+                    delete state.settings[course];
+                    delete state.dateSpeeds[course];
+                    delete state.results[course];
+                    delete state.doneDates[course];
+                    delete state.copies[course];
+                    delete state.moves[course];
+                    if (state.focusCourse === course) state.focusCourse = null;
+                    const focus = getFocus();
+                    if (focus) state.focusCourse = focus;
+                    saveState();
+                    toast(`🗑️ Course "${course}" deleted`);
+                    renderAll();
+                });
+            });
+        }
+
+        // ── UPLOAD ──
+
+        function renderUpload() {
+            // Just a placeholder, upload is mostly static
+        }
+
+        // ── TIMETABLE ──
+
+        function renderTimetable() {
+            const select = document.getElementById('ttCourse');
+            const names = getCourseNames();
+            const focus = getFocus();
+            select.innerHTML = '';
+            names.forEach(n => {
+                const opt = document.createElement('option');
+                opt.value = n;
+                opt.textContent = n + (n === focus ? ' ⭐' : '');
+                select.appendChild(opt);
+            });
+            const allOpt = document.createElement('option');
+            allOpt.value = '__all__';
+            allOpt.textContent = '📚 Select All';
+            select.appendChild(allOpt);
+            if (ttCourse && names.includes(ttCourse)) select.value = ttCourse;
+            else if (focus) select.value = focus;
+            else if (names.length) select.value = names[0];
+            else select.value = '__all__';
+            ttCourse = select.value === '__all__' ? null : select.value;
+
+            const monthNames = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September',
+                'October', 'November', 'December'
+            ];
+            document.getElementById('ttMonthLabel').textContent =
+                `${monthNames[ttCurrentDate.getMonth()]} ${ttCurrentDate.getFullYear()}`;
+
+            renderCalendar();
+            if (!ttSelectedDate) {
+                ttSelectedDate = getDateStr(new Date());
+            }
+            renderDayDetail();
+        }
+
+        function renderCalendar() {
+            const grid = document.getElementById('ttCalendar');
+            const year = ttCurrentDate.getFullYear();
+            const month = ttCurrentDate.getMonth();
+            const firstDay = new Date(year, month, 1).getDay();
+            const daysInMonth = new Date(year, month + 1, 0).getDate();
+            const today = getDateStr(new Date());
+
+            let html = '';
+            const days = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+            days.forEach(d => { html += `<div class="day-header">${d}</div>`; });
+
+            const course = ttCourse;
+            const isAll = course === null;
+
+            for (let i = 0; i < firstDay; i++) {
+                html += `<div class="day-cell empty"></div>`;
+            }
+            for (let d = 1; d <= daysInMonth; d++) {
+                const dateObj = new Date(year, month, d);
+                const ds = getDateStr(dateObj);
+                const isSunday = dateObj.getDay() === 0;
+                const isToday = ds === today;
+                const isSelected = ds === ttSelectedDate;
+
+                let dotClass = '';
+                if (!isAll) {
+                    const comp = getDateCompletion(course, ds);
+                    if (comp.total === 0) dotClass = '';
+                    else if (comp.done === comp.total) dotClass = 'green';
+                    else if (comp.done > 0) dotClass = 'blue';
+                    else dotClass = 'red';
+                } else {
+                    const comp = getCombinedDateCompletion(ds);
+                    if (comp.total === 0) dotClass = '';
+                    else if (comp.done === comp.total) dotClass = 'green';
+                    else if (comp.done > 0) dotClass = 'blue';
+                    else dotClass = 'red';
+                }
+
+                let classes = 'day-cell';
+                if (isSunday) classes += ' sunday';
+                if (isToday) classes += ' today';
+                if (isSelected) classes += ' selected';
+
+                const speedIcon = (course && state.dateSpeeds[course] && state.dateSpeeds[course][ds]) ?
+                    '<span class="speed-icon">⚡</span>' : '';
+
+                html += `
+              <div class="${classes}" data-date="${ds}">
+                ${d}${speedIcon}
+                ${dotClass ? `<span class="dot ${dotClass}"></span>` : ''}
+              </div>
+            `;
+            }
+            grid.innerHTML = html;
+
+            grid.querySelectorAll('.day-cell:not(.empty)').forEach(el => {
+                el.addEventListener('click', () => {
+                    ttSelectedDate = el.dataset.date;
+                    renderDayDetail();
+                    renderCalendar();
+                });
+            });
+        }
+
+        function renderDayDetail() {
+            const container = document.getElementById('ttDayDetail');
+            const dateStr = ttSelectedDate;
+            if (!dateStr) { container.style.display = 'none'; return; }
+
+            const course = ttCourse;
+            const isAll = course === null;
+
+            const speedCtrl = document.getElementById('ttSpeedControl');
+            if (!isAll && course) {
+                speedCtrl.style.display = 'block';
+                const settings = state.settings[course] || { speed: 120 };
+                const defSpeed = settings.speed || 120;
+                document.getElementById('ttDefaultSpeed').textContent = defSpeed;
+                const custom = (state.dateSpeeds[course] || {})[dateStr] || '';
+                document.getElementById('ttCustomSpeed').value = custom;
+                document.getElementById('ttSpeedStatus').textContent = custom ? `⚡ Custom: ${custom} mins` :
+                    'Default speed';
+            } else {
+                speedCtrl.style.display = 'none';
+            }
+
+            const d = parseDate(dateStr);
+            const days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+            const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+            document.getElementById('ttDayTitle').textContent =
+                `${days[d.getDay()]}, ${months[d.getMonth()]} ${d.getDate()}, ${d.getFullYear()}`;
+
+            let lectures = [];
+            let totalDuration = 0;
+            let allocatedDur = 0;
+            let copiedDur = 0;
+            let movedDur = 0;
+
+            if (isAll) {
+                const names = getCourseNames();
+                names.forEach(c => {
+                    const lecs = getDateLectures(c, dateStr);
+                    lecs.forEach(l => {
+                        const dur = l.partDuration || l.duration || 0;
+                        lectures.push({ ...l, course: c, duration: dur });
+                        totalDuration += dur;
+                        if (l.isCopy) copiedDur += dur;
+                        else if (l.isMove) movedDur += dur;
+                        else allocatedDur += dur;
+                    });
+                });
+                // Sort by course then sr
+                lectures.sort((a, b) => {
+                    if (a.course !== b.course) return a.course.localeCompare(b.course);
+                    return a.sr - b.sr;
+                });
+            } else if (course) {
+                lectures = getDateLectures(course, dateStr);
+                lectures.forEach(l => {
+                    const dur = l.partDuration || l.duration || 0;
+                    totalDuration += dur;
+                    if (l.isCopy) copiedDur += dur;
+                    else if (l.isMove) movedDur += dur;
+                    else allocatedDur += dur;
+                });
+            }
+
+            document.getElementById('ttDurationSummary').textContent =
+                `Total: ${formatDuration(totalDuration)}  (Alloc: ${formatDuration(allocatedDur)}  Copy: ${formatDuration(copiedDur)}  Move: ${formatDuration(movedDur)})`;
+
+            const list = document.getElementById('ttLectureList');
+            if (!lectures.length) {
+                list.innerHTML = '<div class="text-muted">No lectures on this date.</div>';
+                container.style.display = 'block';
+                return;
+            }
+
+            let html = '';
+            lectures.forEach((l) => {
+                const key = l.key;
+                const courseName = l.course || course;
+                const done = isDone(courseName, key);
+                const doneDate = getDoneDate(courseName, key);
+                const isCopy = l.isCopy || (state.copies[courseName] && state.copies[courseName][key] &&
+                    state.copies[courseName][key].includes(dateStr));
+                const copyInfo = getCopyInfo(courseName, key, dateStr);
+                const moveInfo = getMoveInfo(courseName, key, dateStr);
+
+                // Determine row class
+                let rowClass = 'lecture-row';
+                let statusBadge = '';
+
+                if (isCopy) {
+                    rowClass += ' done-copy';
+                    statusBadge = '<span class="badge badge-copy">📋 Copy</span>';
+                } else if (done) {
+                    rowClass += ' done';
+                    statusBadge = '<span class="badge badge-success">✅ Done</span>';
+                } else {
+                    statusBadge = '<span class="badge badge-danger">⏳ Pending</span>';
+                }
+
+                // Check if allocated date != done date (yellow highlight)
+                const allocDate = l.allocatedDate || dateStr;
+                if (done && doneDate && allocDate !== doneDate) {
+                    rowClass += ' yellow';
+                }
+
+                const strikeClass = done ? 'strike' : '';
+                const copyStamp = copyInfo ?
+                    `<span class="copy-stamp">📋 ${copyInfo.type === 'from' ? `Copied to ${copyInfo.target}` : `Copied from ${copyInfo.source}`}</span>` :
+                    '';
+                const moveStamp = moveInfo ?
+                    `<span class="move-stamp">📦 ${moveInfo.type === 'from' ? `Moved to ${moveInfo.target}` : `Moved from ${moveInfo.source}`}</span>` :
+                    '';
+
+                // For copied lectures, show red color even when done
+                const nameClass = isCopy ? `lec-name ${strikeClass}` : `lec-name ${strikeClass}`;
+
+                html += `
+              <div class="${rowClass}" data-key="${key}" data-course="${courseName}">
+                <input type="checkbox" class="lec-check" ${done ? 'checked' : ''} />
+                <span class="${nameClass}">${l.sr}. ${l.name}</span>
+                <span class="lec-duration">${formatDuration(l.duration)}</span>
+                <span class="lec-dates">
+                  <span class="alloc">Alloc: ${allocDate}</span>
+                  ${doneDate ? `<span class="done">Done: ${doneDate}</span>` : ''}
+                </span>
+                <span class="lec-status">${statusBadge}</span>
+                ${l.isContinuing ? '<span class="continuing">continuing</span>' : ''}
+                ${copyStamp}
+                ${moveStamp}
+                <div class="lec-actions">
+                  <button class="btn btn-xs btn-outline copy-left" data-key="${key}" data-course="${courseName}">← Copy</button>
+                  <button class="btn btn-xs btn-outline copy-right" data-key="${key}" data-course="${courseName}">Copy →</button>
+                  <button class="btn btn-xs btn-outline move-left" data-key="${key}" data-course="${courseName}">← Move</button>
+                  <button class="btn btn-xs btn-outline move-right" data-key="${key}" data-course="${courseName}">Move →</button>
+                  ${copyStamp ? `<button class="btn btn-xs btn-outline clear-copy" data-key="${key}" data-course="${courseName}">🧹</button>` : ''}
+                  ${moveStamp ? `<button class="btn btn-xs btn-outline clear-move" data-key="${key}" data-course="${courseName}">🚫</button>` : ''}
+                  <input type="date" class="done-date-picker" value="${doneDate || ''}" style="width:120px;min-height:28px;font-size:11px;" />
+                </div>
+              </div>
+            `;
+            });
+            list.innerHTML = html;
+
+            // Event listeners
+            list.querySelectorAll('.lec-check').forEach((cb) => {
+                cb.addEventListener('change', () => {
+                    const row = cb.closest('.lecture-row');
+                    const key = row.dataset.key;
+                    const courseName = row.dataset.course;
+                    if (!courseName) return;
+                    const done = cb.checked;
+                    if (!state.results[courseName]) state.results[courseName] = {};
+                    state.results[courseName][key] = done;
+                    if (done) {
+                        if (!state.doneDates[courseName]) state.doneDates[courseName] = {};
+                        if (!state.doneDates[courseName][key]) {
+                            state.doneDates[courseName][key] = dateStr;
+                        }
+                    }
+                    saveState();
+                    renderDayDetail();
+                    renderCalendar();
+                    renderAll();
+                });
+            });
+
+            list.querySelectorAll('.done-date-picker').forEach((picker) => {
+                picker.addEventListener('change', () => {
+                    const row = picker.closest('.lecture-row');
+                    const key = row.dataset.key;
+                    const courseName = row.dataset.course;
+                    if (!courseName) return;
+                    const val = picker.value;
+                    if (val) {
+                        if (!state.doneDates[courseName]) state.doneDates[courseName] = {};
+                        state.doneDates[courseName][key] = val;
+                        if (!state.results[courseName]) state.results[courseName] = {};
+                        state.results[courseName][key] = true;
+                        saveState();
+                        renderDayDetail();
+                        renderCalendar();
+                        renderAll();
+                    }
+                });
+            });
+
+            list.querySelectorAll('.copy-left').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    const key = btn.dataset.key;
+                    const courseName = btn.dataset.course;
+                    if (!courseName) return;
+                    handleCopy(courseName, key, -1, dateStr);
+                });
+            });
+            list.querySelectorAll('.copy-right').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    const key = btn.dataset.key;
+                    const courseName = btn.dataset.course;
+                    if (!courseName) return;
+                    handleCopy(courseName, key, 1, dateStr);
+                });
+            });
+            list.querySelectorAll('.move-left').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    const key = btn.dataset.key;
+                    const courseName = btn.dataset.course;
+                    if (!courseName) return;
+                    handleMove(courseName, key, -1, dateStr);
+                });
+            });
+            list.querySelectorAll('.move-right').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    const key = btn.dataset.key;
+                    const courseName = btn.dataset.course;
+                    if (!courseName) return;
+                    handleMove(courseName, key, 1, dateStr);
+                });
+            });
+            list.querySelectorAll('.clear-copy').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    const key = btn.dataset.key;
+                    const courseName = btn.dataset.course;
+                    if (!courseName) return;
+                    if (state.copies[courseName] && state.copies[courseName][key]) {
+                        state.copies[courseName][key] = state.copies[courseName][key].filter(d => d !==
+                            dateStr);
+                        if (!state.copies[courseName][key].length) delete state.copies[courseName][key];
+                        saveState();
+                        renderDayDetail();
+                        renderCalendar();
+                        toast('🧹 Copy stamp cleared');
+                    }
+                });
+            });
+            list.querySelectorAll('.clear-move').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    const key = btn.dataset.key;
+                    const courseName = btn.dataset.course;
+                    if (!courseName) return;
+                    if (state.moves[courseName] && state.moves[courseName][key] === dateStr) {
+                        delete state.moves[courseName][key];
+                        saveState();
+                        renderDayDetail();
+                        renderCalendar();
+                        toast('🚫 Move stamp cleared');
+                    }
+                });
+            });
+
+            container.style.display = 'block';
+        }
+
+        function handleCopy(course, key, direction, currentDate) {
+            const dateObj = parseDate(currentDate);
+            const target = addDays(dateObj, direction);
+            const targetStr = getDateStr(target);
+            const lecs = getLectures(course);
+            const lec = lecs.find(l => getLectureKey(l) === key);
+            if (!lec) { toast('Lecture not found', 'error'); return; }
+
+            if (!state.copies[course]) state.copies[course] = {};
+            if (!state.copies[course][key]) state.copies[course][key] = [];
+            if (state.copies[course][key].includes(targetStr)) {
+                toast('⚠️ Copy already exists on ' + targetStr, 'warning');
+                return;
+            }
+            state.copies[course][key].push(targetStr);
+            if (!state.results[course]) state.results[course] = {};
+            state.results[course][key] = false;
+            saveState();
+            renderDayDetail();
+            renderCalendar();
+            toast(`📋 Copied "${lec.name}" to ${direction === 1 ? 'next' : 'previous'} day`);
+        }
+
+        function handleMove(course, key, direction, currentDate) {
+            const dateObj = parseDate(currentDate);
+            const target = addDays(dateObj, direction);
+            const targetStr = getDateStr(target);
+            const lecs = getLectures(course);
+            const lec = lecs.find(l => getLectureKey(l) === key);
+            if (!lec) { toast('Lecture not found', 'error'); return; }
+
+            if (state.moves[course] && state.moves[course][key]) {
+                toast('⚠️ Lecture already moved', 'warning');
+                return;
+            }
+            if (!state.moves[course]) state.moves[course] = {};
+            state.moves[course][key] = targetStr;
+            saveState();
+            renderDayDetail();
+            renderCalendar();
+            toast(`📦 Moved "${lec.name}" to ${direction === 1 ? 'next' : 'previous'} day`);
+        }
+
+        // ── EDIT ──
+
+        function renderEdit() {
+            const select = document.getElementById('editCourse');
+            const names = getCourseNames();
+            const focus = getFocus();
+            select.innerHTML = '';
+            names.forEach(n => {
+                const opt = document.createElement('option');
+                opt.value = n;
+                opt.textContent = n + (n === focus ? ' ⭐' : '');
+                select.appendChild(opt);
+            });
+            if (focus && names.includes(focus)) select.value = focus;
+            else if (names.length) select.value = names[0];
+
+            const course = select.value;
+            if (!course) {
+                document.getElementById('editTableBody').innerHTML =
+                    '<tr><td colspan="5" class="text-muted">No course selected</td></tr>';
+                document.getElementById('editSummary').textContent = '';
+                return;
+            }
+
+            const settings = state.settings[course] || { speed: 120, startDate: getDateStr(new Date()) };
+            document.getElementById('editSpeed').value = settings.speed || 120;
+            document.getElementById('editStartDate').value = settings.startDate || getDateStr(new Date());
+
+            const lecs = getLectures(course);
+            const res = state.results[course] || {};
+            let totalDur = 0;
+            let doneCount = 0;
+            let html = '';
+            lecs.forEach(l => {
+                const key = getLectureKey(l);
+                const done = res[key] || false;
+                totalDur += l.duration;
+                if (done) doneCount++;
+                html += `
+              <tr class="${done ? 'done' : ''}">
+                <td>${l.sr}</td>
+                <td><input type="text" value="${l.name}" class="edit-lecture-name" data-key="${key}" style="min-width:80px;" /></td>
+                <td><input type="number" value="${l.duration}" class="edit-lecture-dur" data-key="${key}" style="width:60px;" min="1" /></td>
+                <td><input type="checkbox" class="edit-lecture-done" data-key="${key}" ${done ? 'checked' : ''} /></td>
+                <td><button class="btn btn-xs btn-danger edit-delete-lecture" data-key="${key}">✕</button></td>
+              </tr>
+            `;
+            });
+            document.getElementById('editTableBody').innerHTML = html;
+            document.getElementById('editSummary').textContent =
+                `📊 ${formatDuration(totalDur)}  📚 ${lecs.length} lectures  ✅ ${doneCount} completed`;
+
+            document.querySelectorAll('.edit-lecture-name').forEach(inp => {
+                inp.addEventListener('change', () => {
+                    const key = inp.dataset.key;
+                    const course = document.getElementById('editCourse').value;
+                    if (!course) return;
+                    const lecs = getLectures(course);
+                    const l = lecs.find(lec => getLectureKey(lec) === key);
+                    if (l) {
+                        l.name = inp.value;
+                        saveState();
+                        renderEdit();
+                        renderAll();
+                    }
+                });
+            });
+            document.querySelectorAll('.edit-lecture-dur').forEach(inp => {
+                inp.addEventListener('change', () => {
+                    const key = inp.dataset.key;
+                    const course = document.getElementById('editCourse').value;
+                    if (!course) return;
+                    const lecs = getLectures(course);
+                    const l = lecs.find(lec => getLectureKey(lec) === key);
+                    if (l) {
+                        l.duration = parseInt(inp.value) || 0;
+                        saveState();
+                        renderEdit();
+                        renderAll();
+                    }
+                });
+            });
+            document.querySelectorAll('.edit-lecture-done').forEach(cb => {
+                cb.addEventListener('change', () => {
+                    const key = cb.dataset.key;
+                    const course = document.getElementById('editCourse').value;
+                    if (!course) return;
+                    if (!state.results[course]) state.results[course] = {};
+                    state.results[course][key] = cb.checked;
+                    if (cb.checked) {
+                        if (!state.doneDates[course]) state.doneDates[course] = {};
+                        if (!state.doneDates[course][key]) {
+                            state.doneDates[course][key] = getDateStr(new Date());
+                        }
+                    }
+                    saveState();
+                    renderEdit();
+                    renderAll();
+                });
+            });
+            document.querySelectorAll('.edit-delete-lecture').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    const key = btn.dataset.key;
+                    const course = document.getElementById('editCourse').value;
+                    if (!course) return;
+                    if (!confirm(`Delete this lecture?`)) return;
+                    const lecs = getLectures(course);
+                    const idx = lecs.findIndex(l => getLectureKey(l) === key);
+                    if (idx > -1) {
+                        lecs.splice(idx, 1);
+                        lecs.forEach((l, i) => l.sr = i + 1);
+                        if (state.results[course]) delete state.results[course][key];
+                        if (state.doneDates[course]) delete state.doneDates[course][key];
+                        if (state.copies[course]) delete state.copies[course][key];
+                        if (state.moves[course]) delete state.moves[course][key];
+                        saveState();
+                        renderEdit();
+                        renderAll();
+                        toast('🗑️ Lecture deleted');
+                    }
+                });
+            });
+        }
+
+        // ── HISTORY ──
+
+        function renderHistory() {
+            const select = document.getElementById('histCourse');
+            const names = getCourseNames();
+            const focus = getFocus();
+            select.innerHTML = '';
+            names.forEach(n => {
+                const opt = document.createElement('option');
+                opt.value = n;
+                opt.textContent = n + (n === focus ? ' ⭐' : '');
+                select.appendChild(opt);
+            });
+            const allOpt = document.createElement('option');
+            allOpt.value = '__all__';
+            allOpt.textContent = '📚 Select All';
+            select.appendChild(allOpt);
+            if (focus) select.value = focus;
+            else if (names.length) select.value = names[0];
+            else select.value = '__all__';
+
+            const course = select.value === '__all__' ? null : select.value;
+            const from = document.getElementById('histFrom').value || '2026-01-01';
+            const to = document.getElementById('histTo').value || getDateStr(new Date());
+
+            let total = 0,
+                done = 0;
+            const rows = [];
+
+            if (course) {
+                const lecs = getLectures(course);
+                const alloc = getAllocatedDates(course);
+                const res = state.results[course] || {};
+                const doneDates = state.doneDates[course] || {};
+                lecs.forEach(l => {
+                    const key = getLectureKey(l);
+                    const aDate = alloc[key];
+                    if (aDate && aDate >= from && aDate <= to) {
+                        total++;
+                        const d = res[key] || false;
+                        if (d) done++;
+                        const dd = doneDates[key] || null;
+                        rows.push({
+                            name: `${l.sr}. ${l.name}`,
+                            course: course,
+                            allocated: aDate,
+                            doneDate: dd,
+                            status: d,
+                            expected: l.duration,
+                            actual: d ? l.duration : null,
+                            diff: dd ? (dd === aDate ? 'On time' : dd < aDate ? 'Early' : 'Late') : '-'
+                        });
+                    }
+                });
+            } else {
+                names.forEach(c => {
+                    const lecs = getLectures(c);
+                    const alloc = getAllocatedDates(c);
+                    const res = state.results[c] || {};
+                    const doneDates = state.doneDates[c] || {};
+                    lecs.forEach(l => {
+                        const key = getLectureKey(l);
+                        const aDate = alloc[key];
+                        if (aDate && aDate >= from && aDate <= to) {
+                            total++;
+                            const d = res[key] || false;
+                            if (d) done++;
+                            const dd = doneDates[key] || null;
+                            rows.push({
+                                name: `${l.sr}. ${l.name}`,
+                                course: c,
+                                allocated: aDate,
+                                doneDate: dd,
+                                status: d,
+                                expected: l.duration,
+                                actual: d ? l.duration : null,
+                                diff: dd ? (dd === aDate ? 'On time' : dd < aDate ? 'Early' : 'Late') :
+                                    '-'
+                            });
+                        }
+                    });
+                });
+            }
+
+            document.getElementById('histTotal').textContent = total;
+            document.getElementById('histDone').textContent = done;
+            document.getElementById('histPending').textContent = total - done;
+            document.getElementById('histPct').textContent = total > 0 ? Math.round((done / total) * 100) + '%' : '0%';
+
+            const tbody = document.getElementById('histTableBody');
+            if (!rows.length) {
+                tbody.innerHTML = '<tr><td colspan="8" class="text-muted">No data in this range</td></tr>';
+            } else {
+                let html = '';
+                rows.forEach(r => {
+                    const statusClass = r.status ? 'badge-success' : 'badge-danger';
+                    const statusText = r.status ? '✅ Done' : '⏳ Pending';
+                    const diffClass = r.diff === 'On time' ? 'on-time' : r.diff === 'Early' ? 'early' : r.diff ===
+                        'Late' ? 'late' : '';
+                    html += `
+                <tr class="${diffClass}">
+                  <td>${r.name}</td>
+                  <td>${r.course}</td>
+                  <td><span class="alloc" style="color:#667eea;">${r.allocated}</span></td>
+                  <td>${r.doneDate ? `<span class="done" style="color:#51cf66;">${r.doneDate}</span>` : '-'}</td>
+                  <td><span class="badge ${statusClass}">${statusText}</span></td>
+                  <td>${formatDuration(r.expected)}</td>
+                  <td>${r.actual ? formatDuration(r.actual) : '-'}</td>
+                  <td>${r.diff}</td>
+                </tr>
+              `;
+                });
+                tbody.innerHTML = html;
+            }
+
+            const batts = document.getElementById('histBatteries');
+            const dFrom = parseDate(from);
+            const dTo = parseDate(to);
+            let bHtml = '';
+            let cur = new Date(dFrom);
+            while (cur <= dTo) {
+                const ds = getDateStr(cur);
+                const comp = course ? getDateCompletion(course, ds) : getCombinedDateCompletion(ds);
+                const cls = getBatteryClass(comp.pct);
+                bHtml += `
+              <span class="battery-mini">
+                <span class="bar"><span class="fill ${cls}" style="width:${comp.pct}%;"></span></span>
+                ${formatDateShort(ds)}: ${comp.pct}%
+              </span>
+            `;
+                cur = addDays(cur, 1);
+            }
+            batts.innerHTML = bHtml || '<span class="text-muted">No dates in range</span>';
+        }
+
+        // ── HABITS ──
+
+        function renderHabits() {
+            const container = document.getElementById('habitsList');
+            const names = Object.keys(state.habits);
+            if (!names.length) {
+                container.innerHTML = '<div class="text-muted">No habits yet. Add one above!</div>';
+                return;
+            }
+            const today = getDateStr(new Date());
+            let html = '';
+            names.forEach(n => {
+                const h = state.habits[n];
+                const done = h.completed && h.completed[today] || false;
+                const streak = calculateStreak(n);
+                if (h.streak !== streak) { h.streak = streak;
+                    saveState(); }
+                const patternMap = { daily: 'Daily', weekly: 'Weekly', monthly: 'Monthly' };
+                html += `
+              <div class="habit-row">
+                <input type="checkbox" class="habit-check" data-name="${n}" ${done ? 'checked' : ''} />
+                <span class="habit-name">${n}</span>
+                <span class="habit-meta">
+                  <span class="badge badge-primary">${patternMap[h.pattern] || h.pattern}</span>
+                  <span>${h.time || '09:00'}</span>
+                  <span class="habit-streak">🔥 ${streak} ${h.pattern === 'daily' ? 'day' : h.pattern === 'weekly' ? 'week' : 'month'} streak</span>
+                </span>
+                <span class="badge ${done ? 'badge-success' : 'badge-danger'}">${done ? '✅ Done' : '⏳ Pending'}</span>
+                <button class="btn btn-xs btn-danger habit-delete" data-name="${n}">✕</button>
+              </div>
+            `;
+            });
+            container.innerHTML = html;
+
+            container.querySelectorAll('.habit-check').forEach(cb => {
+                cb.addEventListener('change', () => {
+                    const name = cb.dataset.name;
+                    const today = getDateStr(new Date());
+                    if (!state.habits[name].completed) state.habits[name].completed = {};
+                    state.habits[name].completed[today] = cb.checked;
+                    state.habits[name].streak = calculateStreak(name);
+                    saveState();
+                    renderHabits();
+                    renderAll();
+                });
+            });
+            container.querySelectorAll('.habit-delete').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    const name = btn.dataset.name;
+                    if (confirm(`Delete habit "${name}"?`)) {
+                        delete state.habits[name];
+                        saveState();
+                        renderHabits();
+                        renderAll();
+                        toast('🗑️ Habit deleted');
+                    }
+                });
+            });
+        }
+
+        // ── LINKS ──
+
+        function renderLinks() {
+            const container = document.getElementById('linksList');
+            if (!state.links.length) {
+                container.innerHTML = '<div class="text-muted">No links yet. Add one above!</div>';
+                return;
+            }
+            let html = '';
+            state.links.forEach((link, idx) => {
+                html += `
+              <div class="link-row">
+                <span class="link-name">${link.name}</span>
+                <span class="link-url" data-url="${link.url}">${link.url}</span>
+                ${link.category ? `<span class="link-cat">${link.category}</span>` : ''}
+                <button class="btn btn-xs btn-outline link-open" data-url="${link.url}">🔗 Open</button>
+                <button class="btn btn-xs btn-danger link-delete" data-idx="${idx}">✕</button>
+              </div>
+            `;
+            });
+            container.innerHTML = html;
+
+            container.querySelectorAll('.link-open').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    const url = btn.dataset.url;
+                    if (url) window.open(url, '_blank');
+                });
+            });
+            container.querySelectorAll('.link-url').forEach(el => {
+                el.addEventListener('click', () => {
+                    const url = el.dataset.url;
+                    if (url) window.open(url, '_blank');
+                });
+            });
+            container.querySelectorAll('.link-delete').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    const idx = parseInt(btn.dataset.idx);
+                    if (confirm('Delete this link?')) {
+                        state.links.splice(idx, 1);
+                        saveState();
+                        renderLinks();
+                        toast('🗑️ Link deleted');
+                    }
+                });
+            });
+        }
+
+        // ── OVERVIEW ──
+
+        function renderOverview() {
+            const names = getCourseNames();
+            const focus = getFocus();
+
+            document.getElementById('ovCourses').textContent = names.length;
+            const overall = getCombinedOverall();
+            document.getElementById('ovOverall').textContent = overall.pct + '%';
+
+            const today = getDateStr(new Date());
+            const todayComp = getCombinedDateCompletion(today);
+            document.getElementById('ovTodayPct').textContent = todayComp.pct + '%';
+
+            const habitsToday = getHabitsToday();
+            document.getElementById('ovHabits').textContent = `${habitsToday.done}/${habitsToday.total}`;
+
+            const cContainer = document.getElementById('overviewCourses');
+            if (!names.length) {
+                cContainer.innerHTML = '<div class="text-muted">No courses</div>';
+            } else {
+                let html = '';
+                names.forEach(n => {
+                    const comp = getCourseCompletion(n);
+                    const pctClass = comp.pct >= 70 ? 'high' : comp.pct >= 40 ? 'medium' : 'low';
+                    html += `
+                <div class="row" style="margin-bottom:6px;">
+                  <span style="font-weight:600;font-size:13px;min-width:100px;">${n} ${n === focus ? '⭐' : ''}</span>
+                  <div class="progress-bar"><div class="fill ${pctClass}" style="width:${comp.pct}%;"></div></div>
+                  <span style="font-size:12px;font-weight:600;min-width:50px;">${comp.pct}% (${comp.done}/${comp.total})</span>
+                </div>
+              `;
+                });
+                cContainer.innerHTML = html;
+            }
+
+            const bContainer = document.getElementById('overviewBatteries');
+            let bHtml = '<div class="text-muted" style="font-size:11px;font-weight:600;">Last 7 Days</div><div class="flex flex-wrap gap-8 mt-8">';
+            const d = new Date();
+            for (let i = 6; i >= 0; i--) {
+                const dd = addDays(d, -i);
+                const ds = getDateStr(dd);
+                const comp = getCombinedDateCompletion(ds);
+                const cls = getBatteryClass(comp.pct);
+                bHtml += `
+              <span class="battery-mini">
+                <span class="bar"><span class="fill ${cls}" style="width:${comp.pct}%;"></span></span>
+                ${formatDateShort(ds)} ${comp.pct}%
+              </span>
+            `;
+            }
+            bHtml += '</div>';
+            bContainer.innerHTML = bHtml;
+
+            const hContainer = document.getElementById('overviewHabits');
+            const hNames = Object.keys(state.habits);
+            if (hNames.length) {
+                let hHtml = '<div class="text-muted" style="font-size:11px;font-weight:600;">Habits Today</div><div class="flex flex-wrap gap-8 mt-8">';
+                hNames.forEach(n => {
+                    const done = state.habits[n].completed && state.habits[n].completed[today] || false;
+                    hHtml +=
+                        `<span class="badge ${done ? 'badge-success' : 'badge-danger'}">${n} ${done ? '✅' : '⏳'}</span>`;
+                });
+                hHtml += '</div>';
+                hContainer.innerHTML = hHtml;
+            } else {
+                hContainer.innerHTML = '<div class="text-muted">No habits</div>';
+            }
+
+            const chartContainer = document.getElementById('overviewChart');
+            const weekDays = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+            let chartHtml = '<div class="text-muted" style="font-size:11px;font-weight:600;">Weekly Pattern</div><div class="chart-bar">';
+            const todayDate = new Date();
+            for (let i = 6; i >= 0; i--) {
+                const dd = addDays(todayDate, -i);
+                const ds = getDateStr(dd);
+                const comp = getCombinedDateCompletion(ds);
+                const pct = comp.pct;
+                const cls = getBatteryClass(pct);
+                const height = Math.max(4, (pct / 100) * 80);
+                chartHtml += `
+              <div class="bar-item">
+                <div class="bar ${cls}" style="height:${height}px;"></div>
+                <span class="bar-label">${weekDays[dd.getDay()]}</span>
+                <span class="bar-label" style="font-size:8px;">${pct}%</span>
+              </div>
+            `;
+            }
+            chartHtml += '</div>';
+            chartContainer.innerHTML = chartHtml;
+        }
+
+        // ── EVENT SETUP ──
+
+        function setupTtEvents() {
+            document.getElementById('ttPrevMonth').addEventListener('click', () => {
+                ttCurrentDate.setMonth(ttCurrentDate.getMonth() - 1);
+                renderTimetable();
+            });
+            document.getElementById('ttNextMonth').addEventListener('click', () => {
+                ttCurrentDate.setMonth(ttCurrentDate.getMonth() + 1);
+                renderTimetable();
+            });
+            document.getElementById('ttToday').addEventListener('click', () => {
+                ttCurrentDate = new Date();
+                ttSelectedDate = getDateStr(ttCurrentDate);
+                renderTimetable();
+            });
+
+            document.getElementById('ttCourse').addEventListener('change', () => {
+                const val = document.getElementById('ttCourse').value;
+                ttCourse = val === '__all__' ? null : val;
+                renderTimetable();
+            });
+
+            document.getElementById('ttCustomSpeed').addEventListener('change', () => {
+                const course = ttCourse;
+                if (!course) return;
+                const val = parseInt(document.getElementById('ttCustomSpeed').value);
+                const dateStr = ttSelectedDate;
+                if (!dateStr) return;
+                if (val > 0) {
+                    if (!state.dateSpeeds[course]) state.dateSpeeds[course] = {};
+                    state.dateSpeeds[course][dateStr] = val;
+                } else {
+                    if (state.dateSpeeds[course]) delete state.dateSpeeds[course][dateStr];
+                }
+                saveState();
+                renderDayDetail();
+                renderCalendar();
+                toast('⚡ Speed updated');
+            });
+
+            document.getElementById('ttResetSpeed').addEventListener('click', () => {
+                const course = ttCourse;
+                if (!course) return;
+                const dateStr = ttSelectedDate;
+                if (!dateStr) return;
+                if (state.dateSpeeds[course]) delete state.dateSpeeds[course][dateStr];
+                saveState();
+                renderDayDetail();
+                renderCalendar();
+                toast('↺ Speed reset to default');
+            });
+
+            document.getElementById('ttTickAll').addEventListener('click', () => {
+                const course = ttCourse;
+                const dateStr = ttSelectedDate;
+                if (!dateStr) return;
+                const lecs = course ? getDateLectures(course, dateStr) : getAllDateLectures(dateStr);
+                lecs.forEach(l => {
+                    const c = l.course || course;
+                    if (!c) return;
+                    const key = l.key;
+                    if (!state.results[c]) state.results[c] = {};
+                    state.results[c][key] = true;
+                    if (!state.doneDates[c]) state.doneDates[c] = {};
+                    if (!state.doneDates[c][key]) state.doneDates[c][key] = dateStr;
+                });
+                saveState();
+                renderDayDetail();
+                renderCalendar();
+                renderAll();
+                toast('✅ All lectures ticked');
+            });
+
+            document.getElementById('ttUntickAll').addEventListener('click', () => {
+                const course = ttCourse;
+                const dateStr = ttSelectedDate;
+                if (!dateStr) return;
+                const lecs = course ? getDateLectures(course, dateStr) : getAllDateLectures(dateStr);
+                lecs.forEach(l => {
+                    const c = l.course || course;
+                    if (!c) return;
+                    const key = l.key;
+                    if (state.results[c]) state.results[c][key] = false;
+                });
+                saveState();
+                renderDayDetail();
+                renderCalendar();
+                renderAll();
+                toast('⭕ All lectures unticked');
+            });
+
+            document.getElementById('ttSetDoneAll').addEventListener('click', () => {
+                const course = ttCourse;
+                const dateStr = ttSelectedDate;
+                if (!dateStr) return;
+                const newDate = prompt('Enter done date (YYYY-MM-DD):', dateStr);
+                if (!newDate) return;
+                if (!/^\d{4}-\d{2}-\d{2}$/.test(newDate)) {
+                    toast('Invalid date format', 'error');
+                    return;
+                }
+                const lecs = course ? getDateLectures(course, dateStr) : getAllDateLectures(dateStr);
+                lecs.forEach(l => {
+                    const c = l.course || course;
+                    if (!c) return;
+                    const key = l.key;
+                    if (!state.results[c]) state.results[c] = {};
+                    state.results[c][key] = true;
+                    if (!state.doneDates[c]) state.doneDates[c] = {};
+                    state.doneDates[c][key] = newDate;
+                });
+                saveState();
+                renderDayDetail();
+                renderCalendar();
+                renderAll();
+                toast(`📅 Done date set to ${newDate} for all`);
+            });
+        }
+
+        function getAllDateLectures(dateStr) {
+            const names = getCourseNames();
+            const result = [];
+            names.forEach(c => {
+                const lecs = getDateLectures(c, dateStr);
+                lecs.forEach(l => result.push({ ...l, course: c }));
+            });
+            return result;
+        }
+
+        function setupGeneralEvents() {
+            document.querySelectorAll('.nav-bottom .tab').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    document.querySelectorAll('.nav-bottom .tab').forEach(b => b.classList.remove('active'));
+                    btn.classList.add('active');
+                    const tab = btn.dataset.tab;
+                    activeTab = tab;
+                    document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
+                    document.getElementById('tab-' + tab).classList.add('active');
+                    renderAll();
+                });
+            });
+
+            document.getElementById('dashCourse').addEventListener('change', () => {
+                const val = document.getElementById('dashCourse').value;
+                if (val) {
+                    state.focusCourse = val;
+                    saveState();
+                    renderAll();
+                }
+            });
+            document.getElementById('dashViewDate').addEventListener('click', () => {
+                state.batteryView = 'date';
+                saveState();
+                renderDashboard();
+            });
+            document.getElementById('dashViewOverall').addEventListener('click', () => {
+                state.batteryView = 'overall';
+                saveState();
+                renderDashboard();
+            });
+            document.getElementById('dashPrev').addEventListener('click', () => {
+                const d = parseDate(state.dashboardDate || getDateStr(new Date()));
+                state.dashboardDate = getDateStr(addDays(d, -1));
+                saveState();
+                renderDashboard();
+            });
+            document.getElementById('dashNext').addEventListener('click', () => {
+                const d = parseDate(state.dashboardDate || getDateStr(new Date()));
+                state.dashboardDate = getDateStr(addDays(d, 1));
+                saveState();
+                renderDashboard();
+            });
+            document.getElementById('dashToday').addEventListener('click', () => {
+                state.dashboardDate = getDateStr(new Date());
+                saveState();
+                renderDashboard();
+            });
+
+            document.getElementById('uploadBtn').addEventListener('click', () => {
+                const name = document.getElementById('uploadCourseName').value.trim();
+                const data = document.getElementById('uploadLectures').value.trim();
+                if (!name) { toast('Please enter a course name', 'error'); return; }
+                if (state.courses[name]) { toast('Course already exists', 'error'); return; }
+                if (!data) { toast('Please enter lecture data', 'error'); return; }
+                const lines = data.split('\n').filter(l => l.trim());
+                const lectures = [];
+                let valid = true;
+                lines.forEach((line, idx) => {
+                    const parts = line.trim().split(/\s+/);
+                    if (parts.length !== 3) {
+                        toast(`Line ${idx+1}: Invalid format. Need: sr name duration`, 'error');
+                        valid = false;
+                        return;
+                    }
+                    const sr = parseInt(parts[0]);
+                    const duration = parseInt(parts[2]);
+                    if (isNaN(sr) || isNaN(duration) || duration <= 0) {
+                        toast(`Line ${idx+1}: Invalid number`, 'error');
+                        valid = false;
+                        return;
+                    }
+                    lectures.push({ sr, name: parts[1], duration });
+                });
+                if (!valid) return;
+                lectures.forEach((l, i) => l.sr = i + 1);
+                state.courses[name] = lectures;
+                state.settings[name] = { speed: 120, startDate: getDateStr(new Date()) };
+                state.results[name] = {};
+                state.doneDates[name] = {};
+                state.copies[name] = {};
+                state.moves[name] = {};
+                state.focusCourse = name;
+                saveState();
+                document.getElementById('uploadCourseName').value = '';
+                document.getElementById('uploadLectures').value = '';
+                toast(`✅ Course "${name}" uploaded with ${lectures.length} lectures`);
+                renderAll();
+            });
+
+            document.getElementById('dummyBtn').addEventListener('click', () => {
+                if (state.courses['Mathematics 101']) {
+                    toast('Dummy data already exists', 'warning');
+                    return;
+                }
+                const math = [
+                    { sr: 1, name: 'Introduction_to_Algebra', duration: 45 },
+                    { sr: 2, name: 'Linear_Equations', duration: 60 },
+                    { sr: 3, name: 'Quadratic_Equations', duration: 50 },
+                    { sr: 4, name: 'Polynomials', duration: 55 },
+                    { sr: 5, name: 'Functions', duration: 40 },
+                ];
+                const physics = [
+                    { sr: 1, name: 'Newton_Laws', duration: 50 },
+                    { sr: 2, name: 'Kinematics', duration: 60 },
+                    { sr: 3, name: 'Energy_Work', duration: 45 },
+                    { sr: 4, name: 'Momentum', duration: 55 },
+                ];
+                state.courses['Mathematics 101'] = math;
+                state.settings['Mathematics 101'] = { speed: 120, startDate: getDateStr(new Date()) };
+                state.results['Mathematics 101'] = {};
+                state.doneDates['Mathematics 101'] = {};
+                state.copies['Mathematics 101'] = {};
+                state.moves['Mathematics 101'] = {};
+
+                state.courses['Physics 101'] = physics;
+                state.settings['Physics 101'] = { speed: 120, startDate: getDateStr(new Date()) };
+                state.results['Physics 101'] = {};
+                state.doneDates['Physics 101'] = {};
+                state.copies['Physics 101'] = {};
+                state.moves['Physics 101'] = {};
+
+                state.focusCourse = 'Mathematics 101';
+                saveState();
+                toast('🎲 Dummy data added');
+                renderAll();
+            });
+
+            document.getElementById('removeDummyBtn').addEventListener('click', () => {
+                if (!state.courses['Mathematics 101'] && !state.courses['Physics 101']) {
+                    toast('No dummy data to remove', 'warning');
+                    return;
+                }
+                if (!confirm('Remove dummy courses (Mathematics 101, Physics 101)?')) return;
+                ['Mathematics 101', 'Physics 101'].forEach(name => {
+                    delete state.courses[name];
+                    delete state.settings[name];
+                    delete state.dateSpeeds[name];
+                    delete state.results[name];
+                    delete state.doneDates[name];
+                    delete state.copies[name];
+                    delete state.moves[name];
+                    if (state.focusCourse === name) state.focusCourse = null;
+                });
+                const focus = getFocus();
+                if (focus) state.focusCourse = focus;
+                saveState();
+                toast('🗑️ Dummy data removed');
+                renderAll();
+            });
+
+            document.getElementById('clearAllBtn').addEventListener('click', () => {
+                if (!confirm('⚠️ This will delete ALL data. Are you sure?')) return;
+                if (!confirm('⚠️ Final confirmation: Delete everything?')) return;
+                state.courses = {};
+                state.settings = {};
+                state.dateSpeeds = {};
+                state.results = {};
+                state.doneDates = {};
+                state.copies = {};
+                state.moves = {};
+                state.habits = {};
+                state.links = [];
+                state.focusCourse = null;
+                state.dashboardDate = getDateStr(new Date());
+                saveState();
+                toast('⚠️ All data cleared');
+                renderAll();
+            });
+
+            document.getElementById('editCourse').addEventListener('change', renderEdit);
+            document.getElementById('editSpeed').addEventListener('change', () => {
+                const course = document.getElementById('editCourse').value;
+                if (!course) return;
+                const val = parseInt(document.getElementById('editSpeed').value);
+                if (val > 0) {
+                    if (!state.settings[course]) state.settings[course] = {};
+                    state.settings[course].speed = val;
+                    saveState();
+                    renderEdit();
+                    renderAll();
+                }
+            });
+            document.getElementById('editResetSpeed').addEventListener('click', () => {
+                const course = document.getElementById('editCourse').value;
+                if (!course) return;
+                if (!state.settings[course]) state.settings[course] = {};
+                state.settings[course].speed = 120;
+                saveState();
+                renderEdit();
+                renderAll();
+                toast('↺ Speed reset to 120');
+            });
+            document.getElementById('editStartDate').addEventListener('change', () => {
+                const course = document.getElementById('editCourse').value;
+                if (!course) return;
+                const val = document.getElementById('editStartDate').value;
+                if (val) {
+                    if (!state.settings[course]) state.settings[course] = {};
+                    state.settings[course].startDate = val;
+                    saveState();
+                    renderEdit();
+                    renderAll();
+                }
+            });
+
+            document.getElementById('editDeleteCourse').addEventListener('click', () => {
+                const course = document.getElementById('editCourse').value;
+                if (!course) return;
+                if (!confirm(`Delete course "${course}" and all its data?`)) return;
+                delete state.courses[course];
+                delete state.settings[course];
+                delete state.dateSpeeds[course];
+                delete state.results[course];
+                delete state.doneDates[course];
+                delete state.copies[course];
+                delete state.moves[course];
+                if (state.focusCourse === course) state.focusCourse = null;
+                const focus = getFocus();
+                if (focus) state.focusCourse = focus;
+                saveState();
+                toast(`🗑️ Course "${course}" deleted`);
+                renderAll();
+            });
+
+            document.getElementById('editResetCourse').addEventListener('click', () => {
+                const course = document.getElementById('editCourse').value;
+                if (!course) return;
+                if (!confirm(`Reset ALL progress for "${course}"? This will clear ticks, copies, moves, and done dates.`))
+                    return;
+                state.results[course] = {};
+                state.doneDates[course] = {};
+                state.copies[course] = {};
+                state.moves[course] = {};
+                if (state.dateSpeeds[course]) delete state.dateSpeeds[course];
+                saveState();
+                toast(`🔄 Course "${course}" reset`);
+                renderAll();
+            });
+
+            document.getElementById('editExportCourse').addEventListener('click', () => {
+                const course = document.getElementById('editCourse').value;
+                if (!course) return;
+                const data = {
+                    course: course,
+                    lectures: state.courses[course] || [],
+                    settings: state.settings[course] || {},
+                    dateSpeeds: state.dateSpeeds[course] || {},
+                    results: state.results[course] || {},
+                    doneDates: state.doneDates[course] || {},
+                    copies: state.copies[course] || {},
+                    moves: state.moves[course] || {},
+                };
+                const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = `${course}_export_${getDateStr(new Date())}.json`;
+                a.click();
+                URL.revokeObjectURL(url);
+                toast(`📤 Course "${course}" exported`);
+            });
+
+            document.getElementById('histRefresh').addEventListener('click', renderHistory);
+            document.getElementById('histCourse').addEventListener('change', renderHistory);
+            document.getElementById('histFrom').addEventListener('change', renderHistory);
+            document.getElementById('histTo').addEventListener('change', renderHistory);
+
+            document.getElementById('habitAdd').addEventListener('click', () => {
+                const name = document.getElementById('habitName').value.trim();
+                const time = document.getElementById('habitTime').value || '09:00';
+                const pattern = document.getElementById('habitPattern').value;
+                if (!name) { toast('Enter a habit name', 'error'); return; }
+                if (state.habits[name]) { toast('Habit already exists', 'error'); return; }
+                state.habits[name] = { time, pattern, completed: {}, streak: 0 };
+                saveState();
+                document.getElementById('habitName').value = '';
+                renderHabits();
+                renderAll();
+                toast(`✅ Habit "${name}" added`);
+            });
+
+            document.getElementById('linkAdd').addEventListener('click', () => {
+                const name = document.getElementById('linkName').value.trim();
+                let url = document.getElementById('linkUrl').value.trim();
+                const category = document.getElementById('linkCategory').value.trim();
+                if (!name) { toast('Enter a link name', 'error'); return; }
+                if (!url) { toast('Enter a URL', 'error'); return; }
+                if (!url.startsWith('http://') && !url.startsWith('https://')) {
+                    url = 'https://' + url;
+                }
+                state.links.push({ name, url, category });
+                saveState();
+                document.getElementById('linkName').value = '';
+                document.getElementById('linkUrl').value = '';
+                document.getElementById('linkCategory').value = '';
+                renderLinks();
+                toast(`🔗 Link "${name}" added`);
+            });
+
+            document.getElementById('overviewRefresh').addEventListener('click', renderOverview);
+
+            document.getElementById('exportBtn').addEventListener('click', () => {
+                const blob = new Blob([JSON.stringify(state, null, 2)], { type: 'application/json' });
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = `lecture_planner_backup_${getDateStr(new Date())}.json`;
+                a.click();
+                URL.revokeObjectURL(url);
+                toast('📤 Data exported');
+            });
+
+            document.getElementById('importBtn').addEventListener('click', () => {
+                document.getElementById('fileInput').click();
+            });
+            document.getElementById('fileInput').addEventListener('change', (e) => {
+                const file = e.target.files[0];
+                if (!file) return;
+                const reader = new FileReader();
+                reader.onload = (ev) => {
+                    try {
+                        const data = JSON.parse(ev.target.result);
+                        if (data.courses && typeof data.courses === 'object') {
+                            state = data;
+                            if (!state.dateSpeeds) state.dateSpeeds = {};
+                            if (!state.copies) state.copies = {};
+                            if (!state.moves) state.moves = {};
+                            if (!state.habits) state.habits = {};
+                            if (!state.links) state.links = [];
+                            if (!state.dashboardDate) state.dashboardDate = getDateStr(new Date());
+                            saveState();
+                            renderAll();
+                            toast('📥 Data imported successfully');
+                        } else {
+                            toast('Invalid data format', 'error');
+                        }
+                    } catch (err) {
+                        toast('Error importing file', 'error');
+                    }
+                };
+                reader.readAsText(file);
+                e.target.value = '';
+            });
+
+            document.getElementById('darkToggle').addEventListener('click', () => {
+                state.darkMode = !state.darkMode;
+                document.body.classList.toggle('dark', state.darkMode);
+                saveState();
+                toast(state.darkMode ? '🌙 Dark mode on' : '☀️ Light mode on');
+            });
+
+            document.addEventListener('keydown', (e) => {
+                if (e.ctrlKey && e.key === 's') {
+                    e.preventDefault();
+                    document.getElementById('exportBtn').click();
+                }
+                if (e.ctrlKey && e.key === 'h') {
+                    e.preventDefault();
+                    document.querySelector('.tab[data-tab="habits"]').click();
+                }
+                if (e.ctrlKey && e.key === 'o') {
+                    e.preventDefault();
+                    document.querySelector('.tab[data-tab="overview"]').click();
+                }
+            });
+        }
+
+        function setupAutoExport() {
+            const now = new Date();
+            const nextNoon = new Date(now);
+            nextNoon.setHours(12, 0, 0, 0);
+            if (now >= nextNoon) nextNoon.setDate(nextNoon.getDate() + 1);
+            const delay = nextNoon - now;
+            setTimeout(() => {
+                const blob = new Blob([JSON.stringify(state, null, 2)], { type: 'application/json' });
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = `lecture_planner_backup_${getDateStr(new Date())}.json`;
+                a.click();
+                URL.revokeObjectURL(url);
+                toast('📤 Auto-export completed');
+                setupAutoExport();
+            }, delay);
+        }
+
+        function init() {
+            initDefaultState();
+
+            const d = new Date();
+            const from = new Date(d);
+            from.setDate(from.getDate() - 30);
+            document.getElementById('histFrom').value = getDateStr(from);
+            document.getElementById('histTo').value = getDateStr(d);
+
+            ttCurrentDate = new Date();
+            ttSelectedDate = getDateStr(ttCurrentDate);
+
+            setupGeneralEvents();
+            setupTtEvents();
+            renderAll();
+            setupAutoExport();
+
+            setInterval(() => { saveState(); }, 30000);
+
+            document.addEventListener('visibilitychange', () => {
+                if (document.hidden) saveState();
+            });
+
+            toast('📚 Lecture Planner Pro loaded', 'info');
+        }
+
+        document.addEventListener('DOMContentLoaded', init);
+    </script>
+</body>
 </html>            border-top-color: #4a5568;
         }
         body.dark .nav-bottom .tab-label {
