@@ -461,14 +461,6 @@
             appearance: auto;
             min-height: 36px;
         }
-        .input-group {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-        .input-group input {
-            flex: 1;
-        }
         .badge {
             display: inline-block;
             padding: 2px 8px;
@@ -1109,7 +1101,6 @@
         body.dark .table-wrap .odd-date {
             background: rgba(102, 126, 234, 0.15);
         }
-        /* Focus Mode */
         .focus-mode-overlay {
             position: fixed;
             top: 0;
@@ -1121,8 +1112,8 @@
             display: none;
             flex-direction: column;
             align-items: center;
-            justify-content: center;
-            padding: 20px;
+            justify-content: flex-start;
+            padding: 16px 20px;
             overflow-y: auto;
         }
         .focus-mode-overlay.active {
@@ -1132,20 +1123,36 @@
             color: #e2e8f0;
             font-size: 18px;
             font-weight: 600;
-            margin-bottom: 10px;
+            margin-bottom: 4px;
             text-align: center;
+            width: 100%;
+        }
+        .focus-mode-overlay .focus-slogan-input {
+            width: 100%;
+            max-width: 500px;
+            background: #1a202c;
+            color: #e2e8f0;
+            border: 1px solid #4a5568;
+            border-radius: 8px;
+            padding: 8px 14px;
+            font-size: 14px;
+            text-align: center;
+            margin-bottom: 8px;
+        }
+        .focus-mode-overlay .focus-slogan-input::placeholder {
+            color: #718096;
         }
         .focus-mode-overlay .focus-date {
             color: #718096;
             font-size: 14px;
-            margin-bottom: 15px;
+            margin-bottom: 10px;
             text-align: center;
         }
         .focus-mode-overlay .focus-battery-container {
             display: flex;
             flex-direction: column;
             align-items: center;
-            margin-bottom: 15px;
+            margin-bottom: 10px;
         }
         .focus-mode-overlay .focus-battery {
             position: relative;
@@ -1224,7 +1231,7 @@
         .focus-mode-overlay .focus-progress {
             color: #e2e8f0;
             font-size: 14px;
-            margin: 8px 0;
+            margin: 4px 0;
             text-align: center;
         }
         .focus-mode-overlay .focus-progress .pending {
@@ -1234,9 +1241,9 @@
         .focus-mode-overlay .focus-lectures {
             width: 100%;
             max-width: 600px;
-            max-height: 50vh;
+            max-height: 40vh;
             overflow-y: auto;
-            padding: 8px;
+            padding: 6px;
         }
         .focus-mode-overlay .focus-lectures .lecture-row {
             background: #1a202c;
@@ -1256,7 +1263,7 @@
         .focus-mode-overlay .focus-course-bar {
             width: 100%;
             max-width: 600px;
-            margin-top: 10px;
+            margin-top: 6px;
             padding: 8px 12px;
             background: #1a202c;
             border-radius: 8px;
@@ -1265,8 +1272,34 @@
         .focus-mode-overlay .focus-course-bar .row {
             font-size: 12px;
         }
+        .focus-mode-overlay .focus-finish-date {
+            color: #51cf66;
+            font-size: 13px;
+            font-weight: 600;
+            text-align: center;
+            margin-top: 6px;
+            padding: 6px 12px;
+            background: rgba(81, 207, 102, 0.1);
+            border-radius: 8px;
+            width: 100%;
+            max-width: 600px;
+        }
+        .focus-mode-overlay .focus-actions {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-top: 10px;
+            justify-content: center;
+            width: 100%;
+            max-width: 600px;
+        }
+        .focus-mode-overlay .focus-actions .btn {
+            min-height: 32px;
+            font-size: 11px;
+            padding: 4px 12px;
+        }
         .focus-mode-overlay .focus-exit {
-            margin-top: 15px;
+            margin-top: 8px;
             padding: 10px 30px;
             background: #667eea;
             color: #fff;
@@ -1280,7 +1313,6 @@
         .focus-mode-overlay .focus-exit:hover {
             background: #5a6fd6;
         }
-        /* Celebration particles */
         .celebration-container {
             position: fixed;
             top: 0;
@@ -1357,6 +1389,11 @@
             .focus-mode-overlay .focus-battery .pct {
                 font-size: 18px;
             }
+            .focus-mode-overlay .focus-actions .btn {
+                font-size: 10px;
+                padding: 3px 8px;
+                min-height: 28px;
+            }
         }
     </style>
 </head>
@@ -1390,6 +1427,7 @@
     <!-- Focus Mode Overlay -->
     <div class="focus-mode-overlay" id="focusOverlay">
         <div class="focus-header" id="focusDayTitle">Wednesday, January 15, 2026</div>
+        <input class="focus-slogan-input" id="focusSlogan" placeholder="✍️ Write your daily slogan here..." />
         <div class="focus-date" id="focusCourseName">Mathematics 101</div>
         <div class="focus-battery-container">
             <div class="focus-battery" id="focusBattery">
@@ -1408,10 +1446,15 @@
                 <div class="progress-bar"><div class="fill high" id="focusCourseBarFill" style="width:0%;"></div></div>
             </div>
         </div>
+        <div class="focus-finish-date" id="focusFinishDate">🎯 Project Completion: Calculating...</div>
+        <div class="focus-actions">
+            <button class="btn btn-sm btn-primary" id="focusExportBtn">📤 Export</button>
+            <button class="btn btn-sm btn-success" id="focusImportBtn">📥 Import</button>
+            <button class="btn btn-sm btn-warning" id="focusSyncBtn">☁️ Sync</button>
+        </div>
         <button class="focus-exit" id="focusExitBtn">✕ Exit Focus Mode</button>
     </div>
 
-    <!-- Celebration Container -->
     <div class="celebration-container" id="celebrationContainer"></div>
 
     <div class="container">
@@ -1667,6 +1710,24 @@
                 <div id="overviewHoursGraph" class="mt-8"></div>
                 <div id="overviewCourseHours" class="mt-8"></div>
                 <div id="overviewChart" class="mt-8"></div>
+                <!-- Project Completion Section -->
+                <div class="mt-12" style="background:#f8fafc;border-radius:12px;padding:16px;border:2px solid #667eea;">
+                    <div style="font-size:14px;font-weight:700;color:#667eea;margin-bottom:8px;">🎯 Project Completion Forecast</div>
+                    <div id="projectCompletionInfo" style="font-size:13px;line-height:1.8;">
+                        <div>📅 <strong>Start Date:</strong> <span id="projStartDate">-</span></div>
+                        <div>📅 <strong>Completion Date:</strong> <span id="projEndDate">-</span></div>
+                        <div>⏱️ <strong>Total Duration:</strong> <span id="projTotalHours">-</span></div>
+                        <div>📊 <strong>Days Required:</strong> <span id="projDaysRequired">-</span></div>
+                        <div>✅ <strong>Done:</strong> <span id="projDoneHours">-</span></div>
+                        <div>⏳ <strong>Remaining:</strong> <span id="projRemainingHours">-</span></div>
+                        <div style="margin-top:8px;">
+                            <span style="font-size:11px;color:#718096;">Default speed: 5h/day</span>
+                            <input type="number" id="projectSpeedInput" value="300" min="1" style="width:70px;display:inline-block;padding:4px 6px;font-size:11px;min-height:28px;" />
+                            <span style="font-size:11px;color:#718096;">mins/day</span>
+                            <button class="btn btn-xs btn-primary" id="projectSpeedUpdate">Update</button>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
 
@@ -1676,7 +1737,7 @@
         // ════════════════════════════════════════════════════════════════
         // STATE
         // ════════════════════════════════════════════════════════════════
-        const STORAGE_KEY = 'lecturePlannerPro_v2';
+        const STORAGE_KEY = 'lecturePlannerPro_v3';
 
         let state = {
             courses: {},
@@ -1689,13 +1750,15 @@
             habits: {},
             links: [],
             dailyNotes: {},
+            focusSlogan: '',
             focusCourse: null,
             batteryView: 'date',
             dashboardDate: null,
             darkMode: false,
             githubToken: '',
             githubGistId: '',
-            githubEnabled: false
+            githubEnabled: false,
+            projectSpeed: 300 // 5 hours in minutes
         };
 
         let activeTab = 'dashboard';
@@ -1734,9 +1797,7 @@
             return `${min}m`;
         }
 
-        function getCourseNames() {
-            return Object.keys(state.courses);
-        }
+        function getCourseNames() { return Object.keys(state.courses); }
 
         function getFocus() {
             const names = getCourseNames();
@@ -1744,13 +1805,9 @@
             return names.length > 0 ? names[0] : null;
         }
 
-        function getLectures(course) {
-            return state.courses[course] || [];
-        }
+        function getLectures(course) { return state.courses[course] || []; }
 
-        function getLectureKey(lec) {
-            return `${lec.sr}_${lec.name}`;
-        }
+        function getLectureKey(lec) { return `${lec.sr}_${lec.name}`; }
 
         function getCourseTotalDuration(course) {
             return getLectures(course).reduce((sum, l) => sum + l.duration, 0);
@@ -1918,14 +1975,6 @@
             return { done, total, pct: total > 0 ? Math.round((done / total) * 100) : 0 };
         }
 
-        function getDoneDate(course, key) {
-            return (state.doneDates[course] || {})[key] || null;
-        }
-
-        function isDone(course, key) {
-            return (state.results[course] || {})[key] || false;
-        }
-
         function getCombinedDateCompletion(dateStr) {
             const names = getCourseNames();
             let total = 0,
@@ -2035,6 +2084,8 @@
                     if (!state.dashboardDate) state.dashboardDate = getDateStr(new Date());
                     if (state.darkMode === undefined) state.darkMode = false;
                     if (!state.githubEnabled) state.githubEnabled = false;
+                    if (!state.focusSlogan) state.focusSlogan = '';
+                    if (!state.projectSpeed) state.projectSpeed = 300;
                     return true;
                 }
             } catch (e) { console.warn('Load error', e); }
@@ -2061,6 +2112,7 @@
                 state.habits = {};
                 state.links = [];
                 state.dailyNotes = {};
+                state.focusSlogan = '';
                 state.focusCourse = null;
                 state.batteryView = 'date';
                 state.dashboardDate = getDateStr(new Date());
@@ -2068,6 +2120,7 @@
                 state.githubEnabled = false;
                 state.githubToken = '';
                 state.githubGistId = '';
+                state.projectSpeed = 300;
                 saveState();
             }
             if (state.darkMode) document.body.classList.add('dark');
@@ -2084,16 +2137,16 @@
             saveState();
         }
 
-        // ── Celebration System ──
+        // ── CELEBRATION ──
         function triggerCelebration(intensity = 'small') {
             const container = document.getElementById('celebrationContainer');
             const emojis = ['⭐', '🌟', '✨', '🌸', '🌺', '🌻', '🌹', '💫', '🎉', '🎊'];
-            let count = 10,
-                duration = 1500;
-            if (intensity === 'medium') { count = 25;
-                duration = 2000; }
-            if (intensity === 'large') { count = 40;
-                duration = 3000; }
+            let count = 8,
+                duration = 1200;
+            if (intensity === 'medium') { count = 20;
+                duration = 1800; }
+            if (intensity === 'large') { count = 35;
+                duration = 2500; }
 
             for (let i = 0; i < count; i++) {
                 const el = document.createElement('div');
@@ -2101,35 +2154,444 @@
                 el.textContent = emojis[Math.floor(Math.random() * emojis.length)];
                 el.style.left = Math.random() * 100 + '%';
                 el.style.top = Math.random() * 80 + 20 + '%';
-                el.style.fontSize = (16 + Math.random() * 24) + 'px';
-                el.style.animationDuration = (1.5 + Math.random() * 1) + 's';
-                el.style.animationDelay = Math.random() * 0.5 + 's';
+                el.style.fontSize = (14 + Math.random() * 22) + 'px';
+                el.style.animationDuration = (1.2 + Math.random() * 0.8) + 's';
+                el.style.animationDelay = Math.random() * 0.4 + 's';
                 container.appendChild(el);
             }
 
             clearTimeout(celebrationTimeout);
-            celebrationTimeout = setTimeout(() => { container.innerHTML = ''; }, duration + 1000);
+            celebrationTimeout = setTimeout(() => { container.innerHTML = ''; }, duration + 800);
         }
 
         function triggerFocusCelebration() {
             const container = document.getElementById('focusStarsContainer');
             const emojis = ['⭐', '🌟', '✨', '💫'];
             container.innerHTML = '';
-            for (let i = 0; i < 20; i++) {
+            for (let i = 0; i < 15; i++) {
                 const el = document.createElement('div');
                 el.className = 'star';
                 el.textContent = emojis[Math.floor(Math.random() * emojis.length)];
                 el.style.left = (5 + Math.random() * 90) + '%';
                 el.style.top = (5 + Math.random() * 90) + '%';
-                el.style.fontSize = (12 + Math.random() * 18) + 'px';
+                el.style.fontSize = (10 + Math.random() * 16) + 'px';
                 el.style.animationDelay = (Math.random() * 2) + 's';
                 el.style.animationDuration = (2 + Math.random() * 2) + 's';
                 container.appendChild(el);
             }
-            setTimeout(() => { container.innerHTML = ''; }, 4000);
+            setTimeout(() => { container.innerHTML = ''; }, 3500);
         }
 
-        // ── Render Functions ──
+        // ── Project Completion Calculation ──
+        function calculateProjectCompletion() {
+            const names = getSortedCourses();
+            if (!names.length) {
+                document.getElementById('projStartDate').textContent = '-';
+                document.getElementById('projEndDate').textContent = '-';
+                document.getElementById('projTotalHours').textContent = '-';
+                document.getElementById('projDaysRequired').textContent = '-';
+                document.getElementById('projDoneHours').textContent = '-';
+                document.getElementById('projRemainingHours').textContent = '-';
+                return;
+            }
+
+            const speed = state.projectSpeed || 300; // minutes per day
+            let currentDate = null;
+            let totalHours = 0;
+            let doneHours = 0;
+            let firstDate = null;
+            let lastDate = null;
+
+            names.forEach(course => {
+                const lecs = getLectures(course);
+                const settings = state.settings[course] || { speed: 120, startDate: getDateStr(new Date()) };
+                const courseSpeed = settings.speed || 120;
+                const startDate = parseDate(settings.startDate || getDateStr(new Date()));
+
+                if (!firstDate || startDate < firstDate) firstDate = startDate;
+
+                // Calculate total hours for this course
+                const totalDur = getCourseTotalDuration(course);
+                totalHours += totalDur;
+
+                // Calculate done hours
+                const comp = getCourseCompletion(course);
+                doneHours += comp.doneDuration;
+
+                // Calculate completion date for this course
+                let cur = new Date(startDate);
+                let used = 0;
+                let remaining = totalDur;
+                const dateSpeeds = state.dateSpeeds[course] || {};
+
+                lecs.forEach(l => {
+                    let rem = l.duration;
+                    while (rem > 0) {
+                        const ds = getDateStr(cur);
+                        const spd = dateSpeeds[ds] || courseSpeed;
+                        const avail = spd - used;
+                        const take = Math.min(rem, avail);
+                        used += take;
+                        rem -= take;
+                        if (used >= spd && rem > 0) { used = 0;
+                            cur = addDays(cur, 1); }
+                    }
+                });
+
+                // Use project speed for overall projection
+                // Calculate how many days this course would take at project speed
+                const courseDays = Math.ceil(totalDur / speed);
+                const courseEnd = addDays(startDate, courseDays - 1);
+
+                if (!lastDate || courseEnd > lastDate) lastDate = courseEnd;
+            });
+
+            // Calculate total days from first to last
+            const totalDays = Math.ceil((lastDate - firstDate) / (1000 * 60 * 60 * 24)) + 1;
+            const remainingHours = totalHours - doneHours;
+            const remainingDays = Math.ceil(remainingHours / (speed / 60));
+            const completionDate = addDays(new Date(), remainingDays);
+
+            document.getElementById('projStartDate').textContent = getDateStr(firstDate);
+            document.getElementById('projEndDate').textContent = getDateStr(completionDate);
+            document.getElementById('projTotalHours').textContent = formatDuration(totalHours);
+            document.getElementById('projDaysRequired').textContent = `${remainingDays} days`;
+            document.getElementById('projDoneHours').textContent = formatDuration(doneHours);
+            document.getElementById('projRemainingHours').textContent = formatDuration(remainingHours);
+        }
+
+        // ── DEPENDENT LECTURE COMPLETION ──
+        function completeDependentLectures(course, dateStr, lectureKey) {
+            const lecs = getDateLectures(course, dateStr);
+            const sortedLecs = [...lecs].sort((a, b) => a.sr - b.sr);
+            let targetIndex = -1;
+
+            for (let i = 0; i < sortedLecs.length; i++) {
+                if (sortedLecs[i].key === lectureKey) {
+                    targetIndex = i;
+                    break;
+                }
+            }
+
+            if (targetIndex === -1) return;
+
+            // Mark all previous lectures as done for this date
+            if (!state.results[course]) state.results[course] = {};
+            if (!state.doneDates[course]) state.doneDates[course] = {};
+
+            for (let i = 0; i <= targetIndex; i++) {
+                const key = sortedLecs[i].key;
+                state.results[course][key] = true;
+                if (!state.doneDates[course][key]) {
+                    state.doneDates[course][key] = dateStr;
+                }
+            }
+        }
+
+        // ── GITHUB SYNC (Mobile Friendly) ──
+        function showSyncSetupModal() {
+            const modal = document.createElement('div');
+            modal.style.cssText = `
+                position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+                background: rgba(0,0,0,0.85); z-index: 99999;
+                display: flex; align-items: center; justify-content: center;
+                padding: 20px;
+            `;
+            modal.innerHTML = `
+                <div style="background: #fff; border-radius: 16px; padding: 24px; max-width: 400px; width: 100%;">
+                    <h3 style="margin-bottom: 12px; font-size: 18px;">☁️ GitHub Sync Setup</h3>
+                    <div style="margin-bottom: 12px;">
+                        <label style="font-size: 12px; color: #666; display: block; margin-bottom: 4px;">GitHub Token (ghp_...)</label>
+                        <input id="syncTokenInput" type="password" style="width:100%; padding: 10px; border: 1px solid #ddd; border-radius: 8px; font-size: 14px;" placeholder="ghp_xxxxxxxxxxxx">
+                    </div>
+                    <div style="margin-bottom: 12px;">
+                        <label style="font-size: 12px; color: #666; display: block; margin-bottom: 4px;">Gist ID (optional - leave blank to create new)</label>
+                        <input id="syncGistInput" type="text" style="width:100%; padding: 10px; border: 1px solid #ddd; border-radius: 8px; font-size: 14px;" placeholder="abc123def456">
+                    </div>
+                    <div style="display: flex; gap: 10px;">
+                        <button id="syncSetupOk" style="flex:1; padding: 12px; background: #667eea; color: #fff; border: none; border-radius: 8px; font-size: 14px; font-weight: 600; cursor: pointer;">Connect</button>
+                        <button id="syncSetupCancel" style="flex:1; padding: 12px; background: #e2e8f0; color: #333; border: none; border-radius: 8px; font-size: 14px; cursor: pointer;">Cancel</button>
+                    </div>
+                    <div style="margin-top: 12px; font-size: 11px; color: #999; line-height: 1.5;">
+                        💡 <strong>How to get token:</strong><br>
+                        1. Go to github.com → Settings → Developer Settings<br>
+                        2. Personal Access Tokens → Generate new token<br>
+                        3. Check <strong>'gist'</strong> and <strong>'repo'</strong> scopes<br>
+                        4. Copy the token (starts with ghp_)
+                    </div>
+                </div>
+            `;
+            document.body.appendChild(modal);
+
+            document.getElementById('syncSetupOk').addEventListener('click', () => {
+                const token = document.getElementById('syncTokenInput').value.trim();
+                const gistId = document.getElementById('syncGistInput').value.trim();
+                if (!token) { toast('Please enter a GitHub token', 'error'); return; }
+                state.githubToken = token;
+                if (gistId) state.githubGistId = gistId;
+                state.githubEnabled = true;
+                saveState();
+                document.body.removeChild(modal);
+                toast('✅ Token saved! Syncing...', 'info');
+                syncToGithub();
+            });
+
+            document.getElementById('syncSetupCancel').addEventListener('click', () => {
+                document.body.removeChild(modal);
+            });
+        }
+
+        async function syncDirect() {
+            if (!state.githubToken || !state.githubGistId) {
+                showSyncSetupModal();
+                return false;
+            }
+
+            const url = `https://api.github.com/gists/${state.githubGistId}`;
+            const data = {
+                files: {
+                    'lecture_planner_data.json': {
+                        content: JSON.stringify(state, null, 2)
+                    }
+                }
+            };
+
+            try {
+                const response = await fetch(url, {
+                    method: 'PATCH',
+                    headers: {
+                        'Authorization': `token ${state.githubToken}`,
+                        'Content-Type': 'application/json',
+                        'Accept': 'application/vnd.github.v3+json'
+                    },
+                    body: JSON.stringify(data)
+                });
+
+                if (response.ok) {
+                    toast('✅ Synced to GitHub!', 'success');
+                    return true;
+                } else {
+                    const err = await response.json();
+                    throw new Error(err.message || 'Unknown error');
+                }
+            } catch (e) {
+                console.log('Direct sync error:', e);
+                throw e;
+            }
+        }
+
+        async function syncViaProxy() {
+            if (!state.githubToken || !state.githubGistId) {
+                showSyncSetupModal();
+                return false;
+            }
+
+            const proxies = [
+                'https://api.allorigins.win/raw?url=',
+                'https://corsproxy.io/?'
+            ];
+
+            const url = `https://api.github.com/gists/${state.githubGistId}`;
+            const data = {
+                files: {
+                    'lecture_planner_data.json': {
+                        content: JSON.stringify(state, null, 2)
+                    }
+                }
+            };
+
+            for (const proxy of proxies) {
+                try {
+                    const response = await fetch(proxy + encodeURIComponent(url), {
+                        method: 'PATCH',
+                        headers: {
+                            'Authorization': `token ${state.githubToken}`,
+                            'Content-Type': 'application/json',
+                            'Accept': 'application/vnd.github.v3+json'
+                        },
+                        body: JSON.stringify(data)
+                    });
+
+                    if (response.ok) {
+                        toast('✅ Synced to GitHub via proxy!', 'success');
+                        return true;
+                    }
+                } catch (e) {
+                    console.log(`Proxy ${proxy} failed:`, e);
+                }
+            }
+            throw new Error('All proxy methods failed');
+        }
+
+        async function createNewGist() {
+            if (!state.githubToken) {
+                showSyncSetupModal();
+                return false;
+            }
+
+            const data = {
+                description: 'Lecture Planner Pro Backup',
+                public: false,
+                files: {
+                    'lecture_planner_data.json': {
+                        content: JSON.stringify(state, null, 2)
+                    }
+                }
+            };
+
+            try {
+                const response = await fetch('https://api.github.com/gists', {
+                    method: 'POST',
+                    headers: {
+                        'Authorization': `token ${state.githubToken}`,
+                        'Content-Type': 'application/json',
+                        'Accept': 'application/vnd.github.v3+json'
+                    },
+                    body: JSON.stringify(data)
+                });
+
+                if (response.ok) {
+                    const result = await response.json();
+                    state.githubGistId = result.id;
+                    saveState();
+                    toast('✅ New Gist created!', 'success');
+                    return true;
+                } else {
+                    const err = await response.json();
+                    throw new Error(err.message || 'Unknown error');
+                }
+            } catch (e) {
+                console.log('Create gist error:', e);
+                throw e;
+            }
+        }
+
+        async function syncToGithub() {
+            if (!state.githubToken) {
+                showSyncSetupModal();
+                return;
+            }
+
+            if (!state.githubGistId) {
+                try {
+                    const created = await createNewGist();
+                    if (!created) { toast('❌ Failed to create Gist', 'error'); return; }
+                } catch (e) { toast('❌ Failed to create Gist: ' + e.message, 'error'); return; }
+            }
+
+            try {
+                await syncDirect();
+                return;
+            } catch (e1) {
+                console.log('Direct sync failed:', e1);
+                try {
+                    await syncViaProxy();
+                    return;
+                } catch (e2) {
+                    console.log('Proxy sync failed:', e2);
+                    toast('⚠️ Auto-sync failed. Use manual export/import.', 'warning');
+                    showManualSyncOptions();
+                }
+            }
+        }
+
+        async function syncFromGithub() {
+            if (!state.githubToken || !state.githubGistId) {
+                showSyncSetupModal();
+                return;
+            }
+
+            try {
+                const response = await fetch(`https://api.github.com/gists/${state.githubGistId}`, {
+                    headers: {
+                        'Authorization': `token ${state.githubToken}`,
+                        'Accept': 'application/vnd.github.v3+json'
+                    }
+                });
+
+                if (!response.ok) {
+                    const proxies = [
+                        'https://api.allorigins.win/raw?url=',
+                        'https://corsproxy.io/?'
+                    ];
+                    let data = null;
+                    for (const proxy of proxies) {
+                        try {
+                            const r = await fetch(proxy + encodeURIComponent(
+                                `https://api.github.com/gists/${state.githubGistId}`), {
+                                headers: {
+                                    'Authorization': `token ${state.githubToken}`,
+                                    'Accept': 'application/vnd.github.v3+json'
+                                }
+                            });
+                            if (r.ok) { data = await r.json(); break; }
+                        } catch (e) {}
+                    }
+                    if (!data) throw new Error('All fetch methods failed');
+                    const content = data.files['lecture_planner_data.json'].content;
+                    const parsed = JSON.parse(content);
+                    state = parsed;
+                    saveState();
+                    renderAll();
+                    toast('✅ Synced from GitHub!', 'success');
+                    return;
+                }
+
+                const data = await response.json();
+                const content = data.files['lecture_planner_data.json'].content;
+                const parsed = JSON.parse(content);
+                state = parsed;
+                saveState();
+                renderAll();
+                toast('✅ Synced from GitHub!', 'success');
+            } catch (e) {
+                console.log('Sync from GitHub error:', e);
+                toast('❌ Failed to sync from GitHub. Try manual import.', 'error');
+                showManualSyncOptions();
+            }
+        }
+
+        function showManualSyncOptions() {
+            const modal = document.createElement('div');
+            modal.style.cssText = `
+                position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+                background: rgba(0,0,0,0.85); z-index: 99999;
+                display: flex; align-items: center; justify-content: center;
+                padding: 20px;
+            `;
+            modal.innerHTML = `
+                <div style="background: #fff; border-radius: 16px; padding: 24px; max-width: 400px; width: 100%;">
+                    <h3 style="margin-bottom: 12px; font-size: 18px;">⚠️ Manual Sync Required</h3>
+                    <p style="font-size: 14px; color: #666; margin-bottom: 16px; line-height: 1.5;">
+                        Auto-sync failed. You can manually backup/restore your data:
+                    </p>
+                    <button id="manualExport" style="width:100%; padding: 14px; background: #667eea; color: #fff; border: none; border-radius: 8px; font-size: 15px; font-weight: 600; cursor: pointer; margin-bottom: 8px;">
+                        📤 Export Data (Download JSON)
+                    </button>
+                    <button id="manualImport" style="width:100%; padding: 14px; background: #51cf66; color: #fff; border: none; border-radius: 8px; font-size: 15px; font-weight: 600; cursor: pointer; margin-bottom: 8px;">
+                        📥 Import Data (Upload JSON)
+                    </button>
+                    <button id="manualClose" style="width:100%; padding: 14px; background: #e2e8f0; color: #333; border: none; border-radius: 8px; font-size: 15px; cursor: pointer;">
+                        Cancel
+                    </button>
+                </div>
+            `;
+            document.body.appendChild(modal);
+
+            document.getElementById('manualExport').addEventListener('click', () => {
+                document.getElementById('exportBtn').click();
+                document.body.removeChild(modal);
+            });
+            document.getElementById('manualImport').addEventListener('click', () => {
+                document.getElementById('importBtn').click();
+                document.body.removeChild(modal);
+            });
+            document.getElementById('manualClose').addEventListener('click', () => {
+                document.body.removeChild(modal);
+            });
+        }
+
+        // ── RENDER FUNCTIONS ──
         function renderAll() {
             renderDashSavedCourses();
             renderDashboard();
@@ -2142,6 +2604,7 @@
             renderOverview();
             renderNavBadge();
             renderDailyNote();
+            calculateProjectCompletion();
         }
 
         function renderNavBadge() {
@@ -2172,13 +2635,13 @@
                 const isFocus = n === focus;
                 const totalHrs = formatDuration(comp.totalDuration);
                 html += `
-              <div class="lecture-row" style="border-left-color:${isFocus ? '#667eea' : 'transparent'};">
-                <span style="font-weight:600;flex:1;font-size:12px;">${n} ${isFocus ? '⭐' : ''}</span>
-                <span class="badge badge-primary">${getLectures(n).length} lectures (${totalHrs})</span>
-                <span class="badge ${pctClass}">${comp.pct}%</span>
-                <button class="btn btn-sm btn-outline rename-btn" data-course="${n}" style="min-height:24px;padding:2px 8px;font-size:10px;">✏️</button>
-              </div>
-            `;
+                    <div class="lecture-row" style="border-left-color:${isFocus ? '#667eea' : 'transparent'};">
+                        <span style="font-weight:600;flex:1;font-size:12px;">${n} ${isFocus ? '⭐' : ''}</span>
+                        <span class="badge badge-primary">${getLectures(n).length} lectures (${totalHrs})</span>
+                        <span class="badge ${pctClass}">${comp.pct}%</span>
+                        <button class="btn btn-sm btn-outline rename-btn" data-course="${n}" style="min-height:24px;padding:2px 8px;font-size:10px;">✏️</button>
+                    </div>
+                `;
             });
             container.innerHTML = html;
             container.querySelectorAll('.rename-btn').forEach(btn => {
@@ -2240,15 +2703,15 @@
                 const comp = getCourseCompletion(course);
                 container.innerHTML =
                     `
-              <div class="battery-item">
-                <div class="battery large">
-                  <div class="cap"></div>
-                  <div class="fill ${getBatteryClass(comp.pct)}" style="height:${comp.pct}%;"></div>
-                  <div class="pct">${comp.pct}%</div>
-                </div>
-                <div class="battery-label">Overall</div>
-              </div>
-            `;
+                        <div class="battery-item">
+                            <div class="battery large">
+                                <div class="cap"></div>
+                                <div class="fill ${getBatteryClass(comp.pct)}" style="height:${comp.pct}%;"></div>
+                                <div class="pct">${comp.pct}%</div>
+                            </div>
+                            <div class="battery-label">Overall</div>
+                        </div>
+                    `;
             } else {
                 let html = '';
                 const dates = [];
@@ -2262,15 +2725,15 @@
                     const label = formatDateShort(ds);
                     const day = formatDay(ds);
                     html += `
-                <div class="battery-item" data-date="${ds}">
-                  <div class="${cls}">
-                    <div class="cap"></div>
-                    <div class="fill ${getBatteryClass(comp.pct)}" style="height:${comp.pct}%;"></div>
-                    <div class="pct">${comp.pct}%</div>
-                  </div>
-                  <div class="battery-label">${label}<br/><span class="day">${day}</span></div>
-                </div>
-              `;
+                            <div class="battery-item" data-date="${ds}">
+                                <div class="${cls}">
+                                    <div class="cap"></div>
+                                    <div class="fill ${getBatteryClass(comp.pct)}" style="height:${comp.pct}%;"></div>
+                                    <div class="pct">${comp.pct}%</div>
+                                </div>
+                                <div class="battery-label">${label}<br/><span class="day">${day}</span></div>
+                            </div>
+                        `;
                 });
                 container.innerHTML = html;
                 container.querySelectorAll('.battery-item').forEach(el => {
@@ -2399,11 +2862,11 @@
                     '<span class="speed-icon">⚡</span>' : '';
 
                 html += `
-              <div class="${classes}" data-date="${ds}">
-                ${d}${speedIcon}
-                ${dotClass ? `<span class="dot ${dotClass}"></span>` : ''}
-              </div>
-            `;
+                        <div class="${classes}" data-date="${ds}">
+                            ${d}${speedIcon}
+                            ${dotClass ? `<span class="dot ${dotClass}"></span>` : ''}
+                        </div>
+                    `;
             }
             grid.innerHTML = html;
 
@@ -2519,30 +2982,30 @@
                 const moveStamp = getMoveStamp(courseName, key, dateStr);
 
                 html += `
-              <div class="lecture-row ${rowClass}" data-key="${key}" data-course="${courseName}">
-                <span class="sr-badge">${l.sr}</span>
-                <input type="checkbox" class="lec-check" ${done ? 'checked' : ''} />
-                <span class="lec-name ${strikeClass}">${l.name}</span>
-                <span class="lec-duration">${formatDuration(l.duration)}</span>
-                <span class="lec-dates">
-                  <span class="alloc">Alloc: ${allocatedDate}</span>
-                  ${doneDate ? `<span class="done">Done: ${doneDate}</span>` : ''}
-                </span>
-                <span class="lec-status">${statusBadge}</span>
-                ${l.isContinuing ? '<span class="continuing">continuing</span>' : ''}
-                ${copyStamp}
-                ${moveStamp}
-                <div class="lec-actions">
-                  <button class="btn btn-xs btn-outline copy-left" data-key="${key}" data-course="${courseName}">← Copy</button>
-                  <button class="btn btn-xs btn-outline copy-right" data-key="${key}" data-course="${courseName}">Copy →</button>
-                  <button class="btn btn-xs btn-outline move-left" data-key="${key}" data-course="${courseName}">← Move</button>
-                  <button class="btn btn-xs btn-outline move-right" data-key="${key}" data-course="${courseName}">Move →</button>
-                  ${copyStamp ? `<button class="btn btn-xs btn-outline clear-copy" data-key="${key}" data-course="${courseName}">🧹</button>` : ''}
-                  ${moveStamp ? `<button class="btn btn-xs btn-outline clear-move" data-key="${key}" data-course="${courseName}">🚫</button>` : ''}
-                  <input type="date" class="done-date-picker" value="${doneDate || ''}" style="width:100px;min-height:24px;font-size:10px;" />
-                </div>
-              </div>
-            `;
+                        <div class="lecture-row ${rowClass}" data-key="${key}" data-course="${courseName}">
+                            <span class="sr-badge">${l.sr}</span>
+                            <input type="checkbox" class="lec-check" ${done ? 'checked' : ''} />
+                            <span class="lec-name ${strikeClass}">${l.name}</span>
+                            <span class="lec-duration">${formatDuration(l.duration)}</span>
+                            <span class="lec-dates">
+                                <span class="alloc">Alloc: ${allocatedDate}</span>
+                                ${doneDate ? `<span class="done">Done: ${doneDate}</span>` : ''}
+                            </span>
+                            <span class="lec-status">${statusBadge}</span>
+                            ${l.isContinuing ? '<span class="continuing">continuing</span>' : ''}
+                            ${copyStamp}
+                            ${moveStamp}
+                            <div class="lec-actions">
+                                <button class="btn btn-xs btn-outline copy-left" data-key="${key}" data-course="${courseName}">← Copy</button>
+                                <button class="btn btn-xs btn-outline copy-right" data-key="${key}" data-course="${courseName}">Copy →</button>
+                                <button class="btn btn-xs btn-outline move-left" data-key="${key}" data-course="${courseName}">← Move</button>
+                                <button class="btn btn-xs btn-outline move-right" data-key="${key}" data-course="${courseName}">Move →</button>
+                                ${copyStamp ? `<button class="btn btn-xs btn-outline clear-copy" data-key="${key}" data-course="${courseName}">🧹</button>` : ''}
+                                ${moveStamp ? `<button class="btn btn-xs btn-outline clear-move" data-key="${key}" data-course="${courseName}">🚫</button>` : ''}
+                                <input type="date" class="done-date-picker" value="${doneDate || ''}" style="width:100px;min-height:24px;font-size:10px;" />
+                            </div>
+                        </div>
+                    `;
             });
             list.innerHTML = html;
 
@@ -2554,11 +3017,15 @@
                     if (!courseName) return;
                     const done = cb.checked;
                     if (!state.results[courseName]) state.results[courseName] = {};
-                    state.results[courseName][key] = done;
+
                     if (done) {
-                        if (!state.doneDates[courseName]) state.doneDates[courseName] = {};
-                        if (!state.doneDates[courseName][key]) state.doneDates[courseName][key] = dateStr;
+                        // Complete dependent lectures (all previous lectures for this date)
+                        completeDependentLectures(courseName, dateStr, key);
+                    } else {
+                        // If unchecked, just uncheck this one
+                        state.results[courseName][key] = false;
                     }
+
                     saveState();
                     renderDayDetail();
                     renderCalendar();
@@ -2727,6 +3194,14 @@
             toast(`📦 Moved "${lec.name}" to ${direction === 1 ? 'next' : 'previous'} day`);
         }
 
+        function isDone(course, key) {
+            return (state.results[course] || {})[key] || false;
+        }
+
+        function getDoneDate(course, key) {
+            return (state.doneDates[course] || {})[key] || null;
+        }
+
         function renderEdit() {
             const select = document.getElementById('editCourse');
             const names = getCourseNames();
@@ -2765,14 +3240,14 @@
                 totalDur += l.duration;
                 if (done) doneCount++;
                 html += `
-              <tr class="${done ? 'done' : ''}">
-                <td>${l.sr}</td>
-                <td><input type="text" value="${l.name}" class="edit-lecture-name" data-key="${key}" style="min-width:60px;font-size:11px;" /></td>
-                <td><input type="number" value="${l.duration}" class="edit-lecture-dur" data-key="${key}" style="width:50px;font-size:11px;" min="1" /></td>
-                <td><input type="checkbox" class="edit-lecture-done" data-key="${key}" ${done ? 'checked' : ''} /></td>
-                <td><button class="btn btn-xs btn-danger edit-delete-lecture" data-key="${key}" style="min-height:20px;padding:1px 6px;">✕</button></td>
-              </tr>
-            `;
+                        <tr class="${done ? 'done' : ''}">
+                            <td>${l.sr}</td>
+                            <td><input type="text" value="${l.name}" class="edit-lecture-name" data-key="${key}" style="min-width:60px;font-size:11px;" /></td>
+                            <td><input type="number" value="${l.duration}" class="edit-lecture-dur" data-key="${key}" style="width:50px;font-size:11px;" min="1" /></td>
+                            <td><input type="checkbox" class="edit-lecture-done" data-key="${key}" ${done ? 'checked' : ''} /></td>
+                            <td><button class="btn btn-xs btn-danger edit-delete-lecture" data-key="${key}" style="min-height:20px;padding:1px 6px;">✕</button></td>
+                        </tr>
+                    `;
             });
             document.getElementById('editTableBody').innerHTML = html;
             document.getElementById('editSummary').textContent =
@@ -2954,20 +3429,19 @@
                         'Late' ? 'late' : '';
                     const isOdd = (idx + 1) % 2 !== 0;
                     html += `
-                <tr class="${diffClass} ${isOdd ? 'odd-date' : ''}">
-                  <td>${r.name}</td>
-                  <td><span class="alloc" style="color:#667eea;">${r.allocated}</span></td>
-                  <td>${r.doneDate ? `<span class="done" style="color:#51cf66;">${r.doneDate}</span>` : '-'}</td>
-                  <td><span class="badge ${statusClass}">${statusText}</span></td>
-                  <td>${formatDuration(r.expected)}</td>
-                  <td>${r.diff}</td>
-                </tr>
-              `;
+                            <tr class="${diffClass} ${isOdd ? 'odd-date' : ''}">
+                                <td>${r.name}</td>
+                                <td><span class="alloc" style="color:#667eea;">${r.allocated}</span></td>
+                                <td>${r.doneDate ? `<span class="done" style="color:#51cf66;">${r.doneDate}</span>` : '-'}</td>
+                                <td><span class="badge ${statusClass}">${statusText}</span></td>
+                                <td>${formatDuration(r.expected)}</td>
+                                <td>${r.diff}</td>
+                            </tr>
+                        `;
                 });
                 tbody.innerHTML = html;
             }
 
-            // Hours graph
             renderHoursGraph('histHoursGraph', course);
         }
 
@@ -3016,12 +3490,12 @@
                 const pct = (hr / maxHr) * 80;
                 const color = hr > 0 ? '#51cf66' : '#e2e8f0';
                 html += `
-              <div class="bar-item">
-                <div class="bar" style="height:${Math.max(3, pct)}px;background:${color};"></div>
-                <span class="bar-label">${formatDateShort(ds)}</span>
-                <span class="bar-label" style="font-size:7px;">${hr}h</span>
-              </div>
-            `;
+                        <div class="bar-item">
+                            <div class="bar" style="height:${Math.max(3, pct)}px;background:${color};"></div>
+                            <span class="bar-label">${formatDateShort(ds)}</span>
+                            <span class="bar-label" style="font-size:7px;">${hr}h</span>
+                        </div>
+                    `;
             });
             html += '</div>';
             container.innerHTML = html;
@@ -3035,7 +3509,6 @@
                 return;
             }
 
-            // Sort by time
             const sorted = names.sort((a, b) => {
                 const tA = state.habits[a].time || '00:00';
                 const tB = state.habits[b].time || '00:00';
@@ -3056,18 +3529,18 @@
                 const customDisplay = h.customDays ? ` (${h.customDays.map(d => ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'][d]).join(', ')})` :
                     '';
                 html += `
-              <div class="habit-row">
-                <input type="checkbox" class="habit-check" data-name="${n}" ${done ? 'checked' : ''} />
-                <span class="habit-name">${n}</span>
-                <span class="habit-meta">
-                  <span class="badge badge-primary">${patternMap[h.pattern] || h.pattern}${customDisplay}</span>
-                  <span>${h.time || '09:00'}</span>
-                  <span class="habit-streak">🔥 ${streak} ${h.pattern === 'daily' ? 'd' : h.pattern === 'weekly' ? 'w' : 'm'}</span>
-                </span>
-                <span class="badge ${done ? 'badge-success' : 'badge-danger'}">${done ? '✅ Done' : '⏳ Pending'}</span>
-                <button class="btn btn-xs btn-danger habit-delete" data-name="${n}" style="min-height:20px;padding:1px 6px;">✕</button>
-              </div>
-            `;
+                        <div class="habit-row">
+                            <input type="checkbox" class="habit-check" data-name="${n}" ${done ? 'checked' : ''} />
+                            <span class="habit-name">${n}</span>
+                            <span class="habit-meta">
+                                <span class="badge badge-primary">${patternMap[h.pattern] || h.pattern}${customDisplay}</span>
+                                <span>${h.time || '09:00'}</span>
+                                <span class="habit-streak">🔥 ${streak} ${h.pattern === 'daily' ? 'd' : h.pattern === 'weekly' ? 'w' : 'm'}</span>
+                            </span>
+                            <span class="badge ${done ? 'badge-success' : 'badge-danger'}">${done ? '✅ Done' : '⏳ Pending'}</span>
+                            <button class="btn btn-xs btn-danger habit-delete" data-name="${n}" style="min-height:20px;padding:1px 6px;">✕</button>
+                        </div>
+                    `;
             });
             container.innerHTML = html;
 
@@ -3107,14 +3580,14 @@
             let html = '';
             state.links.forEach((link, idx) => {
                 html += `
-              <div class="link-row">
-                <span class="link-name">${link.name}</span>
-                <span class="link-url" data-url="${link.url}">${link.url}</span>
-                ${link.category ? `<span class="link-cat">${link.category}</span>` : ''}
-                <button class="btn btn-xs btn-outline link-open" data-url="${link.url}" style="min-height:20px;padding:1px 6px;">🔗 Open</button>
-                <button class="btn btn-xs btn-danger link-delete" data-idx="${idx}" style="min-height:20px;padding:1px 6px;">✕</button>
-              </div>
-            `;
+                        <div class="link-row">
+                            <span class="link-name">${link.name}</span>
+                            <span class="link-url" data-url="${link.url}">${link.url}</span>
+                            ${link.category ? `<span class="link-cat">${link.category}</span>` : ''}
+                            <button class="btn btn-xs btn-outline link-open" data-url="${link.url}" style="min-height:20px;padding:1px 6px;">🔗 Open</button>
+                            <button class="btn btn-xs btn-danger link-delete" data-idx="${idx}" style="min-height:20px;padding:1px 6px;">✕</button>
+                        </div>
+                    `;
             });
             container.innerHTML = html;
 
@@ -3172,19 +3645,20 @@
                     const comp = getCourseCompletion(n);
                     const pctClass = comp.pct >= 70 ? 'high' : comp.pct >= 40 ? 'medium' : 'low';
                     html += `
-                <div class="row" style="margin-bottom:4px;">
-                  <span style="font-weight:600;font-size:12px;min-width:80px;">${n} ${n === focus ? '⭐' : ''}</span>
-                  <div class="progress-bar"><div class="fill ${pctClass}" style="width:${comp.pct}%;"></div></div>
-                  <span style="font-size:11px;font-weight:600;min-width:40px;">${comp.pct}%</span>
-                  <span style="font-size:10px;color:#718096;">${formatDuration(comp.doneDuration)} / ${formatDuration(comp.totalDuration)}</span>
-                </div>
-              `;
+                            <div class="row" style="margin-bottom:4px;">
+                                <span style="font-weight:600;font-size:12px;min-width:80px;">${n} ${n === focus ? '⭐' : ''}</span>
+                                <div class="progress-bar"><div class="fill ${pctClass}" style="width:${comp.pct}%;"></div></div>
+                                <span style="font-size:11px;font-weight:600;min-width:40px;">${comp.pct}%</span>
+                                <span style="font-size:10px;color:#718096;">${formatDuration(comp.doneDuration)} / ${formatDuration(comp.totalDuration)}</span>
+                            </div>
+                        `;
                 });
                 cContainer.innerHTML = html;
             }
 
             const bContainer = document.getElementById('overviewBatteries');
-            let bHtml = '<div class="text-muted" style="font-size:11px;font-weight:600;">Last 7 Days</div><div class="flex flex-wrap gap-8 mt-8">';
+            let bHtml =
+                '<div class="text-muted" style="font-size:11px;font-weight:600;">Last 7 Days</div><div class="flex flex-wrap gap-8 mt-8">';
             const d = new Date();
             for (let i = 6; i >= 0; i--) {
                 const dd = addDays(d, -i);
@@ -3192,11 +3666,11 @@
                 const comp = getCombinedDateCompletion(ds);
                 const cls = getBatteryClass(comp.pct);
                 bHtml += `
-              <span class="battery-mini">
-                <span class="bar"><span class="fill ${cls}" style="width:${comp.pct}%;"></span></span>
-                ${formatDateShort(ds)} ${comp.pct}%
-              </span>
-            `;
+                        <span class="battery-mini">
+                            <span class="bar"><span class="fill ${cls}" style="width:${comp.pct}%;"></span></span>
+                            ${formatDateShort(ds)} ${comp.pct}%
+                        </span>
+                    `;
             }
             bHtml += '</div>';
             bContainer.innerHTML = bHtml;
@@ -3204,7 +3678,8 @@
             const hContainer = document.getElementById('overviewHabits');
             const hNames = Object.keys(state.habits);
             if (hNames.length) {
-                let hHtml = '<div class="text-muted" style="font-size:11px;font-weight:600;">Habits Today</div><div class="flex flex-wrap gap-8 mt-8">';
+                let hHtml =
+                    '<div class="text-muted" style="font-size:11px;font-weight:600;">Habits Today</div><div class="flex flex-wrap gap-8 mt-8">';
                 hNames.forEach(n => {
                     const h = state.habits[n];
                     if (!shouldHabitAppear(h, today)) return;
@@ -3220,7 +3695,6 @@
 
             renderHoursGraph('overviewHoursGraph', null);
 
-            // Course hours chart
             const chContainer = document.getElementById('overviewCourseHours');
             if (names.length) {
                 let chHtml = '<div class="text-muted" style="font-size:11px;font-weight:600;">Hours by Course</div>';
@@ -3229,20 +3703,20 @@
                     const pct = overall.totalDur > 0 ? Math.round((comp.totalDuration / overall.totalDur) * 100) :
                         0;
                     chHtml += `
-                <div class="row" style="margin-bottom:2px;">
-                  <span style="font-size:11px;min-width:60px;">${n}</span>
-                  <div class="progress-bar"><div class="fill" style="width:${pct}%;background:#667eea;"></div></div>
-                  <span style="font-size:10px;color:#718096;min-width:60px;">${formatDuration(comp.totalDuration)}</span>
-                </div>
-              `;
+                            <div class="row" style="margin-bottom:2px;">
+                                <span style="font-size:11px;min-width:60px;">${n}</span>
+                                <div class="progress-bar"><div class="fill" style="width:${pct}%;background:#667eea;"></div></div>
+                                <span style="font-size:10px;color:#718096;min-width:60px;">${formatDuration(comp.totalDuration)}</span>
+                            </div>
+                        `;
                 });
                 chContainer.innerHTML = chHtml;
             }
 
-            // Weekly chart
             const chartContainer = document.getElementById('overviewChart');
             const weekDays = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
-            let chartHtml = '<div class="text-muted" style="font-size:11px;font-weight:600;">Weekly Pattern</div><div class="chart-bar">';
+            let chartHtml =
+                '<div class="text-muted" style="font-size:11px;font-weight:600;">Weekly Pattern</div><div class="chart-bar">';
             const todayDate = new Date();
             for (let i = 6; i >= 0; i--) {
                 const dd = addDays(todayDate, -i);
@@ -3252,18 +3726,18 @@
                 const cls = getBatteryClass(pct);
                 const height = Math.max(3, (pct / 100) * 70);
                 chartHtml += `
-              <div class="bar-item">
-                <div class="bar ${cls}" style="height:${height}px;"></div>
-                <span class="bar-label">${weekDays[dd.getDay()]}</span>
-                <span class="bar-label" style="font-size:7px;">${pct}%</span>
-              </div>
-            `;
+                        <div class="bar-item">
+                            <div class="bar ${cls}" style="height:${height}px;"></div>
+                            <span class="bar-label">${weekDays[dd.getDay()]}</span>
+                            <span class="bar-label" style="font-size:7px;">${pct}%</span>
+                        </div>
+                    `;
             }
             chartHtml += '</div>';
             chartContainer.innerHTML = chartHtml;
         }
 
-        // ── Focus Mode ──
+        // ── FOCUS MODE ──
         function renderFocusMode() {
             const overlay = document.getElementById('focusOverlay');
             const course = getFocus();
@@ -3279,6 +3753,13 @@
             document.getElementById('focusDayTitle').textContent =
                 `${days[d.getDay()]}, ${months[d.getMonth()]} ${d.getDate()}, ${d.getFullYear()}`;
             document.getElementById('focusCourseName').textContent = course;
+            document.getElementById('focusSlogan').value = state.focusSlogan || '';
+
+            // Slogan save
+            document.getElementById('focusSlogan').addEventListener('change', () => {
+                state.focusSlogan = document.getElementById('focusSlogan').value;
+                saveState();
+            });
 
             const lecs = getDateLectures(course, dateStr);
             let total = 0,
@@ -3299,7 +3780,10 @@
             document.getElementById('focusProgress').innerHTML =
                 `Today: ${formatDuration(done)} / ${formatDuration(total)} | <span class="pending">Pending: ${formatDuration(total - done)}</span>`;
 
-            // Lecture list
+            // Calculate finish date
+            const finishDate = calculateFinishDate(course, dateStr);
+            document.getElementById('focusFinishDate').textContent = `🎯 Project Completion: ${finishDate}`;
+
             const list = document.getElementById('focusLectureList');
             if (!lecs.length) {
                 list.innerHTML = '<div style="color:#718096;text-align:center;">No lectures scheduled today</div>';
@@ -3310,14 +3794,14 @@
                     const rowClass = done ? 'done' : '';
                     const strikeClass = done ? 'strike' : '';
                     html += `
-                <div class="lecture-row ${rowClass}">
-                  <span class="sr-badge">${l.sr}</span>
-                  <input type="checkbox" class="focus-check" data-key="${l.key}" ${done ? 'checked' : ''} />
-                  <span class="lec-name ${strikeClass}">${l.name}</span>
-                  <span class="lec-duration">${formatDuration(l.duration)}</span>
-                  <span class="lec-status">${done ? '<span class="badge badge-success">✅ Done</span>' : '<span class="badge badge-danger">⏳ Pending</span>'}</span>
-                </div>
-              `;
+                            <div class="lecture-row ${rowClass}">
+                                <span class="sr-badge">${l.sr}</span>
+                                <input type="checkbox" class="focus-check" data-key="${l.key}" ${done ? 'checked' : ''} />
+                                <span class="lec-name ${strikeClass}">${l.name}</span>
+                                <span class="lec-duration">${formatDuration(l.duration)}</span>
+                                <span class="lec-status">${done ? '<span class="badge badge-success">✅ Done</span>' : '<span class="badge badge-danger">⏳ Pending</span>'}</span>
+                            </div>
+                        `;
                 });
                 list.innerHTML = html;
 
@@ -3326,12 +3810,14 @@
                         const key = cb.dataset.key;
                         const done = cb.checked;
                         if (!state.results[course]) state.results[course] = {};
-                        state.results[course][key] = done;
+
                         if (done) {
-                            if (!state.doneDates[course]) state.doneDates[course] = {};
-                            if (!state.doneDates[course][key]) state.doneDates[course][key] = dateStr;
-                            triggerCelebration('small');
+                            // Complete dependent lectures (all previous lectures for this date)
+                            completeDependentLectures(course, dateStr, key);
+                        } else {
+                            state.results[course][key] = false;
                         }
+
                         saveState();
                         renderFocusMode();
                         renderAll();
@@ -3356,7 +3842,6 @@
                 });
             }
 
-            // Course bar
             const comp = getCourseCompletion(course);
             document.getElementById('focusCourseBarName').textContent = `Course: ${course}`;
             document.getElementById('focusCourseBarPct').textContent = comp.pct + '%';
@@ -3367,110 +3852,22 @@
             focusModeActive = true;
         }
 
-        // ── GitHub Sync ──
-        async function syncToGithub() {
-            if (!state.githubToken || !state.githubGistId) {
-                const token = prompt('Enter GitHub Personal Access Token:');
-                if (!token) return;
-                const gistId = prompt('Enter Gist ID (or leave blank to create new):');
-                if (gistId === null) return;
-
-                state.githubToken = token;
-                if (gistId) state.githubGistId = gistId;
-                saveState();
-
-                if (!gistId) {
-                    // Create new gist
-                    try {
-                        const response = await fetch('https://api.github.com/gists', {
-                            method: 'POST',
-                            headers: {
-                                'Authorization': `token ${token}`,
-                                'Content-Type': 'application/json'
-                            },
-                            body: JSON.stringify({
-                                description: 'Lecture Planner Pro Backup',
-                                public: false,
-                                files: {
-                                    'lecture_planner_data.json': {
-                                        content: JSON.stringify(state, null, 2)
-                                    }
-                                }
-                            })
-                        });
-                        const data = await response.json();
-                        if (data.id) {
-                            state.githubGistId = data.id;
-                            saveState();
-                            toast('✅ New Gist created!', 'success');
-                        } else {
-                            toast('❌ Failed to create gist: ' + (data.message || 'Unknown error'), 'error');
-                            return;
-                        }
-                    } catch (e) {
-                        toast('❌ Error creating gist: ' + e.message, 'error');
-                        return;
-                    }
-                }
-            }
-
-            // Upload to existing gist
-            try {
-                const response = await fetch(`https://api.github.com/gists/${state.githubGistId}`, {
-                    method: 'PATCH',
-                    headers: {
-                        'Authorization': `token ${state.githubToken}`,
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({
-                        files: {
-                            'lecture_planner_data.json': {
-                                content: JSON.stringify(state, null, 2)
-                            }
-                        }
-                    })
-                });
-                if (response.ok) {
-                    toast('✅ Synced to GitHub!', 'success');
-                } else {
-                    const data = await response.json();
-                    toast('❌ Sync failed: ' + (data.message || 'Unknown error'), 'error');
-                }
-            } catch (e) {
-                toast('❌ Error syncing: ' + e.message, 'error');
-            }
+        function calculateFinishDate(course, currentDate) {
+            const lecs = getLectures(course);
+            const res = state.results[course] || {};
+            let remaining = 0;
+            lecs.forEach(l => {
+                if (!res[getLectureKey(l)]) remaining += l.duration;
+            });
+            const speed = state.projectSpeed || 300;
+            const daysNeeded = Math.ceil(remaining / speed);
+            const finish = addDays(parseDate(currentDate), daysNeeded);
+            const days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+            const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+            return `${days[finish.getDay()]}, ${months[finish.getMonth()]} ${finish.getDate()}, ${finish.getFullYear()} (${daysNeeded} days remaining)`;
         }
 
-        async function syncFromGithub() {
-            if (!state.githubToken || !state.githubGistId) {
-                toast('⚠️ Please setup GitHub sync first', 'warning');
-                return;
-            }
-
-            try {
-                const response = await fetch(`https://api.github.com/gists/${state.githubGistId}`, {
-                    headers: {
-                        'Authorization': `token ${state.githubToken}`
-                    }
-                });
-                if (!response.ok) {
-                    const data = await response.json();
-                    toast('❌ Failed to fetch: ' + (data.message || 'Unknown error'), 'error');
-                    return;
-                }
-                const data = await response.json();
-                const content = data.files['lecture_planner_data.json'].content;
-                const parsed = JSON.parse(content);
-                state = parsed;
-                saveState();
-                renderAll();
-                toast('✅ Synced from GitHub!', 'success');
-            } catch (e) {
-                toast('❌ Error syncing: ' + e.message, 'error');
-            }
-        }
-
-        // ── Event Listeners ──
+        // ── EVENT SETUP ──
         function setupEvents() {
             // Navigation
             document.querySelectorAll('.nav-bottom .tab').forEach(btn => {
@@ -3494,6 +3891,17 @@
                 document.getElementById('focusOverlay').classList.remove('active');
                 focusModeActive = false;
                 document.querySelector('.tab[data-tab="dashboard"]').click();
+            });
+
+            // Focus Export/Import buttons
+            document.getElementById('focusExportBtn').addEventListener('click', () => {
+                document.getElementById('exportBtn').click();
+            });
+            document.getElementById('focusImportBtn').addEventListener('click', () => {
+                document.getElementById('importBtn').click();
+            });
+            document.getElementById('focusSyncBtn').addEventListener('click', () => {
+                document.getElementById('syncBtn').click();
             });
 
             // Daily Note
@@ -3809,6 +4217,20 @@
             // Overview
             document.getElementById('overviewRefresh').addEventListener('click', renderOverview);
 
+            // Project speed update
+            document.getElementById('projectSpeedUpdate').addEventListener('click', () => {
+                const val = parseInt(document.getElementById('projectSpeedInput').value);
+                if (val > 0) {
+                    state.projectSpeed = val;
+                    saveState();
+                    calculateProjectCompletion();
+                    toast('✅ Project speed updated!');
+                } else {
+                    toast('Please enter a valid speed', 'error');
+                }
+            });
+            document.getElementById('projectSpeedInput').value = state.projectSpeed || 300;
+
             // Header
             document.getElementById('exportBtn').addEventListener('click', () => {
                 const blob = new Blob([JSON.stringify(state, null, 2)], { type: 'application/json' });
@@ -3840,6 +4262,8 @@
                             if (!state.links) state.links = [];
                             if (!state.dailyNotes) state.dailyNotes = {};
                             if (!state.dashboardDate) state.dashboardDate = getDateStr(new Date());
+                            if (!state.focusSlogan) state.focusSlogan = '';
+                            if (!state.projectSpeed) state.projectSpeed = 300;
                             saveState();
                             renderAll();
                             toast('📥 Data imported successfully');
@@ -3850,10 +4274,50 @@
                 e.target.value = '';
             });
 
+            // Sync button
             document.getElementById('syncBtn').addEventListener('click', () => {
-                const choice = confirm('Upload to Cloud? Click OK to upload, Cancel to download.');
-                if (choice) syncToGithub();
-                else syncFromGithub();
+                const modal = document.createElement('div');
+                modal.style.cssText = `
+                        position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+                        background: rgba(0,0,0,0.85); z-index: 99999;
+                        display: flex; align-items: center; justify-content: center;
+                        padding: 20px;
+                    `;
+                modal.innerHTML = `
+                        <div style="background: #fff; border-radius: 16px; padding: 24px; max-width: 350px; width: 100%;">
+                            <h3 style="margin-bottom: 16px; font-size: 18px;">☁️ Cloud Sync</h3>
+                            <button id="syncUpload" style="width:100%; padding: 14px; background: #667eea; color: #fff; border: none; border-radius: 8px; font-size: 15px; font-weight: 600; cursor: pointer; margin-bottom: 8px;">
+                                📤 Upload to Cloud
+                            </button>
+                            <button id="syncDownload" style="width:100%; padding: 14px; background: #51cf66; color: #fff; border: none; border-radius: 8px; font-size: 15px; font-weight: 600; cursor: pointer; margin-bottom: 8px;">
+                                📥 Download from Cloud
+                            </button>
+                            <button id="syncSetup" style="width:100%; padding: 14px; background: #ffd93d; color: #333; border: none; border-radius: 8px; font-size: 15px; font-weight: 600; cursor: pointer; margin-bottom: 8px;">
+                                ⚙️ Setup GitHub
+                            </button>
+                            <button id="syncClose" style="width:100%; padding: 14px; background: #e2e8f0; color: #333; border: none; border-radius: 8px; font-size: 15px; cursor: pointer;">
+                                Cancel
+                            </button>
+                            ${state.githubEnabled ? `<div style="margin-top: 8px; font-size: 11px; color: #51cf66; text-align: center;">✅ Connected to GitHub</div>` : `<div style="margin-top: 8px; font-size: 11px; color: #999; text-align: center;">⚠️ Not connected. Click Setup GitHub.</div>`}
+                        </div>
+                    `;
+                document.body.appendChild(modal);
+
+                document.getElementById('syncUpload').addEventListener('click', () => {
+                    document.body.removeChild(modal);
+                    syncToGithub();
+                });
+                document.getElementById('syncDownload').addEventListener('click', () => {
+                    document.body.removeChild(modal);
+                    syncFromGithub();
+                });
+                document.getElementById('syncSetup').addEventListener('click', () => {
+                    document.body.removeChild(modal);
+                    showSyncSetupModal();
+                });
+                document.getElementById('syncClose').addEventListener('click', () => {
+                    document.body.removeChild(modal);
+                });
             });
 
             document.getElementById('darkToggle').addEventListener('click', () => {
@@ -3985,11 +4449,8 @@
                 }
             });
 
-            // Handle custom days checkboxes
             document.querySelectorAll('.custom-day').forEach(cb => {
-                cb.addEventListener('change', () => {
-                    // Just store state, no action needed
-                });
+                cb.addEventListener('change', () => {});
             });
         }
 
@@ -4026,17 +4487,13 @@
         // ── Init ──
         function init() {
             initDefaultState();
-
             ttCurrentDate = new Date();
             ttSelectedDate = getDateStr(ttCurrentDate);
-
             setupEvents();
             renderAll();
             setupAutoExport();
-
             setInterval(() => { saveState(); }, 30000);
             document.addEventListener('visibilitychange', () => { if (document.hidden) saveState(); });
-
             toast('📚 Lecture Planner Pro loaded', 'info');
         }
 
