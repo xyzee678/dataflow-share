@@ -18,17 +18,14 @@
             padding-top: 60px;
             padding-bottom: 76px;
             min-height: 100vh;
-        }
-        body.dark {
-            background: #0a0a0f;
-            color: #e2e8f0;
+            overflow-x: hidden;
         }
         .card {
             background: #1a202c;
             border-radius: 12px;
             padding: 16px;
             margin-bottom: 14px;
-            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06);
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
             border: 1px solid #2d3748;
         }
         .card .card-title {
@@ -62,6 +59,10 @@
         select:focus,
         textarea:focus {
             border-color: #667eea;
+        }
+        input::placeholder,
+        textarea::placeholder {
+            color: #718096;
         }
         textarea {
             resize: vertical;
@@ -98,6 +99,7 @@
             transition: all 0.2s;
             white-space: nowrap;
             min-height: 36px;
+            user-select: none;
         }
         .btn:active {
             transform: scale(0.96);
@@ -949,7 +951,7 @@
         .focus-mode-overlay .focus-lectures {
             width: 100%;
             max-width: 600px;
-            max-height: 35vh;
+            max-height: 30vh;
             overflow-y: auto;
             padding: 4px;
         }
@@ -1175,6 +1177,27 @@
         #toast.info {
             background: #2d3748;
         }
+        .obsession-mode {
+            text-align: center;
+            padding: 30px 20px;
+        }
+        .obsession-mode .big-number {
+            font-size: 32px;
+            font-weight: 700;
+            margin: 4px 0;
+        }
+        .obsession-mode .big-number.green {
+            color: #51cf66;
+        }
+        .obsession-mode .big-number.red {
+            color: #ff6b6b;
+        }
+        .obsession-mode .big-number.purple {
+            color: #667eea;
+        }
+        .obsession-mode .big-number.yellow {
+            color: #ffd93d;
+        }
         @media (max-width: 480px) {
             .battery {
                 width: 36px;
@@ -1240,6 +1263,9 @@
                 min-height: 30px;
                 padding: 4px 10px;
             }
+            .obsession-mode .big-number {
+                font-size: 24px;
+            }
         }
     </style>
 </head>
@@ -1272,12 +1298,12 @@
 
     <!-- Focus Mode Overlay -->
     <div class="focus-mode-overlay" id="focusOverlay">
-        <div class="focus-header" id="focusDayTitle">Wednesday, January 15, 2026</div>
+        <div class="focus-header" id="focusDayTitle">Loading...</div>
         <div class="focus-slogan-row">
             <input class="focus-slogan-input" id="focusSlogan" placeholder="✍️ Write your daily slogan here..." />
             <button class="focus-slogan-save" id="focusSloganSave">💾 Save</button>
         </div>
-        <div class="focus-date" id="focusCourseName">Mathematics 101</div>
+        <div class="focus-date" id="focusCourseName">No course selected</div>
         <div class="focus-battery-container">
             <div class="focus-battery" id="focusBattery">
                 <div class="cap"></div>
@@ -1290,7 +1316,7 @@
         <div class="focus-lectures" id="focusLectureList"></div>
         <div class="focus-course-bar" id="focusCourseBar">
             <div class="row">
-                <span id="focusCourseBarName">Course: Mathematics 101</span>
+                <span id="focusCourseBarName">Course: None</span>
                 <span id="focusCourseBarPct">0%</span>
             </div>
             <div class="progress-bar-horizontal"><div class="fill high" id="focusCourseBarFill" style="width:0%;">0%</div></div>
@@ -1316,17 +1342,17 @@
 
         <!-- OBSESSION MODE -->
         <div class="tab-content" id="tab-obsession">
-            <div class="card" style="text-align:center;padding:30px 20px;">
+            <div class="card obsession-mode">
                 <div style="font-size:12px;color:#718096;margin-bottom:4px;">TODAY</div>
-                <div style="font-size:28px;font-weight:700;color:#e2e8f0;" id="obsessionTarget">Target: 6h</div>
-                <div style="font-size:22px;font-weight:700;color:#51cf66;" id="obsessionDone">Done: 4.2h</div>
-                <div style="font-size:22px;font-weight:700;color:#ff6b6b;" id="obsessionLeft">Left: 1.8h</div>
+                <div class="big-number yellow" id="obsessionTarget">Target: 6h</div>
+                <div class="big-number green" id="obsessionDone">Done: 0h</div>
+                <div class="big-number red" id="obsessionLeft">Left: 6h</div>
                 <div class="progress-bar-horizontal" style="margin:12px auto;max-width:300px;height:30px;">
-                    <div class="fill high" id="obsessionBar" style="width:0%;">0%</div>
+                    <div class="fill low" id="obsessionBar" style="width:0%;">0%</div>
                 </div>
-                <div style="font-size:14px;font-weight:600;color:#ffd93d;" id="obsessionStreak">🔥 Streak: 21 days</div>
-                <div style="font-size:13px;color:#a0aec0;margin-top:4px;" id="obsessionLifetime">⏱️ Lifetime: 1248h</div>
-                <div style="font-size:13px;color:#667eea;margin-top:4px;" id="obsessionMilestone">🎯 Next Milestone: 1500h (252h left)</div>
+                <div class="big-number yellow" style="font-size:20px;" id="obsessionStreak">🔥 Streak: 0 days</div>
+                <div style="font-size:13px;color:#a0aec0;margin-top:4px;" id="obsessionLifetime">⏱️ Lifetime: 0h</div>
+                <div style="font-size:13px;color:#667eea;margin-top:4px;" id="obsessionMilestone">🎯 Next Milestone: 250h (250h left)</div>
                 <div style="font-size:13px;color:#718096;margin-top:12px;font-style:italic;" id="obsessionQuote">"Your future self is watching."</div>
             </div>
         </div>
@@ -1410,7 +1436,7 @@
                         <button class="btn btn-sm btn-outline" id="ttNextMonth">▶</button>
                     </div>
                 </div>
-                <div style="text-align:center;font-weight:700;font-size:14px;padding:4px 0;" id="ttMonthLabel">January 2026</div>
+                <div style="text-align:center;font-weight:700;font-size:14px;padding:4px 0;" id="ttMonthLabel">Loading...</div>
                 <div class="calendar-grid" id="ttCalendar"></div>
                 <div class="mt-8" id="ttSpeedControl" style="display:none;">
                     <div class="row">
@@ -1629,7 +1655,7 @@
                         <div class="progress-bar" style="height:12px;margin-top:8px;">
                             <div class="fill" id="debtBar" style="width:0%;background:#667eea;"></div>
                         </div>
-                        <div class="text-muted mt-8" id="debtMessage">You're on track!</div>
+                        <div class="text-muted mt-8" id="debtMessage">Start studying to track your debt!</div>
                     </div>
                 </div>
 
@@ -1637,7 +1663,7 @@
                 <div class="mt-12">
                     <div class="card-title">📅 Monthly Review</div>
                     <div id="monthlyReviewContainer">
-                        <div class="text-muted">Complete a month to see your review.</div>
+                        <div class="text-muted">Complete 7 days of study to see your monthly review.</div>
                     </div>
                 </div>
 
@@ -1668,7 +1694,7 @@
         // ════════════════════════════════════════════════════════════════
         // COMPLETE STATE
         // ════════════════════════════════════════════════════════════════
-        const STORAGE_KEY = 'lecturePlannerPro_v5';
+        const STORAGE_KEY = 'lecturePlannerPro_final';
 
         let state = {
             courses: {},
@@ -1714,6 +1740,7 @@
         let celebrationTimeout = null;
         let histPage = 0;
         let histPageSize = 30;
+        let appInitialized = false;
 
         // ── Helpers ──
         function getDateStr(d) {
@@ -2084,7 +2111,7 @@
             el.textContent = msg;
             el.className = type + ' show';
             clearTimeout(el._timer);
-            el._timer = setTimeout(() => { el.className = ''; }, 2500);
+            el._timer = setTimeout(() => { el.className = ''; }, 3000);
         }
 
         function initDefaultState() {
@@ -2189,7 +2216,7 @@
 
             const pct = Math.round((doneHours / totalHours) * 100);
             let message =
-            `🎉 Great job! Task completed!\n⭐ +${xpEarned} XP earned! (Total: ${state.xp} XP)\n🔥 Streak: ${state.streak} days\n📊 Course is now ${pct}% complete (${formatDuration(doneHours)} / ${formatDuration(totalHours)})`;
+                `🎉 Great job! Task completed!\n⭐ +${xpEarned} XP earned! (Total: ${state.xp} XP)\n🔥 Streak: ${state.streak} days\n📊 Course is now ${pct}% complete (${formatDuration(doneHours)} / ${formatDuration(totalHours)})`;
 
             toast(message, 'success');
             triggerCelebration('large');
@@ -2265,12 +2292,12 @@
                 const color = val >= 4 ? '#51cf66' : val >= 2 ? '#ffd93d' : '#ff6b6b';
                 const label = d.substring(5);
                 html += `
-                    <div class="bar-item">
-                        <div class="bar" style="height:${height}px;background:${color};"></div>
-                        <span class="bar-label">${label}</span>
-                        <span class="bar-label" style="font-size:7px;">${val}h</span>
-                    </div>
-                `;
+                            <div class="bar-item">
+                                <div class="bar" style="height:${height}px;background:${color};"></div>
+                                <span class="bar-label">${label}</span>
+                                <span class="bar-label" style="font-size:7px;">${val}h</span>
+                            </div>
+                        `;
             });
             container.innerHTML = html;
         }
@@ -2279,19 +2306,16 @@
         function updatePersonalRecords(doneHours, completedCount) {
             const today = getDateStr(new Date());
 
-            // Most hours in a day
             if (doneHours > state.personalRecords.mostHoursDay.hours) {
                 state.personalRecords.mostHoursDay = { hours: doneHours, date: today };
                 toast('🏆 New Personal Record! Most hours in a day!', 'success');
             }
 
-            // Most lectures in a day
             if (completedCount > state.personalRecords.mostLecturesDay.count) {
                 state.personalRecords.mostLecturesDay = { count: completedCount, date: today };
                 toast('🏆 New Personal Record! Most lectures in a day!', 'success');
             }
 
-            // Longest streak
             if (state.streak > state.personalRecords.longestStreak.days) {
                 state.personalRecords.longestStreak = { days: state.streak, date: today };
                 toast('🏆 New Personal Record! Longest streak!', 'success');
@@ -2323,7 +2347,14 @@
             const barEl = document.getElementById('debtBar');
             const msgEl = document.getElementById('debtMessage');
 
-            if (debt >= 0) {
+            if (actual === 0) {
+                debtEl.textContent = 'No data';
+                debtEl.style.color = '#a0aec0';
+                barEl.style.width = '0%';
+                barEl.style.background = '#4a5568';
+                msgEl.textContent = 'Start studying to track your debt!';
+                msgEl.style.color = '#a0aec0';
+            } else if (debt >= 0) {
                 debtEl.textContent = `Ahead: +${debt.toFixed(1)}h`;
                 debtEl.style.color = '#51cf66';
                 barEl.style.width = Math.min((actual / (target * 1.5)) * 100, 100) + '%';
@@ -2401,7 +2432,6 @@
                 return;
             }
 
-            // Generate report
             const history = state.capacityHistory || {};
             const monthDates = Object.keys(history).filter(d => d.startsWith(key));
             if (monthDates.length < 7) {
@@ -2440,22 +2470,23 @@
             }
 
             document.getElementById('monthlyReviewContainer').innerHTML = `
-                <div style="background:#2d3748;border-radius:8px;padding:12px;">
-                    <div style="font-weight:600;color:#667eea;">📊 ${key} Report</div>
-                    <div class="grid-2" style="margin-top:8px;">
-                        <div><span class="text-muted">Hours Studied:</span> ${report.totalHours}h</div>
-                        <div><span class="text-muted">Average:</span> ${report.average}h/day</div>
-                        <div><span class="text-muted">Best Day:</span> ${report.bestDay}h</div>
-                        <div><span class="text-muted">Worst Day:</span> ${report.worstDay}h</div>
-                        <div><span class="text-muted">Streak:</span> ${report.streak} days</div>
-                        <div><span class="text-muted">Days Tracked:</span> ${report.days}</div>
-                    </div>
-                </div>
-            `;
+                        <div style="background:#2d3748;border-radius:8px;padding:12px;">
+                            <div style="font-weight:600;color:#667eea;">📊 ${key} Report</div>
+                            <div class="grid-2" style="margin-top:8px;">
+                                <div><span class="text-muted">Hours Studied:</span> ${report.totalHours}h</div>
+                                <div><span class="text-muted">Average:</span> ${report.average}h/day</div>
+                                <div><span class="text-muted">Best Day:</span> ${report.bestDay}h</div>
+                                <div><span class="text-muted">Worst Day:</span> ${report.worstDay}h</div>
+                                <div><span class="text-muted">Streak:</span> ${report.streak} days</div>
+                                <div><span class="text-muted">Days Tracked:</span> ${report.days}</div>
+                            </div>
+                        </div>
+                    `;
         }
 
         // ── COMPLETE RENDER ──
         function renderAll() {
+            if (!appInitialized) return;
             renderDashSavedCourses();
             renderDashboard();
             renderTimetable();
@@ -2479,7 +2510,12 @@
             const overlay = document.getElementById('focusOverlay');
             const course = getFocus();
             if (!course) {
-                toast('No course selected!', 'error');
+                overlay.classList.add('active');
+                focusModeActive = true;
+                document.getElementById('focusDayTitle').textContent = 'No Course Selected';
+                document.getElementById('focusCourseName').textContent = 'Please add a course';
+                document.getElementById('focusLectureList').innerHTML =
+                    '<div style="color:#718096;text-align:center;">No courses available. Go to Upload tab.</div>';
                 return;
             }
 
@@ -2551,9 +2587,9 @@
                 list.innerHTML = html;
 
                 list.querySelectorAll('.focus-check').forEach(cb => {
-                    cb.addEventListener('change', () => {
-                        const key = cb.dataset.key;
-                        const done = cb.checked;
+                    cb.addEventListener('change', function() {
+                        const key = this.dataset.key;
+                        const done = this.checked;
                         if (!state.results[course]) state.results[course] = {};
 
                         if (done) {
@@ -3094,12 +3130,12 @@
             list.innerHTML = html;
 
             list.querySelectorAll('.lec-check').forEach((cb) => {
-                cb.addEventListener('change', () => {
-                    const row = cb.closest('.lecture-row');
+                cb.addEventListener('change', function() {
+                    const row = this.closest('.lecture-row');
                     const key = row.dataset.key;
                     const courseName = row.dataset.course;
                     if (!courseName) return;
-                    const done = cb.checked;
+                    const done = this.checked;
                     if (!state.results[courseName]) state.results[courseName] = {};
 
                     if (done) {
@@ -3119,12 +3155,12 @@
             });
 
             list.querySelectorAll('.done-date-picker').forEach((picker) => {
-                picker.addEventListener('change', () => {
-                    const row = picker.closest('.lecture-row');
+                picker.addEventListener('change', function() {
+                    const row = this.closest('.lecture-row');
                     const key = row.dataset.key;
                     const courseName = row.dataset.course;
                     if (!courseName) return;
-                    const val = picker.value;
+                    const val = this.value;
                     if (val) {
                         if (!state.doneDates[courseName]) state.doneDates[courseName] = {};
                         state.doneDates[courseName][key] = val;
@@ -3365,39 +3401,39 @@
                 `📊 ${formatDuration(totalDur)}  📚 ${lecs.length} lectures  ✅ ${doneCount} completed`;
 
             document.querySelectorAll('.edit-lecture-name').forEach(inp => {
-                inp.addEventListener('change', () => {
-                    const key = inp.dataset.key;
+                inp.addEventListener('change', function() {
+                    const key = this.dataset.key;
                     const course = document.getElementById('editCourse').value;
                     if (!course) return;
                     const lecs = getLectures(course);
                     const l = lecs.find(lec => getLectureKey(lec) === key);
-                    if (l) { l.name = inp.value;
+                    if (l) { l.name = this.value;
                         saveState();
                         renderEdit();
                         renderAll(); }
                 });
             });
             document.querySelectorAll('.edit-lecture-dur').forEach(inp => {
-                inp.addEventListener('change', () => {
-                    const key = inp.dataset.key;
+                inp.addEventListener('change', function() {
+                    const key = this.dataset.key;
                     const course = document.getElementById('editCourse').value;
                     if (!course) return;
                     const lecs = getLectures(course);
                     const l = lecs.find(lec => getLectureKey(lec) === key);
-                    if (l) { l.duration = parseInt(inp.value) || 0;
+                    if (l) { l.duration = parseInt(this.value) || 0;
                         saveState();
                         renderEdit();
                         renderAll(); }
                 });
             });
             document.querySelectorAll('.edit-lecture-done').forEach(cb => {
-                cb.addEventListener('change', () => {
-                    const key = cb.dataset.key;
+                cb.addEventListener('change', function() {
+                    const key = this.dataset.key;
                     const course = document.getElementById('editCourse').value;
                     if (!course) return;
                     if (!state.results[course]) state.results[course] = {};
-                    state.results[course][key] = cb.checked;
-                    if (cb.checked) {
+                    state.results[course][key] = this.checked;
+                    if (this.checked) {
                         if (!state.doneDates[course]) state.doneDates[course] = {};
                         if (!state.doneDates[course][key]) state.doneDates[course][key] = getDateStr(new Date(
                         ));
@@ -3408,8 +3444,8 @@
                 });
             });
             document.querySelectorAll('.edit-delete-lecture').forEach(btn => {
-                btn.addEventListener('click', () => {
-                    const key = btn.dataset.key;
+                btn.addEventListener('click', function() {
+                    const key = this.dataset.key;
                     const course = document.getElementById('editCourse').value;
                     if (!course) return;
                     if (!confirm(`Delete this lecture?`)) return;
@@ -3687,16 +3723,16 @@
             container.innerHTML = html;
 
             container.querySelectorAll('.habit-check').forEach(cb => {
-                cb.addEventListener('change', () => {
-                    const name = cb.dataset.name;
+                cb.addEventListener('change', function() {
+                    const name = this.dataset.name;
                     const today = getDateStr(new Date());
                     if (!state.habits[name].completed) state.habits[name].completed = {};
-                    state.habits[name].completed[today] = cb.checked;
+                    state.habits[name].completed[today] = this.checked;
                     state.habits[name].streak = calculateStreak(name);
                     saveState();
                     renderHabits();
                     renderAll();
-                    if (cb.checked) {
+                    if (this.checked) {
                         triggerCelebration('small');
                         toast(`✅ Habit "${name}" completed! +5 XP`, 'success');
                         state.xp = (state.xp || 0) + 5;
@@ -3706,8 +3742,8 @@
             });
 
             container.querySelectorAll('.habit-edit').forEach(btn => {
-                btn.addEventListener('click', () => {
-                    const name = btn.dataset.name;
+                btn.addEventListener('click', function() {
+                    const name = this.dataset.name;
                     const habit = state.habits[name];
                     const newName = prompt('Edit habit name:', name);
                     if (newName && newName.trim() && newName.trim() !== name) {
@@ -3751,8 +3787,8 @@
             });
 
             container.querySelectorAll('.habit-delete').forEach(btn => {
-                btn.addEventListener('click', () => {
-                    const name = btn.dataset.name;
+                btn.addEventListener('click', function() {
+                    const name = this.dataset.name;
                     if (confirm(`Delete habit "${name}"?`)) {
                         delete state.habits[name];
                         saveState();
@@ -3785,20 +3821,20 @@
             container.innerHTML = html;
 
             container.querySelectorAll('.link-open').forEach(btn => {
-                btn.addEventListener('click', () => {
-                    const url = btn.dataset.url;
+                btn.addEventListener('click', function() {
+                    const url = this.dataset.url;
                     if (url) window.open(url, '_blank');
                 });
             });
             container.querySelectorAll('.link-url').forEach(el => {
-                el.addEventListener('click', () => {
-                    const url = el.dataset.url;
+                el.addEventListener('click', function() {
+                    const url = this.dataset.url;
                     if (url) window.open(url, '_blank');
                 });
             });
             container.querySelectorAll('.link-delete').forEach(btn => {
-                btn.addEventListener('click', () => {
-                    const idx = parseInt(btn.dataset.idx);
+                btn.addEventListener('click', function() {
+                    const idx = parseInt(this.dataset.idx);
                     if (confirm('Delete this link?')) {
                         state.links.splice(idx, 1);
                         saveState();
@@ -4237,10 +4273,10 @@
         function setupEvents() {
             // Navigation
             document.querySelectorAll('.nav-bottom .tab').forEach(btn => {
-                btn.addEventListener('click', () => {
+                btn.addEventListener('click', function() {
                     document.querySelectorAll('.nav-bottom .tab').forEach(b => b.classList.remove('active'));
-                    btn.classList.add('active');
-                    const tab = btn.dataset.tab;
+                    this.classList.add('active');
+                    const tab = this.dataset.tab;
                     activeTab = tab;
                     document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
                     document.getElementById('tab-' + tab).classList.add('active');
@@ -4249,13 +4285,13 @@
             });
 
             // Focus Mode
-            document.querySelector('.tab[data-tab="focus"]').addEventListener('click', () => {
+            document.querySelector('.tab[data-tab="focus"]').addEventListener('click', function() {
                 if (!getFocus()) { toast('Please add a course first', 'warning'); return; }
                 renderFocusMode();
             });
 
             // Focus Slogan Save
-            document.getElementById('focusSloganSave').addEventListener('click', () => {
+            document.getElementById('focusSloganSave').addEventListener('click', function() {
                 const text = document.getElementById('focusSlogan').value.trim();
                 if (!text) { toast('Please write something first!', 'warning'); return; }
                 state.focusSlogan = text;
@@ -4270,61 +4306,61 @@
                 toast('💾 Slogan saved to Memo page!', 'success');
             });
 
-            document.getElementById('focusExitBtn').addEventListener('click', () => {
+            document.getElementById('focusExitBtn').addEventListener('click', function() {
                 document.getElementById('focusOverlay').classList.remove('active');
                 focusModeActive = false;
             });
 
             // Focus Export/Import
-            document.getElementById('focusExportBtn').addEventListener('click', () => {
+            document.getElementById('focusExportBtn').addEventListener('click', function() {
                 document.getElementById('exportBtn').click();
             });
-            document.getElementById('focusImportBtn').addEventListener('click', () => {
+            document.getElementById('focusImportBtn').addEventListener('click', function() {
                 document.getElementById('importBtn').click();
             });
-            document.getElementById('focusSyncBtn').addEventListener('click', () => {
+            document.getElementById('focusSyncBtn').addEventListener('click', function() {
                 document.getElementById('syncBtn').click();
             });
 
             // Daily Note
-            document.getElementById('dailyNote').addEventListener('input', () => {
+            document.getElementById('dailyNote').addEventListener('input', function() {
                 const dateStr = state.dashboardDate || getDateStr(new Date());
-                state.dailyNotes[dateStr] = document.getElementById('dailyNote').value;
+                state.dailyNotes[dateStr] = this.value;
                 saveState();
             });
 
             // Dashboard
-            document.getElementById('dashCourse').addEventListener('change', () => {
-                const val = document.getElementById('dashCourse').value;
+            document.getElementById('dashCourse').addEventListener('change', function() {
+                const val = this.value;
                 if (val) { state.focusCourse = val;
                     saveState();
                     renderAll(); }
             });
-            document.getElementById('dashViewDate').addEventListener('click', () => {
+            document.getElementById('dashViewDate').addEventListener('click', function() {
                 state.batteryView = 'date';
                 saveState();
                 renderDashboard();
             });
-            document.getElementById('dashViewOverall').addEventListener('click', () => {
+            document.getElementById('dashViewOverall').addEventListener('click', function() {
                 state.batteryView = 'overall';
                 saveState();
                 renderDashboard();
             });
-            document.getElementById('dashPrev').addEventListener('click', () => {
+            document.getElementById('dashPrev').addEventListener('click', function() {
                 const d = parseDate(state.dashboardDate || getDateStr(new Date()));
                 state.dashboardDate = getDateStr(addDays(d, -1));
                 saveState();
                 renderDashboard();
                 renderDailyNote();
             });
-            document.getElementById('dashNext').addEventListener('click', () => {
+            document.getElementById('dashNext').addEventListener('click', function() {
                 const d = parseDate(state.dashboardDate || getDateStr(new Date()));
                 state.dashboardDate = getDateStr(addDays(d, 1));
                 saveState();
                 renderDashboard();
                 renderDailyNote();
             });
-            document.getElementById('dashToday').addEventListener('click', () => {
+            document.getElementById('dashToday').addEventListener('click', function() {
                 state.dashboardDate = getDateStr(new Date());
                 saveState();
                 renderDashboard();
@@ -4332,7 +4368,7 @@
             });
 
             // Upload
-            document.getElementById('uploadBtn').addEventListener('click', () => {
+            document.getElementById('uploadBtn').addEventListener('click', function() {
                 const name = document.getElementById('uploadCourseName').value.trim();
                 const data = document.getElementById('uploadLectures').value.trim();
                 const priority = parseInt(document.getElementById('uploadPriority').value) || 999;
@@ -4370,7 +4406,7 @@
                 renderAll();
             });
 
-            document.getElementById('dummyBtn').addEventListener('click', () => {
+            document.getElementById('dummyBtn').addEventListener('click', function() {
                 if (state.courses['Mathematics 101']) { toast('Dummy data already exists', 'warning'); return; }
                 const math = [{ sr: 1, name: 'Introduction_to_Algebra', duration: 45 }, { sr: 2,
                         name: 'Linear_Equations', duration: 60 }, { sr: 3, name: 'Quadratic_Equations',
@@ -4401,7 +4437,7 @@
                 renderAll();
             });
 
-            document.getElementById('removeDummyBtn').addEventListener('click', () => {
+            document.getElementById('removeDummyBtn').addEventListener('click', function() {
                 if (!state.courses['Mathematics 101'] && !state.courses['Physics 101']) { toast(
                         'No dummy data to remove', 'warning'); return; }
                 if (!confirm('Remove dummy courses?')) return;
@@ -4422,7 +4458,7 @@
                 renderAll();
             });
 
-            document.getElementById('clearAllBtn').addEventListener('click', () => {
+            document.getElementById('clearAllBtn').addEventListener('click', function() {
                 if (!confirm('⚠️ Delete ALL data?')) return;
                 if (!confirm('⚠️ Final confirmation?')) return;
                 state.courses = {};
@@ -4454,10 +4490,10 @@
 
             // Edit
             document.getElementById('editCourse').addEventListener('change', renderEdit);
-            document.getElementById('editSpeed').addEventListener('change', () => {
+            document.getElementById('editSpeed').addEventListener('change', function() {
                 const course = document.getElementById('editCourse').value;
                 if (!course) return;
-                const val = parseInt(document.getElementById('editSpeed').value);
+                const val = parseInt(this.value);
                 if (val > 0) {
                     if (!state.settings[course]) state.settings[course] = {};
                     state.settings[course].speed = val;
@@ -4466,10 +4502,10 @@
                     renderAll();
                 }
             });
-            document.getElementById('editPriority').addEventListener('change', () => {
+            document.getElementById('editPriority').addEventListener('change', function() {
                 const course = document.getElementById('editCourse').value;
                 if (!course) return;
-                const val = parseInt(document.getElementById('editPriority').value);
+                const val = parseInt(this.value);
                 if (val > 0) {
                     if (!state.settings[course]) state.settings[course] = {};
                     state.settings[course].priority = val;
@@ -4478,7 +4514,7 @@
                     renderAll();
                 }
             });
-            document.getElementById('editResetSpeed').addEventListener('click', () => {
+            document.getElementById('editResetSpeed').addEventListener('click', function() {
                 const course = document.getElementById('editCourse').value;
                 if (!course) return;
                 if (!state.settings[course]) state.settings[course] = {};
@@ -4488,10 +4524,10 @@
                 renderAll();
                 toast('↺ Speed reset to 120');
             });
-            document.getElementById('editStartDate').addEventListener('change', () => {
+            document.getElementById('editStartDate').addEventListener('change', function() {
                 const course = document.getElementById('editCourse').value;
                 if (!course) return;
-                const val = document.getElementById('editStartDate').value;
+                const val = this.value;
                 if (val) {
                     if (!state.settings[course]) state.settings[course] = {};
                     state.settings[course].startDate = val;
@@ -4501,7 +4537,7 @@
                 }
             });
 
-            document.getElementById('editDeleteCourse').addEventListener('click', () => {
+            document.getElementById('editDeleteCourse').addEventListener('click', function() {
                 const course = document.getElementById('editCourse').value;
                 if (!course) return;
                 if (!confirm(`Delete course "${course}"?`)) return;
@@ -4520,7 +4556,7 @@
                 renderAll();
             });
 
-            document.getElementById('editResetCourse').addEventListener('click', () => {
+            document.getElementById('editResetCourse').addEventListener('click', function() {
                 const course = document.getElementById('editCourse').value;
                 if (!course) return;
                 if (!confirm(`Reset ALL progress for "${course}"?`)) return;
@@ -4534,7 +4570,7 @@
                 renderAll();
             });
 
-            document.getElementById('editExportCourse').addEventListener('click', () => {
+            document.getElementById('editExportCourse').addEventListener('click', function() {
                 const course = document.getElementById('editCourse').value;
                 if (!course) return;
                 const data = {
@@ -4560,11 +4596,11 @@
             // History
             document.getElementById('histRefresh').addEventListener('click', renderHistory);
             document.getElementById('histCourse').addEventListener('change', renderHistory);
-            document.getElementById('histPrev').addEventListener('click', () => {
+            document.getElementById('histPrev').addEventListener('click', function() {
                 if (histPage > 0) { histPage--;
                     renderHistory(); }
             });
-            document.getElementById('histNext').addEventListener('click', () => {
+            document.getElementById('histNext').addEventListener('click', function() {
                 const totalRows = getHistoryRows().length;
                 if ((histPage + 1) * histPageSize < totalRows) { histPage++;
                     renderHistory(); }
@@ -4603,12 +4639,12 @@
             }
 
             // Habits
-            document.getElementById('habitPattern').addEventListener('change', () => {
-                const val = document.getElementById('habitPattern').value;
+            document.getElementById('habitPattern').addEventListener('change', function() {
+                const val = this.value;
                 document.getElementById('habitCustomDays').style.display = val === 'custom' ? 'block' : 'none';
             });
 
-            document.getElementById('habitAdd').addEventListener('click', () => {
+            document.getElementById('habitAdd').addEventListener('click', function() {
                 const name = document.getElementById('habitName').value.trim();
                 const time = document.getElementById('habitTime').value || '09:00';
                 const pattern = document.getElementById('habitPattern').value;
@@ -4631,7 +4667,7 @@
             });
 
             // Links
-            document.getElementById('linkAdd').addEventListener('click', () => {
+            document.getElementById('linkAdd').addEventListener('click', function() {
                 const name = document.getElementById('linkName').value.trim();
                 let url = document.getElementById('linkUrl').value.trim();
                 const category = document.getElementById('linkCategory').value.trim();
@@ -4651,7 +4687,7 @@
             document.getElementById('overviewRefresh').addEventListener('click', renderOverview);
 
             // Project speed
-            document.getElementById('projectSpeedUpdate').addEventListener('click', () => {
+            document.getElementById('projectSpeedUpdate').addEventListener('click', function() {
                 const val = parseInt(document.getElementById('projectSpeedInput').value);
                 if (val > 0) {
                     state.projectSpeed = val;
@@ -4665,7 +4701,7 @@
             document.getElementById('projectSpeedInput').value = state.projectSpeed || 300;
 
             // Header
-            document.getElementById('exportBtn').addEventListener('click', () => {
+            document.getElementById('exportBtn').addEventListener('click', function() {
                 const blob = new Blob([JSON.stringify(state, null, 2)], { type: 'application/json' });
                 const url = URL.createObjectURL(blob);
                 const a = document.createElement('a');
@@ -4676,14 +4712,14 @@
                 toast('📤 Data exported');
             });
 
-            document.getElementById('importBtn').addEventListener('click', () => {
+            document.getElementById('importBtn').addEventListener('click', function() {
                 document.getElementById('fileInput').click();
             });
-            document.getElementById('fileInput').addEventListener('change', (e) => {
+            document.getElementById('fileInput').addEventListener('change', function(e) {
                 const file = e.target.files[0];
                 if (!file) return;
                 const reader = new FileReader();
-                reader.onload = (ev) => {
+                reader.onload = function(ev) {
                     try {
                         const data = JSON.parse(ev.target.result);
                         if (data.courses && typeof data.courses === 'object') {
@@ -4720,7 +4756,7 @@
             });
 
             // Sync
-            document.getElementById('syncBtn').addEventListener('click', () => {
+            document.getElementById('syncBtn').addEventListener('click', function() {
                 const modal = document.createElement('div');
                 modal.style.cssText = `
                             position: fixed; top: 0; left: 0; right: 0; bottom: 0;
@@ -4749,46 +4785,46 @@
                         `;
                 document.body.appendChild(modal);
 
-                document.getElementById('syncUpload').addEventListener('click', () => {
+                document.getElementById('syncUpload').addEventListener('click', function() {
                     document.body.removeChild(modal);
                     syncToGithub();
                 });
-                document.getElementById('syncDownload').addEventListener('click', () => {
+                document.getElementById('syncDownload').addEventListener('click', function() {
                     document.body.removeChild(modal);
                     syncFromGithub();
                 });
-                document.getElementById('syncSetup').addEventListener('click', () => {
+                document.getElementById('syncSetup').addEventListener('click', function() {
                     document.body.removeChild(modal);
                     showSyncSetupModal();
                 });
-                document.getElementById('syncClose').addEventListener('click', () => {
+                document.getElementById('syncClose').addEventListener('click', function() {
                     document.body.removeChild(modal);
                 });
             });
 
             // TT Events
-            document.getElementById('ttPrevMonth').addEventListener('click', () => {
+            document.getElementById('ttPrevMonth').addEventListener('click', function() {
                 ttCurrentDate.setMonth(ttCurrentDate.getMonth() - 1);
                 renderTimetable();
             });
-            document.getElementById('ttNextMonth').addEventListener('click', () => {
+            document.getElementById('ttNextMonth').addEventListener('click', function() {
                 ttCurrentDate.setMonth(ttCurrentDate.getMonth() + 1);
                 renderTimetable();
             });
-            document.getElementById('ttToday').addEventListener('click', () => {
+            document.getElementById('ttToday').addEventListener('click', function() {
                 ttCurrentDate = new Date();
                 ttSelectedDate = getDateStr(ttCurrentDate);
                 renderTimetable();
             });
-            document.getElementById('ttCourse').addEventListener('change', () => {
-                const val = document.getElementById('ttCourse').value;
+            document.getElementById('ttCourse').addEventListener('change', function() {
+                const val = this.value;
                 ttCourse = val === '__all__' ? null : val;
                 renderTimetable();
             });
-            document.getElementById('ttCustomSpeed').addEventListener('change', () => {
+            document.getElementById('ttCustomSpeed').addEventListener('change', function() {
                 const course = ttCourse;
                 if (!course) return;
-                const val = parseInt(document.getElementById('ttCustomSpeed').value);
+                const val = parseInt(this.value);
                 const dateStr = ttSelectedDate;
                 if (!dateStr) return;
                 if (val > 0) {
@@ -4802,7 +4838,7 @@
                 renderCalendar();
                 toast('⚡ Speed updated');
             });
-            document.getElementById('ttResetSpeed').addEventListener('click', () => {
+            document.getElementById('ttResetSpeed').addEventListener('click', function() {
                 const course = ttCourse;
                 if (!course) return;
                 const dateStr = ttSelectedDate;
@@ -4813,7 +4849,7 @@
                 renderCalendar();
                 toast('↺ Speed reset to default');
             });
-            document.getElementById('ttTickAll').addEventListener('click', () => {
+            document.getElementById('ttTickAll').addEventListener('click', function() {
                 const course = ttCourse;
                 const dateStr = ttSelectedDate;
                 if (!dateStr) return;
@@ -4834,7 +4870,7 @@
                 toast('✅ All lectures ticked');
                 triggerCelebration('medium');
             });
-            document.getElementById('ttUntickAll').addEventListener('click', () => {
+            document.getElementById('ttUntickAll').addEventListener('click', function() {
                 const course = ttCourse;
                 const dateStr = ttSelectedDate;
                 if (!dateStr) return;
@@ -4851,7 +4887,7 @@
                 renderAll();
                 toast('⭕ All lectures unticked');
             });
-            document.getElementById('ttSetDoneAll').addEventListener('click', () => {
+            document.getElementById('ttSetDoneAll').addEventListener('click', function() {
                 const course = ttCourse;
                 const dateStr = ttSelectedDate;
                 if (!dateStr) return;
@@ -4876,7 +4912,7 @@
             });
 
             // Keyboard
-            document.addEventListener('keydown', (e) => {
+            document.addEventListener('keydown', function(e) {
                 if (e.ctrlKey && e.key === 's') { e.preventDefault();
                     document.getElementById('exportBtn').click(); }
                 if (e.ctrlKey && e.key === 'h') { e.preventDefault();
@@ -4889,7 +4925,7 @@
             });
 
             document.querySelectorAll('.custom-day').forEach(cb => {
-                cb.addEventListener('change', () => {});
+                cb.addEventListener('change', function() {});
             });
         }
 
@@ -4939,16 +4975,19 @@
 
             ttCurrentDate = new Date();
             ttSelectedDate = getDateStr(ttCurrentDate);
+            appInitialized = true;
             setupEvents();
             renderAll();
 
             if (getFocus()) {
-                setTimeout(() => renderFocusMode(), 500);
+                setTimeout(function() {
+                    renderFocusMode();
+                }, 500);
             }
 
             setupAutoExport();
-            setInterval(() => { saveState(); }, 30000);
-            document.addEventListener('visibilitychange', () => { if (document.hidden) saveState(); });
+            setInterval(function() { saveState(); }, 30000);
+            document.addEventListener('visibilitychange', function() { if (document.hidden) saveState(); });
             toast('🎯 Lecture Planner Pro - Focus mode ready!', 'info');
         }
 
