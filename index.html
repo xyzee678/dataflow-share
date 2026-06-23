@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
     <title>📚 Lecture Planner Pro</title>
     <style>
-        /* ── Reset & Base ── */
         * {
             margin: 0;
             padding: 0;
@@ -105,8 +104,10 @@
             background: #4a5568;
             color: #a0aec0;
         }
+        body.dark .focus-mode {
+            background: #000 !important;
+        }
 
-        /* ── Scrollbar ── */
         ::-webkit-scrollbar {
             width: 4px;
             height: 4px;
@@ -116,7 +117,6 @@
             border-radius: 4px;
         }
 
-        /* ── Header ── */
         .header {
             position: fixed;
             top: 0;
@@ -185,7 +185,6 @@
             display: none;
         }
 
-        /* ── Bottom Nav ── */
         .nav-bottom {
             position: fixed;
             bottom: 0;
@@ -253,8 +252,21 @@
             text-align: center;
             line-height: 14px;
         }
+        .nav-bottom .tab .focus-badge {
+            position: absolute;
+            top: -4px;
+            right: -4px;
+            background: #ffd93d;
+            color: #1a1a2e;
+            font-size: 8px;
+            font-weight: 700;
+            padding: 1px 6px;
+            border-radius: 10px;
+            min-width: 16px;
+            text-align: center;
+            line-height: 14px;
+        }
 
-        /* ── Container ── */
         .container {
             max-width: 1000px;
             margin: 0 auto;
@@ -278,7 +290,6 @@
             }
         }
 
-        /* ── Cards ── */
         .card {
             background: #fff;
             border-radius: 12px;
@@ -350,7 +361,6 @@
             }
         }
 
-        /* ── Buttons ── */
         .btn {
             display: inline-flex;
             align-items: center;
@@ -421,8 +431,27 @@
             width: 100%;
             justify-content: center;
         }
+        .btn-focus {
+            border-radius: 50%;
+            width: 48px;
+            height: 48px;
+            padding: 0;
+            font-size: 22px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: #fff;
+            border: none;
+            cursor: pointer;
+            box-shadow: 0 2px 12px rgba(102, 126, 234, 0.4);
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+        .btn-focus:hover {
+            transform: scale(1.05);
+            box-shadow: 0 4px 20px rgba(102, 126, 234, 0.6);
+        }
+        .btn-focus:active {
+            transform: scale(0.92);
+        }
 
-        /* ── Inputs ── */
         input,
         select,
         textarea {
@@ -472,7 +501,6 @@
             flex: 1;
         }
 
-        /* ── Badges ── */
         .badge {
             display: inline-block;
             padding: 2px 10px;
@@ -519,7 +547,6 @@
             color: #a0b8f0;
         }
 
-        /* ── Batteries ── */
         .battery-container {
             display: flex;
             align-items: flex-end;
@@ -571,6 +598,20 @@
         .battery .fill.high {
             background: #51cf66;
         }
+        .battery .fill.star {
+            background: linear-gradient(135deg, #ffd93d, #ff6b6b, #667eea, #51cf66);
+            animation: starPulse 1s ease infinite alternate;
+        }
+        @keyframes starPulse {
+            0% {
+                opacity: 0.8;
+                transform: scaleY(1);
+            }
+            100% {
+                opacity: 1;
+                transform: scaleY(1.02);
+            }
+        }
         .battery .pct {
             position: absolute;
             top: 50%;
@@ -611,6 +652,33 @@
             color: #a0aec0;
         }
 
+        .battery-horizontal {
+            height: 20px;
+            border-radius: 10px;
+            background: #e2e8f0;
+            overflow: hidden;
+            position: relative;
+            width: 100%;
+        }
+        .battery-horizontal .fill {
+            height: 100%;
+            border-radius: 10px;
+            transition: width 0.8s cubic-bezier(0.22, 1, 0.36, 1);
+        }
+        .battery-horizontal .pct {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 11px;
+            font-weight: 700;
+            color: #1a1a2e;
+            text-shadow: 0 0 4px rgba(255, 255, 255, 0.6);
+        }
+        body.dark .battery-horizontal .pct {
+            color: #e2e8f0;
+        }
+
         .battery-mini {
             display: inline-flex;
             align-items: center;
@@ -633,7 +701,6 @@
             border-radius: 1px;
         }
 
-        /* ── Stats Cards ── */
         .stat-card {
             text-align: center;
             padding: 12px 8px;
@@ -667,7 +734,6 @@
             color: #667eea;
         }
 
-        /* ── Timetable Calendar ── */
         .calendar-grid {
             display: grid;
             grid-template-columns: repeat(7, 1fr);
@@ -739,7 +805,6 @@
             background: rgba(102, 126, 234, 0.2);
         }
 
-        /* ── Lecture List ── */
         .lecture-row {
             display: flex;
             flex-wrap: wrap;
@@ -877,8 +942,15 @@
             color: #718096;
             min-width: 20px;
         }
+        .lecture-row .good-day {
+            font-size: 10px;
+            color: #51cf66;
+        }
+        .lecture-row .bad-day {
+            font-size: 10px;
+            color: #ff6b6b;
+        }
 
-        /* ── Habits ── */
         .habit-row {
             display: flex;
             flex-wrap: wrap;
@@ -910,7 +982,6 @@
             color: #ffa94d;
         }
 
-        /* ── Links ── */
         .link-row {
             display: flex;
             flex-wrap: wrap;
@@ -951,7 +1022,6 @@
             color: #a0aec0;
         }
 
-        /* ── Progress Bar ── */
         .progress-bar {
             height: 8px;
             border-radius: 4px;
@@ -966,7 +1036,6 @@
             transition: width 0.6s ease;
         }
 
-        /* ── Toast ── */
         #toast {
             position: fixed;
             top: 70px;
@@ -1003,7 +1072,6 @@
             background: #2d3748;
         }
 
-        /* ── Misc ── */
         .text-center {
             text-align: center;
         }
@@ -1050,7 +1118,6 @@
             font-family: 'Courier New', monospace;
         }
 
-        /* ── Overview Charts ── */
         .chart-bar {
             display: flex;
             align-items: flex-end;
@@ -1078,7 +1145,6 @@
             font-weight: 600;
         }
 
-        /* ── Scrollable Table ── */
         .table-wrap {
             overflow-x: auto;
             -webkit-overflow-scrolling: touch;
@@ -1119,8 +1185,222 @@
         .table-wrap .late {
             border-left: 3px solid #ff6b6b;
         }
+        .table-wrap .odd-date {
+            background: rgba(102, 126, 234, 0.08);
+        }
 
-        /* ── Responsive tweaks ── */
+        /* Focus Mode */
+        .focus-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: #000;
+            z-index: 99999;
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            overflow-y: auto;
+            color: #fff;
+        }
+        .focus-overlay.active {
+            display: flex;
+        }
+        .focus-overlay .focus-header {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        .focus-overlay .focus-header .date {
+            font-size: 14px;
+            color: #888;
+            font-weight: 600;
+        }
+        .focus-overlay .focus-header .day {
+            font-size: 22px;
+            font-weight: 700;
+            color: #fff;
+        }
+        .focus-overlay .focus-battery-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin: 10px 0 20px 0;
+        }
+        .focus-overlay .focus-battery {
+            width: 100px;
+            height: 140px;
+            background: #1a1a2e;
+            border-radius: 12px 12px 6px 6px;
+            border: 3px solid #4a5568;
+            overflow: hidden;
+            position: relative;
+        }
+        .focus-overlay .focus-battery .fill {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            border-radius: 0 0 4px 4px;
+            transition: height 0.8s cubic-bezier(0.22, 1, 0.36, 1);
+        }
+        .focus-overlay .focus-battery .cap {
+            position: absolute;
+            top: -8px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 20px;
+            height: 8px;
+            background: #4a5568;
+            border-radius: 3px 3px 0 0;
+        }
+        .focus-overlay .focus-battery .pct {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 18px;
+            font-weight: 700;
+            color: #fff;
+            text-shadow: 0 0 8px rgba(0, 0, 0, 0.8);
+            z-index: 2;
+        }
+        .focus-overlay .focus-stats {
+            display: flex;
+            gap: 30px;
+            margin: 10px 0 20px 0;
+            font-size: 14px;
+            font-weight: 600;
+        }
+        .focus-overlay .focus-stats .pending {
+            color: #ff6b6b;
+        }
+        .focus-overlay .focus-stats .done {
+            color: #51cf66;
+        }
+        .focus-overlay .focus-lectures {
+            width: 100%;
+            max-width: 500px;
+            max-height: 40vh;
+            overflow-y: auto;
+            margin: 10px 0;
+        }
+        .focus-overlay .focus-lectures .flec-row {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 8px 12px;
+            border-radius: 8px;
+            margin-bottom: 4px;
+            background: rgba(255, 255, 255, 0.05);
+            transition: background 0.3s;
+        }
+        .focus-overlay .focus-lectures .flec-row.done {
+            background: rgba(81, 207, 102, 0.2);
+        }
+        .focus-overlay .focus-lectures .flec-row .flec-sr {
+            font-size: 12px;
+            color: #888;
+            min-width: 24px;
+        }
+        .focus-overlay .focus-lectures .flec-row .flec-name {
+            flex: 1;
+            font-size: 14px;
+        }
+        .focus-overlay .focus-lectures .flec-row .flec-dur {
+            font-size: 12px;
+            color: #888;
+        }
+        .focus-overlay .focus-lectures .flec-row .flec-status {
+            font-size: 12px;
+        }
+        .focus-overlay .focus-lectures .flec-row input[type="checkbox"] {
+            width: 22px;
+            height: 22px;
+            min-height: 22px;
+            accent-color: #667eea;
+            cursor: pointer;
+        }
+        .focus-overlay .focus-bottom {
+            width: 100%;
+            max-width: 500px;
+            margin-top: 10px;
+        }
+        .focus-overlay .focus-bottom .course-name {
+            font-size: 14px;
+            font-weight: 600;
+            color: #888;
+            margin-bottom: 4px;
+        }
+        .focus-overlay .focus-bottom .battery-horizontal {
+            background: #1a1a2e;
+        }
+        .focus-overlay .focus-exit {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: rgba(255, 255, 255, 0.1);
+            border: none;
+            color: #fff;
+            padding: 8px 16px;
+            border-radius: 8px;
+            font-size: 14px;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+        .focus-overlay .focus-exit:hover {
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+        /* Celebration animations */
+        .celebration-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            pointer-events: none;
+            z-index: 99998;
+            overflow: hidden;
+        }
+        .celebration-container .star {
+            position: absolute;
+            font-size: 24px;
+            animation: floatStar 2s ease-out forwards;
+            opacity: 0;
+        }
+        @keyframes floatStar {
+            0% {
+                opacity: 1;
+                transform: translateY(0) scale(0.5) rotate(0deg);
+            }
+            100% {
+                opacity: 0;
+                transform: translateY(-200px) scale(1.5) rotate(360deg);
+            }
+        }
+        .celebration-container .firework {
+            position: absolute;
+            font-size: 32px;
+            animation: fireworkBurst 1.5s ease-out forwards;
+        }
+        @keyframes fireworkBurst {
+            0% {
+                opacity: 1;
+                transform: scale(0) rotate(0deg);
+            }
+            50% {
+                opacity: 1;
+                transform: scale(1.5) rotate(180deg);
+            }
+            100% {
+                opacity: 0;
+                transform: scale(2) rotate(360deg) translateY(-100px);
+            }
+        }
+
         @media (max-width: 480px) {
             .battery {
                 width: 36px;
@@ -1165,15 +1445,25 @@
             .nav-bottom .tab .tab-label {
                 font-size: 7px;
             }
+            .focus-overlay .focus-battery {
+                width: 70px;
+                height: 100px;
+            }
+            .focus-overlay .focus-stats {
+                font-size: 12px;
+                gap: 15px;
+            }
+            .focus-overlay .focus-lectures .flec-row {
+                font-size: 12px;
+                padding: 6px 8px;
+            }
         }
     </style>
 </head>
 <body>
 
-    <!-- ═══ TOAST ═══ -->
     <div id="toast"></div>
 
-    <!-- ═══ HEADER ═══ -->
     <header class="header">
         <div class="title"><span class="emoji">📚</span> Lecture Planner</div>
         <div class="actions">
@@ -1184,7 +1474,6 @@
         </div>
     </header>
 
-    <!-- ═══ BOTTOM NAV ═══ -->
     <nav class="nav-bottom" id="bottomNav">
         <button class="tab active" data-tab="dashboard"><span class="tab-icon">🏠</span><span class="tab-label">Dash</span></button>
         <button class="tab" data-tab="upload"><span class="tab-icon">📤</span><span class="tab-label">Upload</span></button>
@@ -1196,17 +1485,23 @@
         <button class="tab" data-tab="overview"><span class="tab-icon">📈</span><span class="tab-label">Overview</span></button>
     </nav>
 
-    <!-- ═══ MAIN CONTENT ═══ -->
     <div class="container">
 
-        <!-- ─── DASHBOARD ─── -->
+        <!-- DASHBOARD -->
         <div class="tab-content active" id="tab-dashboard">
             <div class="card">
                 <div class="card-title">📚 Saved Courses</div>
                 <div id="dashSavedCourses"></div>
             </div>
             <div class="card">
-                <div class="card-title">📊 Dashboard</div>
+                <div class="card-title">📝 Daily Notes</div>
+                <textarea id="dailyNotes" placeholder="Write your notes for today..." style="min-height:60px;font-size:13px;"></textarea>
+            </div>
+            <div class="card">
+                <div class="card-title" style="justify-content:space-between;">
+                    <span>📊 Dashboard</span>
+                    <button class="btn-focus" id="focusBtn" title="Focus Mode">🎯</button>
+                </div>
                 <div class="row">
                     <div class="flex-1">
                         <select id="dashCourse" style="min-height:40px;"></select>
@@ -1224,22 +1519,26 @@
                 </div>
                 <div class="battery-container" id="dashBatteries"></div>
                 <div class="grid-4 mt-8" id="dashStats">
-                    <div class="stat-card"><div class="number purple" id="dashTotal">0</div><div class="label">Total</div></div>
-                    <div class="stat-card"><div class="number green" id="dashDone">0</div><div class="label">✅ Done</div></div>
-                    <div class="stat-card"><div class="number red" id="dashPending">0</div><div class="label">⏳ Pending</div></div>
+                    <div class="stat-card"><div class="number purple" id="dashTotal">0</div><div class="label" id="dashTotalLabel">Total</div></div>
+                    <div class="stat-card"><div class="number green" id="dashDone">0</div><div class="label" id="dashDoneLabel">✅ Done</div></div>
+                    <div class="stat-card"><div class="number red" id="dashPending">0</div><div class="label" id="dashPendingLabel">⏳ Pending</div></div>
                     <div class="stat-card"><div class="number purple" id="dashDuration">0h</div><div class="label">Duration</div></div>
                 </div>
                 <div class="text-muted text-center" id="dashCourseCount">📚 0 courses</div>
             </div>
         </div>
 
-        <!-- ─── UPLOAD ─── -->
+        <!-- UPLOAD -->
         <div class="tab-content" id="tab-upload">
             <div class="card">
                 <div class="card-title">📤 Upload New Course</div>
                 <div class="row">
                     <div class="flex-1">
                         <input type="text" id="uploadCourseName" placeholder="Course Name (e.g. Mathematics 101)" />
+                    </div>
+                    <div style="min-width:80px;">
+                        <label class="text-muted" style="font-size:11px;">Priority</label>
+                        <input type="number" id="uploadPriority" value="1" min="1" style="min-height:40px;" />
                     </div>
                 </div>
                 <div class="text-muted mt-8" style="font-size:11px;">
@@ -1257,10 +1556,13 @@
             </div>
         </div>
 
-        <!-- ─── TIMETABLE ─── -->
+        <!-- TIMETABLE -->
         <div class="tab-content" id="tab-timetable">
             <div class="card">
-                <div class="card-title">📅 Timetable</div>
+                <div class="card-title" style="justify-content:space-between;">
+                    <span>📅 Timetable</span>
+                    <button class="btn-focus" id="focusBtnTT" title="Focus Mode">🎯</button>
+                </div>
                 <div class="row">
                     <div class="flex-1">
                         <select id="ttCourse" style="min-height:40px;"></select>
@@ -1296,7 +1598,7 @@
             </div>
         </div>
 
-        <!-- ─── EDIT ─── -->
+        <!-- EDIT -->
         <div class="tab-content" id="tab-edit">
             <div class="card">
                 <div class="card-title">✏️ Edit Course</div>
@@ -1305,6 +1607,10 @@
                     <div class="flex-1">
                         <label class="text-muted" style="font-size:11px;">Speed (min/day)</label>
                         <input type="number" id="editSpeed" value="120" min="1" />
+                    </div>
+                    <div style="min-width:80px;">
+                        <label class="text-muted" style="font-size:11px;">Priority</label>
+                        <input type="number" id="editPriority" value="1" min="1" style="min-height:40px;" />
                     </div>
                     <button class="btn btn-sm btn-outline" id="editResetSpeed">↺ Reset</button>
                     <div class="flex-1">
@@ -1329,7 +1635,7 @@
             </div>
         </div>
 
-        <!-- ─── HISTORY ─── -->
+        <!-- HISTORY -->
         <div class="tab-content" id="tab-history">
             <div class="card">
                 <div class="card-title">📊 History</div>
@@ -1337,33 +1643,35 @@
                     <div class="flex-1">
                         <select id="histCourse" style="min-height:40px;"></select>
                     </div>
-                    <div class="flex-1">
-                        <label class="text-muted" style="font-size:11px;">From</label>
-                        <input type="date" id="histFrom" />
-                    </div>
-                    <div class="flex-1">
-                        <label class="text-muted" style="font-size:11px;">To</label>
-                        <input type="date" id="histTo" />
-                    </div>
                     <button class="btn btn-primary" id="histRefresh">🔄 Refresh</button>
                 </div>
                 <div class="grid-4 mt-8" id="histStats">
-                    <div class="stat-card"><div class="number purple" id="histTotal">0</div><div class="label">Total</div></div>
-                    <div class="stat-card"><div class="number green" id="histDone">0</div><div class="label">✅ Done</div></div>
-                    <div class="stat-card"><div class="number red" id="histPending">0</div><div class="label">⏳ Pending</div></div>
+                    <div class="stat-card"><div class="number purple" id="histTotal">0</div><div class="label" id="histTotalLabel">Total</div></div>
+                    <div class="stat-card"><div class="number green" id="histDone">0</div><div class="label" id="histDoneLabel">✅ Done</div></div>
+                    <div class="stat-card"><div class="number red" id="histPending">0</div><div class="label" id="histPendingLabel">⏳ Pending</div></div>
                     <div class="stat-card"><div class="number purple" id="histPct">0%</div><div class="label">Completion</div></div>
+                </div>
+                <div class="mt-8">
+                    <div class="text-muted" style="font-size:11px;font-weight:600;">Course Progress</div>
+                    <div class="battery-horizontal" id="histBattery">
+                        <div class="fill high" style="width:0%;"></div>
+                        <span class="pct">0%</span>
+                    </div>
                 </div>
                 <div class="table-wrap mt-8">
                     <table>
-                        <thead><tr><th>Lecture</th><th>Course</th><th>Allocated</th><th>Done Date</th><th>Status</th><th>Expected</th><th>Actual</th><th>Diff</th></tr></thead>
+                        <thead><tr><th>Lecture</th><th>Allocated</th><th>Done Date</th><th>Status</th><th>Diff</th><th>Good/Bad</th></tr></thead>
                         <tbody id="histTableBody"></tbody>
                     </table>
                 </div>
-                <div class="mt-8" id="histBatteries"></div>
+                <div class="mt-8">
+                    <div class="text-muted" style="font-size:11px;font-weight:600;">Hours Studied Per Day</div>
+                    <div id="histGraph" class="chart-bar" style="height:120px;"></div>
+                </div>
             </div>
         </div>
 
-        <!-- ─── HABITS ─── -->
+        <!-- HABITS -->
         <div class="tab-content" id="tab-habits">
             <div class="card">
                 <div class="card-title">✅ Habits</div>
@@ -1379,15 +1687,35 @@
                             <option value="daily">Daily</option>
                             <option value="weekly">Weekly</option>
                             <option value="monthly">Monthly</option>
+                            <option value="custom">Custom</option>
                         </select>
                     </div>
                     <button class="btn btn-primary" id="habitAdd">➕ Add</button>
+                </div>
+                <div id="habitCustom" style="display:none;margin-top:8px;">
+                    <div class="row">
+                        <label style="font-size:12px;font-weight:600;">Days of Week:</label>
+                        <label><input type="checkbox" class="habit-day" value="0" /> Sun</label>
+                        <label><input type="checkbox" class="habit-day" value="1" /> Mon</label>
+                        <label><input type="checkbox" class="habit-day" value="2" /> Tue</label>
+                        <label><input type="checkbox" class="habit-day" value="3" /> Wed</label>
+                        <label><input type="checkbox" class="habit-day" value="4" /> Thu</label>
+                        <label><input type="checkbox" class="habit-day" value="5" /> Fri</label>
+                        <label><input type="checkbox" class="habit-day" value="6" /> Sat</label>
+                    </div>
+                    <div class="row">
+                        <label style="font-size:12px;font-weight:600;">Weeks of Month:</label>
+                        <label><input type="checkbox" class="habit-week" value="1" /> Week 1</label>
+                        <label><input type="checkbox" class="habit-week" value="2" /> Week 2</label>
+                        <label><input type="checkbox" class="habit-week" value="3" /> Week 3</label>
+                        <label><input type="checkbox" class="habit-week" value="4" /> Week 4</label>
+                    </div>
                 </div>
                 <div id="habitsList" class="mt-8"></div>
             </div>
         </div>
 
-        <!-- ─── LINKS ─── -->
+        <!-- LINKS -->
         <div class="tab-content" id="tab-links">
             <div class="card">
                 <div class="card-title">🔗 Links</div>
@@ -1407,7 +1735,7 @@
             </div>
         </div>
 
-        <!-- ─── OVERVIEW ─── -->
+        <!-- OVERVIEW -->
         <div class="tab-content" id="tab-overview">
             <div class="card">
                 <div class="card-title">📈 Progress Overview</div>
@@ -1416,15 +1744,64 @@
                     <div class="stat-card"><div class="number purple" id="ovCourses">0</div><div class="label">📚 Courses</div></div>
                     <div class="stat-card"><div class="number green" id="ovOverall">0%</div><div class="label">📊 Overall</div></div>
                     <div class="stat-card"><div class="number purple" id="ovTodayPct">0%</div><div class="label">📅 Today</div></div>
-                    <div class="stat-card"><div class="number green" id="ovHabits">0/0</div><div class="label">✅ Habits Today</div></div>
+                    <div class="stat-card"><div class="number green" id="ovHabits">0/0</div><div class="label">✅ Habits</div></div>
+                </div>
+                <div class="mt-8">
+                    <div class="text-muted" style="font-size:11px;font-weight:600;">Total Duration</div>
+                    <div class="row">
+                        <span id="ovTotalDur" style="font-weight:600;">0h</span>
+                        <span id="ovDoneDur" style="font-weight:600;color:#51cf66;">Done: 0h</span>
+                        <span id="ovPendingDur" style="font-weight:600;color:#ff6b6b;">Pending: 0h</span>
+                    </div>
+                    <div class="battery-horizontal" id="ovBattery">
+                        <div class="fill high" style="width:0%;"></div>
+                        <span class="pct">0%</span>
+                    </div>
                 </div>
                 <div id="overviewCourses" class="mt-8"></div>
                 <div id="overviewBatteries" class="mt-8"></div>
                 <div id="overviewHabits" class="mt-8"></div>
-                <div id="overviewChart" class="mt-8"></div>
+                <div class="mt-8">
+                    <div class="text-muted" style="font-size:11px;font-weight:600;">Weekly Pattern</div>
+                    <div id="overviewChart" class="chart-bar"></div>
+                </div>
+                <div class="mt-8">
+                    <div class="text-muted" style="font-size:11px;font-weight:600;">Hours Per Course Per Day</div>
+                    <div id="overviewMultiGraph" class="chart-bar" style="height:150px;"></div>
+                </div>
             </div>
         </div>
 
+    </div>
+
+    <!-- FOCUS OVERLAY -->
+    <div class="focus-overlay" id="focusOverlay">
+        <button class="focus-exit" id="focusExit">✕ Close</button>
+        <div class="focus-header">
+            <div class="date" id="focusDate"></div>
+            <div class="day" id="focusDay"></div>
+        </div>
+        <div class="focus-battery-container">
+            <div class="focus-battery" id="focusBattery">
+                <div class="cap"></div>
+                <div class="fill high" id="focusBatteryFill" style="height:0%;"></div>
+                <div class="pct" id="focusPct">0%</div>
+            </div>
+            <div class="focus-stats">
+                <span>Total: <span id="focusTotal">0h</span></span>
+                <span class="done">Done: <span id="focusDone">0h</span></span>
+                <span class="pending">Pending: <span id="focusPending">0h</span></span>
+            </div>
+        </div>
+        <div class="focus-lectures" id="focusLectures"></div>
+        <div class="focus-bottom">
+            <div class="course-name" id="focusCourseName"></div>
+            <div class="battery-horizontal" id="focusCourseBattery">
+                <div class="fill high" style="width:0%;"></div>
+                <span class="pct">0%</span>
+            </div>
+        </div>
+        <div class="celebration-container" id="celebrationContainer"></div>
     </div>
 
     <script>
@@ -1447,12 +1824,17 @@
             batteryView: 'date',
             dashboardDate: null,
             darkMode: false,
+            priorities: {},
+            dailyNotes: {},
+            habitCustom: {},
         };
 
         let activeTab = 'dashboard';
         let ttCurrentDate = new Date();
         let ttSelectedDate = null;
         let ttCourse = null;
+        let focusModeActive = false;
+        let celebrationActive = false;
 
         // ── Helpers ──
         function getDateStr(d) {
@@ -1474,11 +1856,13 @@
         }
 
         function formatDuration(min) {
-            const h = Math.floor(min / 60);
-            const m = min % 60;
-            if (h === 0) return `${m}m`;
-            if (m === 0) return `${h}h`;
-            return `${h}h ${m}m`;
+            if (min >= 60) {
+                const h = Math.floor(min / 60);
+                const m = min % 60;
+                if (m === 0) return `${h}h`;
+                return `${h}h ${m}m`;
+            }
+            return `${min}m`;
         }
 
         function getCourseNames() {
@@ -1501,11 +1885,17 @@
 
         function getCourseCompletion(course) {
             const lecs = getLectures(course);
-            if (!lecs.length) return { done: 0, total: 0, pct: 0 };
-            let done = 0;
+            if (!lecs.length) return { done: 0, total: 0, pct: 0, doneDur: 0, totalDur: 0 };
+            let done = 0,
+                doneDur = 0,
+                totalDur = 0;
             const res = state.results[course] || {};
-            lecs.forEach(l => { if (res[getLectureKey(l)]) done++; });
-            return { done, total: lecs.length, pct: Math.round((done / lecs.length) * 100) };
+            lecs.forEach(l => {
+                totalDur += l.duration;
+                if (res[getLectureKey(l)]) { done++;
+                    doneDur += l.duration; }
+            });
+            return { done, total: lecs.length, pct: Math.round((done / lecs.length) * 100), doneDur, totalDur };
         }
 
         function getAllocatedDates(course) {
@@ -1517,43 +1907,10 @@
             const dateSpeeds = state.dateSpeeds[course] || {};
             const moves = state.moves[course] || {};
 
-            // For each lecture, calculate its allocated date
-            // We need to handle moves: moved lectures keep their original allocated date
-            const unmoved = lecs.filter(l => !moves[getLectureKey(l)]);
-            const moved = lecs.filter(l => moves[getLectureKey(l)]);
-
-            // Allocate unmoved lectures first
+            // For moved lectures, use the original allocated date
+            const allResult = {};
             let cur = new Date(start);
             let used = 0;
-            unmoved.forEach(l => {
-                let remaining = l.duration;
-                let first = true;
-                while (remaining > 0) {
-                    const ds = getDateStr(cur);
-                    const spd = dateSpeeds[ds] || speed;
-                    const avail = spd - used;
-                    const take = Math.min(remaining, avail);
-                    const key = getLectureKey(l);
-                    if (first) {
-                        result[key] = ds;
-                        first = false;
-                    }
-                    used += take;
-                    remaining -= take;
-                    if (used >= spd && remaining > 0) {
-                        used = 0;
-                        cur = addDays(cur, 1);
-                    }
-                }
-            });
-
-            // For moved lectures, use the original allocated date (before move)
-            // But we need to calculate it based on the original order
-            // For simplicity, we'll compute allocation for all lectures and then override moves
-            // Re-run allocation for all lectures to get base dates
-            const allResult = {};
-            cur = new Date(start);
-            used = 0;
             lecs.forEach(l => {
                 let remaining = l.duration;
                 let first = true;
@@ -1576,14 +1933,14 @@
                 }
             });
 
-            // For moved lectures, use the base allocated date
-            moved.forEach(l => {
+            lecs.forEach(l => {
                 const key = getLectureKey(l);
-                if (allResult[key]) {
-                    result[key] = allResult[key];
+                if (moves[key]) {
+                    result[key] = allResult[key] || start;
+                } else {
+                    result[key] = allResult[key] || start;
                 }
             });
-
             return result;
         }
 
@@ -1595,19 +1952,14 @@
             const result = [];
             const added = new Set();
 
-            // Get all lectures sorted by serial number
             const sortedLecs = [...lecs].sort((a, b) => a.sr - b.sr);
 
-            // Original lectures (including continuing)
             sortedLecs.forEach(l => {
                 const key = getLectureKey(l);
                 const aDate = alloc[key];
                 const moveTarget = moves[key];
 
-                // Check if this lecture appears on this date (either allocated or continuing)
-                // We need to check if any part of the lecture is on this date
                 if (!moveTarget) {
-                    // Not moved - check allocation
                     const parts = getAllocatedParts(course, l, dateStr);
                     if (parts > 0) {
                         const isContinuing = aDate !== dateStr;
@@ -1623,7 +1975,6 @@
                         added.add(key);
                     }
                 } else if (moveTarget === dateStr) {
-                    // Moved to this date
                     result.push({
                         ...l,
                         key,
@@ -1638,7 +1989,6 @@
                 }
             });
 
-            // Copies - these appear on the target date
             Object.keys(copies).forEach(key => {
                 const dates = copies[key];
                 if (dates && dates.includes(dateStr)) {
@@ -1659,27 +2009,21 @@
                 }
             });
 
-            // Sort by serial number
             result.sort((a, b) => a.sr - b.sr);
             return result;
         }
 
         function getAllocatedParts(course, lec, dateStr) {
-            // Calculate how much of this lecture is on the given date
             const settings = state.settings[course] || { speed: 120, startDate: getDateStr(new Date()) };
             const speed = settings.speed || 120;
             const start = parseDate(settings.startDate || getDateStr(new Date()));
             const dateSpeeds = state.dateSpeeds[course] || {};
             const lecs = getLectures(course);
-
-            // Find index of this lecture
             const idx = lecs.indexOf(lec);
             if (idx === -1) return 0;
 
-            // Calculate allocation for all lectures up to this one
             let cur = new Date(start);
             let used = 0;
-            let found = false;
             let result = 0;
 
             for (let i = 0; i <= idx; i++) {
@@ -1690,12 +2034,9 @@
                     const spd = dateSpeeds[ds] || speed;
                     const avail = spd - used;
                     const take = Math.min(remaining, avail);
-
                     if (i === idx && ds === dateStr) {
                         result += take;
-                        found = true;
                     }
-
                     used += take;
                     remaining -= take;
                     if (used >= spd && remaining > 0) {
@@ -1704,7 +2045,6 @@
                     }
                 }
             }
-
             return result;
         }
 
@@ -1744,13 +2084,17 @@
         function getCombinedOverall() {
             const names = getCourseNames();
             let total = 0,
-                done = 0;
+                done = 0,
+                totalDur = 0,
+                doneDur = 0;
             names.forEach(c => {
                 const d = getCourseCompletion(c);
                 total += d.total;
                 done += d.done;
+                totalDur += d.totalDur;
+                doneDur += d.doneDur;
             });
-            return { done, total, pct: total > 0 ? Math.round((done / total) * 100) : 0 };
+            return { done, total, pct: total > 0 ? Math.round((done / total) * 100) : 0, totalDur, doneDur };
         }
 
         function getHabitsToday() {
@@ -1759,9 +2103,36 @@
             let done = 0,
                 total = names.length;
             names.forEach(n => {
-                if (state.habits[n].completed && state.habits[n].completed[today]) done++;
+                if (shouldHabitCompleteToday(n, today)) {
+                    if (state.habits[n].completed && state.habits[n].completed[today]) done++;
+                } else {
+                    total--;
+                }
             });
             return { done, total };
+        }
+
+        function shouldHabitCompleteToday(name, dateStr) {
+            const habit = state.habits[name];
+            if (!habit) return false;
+            const d = parseDate(dateStr);
+            const dayOfWeek = d.getDay();
+            const weekOfMonth = Math.ceil((d.getDate()) / 7);
+
+            if (habit.pattern === 'daily') return true;
+            if (habit.pattern === 'weekly') return true;
+            if (habit.pattern === 'monthly') return true;
+            if (habit.pattern === 'custom') {
+                const custom = state.habitCustom[name] || {};
+                if (custom.days && custom.days.length > 0) {
+                    if (!custom.days.includes(dayOfWeek)) return false;
+                }
+                if (custom.weeks && custom.weeks.length > 0) {
+                    if (!custom.weeks.includes(weekOfMonth)) return false;
+                }
+                return true;
+            }
+            return true;
         }
 
         function calculateStreak(name) {
@@ -1772,12 +2143,25 @@
             d.setHours(0, 0, 0, 0);
             while (true) {
                 const ds = getDateStr(d);
-                if (habit.completed && habit.completed[ds]) {
-                    streak++;
+                if (shouldHabitCompleteToday(name, ds)) {
+                    if (habit.completed && habit.completed[ds]) {
+                        streak++;
+                        d.setDate(d.getDate() - 1);
+                    } else break;
+                } else {
                     d.setDate(d.getDate() - 1);
-                } else break;
+                }
             }
             return streak;
+        }
+
+        function getCoursePriority(course) {
+            return state.priorities[course] || 1;
+        }
+
+        function getSortedCourses() {
+            const names = getCourseNames();
+            return names.sort((a, b) => (state.priorities[a] || 1) - (state.priorities[b] || 1));
         }
 
         // ── Save / Load ──
@@ -1802,6 +2186,9 @@
                     if (!state.moves) state.moves = {};
                     if (!state.habits) state.habits = {};
                     if (!state.links) state.links = [];
+                    if (!state.priorities) state.priorities = {};
+                    if (!state.dailyNotes) state.dailyNotes = {};
+                    if (!state.habitCustom) state.habitCustom = {};
                     if (!state.batteryView) state.batteryView = 'date';
                     if (!state.dashboardDate) state.dashboardDate = getDateStr(new Date());
                     if (state.darkMode === undefined) state.darkMode = false;
@@ -1820,6 +2207,40 @@
             el._timer = setTimeout(() => { el.className = ''; }, 2500);
         }
 
+        // ── Celebration ──
+        function triggerCelebration(intensity) {
+            const container = document.getElementById('celebrationContainer');
+            const emojis = ['⭐', '🌟', '✨', '🎉', '🎊', '💫', '🌈', '🎆', '🎇', '🌠'];
+
+            if (intensity === 'big') {
+                for (let i = 0; i < 80; i++) {
+                    const el = document.createElement('div');
+                    el.className = 'firework';
+                    el.textContent = emojis[Math.floor(Math.random() * emojis.length)];
+                    el.style.left = Math.random() * 100 + '%';
+                    el.style.top = Math.random() * 100 + '%';
+                    el.style.fontSize = (24 + Math.random() * 40) + 'px';
+                    el.style.animationDuration = (1 + Math.random() * 2) + 's';
+                    container.appendChild(el);
+                    setTimeout(() => el.remove(), 3000);
+                }
+                // Also fill battery with stars
+                document.getElementById('focusBatteryFill').className = 'fill star';
+            } else if (intensity === 'small') {
+                for (let i = 0; i < 20; i++) {
+                    const el = document.createElement('div');
+                    el.className = 'star';
+                    el.textContent = ['⭐', '🌟', '✨', '💫'][Math.floor(Math.random() * 4)];
+                    el.style.left = (20 + Math.random() * 60) + '%';
+                    el.style.top = (20 + Math.random() * 60) + '%';
+                    el.style.fontSize = (16 + Math.random() * 20) + 'px';
+                    el.style.animationDuration = (1 + Math.random() * 1.5) + 's';
+                    container.appendChild(el);
+                    setTimeout(() => el.remove(), 2500);
+                }
+            }
+        }
+
         // ── Init ──
         function initDefaultState() {
             if (!loadState()) {
@@ -1832,6 +2253,9 @@
                 state.moves = {};
                 state.habits = {};
                 state.links = [];
+                state.priorities = {};
+                state.dailyNotes = {};
+                state.habitCustom = {};
                 state.focusCourse = null;
                 state.batteryView = 'date';
                 state.dashboardDate = getDateStr(new Date());
@@ -1865,6 +2289,7 @@
 
         function renderAll() {
             renderDashSavedCourses();
+            renderDailyNotes();
             renderDashboard();
             renderUpload();
             renderTimetable();
@@ -1874,6 +2299,7 @@
             renderLinks();
             renderOverview();
             renderNavBadge();
+            renderFocusMode();
         }
 
         function renderNavBadge() {
@@ -1901,11 +2327,13 @@
                 const comp = getCourseCompletion(n);
                 const pctClass = comp.pct >= 70 ? 'badge-success' : comp.pct >= 40 ? 'badge-warning' : 'badge-danger';
                 const isFocus = n === focus;
+                const priority = getCoursePriority(n);
                 html += `
               <div class="lecture-row" style="border-left-color:${isFocus ? '#667eea' : 'transparent'};">
                 <span style="font-weight:600;flex:1;">${n} ${isFocus ? '⭐' : ''}</span>
-                <span class="badge badge-primary">${getLectures(n).length} lectures</span>
+                <span class="badge badge-primary">${getLectures(n).length} lectures (${formatDuration(comp.totalDur)})</span>
                 <span class="badge ${pctClass}">${comp.pct}%</span>
+                <span class="badge badge-primary">Prio: ${priority}</span>
                 <button class="btn btn-sm btn-outline rename-btn" data-course="${n}">✏️</button>
               </div>
             `;
@@ -1947,6 +2375,10 @@
                             state.moves[trimmed] = state.moves[oldName];
                             delete state.moves[oldName];
                         }
+                        if (state.priorities[oldName]) {
+                            state.priorities[trimmed] = state.priorities[oldName];
+                            delete state.priorities[oldName];
+                        }
                         if (state.focusCourse === oldName) state.focusCourse = trimmed;
                         saveState();
                         renderAll();
@@ -1955,6 +2387,21 @@
                 });
             });
         }
+
+        // ── DAILY NOTES ──
+        function renderDailyNotes() {
+            const today = getDateStr(new Date());
+            const notes = state.dailyNotes[today] || '';
+            document.getElementById('dailyNotes').value = notes;
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            document.getElementById('dailyNotes').addEventListener('change', function() {
+                const today = getDateStr(new Date());
+                state.dailyNotes[today] = this.value;
+                saveState();
+            });
+        });
 
         // ── DASHBOARD ──
         function renderDashboard() {
@@ -2042,8 +2489,11 @@
 
             const comp = isOverall ? getCourseCompletion(course) : getDateCompletion(course, dateStr);
             document.getElementById('dashTotal').textContent = comp.total;
+            document.getElementById('dashTotalLabel').textContent = `Total (${formatDuration(comp.total)})`;
             document.getElementById('dashDone').textContent = comp.done;
+            document.getElementById('dashDoneLabel').textContent = `✅ Done (${formatDuration(comp.done)})`;
             document.getElementById('dashPending').textContent = comp.total - comp.done;
+            document.getElementById('dashPendingLabel').textContent = `⏳ Pending (${formatDuration(comp.total - comp.done)})`;
             const dur = getLectures(course).reduce((sum, l) => sum + l.duration, 0);
             document.getElementById('dashDuration').textContent = formatDuration(dur);
             document.getElementById('dashCourseCount').textContent = `📚 ${names.length} courses`;
@@ -2076,10 +2526,7 @@
         }
 
         // ── UPLOAD ──
-        function renderUpload() {
-            // Upload page now only shows the upload form
-            // Saved courses moved to dashboard
-        }
+        function renderUpload() {}
 
         // ── TIMETABLE ──
         function renderTimetable() {
@@ -2259,11 +2706,9 @@
                 const courseName = isAll ? l.course : course;
                 const allocatedDate = l.allocatedDate || dateStr;
 
-                // Determine row class
                 let rowClass = '';
                 let statusBadge = '';
 
-                // Check if it's a copy
                 if (l.isCopy) {
                     rowClass = 'copy-row';
                     statusBadge = done ? '<span class="badge badge-danger">✅ Done (Copy)</span>' :
@@ -2290,7 +2735,6 @@
                     statusBadge = '<span class="badge badge-danger">⏳ Pending</span>';
                 }
 
-                // Check for date mismatch (allocated date != done date)
                 if (done && doneDate && doneDate !== allocatedDate && !l.isCopy && !l.isMove) {
                     rowClass = 'mismatch';
                 }
@@ -2327,7 +2771,6 @@
             });
             list.innerHTML = html;
 
-            // ── Event listeners ──
             list.querySelectorAll('.lec-check').forEach((cb, idx) => {
                 cb.addEventListener('change', () => {
                     const row = cb.closest('.lecture-row');
@@ -2347,6 +2790,9 @@
                     renderDayDetail();
                     renderCalendar();
                     renderAll();
+                    if (done) {
+                        checkFocusCompletion();
+                    }
                 });
             });
 
@@ -2366,6 +2812,7 @@
                         renderDayDetail();
                         renderCalendar();
                         renderAll();
+                        checkFocusCompletion();
                     }
                 });
             });
@@ -2535,6 +2982,7 @@
             const settings = state.settings[course] || { speed: 120, startDate: getDateStr(new Date()) };
             document.getElementById('editSpeed').value = settings.speed || 120;
             document.getElementById('editStartDate').value = settings.startDate || getDateStr(new Date());
+            document.getElementById('editPriority').value = state.priorities[course] || 1;
 
             const lecs = getLectures(course);
             const res = state.results[course] || {};
@@ -2630,6 +3078,15 @@
                     }
                 });
             });
+
+            document.getElementById('editPriority').addEventListener('change', function() {
+                const course = document.getElementById('editCourse').value;
+                if (!course) return;
+                const val = parseInt(this.value) || 1;
+                state.priorities[course] = val;
+                saveState();
+                renderAll();
+            });
         }
 
         // ── HISTORY ──
@@ -2653,12 +3110,13 @@
             else select.value = '__all__';
 
             const course = select.value === '__all__' ? null : select.value;
-            const from = document.getElementById('histFrom').value || '2026-01-01';
-            const to = document.getElementById('histTo').value || getDateStr(new Date());
 
             let total = 0,
-                done = 0;
+                done = 0,
+                totalDur = 0,
+                doneDur = 0;
             const rows = [];
+            const dateMap = {};
 
             if (course) {
                 const lecs = getLectures(course);
@@ -2668,21 +3126,28 @@
                 lecs.forEach(l => {
                     const key = getLectureKey(l);
                     const aDate = alloc[key];
-                    if (aDate && aDate >= from && aDate <= to) {
+                    if (aDate) {
                         total++;
+                        totalDur += l.duration;
                         const d = res[key] || false;
-                        if (d) done++;
+                        if (d) { done++;
+                            doneDur += l.duration; }
                         const dd = doneDates[key] || null;
+                        const diff = dd ? (dd === aDate ? 'On time' : dd < aDate ? 'Early' : 'Late') : '-';
+                        const isOdd = parseInt(aDate.split('-')[2]) % 2 !== 0;
                         rows.push({
                             name: `${l.sr}. ${l.name}`,
-                            course: course,
                             allocated: aDate,
                             doneDate: dd,
                             status: d,
-                            expected: l.duration,
-                            actual: d ? l.duration : null,
-                            diff: dd ? (dd === aDate ? 'On time' : dd < aDate ? 'Early' : 'Late') : '-'
+                            diff: diff,
+                            isOdd: isOdd,
+                            duration: l.duration
                         });
+                        if (dd) {
+                            if (!dateMap[dd]) dateMap[dd] = 0;
+                            dateMap[dd] += l.duration;
+                        }
                     }
                 });
             } else {
@@ -2694,35 +3159,53 @@
                     lecs.forEach(l => {
                         const key = getLectureKey(l);
                         const aDate = alloc[key];
-                        if (aDate && aDate >= from && aDate <= to) {
+                        if (aDate) {
                             total++;
+                            totalDur += l.duration;
                             const d = res[key] || false;
-                            if (d) done++;
+                            if (d) { done++;
+                                doneDur += l.duration; }
                             const dd = doneDates[key] || null;
+                            const diff = dd ? (dd === aDate ? 'On time' : dd < aDate ? 'Early' : 'Late') :
+                            '-';
+                            const isOdd = parseInt(aDate.split('-')[2]) % 2 !== 0;
                             rows.push({
                                 name: `${l.sr}. ${l.name}`,
-                                course: c,
                                 allocated: aDate,
                                 doneDate: dd,
                                 status: d,
-                                expected: l.duration,
-                                actual: d ? l.duration : null,
-                                diff: dd ? (dd === aDate ? 'On time' : dd < aDate ? 'Early' : 'Late') :
-                                    '-'
+                                diff: diff,
+                                isOdd: isOdd,
+                                duration: l.duration
                             });
+                            if (dd) {
+                                if (!dateMap[dd]) dateMap[dd] = 0;
+                                dateMap[dd] += l.duration;
+                            }
                         }
                     });
                 });
             }
 
             document.getElementById('histTotal').textContent = total;
+            document.getElementById('histTotalLabel').textContent = `Total (${formatDuration(totalDur)})`;
             document.getElementById('histDone').textContent = done;
+            document.getElementById('histDoneLabel').textContent = `✅ Done (${formatDuration(doneDur)})`;
             document.getElementById('histPending').textContent = total - done;
-            document.getElementById('histPct').textContent = total > 0 ? Math.round((done / total) * 100) + '%' : '0%';
+            document.getElementById('histPendingLabel').textContent = `⏳ Pending (${formatDuration(totalDur - doneDur)})`;
+            const pct = total > 0 ? Math.round((done / total) * 100) : 0;
+            document.getElementById('histPct').textContent = pct + '%';
 
+            // Horizontal battery
+            const batt = document.getElementById('histBattery');
+            batt.querySelector('.fill').style.width = pct + '%';
+            batt.querySelector('.fill').className = 'fill ' + getBatteryClass(pct);
+            batt.querySelector('.pct').textContent = pct + '%';
+
+            // Table
             const tbody = document.getElementById('histTableBody');
             if (!rows.length) {
-                tbody.innerHTML = '<tr><td colspan="8" class="text-muted">No data in this range</td></tr>';
+                tbody.innerHTML = '<tr><td colspan="6" class="text-muted">No data available</td></tr>';
             } else {
                 let html = '';
                 rows.forEach(r => {
@@ -2730,40 +3213,45 @@
                     const statusText = r.status ? '✅ Done' : '⏳ Pending';
                     const diffClass = r.diff === 'On time' ? 'on-time' : r.diff === 'Early' ? 'early' : r.diff ===
                         'Late' ? 'late' : '';
+                    const rowClass = r.isOdd ? 'odd-date' : '';
+                    const goodBad = r.status && r.doneDate ? (r.doneDate === r.allocated ? '✅ Good' : r.doneDate <
+                        r.allocated ? '✅ Early' : '⚠️ Late') : '-';
                     html += `
-                <tr class="${diffClass}">
+                <tr class="${diffClass} ${rowClass}">
                   <td>${r.name}</td>
-                  <td>${r.course}</td>
                   <td><span class="alloc" style="color:#667eea;">${r.allocated}</span></td>
                   <td>${r.doneDate ? `<span class="done" style="color:#51cf66;">${r.doneDate}</span>` : '-'}</td>
                   <td><span class="badge ${statusClass}">${statusText}</span></td>
-                  <td>${formatDuration(r.expected)}</td>
-                  <td>${r.actual ? formatDuration(r.actual) : '-'}</td>
                   <td>${r.diff}</td>
+                  <td>${goodBad}</td>
                 </tr>
               `;
                 });
                 tbody.innerHTML = html;
             }
 
-            const batts = document.getElementById('histBatteries');
-            const dFrom = parseDate(from);
-            const dTo = parseDate(to);
-            let bHtml = '';
-            let cur = new Date(dFrom);
-            while (cur <= dTo) {
-                const ds = getDateStr(cur);
-                const comp = course ? getDateCompletion(course, ds) : getCombinedDateCompletion(ds);
-                const cls = getBatteryClass(comp.pct);
-                bHtml += `
-              <span class="battery-mini">
-                <span class="bar"><span class="fill ${cls}" style="width:${comp.pct}%;"></span></span>
-                ${formatDateShort(ds)}: ${comp.pct}%
-              </span>
-            `;
-                cur = addDays(cur, 1);
+            // Graph
+            const graph = document.getElementById('histGraph');
+            const sortedDates = Object.keys(dateMap).sort();
+            if (!sortedDates.length) {
+                graph.innerHTML = '<div class="text-muted">No data for graph</div>';
+            } else {
+                const maxVal = Math.max(...Object.values(dateMap), 1);
+                let gHtml = '';
+                sortedDates.forEach(d => {
+                    const h = (dateMap[d] / maxVal) * 100;
+                    const cls = dateMap[d] >= (maxVal * 0.7) ? 'high' : dateMap[d] >= (maxVal * 0.4) ? 'medium' :
+                        'low';
+                    gHtml += `
+                <div class="bar-item">
+                  <div class="bar ${cls}" style="height:${Math.max(4, h)}px;"></div>
+                  <span class="bar-label">${formatDateShort(d)}</span>
+                  <span class="bar-label" style="font-size:8px;">${formatDuration(dateMap[d])}</span>
+                </div>
+              `;
+                });
+                graph.innerHTML = gHtml;
             }
-            batts.innerHTML = bHtml || '<span class="text-muted">No dates in range</span>';
         }
 
         // ── HABITS ──
@@ -2775,24 +3263,36 @@
                 return;
             }
             const today = getDateStr(new Date());
+
+            // Sort by time
+            const sorted = names.sort((a, b) => {
+                const ta = state.habits[a].time || '09:00';
+                const tb = state.habits[b].time || '09:00';
+                return ta.localeCompare(tb);
+            });
+
             let html = '';
-            names.forEach(n => {
+            sorted.forEach(n => {
                 const h = state.habits[n];
                 const done = h.completed && h.completed[today] || false;
                 const streak = calculateStreak(n);
                 if (h.streak !== streak) { h.streak = streak;
                     saveState(); }
-                const patternMap = { daily: 'Daily', weekly: 'Weekly', monthly: 'Monthly' };
+                const patternMap = { daily: 'Daily', weekly: 'Weekly', monthly: 'Monthly', custom: 'Custom' };
+                const shouldComplete = shouldHabitCompleteToday(n, today);
+                const statusBadge = !shouldComplete ? '<span class="badge badge-primary">Not Due</span>' :
+                    done ? '<span class="badge badge-success">✅ Done</span>' :
+                    '<span class="badge badge-danger">⏳ Pending</span>';
                 html += `
               <div class="habit-row">
-                <input type="checkbox" class="habit-check" data-name="${n}" ${done ? 'checked' : ''} />
+                <input type="checkbox" class="habit-check" data-name="${n}" ${done ? 'checked' : ''} ${!shouldComplete ? 'disabled' : ''} />
                 <span class="habit-name">${n}</span>
                 <span class="habit-meta">
                   <span class="badge badge-primary">${patternMap[h.pattern] || h.pattern}</span>
                   <span>${h.time || '09:00'}</span>
-                  <span class="habit-streak">🔥 ${streak} ${h.pattern === 'daily' ? 'day' : h.pattern === 'weekly' ? 'week' : 'month'} streak</span>
+                  <span class="habit-streak">🔥 ${streak} ${h.pattern === 'daily' ? 'day' : h.pattern === 'weekly' ? 'week' : h.pattern === 'monthly' ? 'month' : ''} streak</span>
                 </span>
-                <span class="badge ${done ? 'badge-success' : 'badge-danger'}">${done ? '✅ Done' : '⏳ Pending'}</span>
+                ${statusBadge}
                 <button class="btn btn-xs btn-danger habit-delete" data-name="${n}">✕</button>
               </div>
             `;
@@ -2816,6 +3316,7 @@
                     const name = btn.dataset.name;
                     if (confirm(`Delete habit "${name}"?`)) {
                         delete state.habits[name];
+                        delete state.habitCustom[name];
                         saveState();
                         renderHabits();
                         renderAll();
@@ -2887,25 +3388,44 @@
             const habitsToday = getHabitsToday();
             document.getElementById('ovHabits').textContent = `${habitsToday.done}/${habitsToday.total}`;
 
+            // Total duration
+            const totalDur = overall.totalDur;
+            const doneDur = overall.doneDur;
+            document.getElementById('ovTotalDur').textContent = `Total: ${formatDuration(totalDur)}`;
+            document.getElementById('ovDoneDur').textContent = `Done: ${formatDuration(doneDur)}`;
+            document.getElementById('ovPendingDur').textContent = `Pending: ${formatDuration(totalDur - doneDur)}`;
+
+            const pct = overall.pct;
+            const ovBatt = document.getElementById('ovBattery');
+            ovBatt.querySelector('.fill').style.width = pct + '%';
+            ovBatt.querySelector('.fill').className = 'fill ' + getBatteryClass(pct);
+            ovBatt.querySelector('.pct').textContent = pct + '%';
+
+            // Course progress
             const cContainer = document.getElementById('overviewCourses');
             if (!names.length) {
                 cContainer.innerHTML = '<div class="text-muted">No courses</div>';
             } else {
                 let html = '';
-                names.forEach(n => {
+                const sorted = getSortedCourses();
+                sorted.forEach(n => {
                     const comp = getCourseCompletion(n);
                     const pctClass = comp.pct >= 70 ? 'high' : comp.pct >= 40 ? 'medium' : 'low';
+                    const priority = getCoursePriority(n);
                     html += `
                 <div class="row" style="margin-bottom:6px;">
                   <span style="font-weight:600;font-size:13px;min-width:100px;">${n} ${n === focus ? '⭐' : ''}</span>
+                  <span style="font-size:10px;color:#718096;min-width:40px;">P${priority}</span>
                   <div class="progress-bar"><div class="fill ${pctClass}" style="width:${comp.pct}%;"></div></div>
-                  <span style="font-size:12px;font-weight:600;min-width:50px;">${comp.pct}% (${comp.done}/${comp.total})</span>
+                  <span style="font-size:12px;font-weight:600;min-width:80px;">${comp.pct}% (${comp.done}/${comp.total})</span>
+                  <span style="font-size:11px;color:#718096;">${formatDuration(comp.totalDur)}</span>
                 </div>
               `;
                 });
                 cContainer.innerHTML = html;
             }
 
+            // Mini batteries
             const bContainer = document.getElementById('overviewBatteries');
             let bHtml = '<div class="text-muted" style="font-size:11px;font-weight:600;">Last 7 Days</div><div class="flex flex-wrap gap-8 mt-8">';
             const d = new Date();
@@ -2924,13 +3444,18 @@
             bHtml += '</div>';
             bContainer.innerHTML = bHtml;
 
+            // Habits
             const hContainer = document.getElementById('overviewHabits');
             const hNames = Object.keys(state.habits);
             if (hNames.length) {
                 let hHtml = '<div class="text-muted" style="font-size:11px;font-weight:600;">Habits Today</div><div class="flex flex-wrap gap-8 mt-8">';
                 hNames.forEach(n => {
+                    const shouldComplete = shouldHabitCompleteToday(n, today);
                     const done = state.habits[n].completed && state.habits[n].completed[today] || false;
-                    hHtml += `<span class="badge ${done ? 'badge-success' : 'badge-danger'}">${n} ${done ? '✅' : '⏳'}</span>`;
+                    if (shouldComplete) {
+                        hHtml +=
+                            `<span class="badge ${done ? 'badge-success' : 'badge-danger'}">${n} ${done ? '✅' : '⏳'}</span>`;
+                    }
                 });
                 hHtml += '</div>';
                 hContainer.innerHTML = hHtml;
@@ -2938,9 +3463,10 @@
                 hContainer.innerHTML = '<div class="text-muted">No habits</div>';
             }
 
+            // Weekly pattern
             const chartContainer = document.getElementById('overviewChart');
             const weekDays = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
-            let chartHtml = '<div class="text-muted" style="font-size:11px;font-weight:600;">Weekly Pattern</div><div class="chart-bar">';
+            let chartHtml = '';
             const todayDate = new Date();
             for (let i = 6; i >= 0; i--) {
                 const dd = addDays(todayDate, -i);
@@ -2957,8 +3483,192 @@
               </div>
             `;
             }
-            chartHtml += '</div>';
             chartContainer.innerHTML = chartHtml;
+
+            // Multi-course graph
+            const multiGraph = document.getElementById('overviewMultiGraph');
+            // Show last 7 days with per-course breakdown
+            const colors = ['#667eea', '#51cf66', '#ffd93d', '#ff6b6b', '#a78bfa', '#f472b6', '#34d399'];
+            let multiHtml = '';
+            const dates = [];
+            for (let i = 6; i >= 0; i--) {
+                const dd = addDays(todayDate, -i);
+                dates.push(getDateStr(dd));
+            }
+            // For each date, get per-course hours
+            const courseNames = getCourseNames();
+            dates.forEach((ds, idx) => {
+                let totalH = 0;
+                let innerHtml = '';
+                courseNames.forEach((c, ci) => {
+                    const lecs = getDateLectures(c, ds);
+                    let h = 0;
+                    lecs.forEach(l => { h += l.partDuration || l.duration || 0; });
+                    if (h > 0) {
+                        totalH += h;
+                        const color = colors[ci % colors.length];
+                        innerHtml +=
+                            `<div style="background:${color};height:${Math.max(2, (h / 60) * 10)}px;width:100%;border-radius:2px;margin-bottom:1px;"></div>`;
+                    }
+                });
+                const totalHDisplay = formatDuration(totalH);
+                multiHtml += `
+              <div class="bar-item" style="flex:1;display:flex;flex-direction:column;align-items:center;gap:2px;">
+                <div style="width:100%;display:flex;flex-direction:column;align-items:center;height:80px;justify-content:flex-end;gap:1px;">
+                  ${innerHtml || `<div style="height:2px;width:100%;background:#e2e8f0;"></div>`}
+                </div>
+                <span class="bar-label">${formatDateShort(ds)}</span>
+                <span class="bar-label" style="font-size:8px;">${totalHDisplay}</span>
+              </div>
+            `;
+            });
+            multiGraph.innerHTML = multiHtml ||
+                '<div class="text-muted">No data for graph</div>';
+        }
+
+        // ── FOCUS MODE ──
+        function renderFocusMode() {
+            // This is called to update focus mode if it's active
+            if (focusModeActive) {
+                updateFocusMode();
+            }
+        }
+
+        function openFocusMode() {
+            focusModeActive = true;
+            document.getElementById('focusOverlay').classList.add('active');
+            document.body.style.overflow = 'hidden';
+            updateFocusMode();
+        }
+
+        function closeFocusMode() {
+            focusModeActive = false;
+            document.getElementById('focusOverlay').classList.remove('active');
+            document.body.style.overflow = '';
+            document.getElementById('celebrationContainer').innerHTML = '';
+        }
+
+        function updateFocusMode() {
+            const today = getDateStr(new Date());
+            const d = parseDate(today);
+            const days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+            const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+
+            document.getElementById('focusDate').textContent = `${days[d.getDay()]}`;
+            document.getElementById('focusDay').textContent = `${months[d.getMonth()]} ${d.getDate()}, ${d.getFullYear()}`;
+
+            const course = getFocus();
+            if (!course) {
+                document.getElementById('focusLectures').innerHTML =
+                    '<div class="text-muted" style="color:#888;text-align:center;">No course selected</div>';
+                document.getElementById('focusCourseName').textContent = 'No course';
+                return;
+            }
+
+            document.getElementById('focusCourseName').textContent = `📚 ${course}`;
+
+            const lecs = getDateLectures(course, today);
+            let total = 0,
+                done = 0;
+            const res = state.results[course] || {};
+
+            // Sort by serial number
+            lecs.sort((a, b) => a.sr - b.sr);
+
+            let html = '';
+            lecs.forEach(l => {
+                const key = l.key;
+                const isDone = res[key] || false;
+                const dur = l.partDuration || l.duration || 0;
+                total += dur;
+                if (isDone) done += dur;
+                const cls = isDone ? 'done' : '';
+                const statusText = isDone ? '✅ Done' : '⏳ Pending';
+                const statusColor = isDone ? '#51cf66' : '#ff6b6b';
+                html += `
+              <div class="flec-row ${cls}">
+                <span class="flec-sr">${l.sr}</span>
+                <input type="checkbox" class="focus-check" data-key="${key}" ${isDone ? 'checked' : ''} />
+                <span class="flec-name">${l.name}</span>
+                <span class="flec-dur">${formatDuration(dur)}</span>
+                <span class="flec-status" style="color:${statusColor};">${statusText}</span>
+              </div>
+            `;
+            });
+            document.getElementById('focusLectures').innerHTML = html;
+
+            document.getElementById('focusTotal').textContent = formatDuration(total);
+            document.getElementById('focusDone').textContent = formatDuration(done);
+            document.getElementById('focusPending').textContent = formatDuration(total - done);
+
+            const pct = total > 0 ? Math.round((done / total) * 100) : 0;
+            document.getElementById('focusPct').textContent = pct + '%';
+            const fill = document.getElementById('focusBatteryFill');
+            fill.style.height = pct + '%';
+            fill.className = 'fill ' + getBatteryClass(pct);
+
+            // Course battery
+            const comp = getCourseCompletion(course);
+            const cbatt = document.getElementById('focusCourseBattery');
+            cbatt.querySelector('.fill').style.width = comp.pct + '%';
+            cbatt.querySelector('.fill').className = 'fill ' + getBatteryClass(comp.pct);
+            cbatt.querySelector('.pct').textContent = comp.pct + '%';
+
+            // Focus checkboxes
+            document.querySelectorAll('.focus-check').forEach(cb => {
+                cb.addEventListener('change', function() {
+                    const key = this.dataset.key;
+                    if (!state.results[course]) state.results[course] = {};
+                    state.results[course][key] = this.checked;
+                    if (this.checked) {
+                        if (!state.doneDates[course]) state.doneDates[course] = {};
+                        if (!state.doneDates[course][key]) {
+                            state.doneDates[course][key] = today;
+                        }
+                        // Small celebration
+                        triggerCelebration('small');
+                    }
+                    saveState();
+                    updateFocusMode();
+                    renderAll();
+
+                    // Check for milestones
+                    const totalLecs = lecs.length;
+                    const doneLecs = Object.values(state.results[course]).filter(v => v).length;
+                    const pctComplete = totalLecs > 0 ? (doneLecs / totalLecs) * 100 : 0;
+
+                    if (pctComplete >= 100) {
+                        triggerCelebration('big');
+                        toast('🎉 100% Complete! Amazing work! 🎉', 'success');
+                    } else if (pctComplete >= 90) {
+                        triggerCelebration('big');
+                        toast('🌟 90% Complete! Almost there! 🌟', 'success');
+                    } else if (pctComplete >= 70) {
+                        triggerCelebration('small');
+                    }
+                });
+            });
+        }
+
+        function checkFocusCompletion() {
+            if (!focusModeActive) return;
+            const today = getDateStr(new Date());
+            const course = getFocus();
+            if (!course) return;
+            const lecs = getDateLectures(course, today);
+            const res = state.results[course] || {};
+            const total = lecs.length;
+            const done = lecs.filter(l => res[l.key]).length;
+            const pct = total > 0 ? (done / total) * 100 : 0;
+            if (pct >= 100) {
+                triggerCelebration('big');
+                toast('🎉 100% Complete! Amazing work! 🎉', 'success');
+            } else if (pct >= 90) {
+                triggerCelebration('big');
+                toast('🌟 90% Complete! Almost there! 🌟', 'success');
+            } else if (pct >= 70) {
+                triggerCelebration('small');
+            }
         }
 
         // ── TT Event listeners ──
@@ -3140,9 +3850,21 @@
                 renderDashboard();
             });
 
+            // Focus buttons
+            document.getElementById('focusBtn').addEventListener('click', openFocusMode);
+            document.getElementById('focusBtnTT').addEventListener('click', openFocusMode);
+            document.getElementById('focusExit').addEventListener('click', closeFocusMode);
+            document.getElementById('focusOverlay').addEventListener('click', function(e) {
+                if (e.target === this) closeFocusMode();
+            });
+            document.addEventListener('keydown', (e) => {
+                if (e.key === 'Escape' && focusModeActive) closeFocusMode();
+            });
+
             document.getElementById('uploadBtn').addEventListener('click', () => {
                 const name = document.getElementById('uploadCourseName').value.trim();
                 const data = document.getElementById('uploadLectures').value.trim();
+                const priority = parseInt(document.getElementById('uploadPriority').value) || 1;
                 if (!name) { toast('Please enter a course name', 'error'); return; }
                 if (state.courses[name]) { toast('Course already exists', 'error'); return; }
                 if (!data) { toast('Please enter lecture data', 'error'); return; }
@@ -3173,6 +3895,7 @@
                 state.doneDates[name] = {};
                 state.copies[name] = {};
                 state.moves[name] = {};
+                state.priorities[name] = priority;
                 state.focusCourse = name;
                 saveState();
                 document.getElementById('uploadCourseName').value = '';
@@ -3205,6 +3928,7 @@
                 state.doneDates['Mathematics 101'] = {};
                 state.copies['Mathematics 101'] = {};
                 state.moves['Mathematics 101'] = {};
+                state.priorities['Mathematics 101'] = 1;
 
                 state.courses['Physics 101'] = physics;
                 state.settings['Physics 101'] = { speed: 120, startDate: getDateStr(new Date()) };
@@ -3212,6 +3936,7 @@
                 state.doneDates['Physics 101'] = {};
                 state.copies['Physics 101'] = {};
                 state.moves['Physics 101'] = {};
+                state.priorities['Physics 101'] = 2;
 
                 state.focusCourse = 'Mathematics 101';
                 saveState();
@@ -3233,6 +3958,7 @@
                     delete state.doneDates[name];
                     delete state.copies[name];
                     delete state.moves[name];
+                    delete state.priorities[name];
                     if (state.focusCourse === name) state.focusCourse = null;
                 });
                 const focus = getFocus();
@@ -3254,6 +3980,9 @@
                 state.moves = {};
                 state.habits = {};
                 state.links = [];
+                state.priorities = {};
+                state.dailyNotes = {};
+                state.habitCustom = {};
                 state.focusCourse = null;
                 state.dashboardDate = getDateStr(new Date());
                 saveState();
@@ -3308,6 +4037,7 @@
                 delete state.doneDates[course];
                 delete state.copies[course];
                 delete state.moves[course];
+                delete state.priorities[course];
                 if (state.focusCourse === course) state.focusCourse = null;
                 const focus = getFocus();
                 if (focus) state.focusCourse = focus;
@@ -3343,6 +4073,7 @@
                     doneDates: state.doneDates[course] || {},
                     copies: state.copies[course] || {},
                     moves: state.moves[course] || {},
+                    priority: state.priorities[course] || 1,
                 };
                 const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
                 const url = URL.createObjectURL(blob);
@@ -3356,8 +4087,11 @@
 
             document.getElementById('histRefresh').addEventListener('click', renderHistory);
             document.getElementById('histCourse').addEventListener('change', renderHistory);
-            document.getElementById('histFrom').addEventListener('change', renderHistory);
-            document.getElementById('histTo').addEventListener('change', renderHistory);
+
+            // Habits - Custom pattern
+            document.getElementById('habitPattern').addEventListener('change', function() {
+                document.getElementById('habitCustom').style.display = this.value === 'custom' ? 'block' : 'none';
+            });
 
             document.getElementById('habitAdd').addEventListener('click', () => {
                 const name = document.getElementById('habitName').value.trim();
@@ -3365,9 +4099,20 @@
                 const pattern = document.getElementById('habitPattern').value;
                 if (!name) { toast('Enter a habit name', 'error'); return; }
                 if (state.habits[name]) { toast('Habit already exists', 'error'); return; }
+
                 state.habits[name] = { time, pattern, completed: {}, streak: 0 };
+
+                if (pattern === 'custom') {
+                    const days = [];
+                    document.querySelectorAll('.habit-day:checked').forEach(cb => days.push(parseInt(cb.value)));
+                    const weeks = [];
+                    document.querySelectorAll('.habit-week:checked').forEach(cb => weeks.push(parseInt(cb.value)));
+                    state.habitCustom[name] = { days, weeks };
+                }
+
                 saveState();
                 document.getElementById('habitName').value = '';
+                document.querySelectorAll('.habit-day, .habit-week').forEach(cb => cb.checked = false);
                 renderHabits();
                 renderAll();
                 toast(`✅ Habit "${name}" added`);
@@ -3421,6 +4166,9 @@
                             if (!state.moves) state.moves = {};
                             if (!state.habits) state.habits = {};
                             if (!state.links) state.links = [];
+                            if (!state.priorities) state.priorities = {};
+                            if (!state.dailyNotes) state.dailyNotes = {};
+                            if (!state.habitCustom) state.habitCustom = {};
                             if (!state.dashboardDate) state.dashboardDate = getDateStr(new Date());
                             saveState();
                             renderAll();
@@ -3476,12 +4224,6 @@
         // ── INIT ──
         function init() {
             initDefaultState();
-
-            const d = new Date();
-            const from = new Date(d);
-            from.setDate(from.getDate() - 30);
-            document.getElementById('histFrom').value = getDateStr(from);
-            document.getElementById('histTo').value = getDateStr(d);
 
             ttCurrentDate = new Date();
             ttSelectedDate = getDateStr(ttCurrentDate);
