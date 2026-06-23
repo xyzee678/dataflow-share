@@ -5,117 +5,366 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
     <title>📚 Lecture Planner Pro</title>
     <style>
+        /* ── RESET & BASE ── */
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
             -webkit-tap-highlight-color: transparent;
         }
+
+        /* ── DARK MODE BY DEFAULT ── */
         body {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-            background: #f0f2f5;
-            color: #1a1a2e;
+            background: #0a0a0f;
+            color: #e2e8f0;
             padding-top: 60px;
             padding-bottom: 76px;
             min-height: 100vh;
             transition: background 0.3s, color 0.3s;
         }
-        body.dark {
+
+        /* All cards and elements dark by default */
+        .card {
             background: #1a202c;
             color: #e2e8f0;
+            border-radius: 12px;
+            padding: 16px;
+            margin-bottom: 14px;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+            transition: background 0.3s, color 0.3s;
         }
-        body.dark .card {
-            background: #2d3748;
+        .card .card-title {
             color: #e2e8f0;
         }
-        body.dark .card .muted {
+        .card .muted {
             color: #a0aec0;
         }
-        body.dark .nav-bottom {
-            background: #2d3748;
+
+        /* Navigation */
+        .nav-bottom {
+            background: #1a202c;
             border-top-color: #4a5568;
         }
-        body.dark .nav-bottom .tab-label {
+        .nav-bottom .tab-label {
             color: #a0aec0;
         }
-        body.dark .nav-bottom .tab.active .tab-label {
+        .nav-bottom .tab.active .tab-label {
             color: #a78bfa;
         }
-        body.dark .nav-bottom .tab.active {
+        .nav-bottom .tab.active {
             background: rgba(102, 126, 234, 0.15);
         }
-        body.dark input,
-        body.dark select,
-        body.dark textarea {
-            background: #4a5568;
+
+        /* Inputs */
+        input,
+        select,
+        textarea {
+            background: #2d3748;
             color: #e2e8f0;
             border-color: #4a5568;
         }
-        body.dark input:focus,
-        body.dark select:focus,
-        body.dark textarea:focus {
+        input:focus,
+        select:focus,
+        textarea:focus {
             border-color: #667eea;
         }
-        body.dark .badge-danger {
-            background: #e53e3e;
-        }
-        body.dark .badge-success {
-            background: #38a169;
-        }
-        body.dark .badge-warning {
-            background: #d69e2e;
-        }
-        body.dark .stat-card {
-            background: #374151;
-        }
-        body.dark .lecture-row {
-            background: #374151;
-        }
-        body.dark .lecture-row.done {
+
+        /* Badges */
+        .badge-success {
             background: #2d4a3a;
+            color: #8fdf9f;
         }
-        body.dark .lecture-row.early {
+        .badge-danger {
+            background: #4a2d2d;
+            color: #f8a0a0;
+        }
+        .badge-warning {
+            background: #4a442d;
+            color: #f0d060;
+        }
+        .badge-primary {
+            background: #2d3a6a;
+            color: #a0b8f0;
+        }
+        .badge-info {
+            background: #2d3a4a;
+            color: #a0d0f0;
+        }
+        .badge-gold {
+            background: #4a442d;
+            color: #ffd700;
+        }
+
+        /* Stats cards */
+        .stat-card {
+            background: #2d3748;
+        }
+        .stat-card .number {
+            color: #e2e8f0;
+        }
+        .stat-card .number.green {
+            color: #51cf66;
+        }
+        .stat-card .number.red {
+            color: #ff6b6b;
+        }
+        .stat-card .number.purple {
+            color: #a78bfa;
+        }
+        .stat-card .number.gold {
+            color: #ffd700;
+        }
+
+        /* Lecture rows */
+        .lecture-row {
+            background: #2d3748;
+        }
+        .lecture-row.done {
             background: #2d4a3a;
             border-left-color: #51cf66;
         }
-        body.dark .lecture-row.late {
+        .lecture-row.early {
+            background: #2d4a3a;
+            border-left-color: #51cf66;
+        }
+        .lecture-row.late {
             background: #4a2d2d;
             border-left-color: #ff6b6b;
         }
-        body.dark .lecture-row.mismatch {
+        .lecture-row.mismatch {
             background: #4a442d;
             border-left-color: #ffd93d;
         }
-        body.dark .lecture-row.copy-row {
+        .lecture-row.copy-row {
             background: #4a2d3a;
             border-left-color: #ff6b6b;
         }
-        body.dark .lecture-row.copy-row.done {
+        .lecture-row.copy-row.done {
             background: #4a2d3a;
             border-left-color: #ff6b6b;
         }
-        body.dark .habit-row {
-            background: #374151;
-        }
-        body.dark .link-row {
-            background: #374151;
-        }
-        body.dark .lecture-row .lec-duration {
+        .lecture-row .lec-duration {
             background: #4a5568;
             color: #a0aec0;
         }
-        body.dark .focus-mode {
-            background: #1a202c;
+        .lecture-row .lec-dates .alloc {
+            color: #a78bfa;
         }
-        body.dark .focus-mode .battery {
-            border-color: #4a5568;
+        .lecture-row .lec-dates .done {
+            color: #51cf66;
         }
-        body.dark .focus-mode .battery .cap {
-            background: #4a5568;
+        .lecture-row .continuing {
+            background: #d69e2e;
+            color: #1a1a2e;
         }
-        body.dark .focus-mode .lecture-row {
+        .lecture-row .copy-stamp {
+            color: #ff6b6b;
+            background: rgba(255, 107, 107, 0.15);
+        }
+        .lecture-row .move-stamp {
+            color: #ffa94d;
+            background: rgba(255, 169, 77, 0.15);
+        }
+        .lecture-row .sr-badge {
+            color: #a0aec0;
+        }
+
+        /* Habits */
+        .habit-row {
             background: #2d3748;
         }
+        .habit-row .habit-meta {
+            color: #a0aec0;
+        }
+
+        /* Links */
+        .link-row {
+            background: #2d3748;
+        }
+        .link-row .link-cat {
+            background: #4a5568;
+            color: #a0aec0;
+        }
+
+        /* Records */
+        .record-item {
+            background: #2d3748;
+        }
+
+        /* Calendar */
+        .calendar-grid .day-header {
+            color: #a0aec0;
+        }
+        .calendar-grid .day-cell.sunday {
+            background: #4a2d2d;
+        }
+        .calendar-grid .day-cell .dot.green {
+            background: #51cf66;
+        }
+        .calendar-grid .day-cell .dot.blue {
+            background: #a78bfa;
+        }
+        .calendar-grid .day-cell .dot.red {
+            background: #ff6b6b;
+        }
+        .calendar-grid .day-cell.today {
+            border: 2px solid #a78bfa;
+        }
+        .calendar-grid .day-cell.selected {
+            background: rgba(102, 126, 234, 0.2);
+        }
+
+        /* Table */
+        .table-wrap th {
+            color: #a0aec0;
+            border-bottom-color: #4a5568;
+        }
+        .table-wrap td {
+            border-bottom-color: #4a5568;
+        }
+
+        /* Memo entries */
+        .memo-entry {
+            background: #2d3748;
+        }
+        .memo-entry .memo-date {
+            color: #a0aec0;
+        }
+
+        /* Progress bars */
+        .progress-bar {
+            background: #4a5568;
+        }
+        .progress-bar-horizontal {
+            background: #4a5568;
+        }
+        .progress-bar-horizontal .fill {
+            color: #fff;
+        }
+
+        /* Battery */
+        .battery {
+            background: #2d3748;
+            border-color: #4a5568;
+        }
+        .battery .pct {
+            color: #1a1a2e;
+            text-shadow: 0 0 4px rgba(255, 255, 255, 0.6);
+        }
+        .battery .cap {
+            background: #4a5568;
+        }
+        .battery-label {
+            color: #a0aec0;
+        }
+        .battery-label .day {
+            color: #a0aec0;
+        }
+
+        /* Battery mini */
+        .battery-mini .bar {
+            background: #4a5568;
+            border-color: #4a5568;
+        }
+
+        /* Focus Mode */
+        .focus-mode-overlay {
+            background: #0a0a0f;
+        }
+        .focus-mode-overlay .focus-header {
+            color: #e2e8f0;
+        }
+        .focus-mode-overlay .focus-slogan-input {
+            background: #1a202c;
+            color: #e2e8f0;
+            border-color: #4a5568;
+        }
+        .focus-mode-overlay .focus-slogan-input::placeholder {
+            color: #718096;
+        }
+        .focus-mode-overlay .focus-date {
+            color: #a0aec0;
+        }
+        .focus-mode-overlay .focus-battery {
+            background: #1a202c;
+            border-color: #4a5568;
+        }
+        .focus-mode-overlay .focus-battery .pct {
+            color: #fff;
+            text-shadow: 0 0 10px rgba(0, 0, 0, 0.8);
+        }
+        .focus-mode-overlay .focus-battery .cap {
+            background: #4a5568;
+        }
+        .focus-mode-overlay .focus-progress {
+            color: #e2e8f0;
+        }
+        .focus-mode-overlay .focus-progress .pending {
+            color: #ff6b6b;
+        }
+        .focus-mode-overlay .focus-lectures .lecture-row {
+            background: #1a202c;
+            color: #e2e8f0;
+            border-left-color: #4a5568;
+        }
+        .focus-mode-overlay .focus-lectures .lecture-row.done {
+            background: #2d4a3a;
+            border-left-color: #51cf66;
+        }
+        .focus-mode-overlay .focus-lectures .lecture-row .lec-duration {
+            background: #2d3748;
+            color: #a0aec0;
+        }
+        .focus-mode-overlay .focus-course-bar {
+            background: #1a202c;
+            color: #e2e8f0;
+        }
+        .focus-mode-overlay .focus-course-bar .row {
+            color: #e2e8f0;
+        }
+        .focus-mode-overlay .focus-days-taken {
+            color: #ffd93d;
+            background: rgba(255, 217, 61, 0.1);
+        }
+        .focus-mode-overlay .focus-finish-date {
+            color: #51cf66;
+            background: rgba(81, 207, 102, 0.1);
+        }
+        .focus-mode-overlay .focus-stats-row {
+            background: #1a202c;
+            color: #e2e8f0;
+        }
+        .focus-mode-overlay .focus-stats-row .stat-value {
+            color: #ffd700;
+        }
+        .focus-mode-overlay .focus-exit {
+            background: #667eea;
+            color: #fff;
+        }
+        .focus-mode-overlay .focus-exit:hover {
+            background: #5a6fd6;
+        }
+
+        /* Toast */
+        #toast {
+            color: #fff;
+        }
+        #toast.success {
+            background: #51cf66;
+        }
+        #toast.error {
+            background: #ff6b6b;
+        }
+        #toast.warning {
+            background: #ffd93d;
+            color: #1a1a2e;
+        }
+        #toast.info {
+            background: #2d3748;
+        }
+
+        /* Scrollbar */
         ::-webkit-scrollbar {
             width: 4px;
             height: 4px;
@@ -124,6 +373,8 @@
             background: #667eea;
             border-radius: 4px;
         }
+
+        /* ── HEADER ── */
         .header {
             position: fixed;
             top: 0;
@@ -136,7 +387,7 @@
             justify-content: space-between;
             padding: 0 16px;
             z-index: 1000;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
         }
         .header .title {
             color: #fff;
@@ -176,14 +427,16 @@
         #fileInput {
             display: none;
         }
+
+        /* ── NAV ── */
         .nav-bottom {
             position: fixed;
             bottom: 0;
             left: 0;
             right: 0;
             height: 68px;
-            background: #fff;
-            border-top: 1px solid #e2e8f0;
+            background: #1a202c;
+            border-top: 1px solid #4a5568;
             display: flex;
             align-items: stretch;
             justify-content: space-around;
@@ -215,19 +468,19 @@
         .nav-bottom .tab .tab-label {
             font-size: 6px;
             font-weight: 600;
-            color: #888;
+            color: #a0aec0;
             text-transform: uppercase;
             letter-spacing: 0.2px;
             transition: color 0.2s;
         }
         .nav-bottom .tab.active .tab-label {
-            color: #667eea;
+            color: #a78bfa;
         }
         .nav-bottom .tab.active .tab-icon {
-            color: #667eea;
+            color: #a78bfa;
         }
         .nav-bottom .tab.active {
-            background: rgba(102, 126, 234, 0.08);
+            background: rgba(102, 126, 234, 0.15);
         }
         .nav-bottom .tab .badge {
             position: absolute;
@@ -243,6 +496,8 @@
             text-align: center;
             line-height: 12px;
         }
+
+        /* ── CONTAINER ── */
         .container {
             max-width: 1000px;
             margin: 0 auto;
@@ -265,58 +520,8 @@
                 transform: translateY(0);
             }
         }
-        .card {
-            background: #fff;
-            border-radius: 12px;
-            padding: 16px;
-            margin-bottom: 14px;
-            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06);
-            transition: background 0.3s, color 0.3s;
-        }
-        .card .card-title {
-            font-size: 14px;
-            font-weight: 700;
-            color: #1a1a2e;
-            margin-bottom: 10px;
-            display: flex;
-            align-items: center;
-            gap: 6px;
-        }
-        .row {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 10px;
-            align-items: center;
-        }
-        .flex-1 {
-            flex: 1;
-            min-width: 100px;
-        }
-        .grid-2 {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 10px;
-        }
-        .grid-4 {
-            display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            gap: 10px;
-        }
-        @media (max-width: 600px) {
-            .grid-4 {
-                grid-template-columns: 1fr 1fr;
-            }
-            .grid-2 {
-                grid-template-columns: 1fr;
-            }
-            .row {
-                flex-direction: column;
-                align-items: stretch;
-            }
-            .row .flex-1 {
-                min-width: unset;
-            }
-        }
+
+        /* ── BUTTONS ── */
         .btn {
             display: inline-flex;
             align-items: center;
@@ -383,16 +588,118 @@
             min-height: 22px;
             border-radius: 6px;
         }
+
+        /* ── BADGES ── */
+        .badge {
+            display: inline-block;
+            padding: 2px 8px;
+            border-radius: 12px;
+            font-size: 9px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.3px;
+        }
+
+        /* ── RESPONSIVE ── */
+        @media (max-width: 600px) {
+            .grid-4 {
+                grid-template-columns: 1fr 1fr;
+            }
+            .grid-2 {
+                grid-template-columns: 1fr;
+            }
+            .row {
+                flex-direction: column;
+                align-items: stretch;
+            }
+            .row .flex-1 {
+                min-width: unset;
+            }
+        }
+        @media (max-width: 480px) {
+            .battery {
+                width: 36px;
+                height: 52px;
+            }
+            .battery.large {
+                width: 56px;
+                height: 76px;
+            }
+            .battery .pct {
+                font-size: 9px;
+            }
+            .battery-label {
+                font-size: 8px;
+            }
+            .header .title {
+                font-size: 13px;
+            }
+            .header .actions button {
+                padding: 3px 6px;
+                font-size: 10px;
+            }
+            .stat-card .number {
+                font-size: 16px;
+            }
+            .calendar-grid .day-cell {
+                font-size: 10px;
+                min-height: 28px;
+            }
+            .lecture-row {
+                padding: 4px 6px;
+                font-size: 11px;
+            }
+            .btn {
+                font-size: 10px;
+                padding: 5px 10px;
+                min-height: 30px;
+            }
+            .nav-bottom .tab .tab-icon {
+                font-size: 13px;
+            }
+            .nav-bottom .tab .tab-label {
+                font-size: 5px;
+            }
+            .focus-mode-overlay .focus-battery {
+                width: 80px;
+                height: 110px;
+            }
+            .focus-mode-overlay .focus-battery .pct {
+                font-size: 18px;
+            }
+        }
+
+        /* ── COMMON ELEMENTS ── */
+        .row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            align-items: center;
+        }
+        .flex-1 {
+            flex: 1;
+            min-width: 100px;
+        }
+        .grid-2 {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+        }
+        .grid-4 {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 10px;
+        }
         input,
         select,
         textarea {
             font-family: inherit;
             font-size: 13px;
             padding: 8px 12px;
-            border: 1.5px solid #e2e8f0;
+            border: 1.5px solid #4a5568;
             border-radius: 8px;
-            background: #fff;
-            color: #1a1a2e;
+            background: #2d3748;
+            color: #e2e8f0;
             transition: border-color 0.2s, background 0.3s, color 0.3s;
             width: 100%;
             outline: none;
@@ -423,30 +730,68 @@
             appearance: auto;
             min-height: 36px;
         }
-        .badge {
-            display: inline-block;
-            padding: 2px 8px;
-            border-radius: 12px;
-            font-size: 9px;
+        .mt-8 {
+            margin-top: 8px;
+        }
+        .mt-12 {
+            margin-top: 12px;
+        }
+        .text-muted {
+            color: #a0aec0;
+            font-size: 11px;
+        }
+        .text-center {
+            text-align: center;
+        }
+        .table-wrap {
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+        }
+        .table-wrap table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 11px;
+        }
+        .table-wrap th {
+            text-align: left;
+            padding: 4px 6px;
             font-weight: 700;
+            color: #a0aec0;
+            font-size: 9px;
             text-transform: uppercase;
-            letter-spacing: 0.3px;
+            border-bottom: 2px solid #4a5568;
+            white-space: nowrap;
         }
-        .badge-success {
-            background: #d4edda;
-            color: #155724;
+        .table-wrap td {
+            padding: 4px 6px;
+            border-bottom: 1px solid #4a5568;
+            white-space: nowrap;
+            color: #e2e8f0;
         }
-        .badge-danger {
-            background: #f8d7da;
-            color: #721c24;
+        .table-wrap .on-time {
+            border-left: 3px solid #a78bfa;
         }
-        .badge-warning {
-            background: #fff3cd;
-            color: #856404;
+        .table-wrap .early {
+            border-left: 3px solid #51cf66;
         }
-        .badge-primary {
-            background: #dbe4ff;
-            color: #3a5bd1;
+        .table-wrap .late {
+            border-left: 3px solid #ff6b6b;
+        }
+        .table-wrap .odd-date {
+            background: rgba(102, 126, 234, 0.1);
+        }
+        .pagination-controls {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            padding: 8px 0;
+            font-size: 13px;
+            color: #e2e8f0;
+        }
+        .pagination-controls .page-info {
+            font-weight: 600;
+            color: #a0aec0;
         }
         .battery-container {
             display: flex;
@@ -471,7 +816,7 @@
             position: relative;
             width: 44px;
             height: 64px;
-            background: #e2e8f0;
+            background: #2d3748;
             border-radius: 8px 8px 4px 4px;
             border: 2px solid #4a5568;
             overflow: hidden;
@@ -525,23 +870,50 @@
             font-size: 9px;
             font-weight: 600;
             text-align: center;
-            color: #4a5568;
+            color: #a0aec0;
+        }
+        .battery-label .day {
+            font-weight: 400;
+            font-size: 8px;
+            color: #a0aec0;
+        }
+        .battery-mini {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            padding: 2px 8px 2px 4px;
+            border-radius: 12px;
+            font-size: 9px;
+            font-weight: 600;
+            color: #e2e8f0;
+        }
+        .battery-mini .bar {
+            width: 14px;
+            height: 10px;
+            background: #4a5568;
+            border-radius: 2px;
+            overflow: hidden;
+            border: 1px solid #4a5568;
+        }
+        .battery-mini .bar .fill {
+            height: 100%;
+            border-radius: 1px;
         }
         .stat-card {
             text-align: center;
             padding: 10px 6px;
-            background: #f8fafc;
+            background: #2d3748;
             border-radius: 10px;
             transition: background 0.3s;
         }
         .stat-card .number {
             font-size: 20px;
             font-weight: 700;
-            color: #1a1a2e;
+            color: #e2e8f0;
         }
         .stat-card .label {
             font-size: 10px;
-            color: #718096;
+            color: #a0aec0;
             margin-top: 2px;
         }
         .stat-card .number.green {
@@ -551,7 +923,10 @@
             color: #ff6b6b;
         }
         .stat-card .number.purple {
-            color: #667eea;
+            color: #a78bfa;
+        }
+        .stat-card .number.gold {
+            color: #ffd700;
         }
         .calendar-grid {
             display: grid;
@@ -563,7 +938,7 @@
             text-align: center;
             font-size: 9px;
             font-weight: 700;
-            color: #718096;
+            color: #a0aec0;
             padding: 4px 0;
             text-transform: uppercase;
         }
@@ -581,6 +956,7 @@
             background: transparent;
             position: relative;
             min-height: 36px;
+            color: #e2e8f0;
         }
         .calendar-grid .day-cell:active {
             transform: scale(0.92);
@@ -590,7 +966,7 @@
             opacity: 0.3;
         }
         .calendar-grid .day-cell.sunday {
-            background: #f8d7da;
+            background: #4a2d2d;
         }
         .calendar-grid .day-cell .dot {
             width: 5px;
@@ -602,13 +978,13 @@
             background: #51cf66;
         }
         .calendar-grid .day-cell .dot.blue {
-            background: #667eea;
+            background: #a78bfa;
         }
         .calendar-grid .day-cell .dot.red {
             background: #ff6b6b;
         }
         .calendar-grid .day-cell.today {
-            border: 2px solid #667eea;
+            border: 2px solid #a78bfa;
             border-radius: 8px;
         }
         .calendar-grid .day-cell .speed-icon {
@@ -627,30 +1003,35 @@
             gap: 4px;
             padding: 6px 8px;
             border-radius: 8px;
-            background: #f8fafc;
+            background: #2d3748;
             margin-bottom: 4px;
             transition: background 0.3s, border-color 0.3s;
             border-left: 4px solid transparent;
             font-size: 12px;
+            color: #e2e8f0;
         }
         .lecture-row.done {
-            background: #d4edda;
+            background: #2d4a3a;
             border-left-color: #51cf66;
         }
         .lecture-row.early {
-            background: #d4edda;
+            background: #2d4a3a;
             border-left-color: #51cf66;
         }
         .lecture-row.late {
-            background: #f8d7da;
+            background: #4a2d2d;
             border-left-color: #ff6b6b;
         }
         .lecture-row.mismatch {
-            background: #fff3cd;
+            background: #4a442d;
             border-left-color: #ffd93d;
         }
         .lecture-row.copy-row {
-            background: #f8d7da;
+            background: #4a2d3a;
+            border-left-color: #ff6b6b;
+        }
+        .lecture-row.copy-row.done {
+            background: #4a2d3a;
             border-left-color: #ff6b6b;
         }
         .lecture-row .lec-check {
@@ -669,20 +1050,20 @@
         .lecture-row .lec-duration {
             font-size: 10px;
             font-weight: 600;
-            color: #718096;
+            color: #a0aec0;
             padding: 1px 6px;
-            background: #e2e8f0;
+            background: #4a5568;
             border-radius: 10px;
         }
         .lecture-row .lec-dates {
             font-size: 10px;
-            color: #718096;
+            color: #a0aec0;
             display: flex;
             gap: 6px;
             flex-wrap: wrap;
         }
         .lecture-row .lec-dates .alloc {
-            color: #667eea;
+            color: #a78bfa;
         }
         .lecture-row .lec-dates .done {
             color: #51cf66;
@@ -699,16 +1080,17 @@
         }
         .lecture-row .continuing {
             font-size: 8px;
-            background: #ffd93d;
+            background: #d69e2e;
             padding: 1px 6px;
             border-radius: 10px;
             font-weight: 700;
+            color: #1a1a2e;
         }
         .lecture-row .copy-stamp {
             font-size: 9px;
             color: #ff6b6b;
             padding: 1px 6px;
-            background: rgba(255, 107, 107, 0.1);
+            background: rgba(255, 107, 107, 0.15);
             border-radius: 10px;
             font-weight: 600;
         }
@@ -716,13 +1098,13 @@
             font-size: 9px;
             color: #ffa94d;
             padding: 1px 6px;
-            background: rgba(255, 169, 77, 0.1);
+            background: rgba(255, 169, 77, 0.15);
             border-radius: 10px;
         }
         .lecture-row .sr-badge {
             font-size: 9px;
             font-weight: 700;
-            color: #718096;
+            color: #a0aec0;
             min-width: 18px;
         }
         .habit-row {
@@ -732,10 +1114,11 @@
             gap: 6px;
             padding: 8px 10px;
             border-radius: 8px;
-            background: #f8fafc;
+            background: #2d3748;
             margin-bottom: 4px;
             font-size: 12px;
             border-left: 4px solid transparent;
+            color: #e2e8f0;
         }
         .habit-row .habit-name {
             flex: 1;
@@ -744,7 +1127,7 @@
         }
         .habit-row .habit-meta {
             font-size: 10px;
-            color: #718096;
+            color: #a0aec0;
             display: flex;
             gap: 6px;
             flex-wrap: wrap;
@@ -754,6 +1137,10 @@
             font-weight: 700;
             color: #ffa94d;
         }
+        .habit-row .habit-actions {
+            display: flex;
+            gap: 4px;
+        }
         .link-row {
             display: flex;
             flex-wrap: wrap;
@@ -761,9 +1148,10 @@
             gap: 6px;
             padding: 6px 10px;
             border-radius: 8px;
-            background: #f8fafc;
+            background: #2d3748;
             margin-bottom: 4px;
             font-size: 12px;
+            color: #e2e8f0;
         }
         .link-row .link-name {
             font-weight: 500;
@@ -773,7 +1161,7 @@
         .link-row .link-url {
             flex: 1;
             font-size: 11px;
-            color: #667eea;
+            color: #a78bfa;
             word-break: break-all;
             cursor: pointer;
             min-width: 60px;
@@ -783,14 +1171,15 @@
         }
         .link-row .link-cat {
             font-size: 9px;
-            background: #e2e8f0;
+            background: #4a5568;
             padding: 1px 8px;
             border-radius: 12px;
+            color: #a0aec0;
         }
         .progress-bar {
             height: 6px;
             border-radius: 4px;
-            background: #e2e8f0;
+            background: #4a5568;
             overflow: hidden;
             flex: 1;
             min-width: 50px;
@@ -804,7 +1193,7 @@
             position: relative;
             height: 24px;
             border-radius: 12px;
-            background: #e2e8f0;
+            background: #4a5568;
             overflow: hidden;
             flex: 1;
             min-width: 80px;
@@ -823,12 +1212,13 @@
         .record-item {
             padding: 8px 12px;
             border-radius: 8px;
-            background: #f8fafc;
+            background: #2d3748;
             margin-bottom: 4px;
             display: flex;
             justify-content: space-between;
             align-items: center;
             border-left: 3px solid #ffd700;
+            color: #e2e8f0;
         }
         .record-item .record-label {
             font-weight: 500;
@@ -855,7 +1245,7 @@
             pointer-events: none;
             max-width: 90%;
             text-align: center;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
         }
         #toast.show {
             opacity: 1;
@@ -874,67 +1264,76 @@
         #toast.info {
             background: #2d3748;
         }
-        .text-muted {
-            color: #718096;
-            font-size: 11px;
+        .memo-entry {
+            padding: 10px 14px;
+            border-radius: 8px;
+            background: #2d3748;
+            margin-bottom: 6px;
+            border-left: 4px solid #a78bfa;
+            color: #e2e8f0;
         }
-        .mt-8 {
-            margin-top: 8px;
-        }
-        .mt-12 {
-            margin-top: 12px;
-        }
-        .text-center {
-            text-align: center;
-        }
-        .table-wrap {
-            overflow-x: auto;
-            -webkit-overflow-scrolling: touch;
-        }
-        .table-wrap table {
-            width: 100%;
-            border-collapse: collapse;
-            font-size: 11px;
-        }
-        .table-wrap th {
-            text-align: left;
-            padding: 4px 6px;
-            font-weight: 700;
-            color: #718096;
-            font-size: 9px;
-            text-transform: uppercase;
-            border-bottom: 2px solid #e2e8f0;
-            white-space: nowrap;
-        }
-        .table-wrap td {
-            padding: 4px 6px;
-            border-bottom: 1px solid #e2e8f0;
-            white-space: nowrap;
-        }
-        .table-wrap .on-time {
-            border-left: 3px solid #667eea;
-        }
-        .table-wrap .early {
-            border-left: 3px solid #51cf66;
-        }
-        .table-wrap .late {
-            border-left: 3px solid #ff6b6b;
-        }
-        .table-wrap .odd-date {
-            background: rgba(102, 126, 234, 0.08);
-        }
-        .pagination-controls {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 12px;
-            padding: 8px 0;
+        .memo-entry .memo-text {
+            font-weight: 500;
             font-size: 13px;
         }
-        .pagination-controls .page-info {
-            font-weight: 600;
-            color: #718096;
+        .memo-entry .memo-date {
+            font-size: 11px;
+            color: #a0aec0;
+            margin-top: 4px;
         }
+        .celebration-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            pointer-events: none;
+            z-index: 10000;
+            overflow: hidden;
+        }
+        .celebration-particle {
+            position: absolute;
+            font-size: 20px;
+            animation: particleFloat 2s ease-out forwards;
+        }
+        @keyframes particleFloat {
+            0% {
+                transform: translateY(0) scale(1) rotate(0deg);
+                opacity: 1;
+            }
+            100% {
+                transform: translateY(-200px) scale(0.3) rotate(360deg);
+                opacity: 0;
+            }
+        }
+        .chart-bar {
+            display: flex;
+            align-items: flex-end;
+            gap: 4px;
+            height: 80px;
+            padding: 6px 0;
+        }
+        .chart-bar .bar-item {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 2px;
+        }
+        .chart-bar .bar-item .bar {
+            width: 100%;
+            max-width: 28px;
+            border-radius: 4px 4px 0 0;
+            min-height: 3px;
+            transition: height 0.6s ease;
+        }
+        .chart-bar .bar-item .bar-label {
+            font-size: 8px;
+            color: #a0aec0;
+            font-weight: 600;
+        }
+
+        /* ── FOCUS MODE OVERLAY ── */
         .focus-mode-overlay {
             position: fixed;
             top: 0;
@@ -993,8 +1392,11 @@
             min-height: 34px;
             white-space: nowrap;
         }
+        .focus-mode-overlay .focus-slogan-save:hover {
+            background: #5a6fd6;
+        }
         .focus-mode-overlay .focus-date {
-            color: #718096;
+            color: #a0aec0;
             font-size: 13px;
             margin-bottom: 4px;
             text-align: center;
@@ -1111,6 +1513,14 @@
             background: #2d3748;
             color: #a0aec0;
         }
+        .focus-mode-overlay .focus-lectures .lecture-row .lec-status .badge-success {
+            background: #2d4a3a;
+            color: #8fdf9f;
+        }
+        .focus-mode-overlay .focus-lectures .lecture-row .lec-status .badge-danger {
+            background: #4a2d2d;
+            color: #f8a0a0;
+        }
         .focus-mode-overlay .focus-course-bar {
             width: 100%;
             max-width: 600px;
@@ -1203,118 +1613,26 @@
         .focus-mode-overlay .focus-exit:hover {
             background: #5a6fd6;
         }
-        .celebration-container {
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            pointer-events: none;
-            z-index: 10000;
-            overflow: hidden;
-        }
-        .celebration-particle {
-            position: absolute;
-            font-size: 20px;
-            animation: particleFloat 2s ease-out forwards;
-        }
-        @keyframes particleFloat {
-            0% {
-                transform: translateY(0) scale(1) rotate(0deg);
-                opacity: 1;
-            }
-            100% {
-                transform: translateY(-200px) scale(0.3) rotate(360deg);
-                opacity: 0;
-            }
-        }
-        .memo-entry {
-            padding: 10px 14px;
-            border-radius: 8px;
-            background: #f8fafc;
-            margin-bottom: 6px;
-            border-left: 4px solid #667eea;
-        }
-        .memo-entry .memo-text {
-            font-weight: 500;
-            font-size: 13px;
-        }
-        .memo-entry .memo-date {
-            font-size: 11px;
-            color: #718096;
-            margin-top: 4px;
-        }
-        @media (max-width: 480px) {
-            .battery {
-                width: 36px;
-                height: 52px;
-            }
-            .battery.large {
-                width: 56px;
-                height: 76px;
-            }
-            .battery .pct {
-                font-size: 9px;
-            }
-            .battery-label {
-                font-size: 8px;
-            }
-            .header .title {
-                font-size: 13px;
-            }
-            .header .actions button {
-                padding: 3px 6px;
-                font-size: 10px;
-            }
-            .stat-card .number {
-                font-size: 16px;
-            }
-            .calendar-grid .day-cell {
-                font-size: 10px;
-                min-height: 28px;
-            }
-            .lecture-row {
-                padding: 4px 6px;
-                font-size: 11px;
-            }
-            .btn {
-                font-size: 10px;
-                padding: 5px 10px;
-                min-height: 30px;
-            }
-            .nav-bottom .tab .tab-icon {
-                font-size: 13px;
-            }
-            .nav-bottom .tab .tab-label {
-                font-size: 5px;
-            }
-            .focus-mode-overlay .focus-battery {
-                width: 80px;
-                height: 110px;
-            }
-            .focus-mode-overlay .focus-battery .pct {
-                font-size: 18px;
-            }
-        }
     </style>
 </head>
 <body>
 
     <div id="toast"></div>
 
+    <!-- HEADER -->
     <header class="header">
         <div class="title"><span class="emoji">📚</span> Lecture Planner</div>
         <div class="actions">
-            <button id="darkToggle" title="Toggle Dark Mode">🌓</button>
             <button id="exportBtn">📤</button>
             <button id="importBtn">📥</button>
             <input type="file" id="fileInput" accept=".json" />
         </div>
     </header>
 
+    <!-- BOTTOM NAV -->
     <nav class="nav-bottom" id="bottomNav">
-        <button class="tab active" data-tab="dashboard"><span class="tab-icon">🏠</span><span class="tab-label">Dash</span></button>
-        <button class="tab" data-tab="focus"><span class="tab-icon">🎯</span><span class="tab-label">Focus</span></button>
+        <button class="tab" data-tab="dashboard"><span class="tab-icon">🏠</span><span class="tab-label">Dash</span></button>
+        <button class="tab active" data-tab="focus"><span class="tab-icon">🎯</span><span class="tab-label">Focus</span></button>
         <button class="tab" data-tab="upload"><span class="tab-icon">📤</span><span class="tab-label">Upload</span></button>
         <button class="tab" data-tab="timetable"><span class="tab-icon">📅</span><span class="tab-label">Time</span><span class="badge" id="courseBadge" style="display:none;">0</span></button>
         <button class="tab" data-tab="edit"><span class="tab-icon">✏️</span><span class="tab-label">Edit</span></button>
@@ -1325,10 +1643,62 @@
         <button class="tab" data-tab="memo"><span class="tab-icon">📝</span><span class="tab-label">Memo</span></button>
     </nav>
 
+    <!-- FOCUS MODE OVERLAY -->
+    <div class="focus-mode-overlay active" id="focusOverlay">
+        <div class="focus-header" id="focusDayTitle">Wednesday, January 15, 2026</div>
+        <div class="focus-slogan-row">
+            <input class="focus-slogan-input" id="focusSlogan" placeholder="✍️ Write your daily slogan here..." />
+            <button class="focus-slogan-save" id="focusSloganSave">💾 Save</button>
+        </div>
+        <div class="focus-date" id="focusCourseName">No course selected</div>
+        <div class="focus-battery-container">
+            <div class="focus-battery" id="focusBattery">
+                <div class="cap"></div>
+                <div class="fill high" id="focusBatteryFill" style="height:0%;"></div>
+                <div class="pct" id="focusBatteryPct">0%</div>
+                <div class="stars-container" id="focusStarsContainer"></div>
+            </div>
+        </div>
+        <div class="focus-progress" id="focusProgress">Today: 0h 0m / 0h 0m | <span class="pending">Pending: 0h 0m</span></div>
+        <div class="focus-lectures" id="focusLectureList">
+            <div style="color:#718096;text-align:center;padding:20px;">No lectures scheduled today.<br/>Go to Upload tab to add a course.</div>
+        </div>
+        <div class="focus-course-bar" id="focusCourseBar">
+            <div class="row">
+                <span id="focusCourseBarName">Course: None</span>
+                <span id="focusCourseBarPct">0%</span>
+            </div>
+            <div class="progress-bar-horizontal" style="margin-top:4px;">
+                <div class="fill high" id="focusCourseBarFill" style="width:0%;">0%</div>
+            </div>
+            <div class="row" style="margin-top:4px;font-size:11px;color:#a0aec0;">
+                <span id="focusTotalHours">Total: 0h</span>
+                <span id="focusDoneHours">Done: 0h</span>
+                <span id="focusRemainingHours">Remaining: 0h</span>
+            </div>
+        </div>
+        <div class="focus-days-taken" id="focusDaysTaken">📅 Days taken: 0 days</div>
+        <div class="focus-finish-date" id="focusFinishDate">🎯 Project Completion: Add a course to see forecast</div>
+        <div class="focus-stats-row" id="focusStatsRow">
+            <div class="stat-item">📊 <span class="stat-value" id="focusMomentum">0%</span> Momentum</div>
+            <div class="stat-item">🔥 <span class="stat-value" id="focusStreak">0</span> Day Streak</div>
+            <div class="stat-item">⭐ <span class="stat-value" id="focusXP">0</span> XP</div>
+            <div class="stat-item">📈 <span class="stat-value" id="focusCapacity">0h</span> Capacity</div>
+        </div>
+        <div class="focus-actions">
+            <button class="btn btn-sm btn-primary" id="focusExportBtn">📤 Export</button>
+            <button class="btn btn-sm btn-success" id="focusImportBtn">📥 Import</button>
+        </div>
+        <button class="focus-exit" id="focusExitBtn">✕ Exit Focus Mode</button>
+    </div>
+
+    <div class="celebration-container" id="celebrationContainer"></div>
+
+    <!-- MAIN CONTAINER -->
     <div class="container">
 
         <!-- DASHBOARD -->
-        <div class="tab-content active" id="tab-dashboard">
+        <div class="tab-content" id="tab-dashboard">
             <div class="card">
                 <div class="card-title">📝 Daily Note</div>
                 <textarea id="dailyNote" rows="2" placeholder="Write your daily note here..." style="min-height:50px;"></textarea>
@@ -1352,7 +1722,7 @@
                     <button class="btn btn-sm btn-outline" id="dashPrev">◀</button>
                     <button class="btn btn-sm btn-primary" id="dashToday">📅 Today</button>
                     <button class="btn btn-sm btn-outline" id="dashNext">▶</button>
-                    <span id="dashDateLabel" style="font-weight:600;font-size:13px;min-width:100px;text-align:center;"></span>
+                    <span id="dashDateLabel" style="font-weight:600;font-size:13px;min-width:100px;text-align:center;color:#e2e8f0;"></span>
                 </div>
                 <div class="battery-container" id="dashBatteries"></div>
                 <div class="grid-4 mt-8" id="dashStats">
@@ -1406,22 +1776,22 @@
                         <button class="btn btn-sm btn-outline" id="ttNextMonth">▶</button>
                     </div>
                 </div>
-                <div style="text-align:center;font-weight:700;font-size:14px;padding:4px 0;" id="ttMonthLabel">January 2026</div>
+                <div style="text-align:center;font-weight:700;font-size:14px;padding:4px 0;color:#e2e8f0;" id="ttMonthLabel">January 2026</div>
                 <div class="calendar-grid" id="ttCalendar"></div>
                 <div class="mt-8" id="ttSpeedControl" style="display:none;">
                     <div class="row">
                         <span class="text-muted" style="font-size:11px;">⚡ Speed: Default <span id="ttDefaultSpeed">120</span> mins</span>
                         <input type="number" id="ttCustomSpeed" placeholder="Custom" style="width:70px;min-height:30px;" />
                         <button class="btn btn-sm btn-outline" id="ttResetSpeed">↺ Reset</button>
-                        <span id="ttSpeedStatus" style="font-size:11px;"></span>
+                        <span id="ttSpeedStatus" style="font-size:11px;color:#a0aec0;"></span>
                     </div>
                 </div>
                 <div class="mt-8" id="ttDayDetail" style="display:none;">
                     <div class="row" style="justify-content:space-between;">
-                        <span id="ttDayTitle" style="font-weight:700;font-size:13px;"></span>
-                        <span id="ttDurationSummary" style="font-size:11px;color:#718096;"></span>
+                        <span id="ttDayTitle" style="font-weight:700;font-size:13px;color:#e2e8f0;"></span>
+                        <span id="ttDurationSummary" style="font-size:11px;color:#a0aec0;"></span>
                     </div>
-                    <div id="ttPerformance" style="font-size:12px;font-weight:600;padding:4px 0;"></div>
+                    <div id="ttPerformance" style="font-size:12px;font-weight:600;padding:4px 0;color:#e2e8f0;"></div>
                     <div class="row mt-8">
                         <button class="btn btn-sm btn-success" id="ttTickAll">✅ Tick All</button>
                         <button class="btn btn-sm btn-outline" id="ttUntickAll">⭕ Untick All</button>
@@ -1459,7 +1829,7 @@
                     </table>
                 </div>
                 <div class="row mt-8">
-                    <span id="editSummary" style="font-size:12px;font-weight:600;"></span>
+                    <span id="editSummary" style="font-size:12px;font-weight:600;color:#e2e8f0;"></span>
                 </div>
                 <div class="grid-2 mt-12">
                     <button class="btn btn-danger" id="editDeleteCourse">🗑️ Delete Course</button>
@@ -1486,10 +1856,10 @@
                     <div class="stat-card"><div class="number purple" id="histPct">0%</div><div class="label">Completion</div></div>
                 </div>
                 <div class="row mt-8">
-                    <span id="histDurationSummary" style="font-size:12px;font-weight:600;"></span>
+                    <span id="histDurationSummary" style="font-size:12px;font-weight:600;color:#e2e8f0;"></span>
                 </div>
                 <div class="mt-8">
-                    <span style="font-size:11px;font-weight:600;">Course Progress</span>
+                    <span style="font-size:11px;font-weight:600;color:#a0aec0;">Course Progress</span>
                     <div class="progress-bar" style="height:10px;"><div class="fill high" id="histProgressBar" style="width:0%;"></div></div>
                 </div>
                 <div class="pagination-controls" id="histPagination">
@@ -1530,13 +1900,13 @@
                 </div>
                 <div id="habitCustomDays" style="display:none;margin-top:8px;">
                     <span class="text-muted" style="font-size:11px;">Repeat on:</span>
-                    <label style="font-size:11px;"><input type="checkbox" class="custom-day" data-day="0" /> Sun</label>
-                    <label style="font-size:11px;"><input type="checkbox" class="custom-day" data-day="1" /> Mon</label>
-                    <label style="font-size:11px;"><input type="checkbox" class="custom-day" data-day="2" /> Tue</label>
-                    <label style="font-size:11px;"><input type="checkbox" class="custom-day" data-day="3" /> Wed</label>
-                    <label style="font-size:11px;"><input type="checkbox" class="custom-day" data-day="4" /> Thu</label>
-                    <label style="font-size:11px;"><input type="checkbox" class="custom-day" data-day="5" /> Fri</label>
-                    <label style="font-size:11px;"><input type="checkbox" class="custom-day" data-day="6" /> Sat</label>
+                    <label style="font-size:11px;color:#e2e8f0;"><input type="checkbox" class="custom-day" data-day="0" /> Sun</label>
+                    <label style="font-size:11px;color:#e2e8f0;"><input type="checkbox" class="custom-day" data-day="1" /> Mon</label>
+                    <label style="font-size:11px;color:#e2e8f0;"><input type="checkbox" class="custom-day" data-day="2" /> Tue</label>
+                    <label style="font-size:11px;color:#e2e8f0;"><input type="checkbox" class="custom-day" data-day="3" /> Wed</label>
+                    <label style="font-size:11px;color:#e2e8f0;"><input type="checkbox" class="custom-day" data-day="4" /> Thu</label>
+                    <label style="font-size:11px;color:#e2e8f0;"><input type="checkbox" class="custom-day" data-day="5" /> Fri</label>
+                    <label style="font-size:11px;color:#e2e8f0;"><input type="checkbox" class="custom-day" data-day="6" /> Sat</label>
                 </div>
                 <div id="habitsList" class="mt-8"></div>
             </div>
@@ -1574,9 +1944,9 @@
                     <div class="stat-card"><div class="number green" id="ovHabits">0/0</div><div class="label">✅ Habits Today</div></div>
                 </div>
                 <div class="mt-8">
-                    <span style="font-size:11px;font-weight:600;">Overall Progress</span>
+                    <span style="font-size:11px;font-weight:600;color:#a0aec0;">Overall Progress</span>
                     <div class="progress-bar" style="height:10px;"><div class="fill high" id="ovOverallBar" style="width:0%;"></div></div>
-                    <span id="ovOverallDetail" style="font-size:11px;color:#718096;"></span>
+                    <span id="ovOverallDetail" style="font-size:11px;color:#a0aec0;"></span>
                 </div>
                 <div id="overviewCourses" class="mt-8"></div>
                 <div id="overviewBatteries" class="mt-8"></div>
@@ -1585,24 +1955,24 @@
                 <div id="overviewCourseHours" class="mt-8"></div>
                 <div id="overviewChart" class="mt-8"></div>
 
-                <div class="mt-12 card" style="background:#f8fafc;border-left:4px solid #ffd700;">
+                <div class="mt-12 card" style="background:#1a202c;border-left:4px solid #ffd700;">
                     <div class="card-title">🏆 Personal Records</div>
                     <div id="personalRecords"></div>
                 </div>
 
-                <div class="mt-12 card" style="background:#f8fafc;border-left:4px solid #667eea;">
+                <div class="mt-12 card" style="background:#1a202c;border-left:4px solid #a78bfa;">
                     <div class="card-title">📈 Capacity Growth</div>
                     <div id="capacityGrowth"></div>
                 </div>
 
-                <div class="mt-12 card" style="background:#f8fafc;border-left:4px solid #ff6b6b;">
+                <div class="mt-12 card" style="background:#1a202c;border-left:4px solid #ff6b6b;">
                     <div class="card-title">💳 Study Debt</div>
                     <div id="studyDebt"></div>
                 </div>
 
-                <div class="mt-12" style="background:#f8fafc;border-radius:12px;padding:16px;border:2px solid #667eea;">
-                    <div style="font-size:14px;font-weight:700;color:#667eea;margin-bottom:8px;">🎯 Project Completion Forecast</div>
-                    <div id="projectCompletionInfo" style="font-size:13px;line-height:1.8;">
+                <div class="mt-12" style="background:#1a202c;border-radius:12px;padding:16px;border:2px solid #a78bfa;">
+                    <div style="font-size:14px;font-weight:700;color:#a78bfa;margin-bottom:8px;">🎯 Project Completion Forecast</div>
+                    <div id="projectCompletionInfo" style="font-size:13px;line-height:1.8;color:#e2e8f0;">
                         <div>📅 <strong>Start Date:</strong> <span id="projStartDate">-</span></div>
                         <div>📅 <strong>Completion Date:</strong> <span id="projEndDate">-</span></div>
                         <div>⏱️ <strong>Total Duration:</strong> <span id="projTotalHours">-</span></div>
@@ -1610,9 +1980,9 @@
                         <div>✅ <strong>Done:</strong> <span id="projDoneHours">-</span></div>
                         <div>⏳ <strong>Remaining:</strong> <span id="projRemainingHours">-</span></div>
                         <div style="margin-top:8px;">
-                            <span style="font-size:11px;color:#718096;">Default speed: 5h/day</span>
+                            <span style="font-size:11px;color:#a0aec0;">Default speed: 5h/day</span>
                             <input type="number" id="projectSpeedInput" value="300" min="1" style="width:70px;display:inline-block;padding:4px 6px;font-size:11px;min-height:28px;" />
-                            <span style="font-size:11px;color:#718096;">mins/day</span>
+                            <span style="font-size:11px;color:#a0aec0;">mins/day</span>
                             <button class="btn btn-xs btn-primary" id="projectSpeedUpdate">Update</button>
                         </div>
                     </div>
@@ -1636,55 +2006,6 @@
 
     </div>
 
-    <!-- Focus Mode Overlay -->
-    <div class="focus-mode-overlay" id="focusOverlay">
-        <div class="focus-header" id="focusDayTitle">Wednesday, January 15, 2026</div>
-        <div class="focus-slogan-row">
-            <input class="focus-slogan-input" id="focusSlogan" placeholder="✍️ Write your daily slogan here..." />
-            <button class="focus-slogan-save" id="focusSloganSave">💾 Save</button>
-        </div>
-        <div class="focus-date" id="focusCourseName">Mathematics 101</div>
-        <div class="focus-battery-container">
-            <div class="focus-battery" id="focusBattery">
-                <div class="cap"></div>
-                <div class="fill high" id="focusBatteryFill" style="height:0%;"></div>
-                <div class="pct" id="focusBatteryPct">0%</div>
-                <div class="stars-container" id="focusStarsContainer"></div>
-            </div>
-        </div>
-        <div class="focus-progress" id="focusProgress">Today: 0h 0m / 0h 0m | <span class="pending">Pending: 0h 0m</span></div>
-        <div class="focus-lectures" id="focusLectureList"></div>
-        <div class="focus-course-bar" id="focusCourseBar">
-            <div class="row">
-                <span id="focusCourseBarName">Course: Mathematics 101</span>
-                <span id="focusCourseBarPct">0%</span>
-            </div>
-            <div class="progress-bar-horizontal" style="margin-top:4px;">
-                <div class="fill high" id="focusCourseBarFill" style="width:0%;">0%</div>
-            </div>
-            <div class="row" style="margin-top:4px;font-size:11px;color:#718096;">
-                <span id="focusTotalHours">Total: 0h</span>
-                <span id="focusDoneHours">Done: 0h</span>
-                <span id="focusRemainingHours">Remaining: 0h</span>
-            </div>
-        </div>
-        <div class="focus-days-taken" id="focusDaysTaken">📅 Days taken: 0 days</div>
-        <div class="focus-finish-date" id="focusFinishDate">🎯 Project Completion: Calculating...</div>
-        <div class="focus-stats-row" id="focusStatsRow">
-            <div class="stat-item">📊 <span class="stat-value" id="focusMomentum">0%</span> Momentum</div>
-            <div class="stat-item">🔥 <span class="stat-value" id="focusStreak">0</span> Day Streak</div>
-            <div class="stat-item">⭐ <span class="stat-value" id="focusXP">0</span> XP</div>
-            <div class="stat-item">📈 <span class="stat-value" id="focusCapacity">0h</span> Capacity</div>
-        </div>
-        <div class="focus-actions">
-            <button class="btn btn-sm btn-primary" id="focusExportBtn">📤 Export</button>
-            <button class="btn btn-sm btn-success" id="focusImportBtn">📥 Import</button>
-        </div>
-        <button class="focus-exit" id="focusExitBtn">✕ Exit Focus Mode</button>
-    </div>
-
-    <div class="celebration-container" id="celebrationContainer"></div>
-
     <script>
         // ============================================================
         // STATE
@@ -1707,7 +2028,6 @@
             focusCourse: null,
             batteryView: 'date',
             dashboardDate: null,
-            darkMode: false,
             projectSpeed: 300,
             xp: 0,
             streak: 0,
@@ -1720,11 +2040,11 @@
             studyDebt: 0
         };
 
-        let activeTab = 'dashboard';
+        let activeTab = 'focus';
         let ttCurrentDate = new Date();
         let ttSelectedDate = null;
         let ttCourse = null;
-        let focusModeActive = false;
+        let focusModeActive = true;
         let celebrationTimeout = null;
         let histPage = 0;
         let histPageSize = 30;
@@ -2052,7 +2372,6 @@
                     if (!state.memos) state.memos = [];
                     if (!state.batteryView) state.batteryView = 'date';
                     if (!state.dashboardDate) state.dashboardDate = getDateStr(new Date());
-                    if (state.darkMode === undefined) state.darkMode = false;
                     if (!state.focusSlogan) state.focusSlogan = '';
                     if (!state.projectSpeed) state.projectSpeed = 300;
                     if (!state.xp) state.xp = 0;
@@ -2095,7 +2414,6 @@
                 state.focusCourse = null;
                 state.batteryView = 'date';
                 state.dashboardDate = getDateStr(new Date());
-                state.darkMode = false;
                 state.projectSpeed = 300;
                 state.xp = 0;
                 state.streak = 0;
@@ -2108,8 +2426,6 @@
                 state.studyDebt = 0;
                 saveState();
             }
-            if (state.darkMode) document.body.classList.add('dark');
-            else document.body.classList.remove('dark');
             if (!state.dashboardDate) { state.dashboardDate = getDateStr(new Date());
                 saveState(); }
             const focus = getFocus();
@@ -2182,7 +2498,6 @@
             triggerCelebration('large');
             triggerFocusCelebration();
 
-            // Check personal records
             const hours = doneHours / 60;
             if (hours > (state.personalRecords.mostHoursDay || 0)) {
                 state.personalRecords.mostHoursDay = hours;
@@ -2329,7 +2644,6 @@
         function renderAll() {
             renderDashSavedCourses();
             renderDashboard();
-            renderUpload();
             renderTimetable();
             renderEdit();
             renderHistory();
@@ -2518,8 +2832,6 @@
             if (pct >= 40) return 'medium';
             return 'low';
         }
-
-        function renderUpload() {}
 
         function renderTimetable() {
             const select = document.getElementById('ttCourse');
@@ -3218,7 +3530,7 @@
                                     <tr class="${diffClass} ${isOdd ? 'odd-date' : ''}">
                                         <td>${r.sr}</td>
                                         <td>${r.name}</td>
-                                        <td><span class="alloc" style="color:#667eea;">${r.allocated}</span></td>
+                                        <td><span class="alloc" style="color:#a78bfa;">${r.allocated}</span></td>
                                         <td>${r.doneDate ? `<span class="done" style="color:#51cf66;">${r.doneDate}</span>` : '-'}</td>
                                         <td><span class="badge ${statusClass}">${statusText}</span></td>
                                         <td>${formatDuration(r.expected)}</td>
@@ -3275,7 +3587,7 @@
             dates.forEach((ds, idx) => {
                 const hr = hours[idx];
                 const pct = (hr / maxHr) * 80;
-                const color = hr > 0 ? '#51cf66' : '#e2e8f0';
+                const color = hr > 0 ? '#51cf66' : '#4a5568';
                 html += `
                                 <div class="bar-item">
                                     <div class="bar" style="height:${Math.max(3, pct)}px;background:${color};"></div>
@@ -3497,10 +3809,10 @@
                     const pctClass = comp.pct >= 70 ? 'high' : comp.pct >= 40 ? 'medium' : 'low';
                     html += `
                                     <div class="row" style="margin-bottom:4px;">
-                                        <span style="font-weight:600;font-size:12px;min-width:80px;">${n} ${n === focus ? '⭐' : ''}</span>
+                                        <span style="font-weight:600;font-size:12px;min-width:80px;color:#e2e8f0;">${n} ${n === focus ? '⭐' : ''}</span>
                                         <div class="progress-bar"><div class="fill ${pctClass}" style="width:${comp.pct}%;"></div></div>
-                                        <span style="font-size:11px;font-weight:600;min-width:40px;">${comp.pct}%</span>
-                                        <span style="font-size:10px;color:#718096;">${formatDuration(comp.doneDuration)} / ${formatDuration(comp.totalDuration)}</span>
+                                        <span style="font-size:11px;font-weight:600;min-width:40px;color:#e2e8f0;">${comp.pct}%</span>
+                                        <span style="font-size:10px;color:#a0aec0;">${formatDuration(comp.doneDuration)} / ${formatDuration(comp.totalDuration)}</span>
                                     </div>
                                 `;
                 });
@@ -3553,9 +3865,9 @@
                         0;
                     chHtml += `
                                     <div class="row" style="margin-bottom:2px;">
-                                        <span style="font-size:11px;min-width:60px;">${n}</span>
+                                        <span style="font-size:11px;min-width:60px;color:#e2e8f0;">${n}</span>
                                         <div class="progress-bar"><div class="fill" style="width:${pct}%;background:#667eea;"></div></div>
-                                        <span style="font-size:10px;color:#718096;min-width:60px;">${formatDuration(comp.totalDuration)}</span>
+                                        <span style="font-size:10px;color:#a0aec0;min-width:60px;">${formatDuration(comp.totalDuration)}</span>
                                     </div>
                                 `;
                 });
@@ -3577,8 +3889,8 @@
                 chartHtml += `
                                 <div class="bar-item">
                                     <div class="bar ${cls}" style="height:${height}px;"></div>
-                                    <span class="bar-label">${weekDays[dd.getDay()]}</span>
-                                    <span class="bar-label" style="font-size:7px;">${pct}%</span>
+                                    <span class="bar-label" style="color:#a0aec0;">${weekDays[dd.getDay()]}</span>
+                                    <span class="bar-label" style="font-size:7px;color:#a0aec0;">${pct}%</span>
                                 </div>
                             `;
             }
@@ -3616,7 +3928,7 @@
             const growth = getCapacityGrowth();
             let html =
                 `
-                            <div class="row">
+                            <div class="row" style="color:#e2e8f0;">
                                 <span>Current Capacity: <strong>${growth.current.toFixed(1)}h/day</strong></span>
                                 <span>30 Days Ago: <strong>${growth.previous.toFixed(1)}h/day</strong></span>
                                 <span>Growth: <strong style="color:${growth.growth >= 0 ? '#51cf66' : '#ff6b6b'};">${growth.growth >= 0 ? '+' : ''}${growth.growth}%</strong></span>
@@ -3639,10 +3951,10 @@
             const label = debt <= 0 ? '✅ Ahead' : '⚠️ Debt';
             container.innerHTML =
                 `
-                            <div class="row">
+                            <div class="row" style="color:#e2e8f0;">
                                 <span>Study Debt: <strong style="color:${color};">${debt.toFixed(1)}h</strong></span>
                                 <span>Status: <strong style="color:${color};">${label}</strong></span>
-                                <span style="font-size:11px;color:#718096;">${debt <= 0 ? 'You are ahead of target! 🎉' : 'You need to catch up! 💪'}</span>
+                                <span style="font-size:11px;color:#a0aec0;">${debt <= 0 ? 'You are ahead of target! 🎉' : 'You need to catch up! 💪'}</span>
                             </div>
                             <div class="progress-bar" style="height:10px;margin-top:8px;">
                                 <div class="fill ${debt <= 0 ? 'high' : 'low'}" style="width:${Math.min(100, Math.abs(debt) * 20)}%;"></div>
@@ -3691,10 +4003,6 @@
         function renderFocusMode() {
             const overlay = document.getElementById('focusOverlay');
             const course = getFocus();
-            if (!course) {
-                toast('No course selected!', 'error');
-                return;
-            }
 
             const dateStr = getDateStr(new Date());
             const d = parseDate(dateStr);
@@ -3702,6 +4010,33 @@
             const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
             document.getElementById('focusDayTitle').textContent =
                 `${days[d.getDay()]}, ${months[d.getMonth()]} ${d.getDate()}, ${d.getFullYear()}`;
+
+            if (!course) {
+                document.getElementById('focusCourseName').textContent = 'No course selected';
+                document.getElementById('focusBatteryFill').style.height = '0%';
+                document.getElementById('focusBatteryPct').textContent = '0%';
+                document.getElementById('focusProgress').innerHTML = 'Add a course to start tracking!';
+                document.getElementById('focusCourseBarName').textContent = 'Course: None';
+                document.getElementById('focusCourseBarPct').textContent = '0%';
+                document.getElementById('focusCourseBarFill').style.width = '0%';
+                document.getElementById('focusCourseBarFill').textContent = '0%';
+                document.getElementById('focusTotalHours').textContent = 'Total: 0h';
+                document.getElementById('focusDoneHours').textContent = 'Done: 0h';
+                document.getElementById('focusRemainingHours').textContent = 'Remaining: 0h';
+                document.getElementById('focusDaysTaken').textContent = '📅 Days taken: 0 days';
+                document.getElementById('focusFinishDate').textContent = '🎯 Project Completion: Add a course to see forecast';
+                document.getElementById('focusMomentum').textContent = '0%';
+                document.getElementById('focusStreak').textContent = '0';
+                document.getElementById('focusXP').textContent = '0';
+                document.getElementById('focusCapacity').textContent = '0h';
+                document.getElementById('focusLectureList').innerHTML =
+                    '<div style="color:#718096;text-align:center;padding:20px;">No lectures scheduled today.<br/>Go to Upload tab to add a course.</div>';
+                document.getElementById('focusSlogan').value = state.focusSlogan || '';
+                overlay.classList.add('active');
+                focusModeActive = true;
+                return;
+            }
+
             document.getElementById('focusCourseName').textContent = course;
             document.getElementById('focusSlogan').value = state.focusSlogan || '';
 
@@ -3751,7 +4086,7 @@
 
             const list = document.getElementById('focusLectureList');
             if (!lecs.length) {
-                list.innerHTML = '<div style="color:#718096;text-align:center;">No lectures scheduled today</div>';
+                list.innerHTML = '<div style="color:#718096;text-align:center;padding:20px;">No lectures scheduled today. 🎉 Take a break!</div>';
             } else {
                 let html = '';
                 lecs.forEach(l => {
@@ -3854,7 +4189,6 @@
 
             // Focus Mode
             document.querySelector('.tab[data-tab="focus"]').addEventListener('click', () => {
-                if (!getFocus()) { toast('Please add a course first', 'warning'); return; }
                 renderFocusMode();
             });
 
@@ -3875,6 +4209,7 @@
             document.getElementById('focusExitBtn').addEventListener('click', () => {
                 document.getElementById('focusOverlay').classList.remove('active');
                 focusModeActive = false;
+                document.querySelector('.tab[data-tab="dashboard"]').click();
             });
 
             document.getElementById('focusExportBtn').addEventListener('click', () => {
@@ -3966,6 +4301,7 @@
                 document.getElementById('uploadPriority').value = '';
                 toast(`✅ Course "${name}" uploaded with ${lectures.length} lectures`);
                 renderAll();
+                renderFocusMode();
             });
 
             document.getElementById('dummyBtn').addEventListener('click', () => {
@@ -3997,6 +4333,7 @@
                 saveState();
                 toast('🎲 Dummy data added');
                 renderAll();
+                renderFocusMode();
             });
 
             document.getElementById('removeDummyBtn').addEventListener('click', () => {
@@ -4018,6 +4355,7 @@
                 saveState();
                 toast('🗑️ Dummy data removed');
                 renderAll();
+                renderFocusMode();
             });
 
             document.getElementById('clearAllBtn').addEventListener('click', () => {
@@ -4047,6 +4385,7 @@
                 saveState();
                 toast('⚠️ All data cleared');
                 renderAll();
+                renderFocusMode();
             });
 
             // Edit
@@ -4115,6 +4454,7 @@
                 saveState();
                 toast(`🗑️ Course "${course}" deleted`);
                 renderAll();
+                renderFocusMode();
             });
 
             document.getElementById('editResetCourse').addEventListener('click', () => {
@@ -4129,6 +4469,7 @@
                 saveState();
                 toast(`🔄 Course "${course}" reset`);
                 renderAll();
+                renderFocusMode();
             });
 
             document.getElementById('editExportCourse').addEventListener('click', () => {
@@ -4316,6 +4657,7 @@
                             saveState();
                             renderAll();
                             toast('📥 Data imported successfully');
+                            renderFocusMode();
                         } else { toast('Invalid data format', 'error'); }
                     } catch (err) { toast('Error importing file', 'error'); }
                 };
@@ -4323,12 +4665,7 @@
                 e.target.value = '';
             });
 
-            document.getElementById('darkToggle').addEventListener('click', () => {
-                state.darkMode = !state.darkMode;
-                document.body.classList.toggle('dark', state.darkMode);
-                saveState();
-                toast(state.darkMode ? '🌙 Dark mode on' : '☀️ Light mode on');
-            });
+            // No dark toggle - dark mode is default
 
             // TT Events
             document.getElementById('ttPrevMonth').addEventListener('click', () => {
@@ -4488,14 +4825,14 @@
         function init() {
             initDefaultState();
 
-            // Set Dashboard as default since Focus needs courses
-            const dashTab = document.querySelector('.tab[data-tab="dashboard"]');
-            if (dashTab) {
+            // Set Focus as default tab (active)
+            const focusTab = document.querySelector('.tab[data-tab="focus"]');
+            if (focusTab) {
                 document.querySelectorAll('.nav-bottom .tab').forEach(b => b.classList.remove('active'));
-                dashTab.classList.add('active');
+                focusTab.classList.add('active');
                 document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
-                document.getElementById('tab-dashboard').classList.add('active');
-                activeTab = 'dashboard';
+                document.getElementById('tab-focus').classList.add('active');
+                activeTab = 'focus';
             }
 
             ttCurrentDate = new Date();
@@ -4503,15 +4840,13 @@
             setupEvents();
             renderAll();
 
-            // Auto-open focus mode if a course exists
-            if (getFocus()) {
-                setTimeout(() => renderFocusMode(), 500);
-            }
+            // Auto-open focus mode
+            setTimeout(() => renderFocusMode(), 300);
 
             setupAutoExport();
             setInterval(() => { saveState(); }, 30000);
             document.addEventListener('visibilitychange', () => { if (document.hidden) saveState(); });
-            toast('📚 Lecture Planner Pro loaded!', 'info');
+            toast('🎯 Lecture Planner Pro - Focus Mode Ready!', 'info');
         }
 
         document.addEventListener('DOMContentLoaded', init);
