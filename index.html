@@ -951,28 +951,6 @@
             }
         }
 
-        .urgency-timer {
-            background: linear-gradient(135deg, #ff6b6b, #e53e3e);
-            padding: 8px 16px;
-            border-radius: 10px;
-            font-weight: 700;
-            color: #fff;
-            animation: flashUrgency 2s ease-in-out infinite;
-            text-align: center;
-            width: 100%;
-            max-width: 500px;
-            margin: 4px auto;
-        }
-        @keyframes flashUrgency {
-            0%,
-            100% {
-                opacity: 1;
-            }
-            50% {
-                opacity: 0.6;
-            }
-        }
-
         .poster-card {
             background: linear-gradient(135deg, #1a202c, #2d3748);
             border: 2px solid #ffd93d;
@@ -994,29 +972,6 @@
             font-size: 12px;
             color: #a0aec0;
             margin-top: 4px;
-        }
-
-        .action-meter {
-            height: 8px;
-            background: #2d3748;
-            border-radius: 4px;
-            overflow: hidden;
-            margin: 4px 0;
-            width: 100%;
-            max-width: 500px;
-        }
-        .action-meter .fill {
-            height: 100%;
-            border-radius: 4px;
-            transition: width 0.6s ease;
-        }
-        .action-meter-label {
-            display: flex;
-            justify-content: space-between;
-            font-size: 11px;
-            color: #a0aec0;
-            max-width: 500px;
-            width: 100%;
         }
 
         .study-period-bar {
@@ -1070,6 +1025,10 @@
             font-weight: 700;
             font-size: 16px;
         }
+        .available-hours .remaining {
+            color: #ffd93d;
+            font-weight: 600;
+        }
 
         .course-toggle {
             display: flex;
@@ -1103,6 +1062,13 @@
             max-height: 200px;
             border-radius: 8px;
             margin-top: 8px;
+        }
+        .image-controls {
+            display: flex;
+            gap: 8px;
+            margin-top: 8px;
+            flex-wrap: wrap;
+            justify-content: center;
         }
 
         .friends-grid {
@@ -1189,14 +1155,15 @@
         }
 
         .focus-lectures {
-            max-height: 38vh;
+            max-height: 42vh;
             overflow-y: auto;
-            padding: 10px 4px;
-            margin: 8px 0;
+            padding: 10px 6px;
+            margin: 10px 0;
             width: 100%;
             max-width: 600px;
             background: rgba(0, 0, 0, 0.2);
             border-radius: 8px;
+            min-height: 180px;
         }
         .focus-lectures .lecture-row {
             background: #1a202c;
@@ -1205,6 +1172,7 @@
             padding: 8px 12px;
             margin-bottom: 4px;
             border-radius: 6px;
+            min-height: 44px;
         }
         .focus-lectures .lecture-row.done {
             background: #2d4a3a;
@@ -1541,17 +1509,15 @@
             .poster-card .quote {
                 font-size: 13px;
             }
-            .urgency-timer {
-                font-size: 12px;
-                padding: 6px 12px;
-            }
             .focus-lectures {
-                max-height: 30vh;
-                padding: 6px 2px;
+                max-height: 35vh;
+                padding: 6px 4px;
+                min-height: 140px;
             }
             .focus-lectures .lecture-row {
                 padding: 6px 8px;
                 font-size: 11px;
+                min-height: 38px;
             }
             .habit-status-select {
                 width: 60px;
@@ -1692,32 +1658,21 @@
         </div>
         <div class="focus-date" id="focusCourseName">No course</div>
 
-        <!-- Urgency Timer -->
-        <div class="urgency-timer" id="urgencyTimer">
-            ⏰ Time wasted today: <span id="wastedTime">0h 0m</span>
-        </div>
-
         <!-- Poster Card -->
         <div class="poster-card" id="posterCard">
             <div class="quote">"Those waiting for the perfect time will always be beaten by those who keep taking action."</div>
             <div class="author">— Action Principle</div>
         </div>
 
-        <!-- Action Meter -->
-        <div class="action-meter">
-            <div class="fill" id="actionMeterFill" style="width:0%;background:#51cf66;"></div>
-        </div>
-        <div class="action-meter-label">
-            <span>Preparation</span>
-            <span id="actionScore">0% Action</span>
-            <span>Action</span>
-        </div>
-
         <!-- Available Study Hours -->
         <div class="available-hours" id="availableHours">
-            ⏰ Available Study Hours Today: <span class="hours" id="availHours">0h 0m</span>
+            ⏰ Available Today: <span class="hours" id="availHours">0h 0m</span>
             <div style="font-size:11px;color:#a0aec0;margin-top:2px;">
-                Wake: <span id="wakeTimeDisplay">8:00 AM</span> | Bed: <span id="bedTimeDisplay">1:00 AM</span> (50% breaks)
+                Remaining today: <span class="remaining" id="remainingHours">0h 0m</span>
+                (until bed time, 50% breaks)
+            </div>
+            <div style="font-size:11px;color:#a0aec0;margin-top:2px;">
+                Wake: <span id="wakeTimeDisplay">8:00 AM</span> | Bed: <span id="bedTimeDisplay">1:00 AM</span>
             </div>
         </div>
 
@@ -1748,7 +1703,7 @@
 
         <div class="focus-progress" id="focusProgress">Today: 0h 0m / 0h 0m | <span class="pending">Pending: 0h 0m</span></div>
 
-        <!-- Lecture List - SPACING FIXED -->
+        <!-- Lecture List - ENHANCED SPACING -->
         <div class="focus-lectures" id="focusLectureList">
             <div style="color:#718096;text-align:center;padding:20px;">No lectures scheduled today</div>
         </div>
@@ -2205,6 +2160,10 @@
                         <input type="file" id="imageUploadInput" accept="image/*" style="display:none;" />
                         <div id="imagePreviewContainer"></div>
                     </div>
+                    <div class="image-controls">
+                        <button class="btn btn-sm btn-outline" id="imageRemoveAll">🗑️ Remove All</button>
+                        <button class="btn btn-sm btn-outline" id="imageNext">⏭️ Next Image</button>
+                    </div>
                     <div style="font-size:11px;color:#718096;margin-top:4px;">Images rotate daily to keep you inspired!</div>
                 </div>
 
@@ -2270,7 +2229,7 @@
                         <button class="btn btn-sm btn-primary" id="dailyScheduleUpdate">Update</button>
                     </div>
                     <div style="font-size:11px;color:#a0aec0;margin-top:4px;">
-                        💡 Available study hours = (Bed Time - Wake Up Time) × 50% (for breaks)
+                        💡 Available study hours = (Bed Time - Current Time) × 50% (for breaks)
                     </div>
                 </div>
 
@@ -2285,7 +2244,7 @@
         // ================================================================
 
         // ---- STATE ----
-        const STORAGE_KEY = 'lecturePlannerPro_v11';
+        const STORAGE_KEY = 'lecturePlannerPro_v12';
         let state = {
             courses: {},
             settings: {},
@@ -2761,32 +2720,47 @@
             saveState();
         }
 
-        // ---- Available Study Hours ----
+        // ---- Available Study Hours (UPDATED) ----
         function calculateAvailableHours() {
             const wakeTime = state.wakeUpTime || '08:00';
             const bedTime = state.bedTime || '01:00';
+            const now = new Date();
 
-            let wakeHour = parseInt(wakeTime.split(':')[0]);
-            let wakeMin = parseInt(wakeTime.split(':')[1]) || 0;
+            // Get current time in minutes
+            const currentMinutes = now.getHours() * 60 + now.getMinutes();
+
             let bedHour = parseInt(bedTime.split(':')[0]);
             let bedMin = parseInt(bedTime.split(':')[1]) || 0;
+            let bedMinutes = bedHour * 60 + bedMin;
 
-            let totalMinutes = 0;
-            if (bedHour < wakeHour || (bedHour === wakeHour && bedMin < wakeMin)) {
-                bedHour += 24;
+            // If bed time is before current time (next day)
+            if (bedMinutes <= currentMinutes) {
+                bedMinutes += 24 * 60;
             }
-            totalMinutes = (bedHour * 60 + bedMin) - (wakeHour * 60 + wakeMin);
-            totalMinutes = Math.floor(totalMinutes * 0.5);
 
-            const hours = Math.floor(totalMinutes / 60);
-            const mins = totalMinutes % 60;
+            const remainingMinutes = Math.max(0, bedMinutes - currentMinutes);
+            const availableMinutes = Math.floor(remainingMinutes * 0.5); // 50% for breaks
 
-            return { hours, mins, totalMinutes };
+            const hours = Math.floor(availableMinutes / 60);
+            const mins = availableMinutes % 60;
+            const remHours = Math.floor(remainingMinutes / 60);
+            const remMins = remainingMinutes % 60;
+
+            return {
+                availableHours: hours,
+                availableMins: mins,
+                remainingHours: remHours,
+                remainingMins: remMins,
+                totalMinutes: availableMinutes
+            };
         }
 
         function updateAvailableHoursDisplay() {
             const avail = calculateAvailableHours();
-            document.getElementById('availHours').textContent = `${avail.hours}h ${avail.mins}m`;
+            document.getElementById('availHours').textContent = `${avail.availableHours}h ${avail.availableMins}m`;
+            document.getElementById('remainingHours').textContent =
+                `${avail.remainingHours}h ${avail.remainingMins}m`;
+
             const wakeParts = state.wakeUpTime.split(':');
             const bedParts = state.bedTime.split(':');
             document.getElementById('wakeTimeDisplay').textContent = formatTime12(parseInt(wakeParts[0]), parseInt(wakeParts[
@@ -2883,7 +2857,6 @@
             state.streak = (state.streak || 0) + 1;
             updatePersonalRecords(doneHours, completedCount);
             updateMomentumScore();
-            updateActionMeter();
             saveState();
 
             const pct = Math.round((doneHours / totalHours) * 100);
@@ -2952,48 +2925,8 @@
             return Math.round((total / 60) * 10) / 10;
         }
 
-        // ---- Action Meter ----
-        function updateActionMeter() {
-            const totalLectures = getTotalLecturesCount();
-            const completedLectures = getCompletedLecturesCount();
-            const actionPct = totalLectures > 0 ? Math.round((completedLectures / totalLectures) * 100) : 0;
-            state.actionScore = actionPct;
-            const fill = document.getElementById('actionMeterFill');
-            const score = document.getElementById('actionScore');
-            if (fill) fill.style.width = actionPct + '%';
-            if (score) score.textContent = actionPct + '% Action';
-            saveState();
-        }
-
-        function getTotalLecturesCount() {
-            let total = 0;
-            const names = getActiveCourseNames();
-            names.forEach(c => {
-                total += getLectures(c).length;
-            });
-            return total;
-        }
-
-        function getCompletedLecturesCount() {
-            let done = 0;
-            const names = getActiveCourseNames();
-            names.forEach(c => {
-                const res = state.results[c] || {};
-                getLectures(c).forEach(l => {
-                    if (res[getLectureKey(l)]) done++;
-                });
-            });
-            return done;
-        }
-
-        // ---- Urgency Timer ----
-        function updateUrgencyTimer() {
-            const wasted = state.wastedTimeToday || 0;
-            const hours = Math.floor(wasted / 60);
-            const mins = Math.round(wasted % 60);
-            const el = document.getElementById('wastedTime');
-            if (el) el.textContent = `${hours}h ${mins}m`;
-        }
+        // ---- Urgency Timer Removed ----
+        // No longer needed
 
         // ---- Posters ----
         const posters = [
@@ -3051,6 +2984,34 @@
                 reader.readAsDataURL(file);
             });
 
+            // Remove All Images
+            document.getElementById('imageRemoveAll').addEventListener('click', function() {
+                if (!state.images || !state.images.length) {
+                    toast('No images to remove', 'warning');
+                    return;
+                }
+                if (confirm('Remove all uploaded images?')) {
+                    state.images = [];
+                    state.currentImageIndex = 0;
+                    saveState();
+                    renderImagePreview();
+                    toast('🗑️ All images removed');
+                }
+            });
+
+            // Next Image
+            document.getElementById('imageNext').addEventListener('click', function() {
+                if (!state.images || !state.images.length) {
+                    toast('No images uploaded', 'warning');
+                    return;
+                }
+                state.currentImageIndex = (state.currentImageIndex || 0) + 1;
+                if (state.currentImageIndex >= state.images.length) state.currentImageIndex = 0;
+                saveState();
+                renderImagePreview();
+                toast(`⏭️ Image ${state.currentImageIndex + 1} of ${state.images.length}`);
+            });
+
             function renderImagePreview() {
                 if (!state.images || !state.images.length) {
                     container.innerHTML = '';
@@ -3060,7 +3021,7 @@
                 container.innerHTML = `
                                 <img src="${state.images[idx]}" alt="Dream Board" />
                                 <div style="font-size:10px;color:#718096;margin-top:4px;">
-                                    Image ${idx+1} of ${state.images.length} (rotates daily)
+                                    Image ${idx+1} of ${state.images.length}
                                 </div>
                             `;
             }
@@ -3068,6 +3029,7 @@
             setInterval(() => {
                 if (state.images && state.images.length) {
                     state.currentImageIndex = (state.currentImageIndex || 0) + 1;
+                    if (state.currentImageIndex >= state.images.length) state.currentImageIndex = 0;
                     saveState();
                     renderImagePreview();
                 }
@@ -3112,7 +3074,6 @@
             if (daydreamEl) daydreamEl.textContent = formatDuration(data.daydream);
             if (workEl) workEl.textContent = formatDuration(data.work);
             state.wastedTimeToday = data.daydream;
-            updateUrgencyTimer();
             saveState();
         }
 
@@ -3196,7 +3157,7 @@
             // Update Available Hours
             updateAvailableHoursDisplay();
 
-            // Lecture List - properly spaced and visible
+            // Lecture List - ENHANCED with proper spacing and height
             const list = document.getElementById('focusLectureList');
             if (!lecs.length) {
                 list.innerHTML = '<div style="color:#718096;text-align:center;padding:16px;">No lectures scheduled today</div>';
@@ -3244,8 +3205,8 @@
                                 saveState();
                             }
                             trackDailyCapacity();
-                            updateActionMeter();
                             updateStudyPeriod();
+                            updateAvailableHoursDisplay();
                         } else {
                             state.results[course][key] = false;
                             toast('⏳ Lecture unchecked', 'info');
@@ -3260,8 +3221,6 @@
 
             overlay.classList.add('active');
             focusModeActive = true;
-            updateActionMeter();
-            updateUrgencyTimer();
             rotatePoster();
             rotateInspirationalIcons();
             updateStudyPeriod();
@@ -3333,7 +3292,6 @@
 
             const speed = state.projectSpeed || 300; // minutes per day
             let firstDate = null;
-            let lastDate = null;
             let totalMinutes = 0;
             let doneMinutes = 0;
 
@@ -3346,26 +3304,6 @@
                 totalMinutes += totalDur;
                 const comp = getCourseCompletion(course);
                 doneMinutes += comp.doneDuration;
-
-                // Course completion with its own speed (just for reference, not used in final)
-                let cur = new Date(startDate);
-                let used = 0;
-                const dateSpeeds = state.dateSpeeds[course] || {};
-                const lecs = getLectures(course);
-                lecs.forEach(l => {
-                    let rem = l.duration;
-                    while (rem > 0) {
-                        const ds = getDateStr(cur);
-                        const spd = dateSpeeds[ds] || settings.speed || 120;
-                        const avail = spd - used;
-                        const take = Math.min(rem, avail);
-                        used += take;
-                        rem -= take;
-                        if (used >= spd && rem > 0) { used = 0;
-                            cur = addDays(cur, 1); }
-                    }
-                });
-                // Not used for final, but keep for consistency
             });
 
             const remainingMinutes = totalMinutes - doneMinutes;
@@ -3400,8 +3338,6 @@
             renderObsessionMode();
             calculateProjectCompletion();
             generateMonthlyReport();
-            updateActionMeter();
-            updateUrgencyTimer();
             updateDaydreamTracker();
             rotatePoster();
             rotateInspirationalIcons();
@@ -3868,7 +3804,6 @@
                         triggerCelebration('small');
                         state.xp = (state.xp || 0) + 10;
                         saveState();
-                        updateActionMeter();
                         updateStudyPeriod();
                     } else {
                         state.results[courseName][key] = false;
@@ -3897,7 +3832,6 @@
                         renderDayDetail();
                         renderCalendar();
                         renderAll();
-                        updateActionMeter();
                         updateStudyPeriod();
                     }
                 });
@@ -4174,7 +4108,6 @@
                     saveState();
                     renderEdit();
                     renderAll();
-                    updateActionMeter();
                     updateStudyPeriod();
                 });
             });
@@ -5801,7 +5734,6 @@
                 state.momentumScore = 0;
                 state.studyLevel = 1;
                 state.wastedTimeToday = 0;
-                state.actionScore = 0;
                 saveState();
                 toast('⚠️ All data cleared');
                 renderAll();
@@ -6215,7 +6147,6 @@
                 renderAll();
                 toast('✅ All lectures ticked');
                 triggerCelebration('medium');
-                updateActionMeter();
                 updateStudyPeriod();
             });
             document.getElementById('ttUntickAll').addEventListener('click', function() {
@@ -6257,7 +6188,6 @@
                 renderCalendar();
                 renderAll();
                 toast(`📅 Done date set to ${newDate} for all`);
-                updateActionMeter();
                 updateStudyPeriod();
             });
 
