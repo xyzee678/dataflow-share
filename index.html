@@ -2285,7 +2285,7 @@
         // ================================================================
 
         // ---- STATE ----
-        const STORAGE_KEY = 'lecturePlannerPro_v10';
+        const STORAGE_KEY = 'lecturePlannerPro_v11';
         let state = {
             courses: {},
             settings: {},
@@ -2771,13 +2771,11 @@
             let bedHour = parseInt(bedTime.split(':')[0]);
             let bedMin = parseInt(bedTime.split(':')[1]) || 0;
 
-            // If bed time is before wake time (e.g., 1 AM is next day)
             let totalMinutes = 0;
             if (bedHour < wakeHour || (bedHour === wakeHour && bedMin < wakeMin)) {
                 bedHour += 24;
             }
             totalMinutes = (bedHour * 60 + bedMin) - (wakeHour * 60 + wakeMin);
-            // 50% for breaks
             totalMinutes = Math.floor(totalMinutes * 0.5);
 
             const hours = Math.floor(totalMinutes / 60);
@@ -2789,7 +2787,6 @@
         function updateAvailableHoursDisplay() {
             const avail = calculateAvailableHours();
             document.getElementById('availHours').textContent = `${avail.hours}h ${avail.mins}m`;
-            // Format times for display
             const wakeParts = state.wakeUpTime.split(':');
             const bedParts = state.bedTime.split(':');
             document.getElementById('wakeTimeDisplay').textContent = formatTime12(parseInt(wakeParts[0]), parseInt(wakeParts[
@@ -3321,6 +3318,7 @@
             return `${days[finish.getDay()]}, ${months[finish.getMonth()]} ${finish.getDate()}, ${finish.getFullYear()} (${daysNeeded} days remaining)`;
         }
 
+        // ---- FIXED: calculateProjectCompletion ----
         function calculateProjectCompletion() {
             const names = getSortedCourses();
             if (!names.length) {
@@ -3333,11 +3331,11 @@
                 return;
             }
 
-            const speed = state.projectSpeed || 300;
+            const speed = state.projectSpeed || 300; // minutes per day
             let firstDate = null;
             let lastDate = null;
-            let totalHours = 0;
-            let doneHours = 0;
+            let totalMinutes = 0;
+            let doneMinutes = 0;
 
             names.forEach(course => {
                 const settings = state.settings[course] || { speed: 120, startDate: getDateStr(new Date()) };
@@ -3345,10 +3343,11 @@
                 if (!firstDate || startDate < firstDate) firstDate = startDate;
 
                 const totalDur = getCourseTotalDuration(course);
-                totalHours += totalDur;
+                totalMinutes += totalDur;
                 const comp = getCourseCompletion(course);
-                doneHours += comp.doneDuration;
+                doneMinutes += comp.doneDuration;
 
+                // Course completion with its own speed (just for reference, not used in final)
                 let cur = new Date(startDate);
                 let used = 0;
                 const dateSpeeds = state.dateSpeeds[course] || {};
@@ -3366,21 +3365,21 @@
                             cur = addDays(cur, 1); }
                     }
                 });
-                const courseDays = Math.ceil(totalDur / speed);
-                const courseEnd = addDays(startDate, courseDays - 1);
-                if (!lastDate || courseEnd > lastDate) lastDate = courseEnd;
+                // Not used for final, but keep for consistency
             });
 
-            const remainingHours = totalHours - doneHours;
-            const remainingDays = Math.ceil(remainingHours / (speed / 60));
+            const remainingMinutes = totalMinutes - doneMinutes;
+
+            // ✅ FIX: Both are in minutes, so direct division
+            const remainingDays = Math.ceil(remainingMinutes / speed);
             const completionDate = addDays(new Date(), remainingDays);
 
             document.getElementById('projStartDate').textContent = getDateStr(firstDate);
             document.getElementById('projEndDate').textContent = getDateStr(completionDate);
-            document.getElementById('projTotalHours').textContent = formatDuration(totalHours);
+            document.getElementById('projTotalHours').textContent = formatDuration(totalMinutes);
             document.getElementById('projDaysRequired').textContent = `${remainingDays} days`;
-            document.getElementById('projDoneHours').textContent = formatDuration(doneHours);
-            document.getElementById('projRemainingHours').textContent = formatDuration(remainingHours);
+            document.getElementById('projDoneHours').textContent = formatDuration(doneMinutes);
+            document.getElementById('projRemainingHours').textContent = formatDuration(remainingMinutes);
         }
 
         // ---- Render Functions ----
