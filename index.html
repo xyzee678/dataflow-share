@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
     <title>📚 Lecture Planner Pro</title>
     <style>
-        /* ====== ALL EXISTING STYLES ====== */
+        /* ====== ALL STYLES ====== */
         * {
             margin: 0;
             padding: 0;
@@ -1025,6 +1025,41 @@
             font-size: 10px;
         }
 
+        .study-period-bar {
+            width: 100%;
+            max-width: 500px;
+            margin: 6px auto;
+            padding: 8px 12px;
+            background: #1a202c;
+            border-radius: 10px;
+            border: 1px solid #4a5568;
+        }
+        .study-period-bar .labels {
+            display: flex;
+            justify-content: space-between;
+            font-size: 11px;
+            color: #a0aec0;
+        }
+        .study-period-bar .bar {
+            height: 10px;
+            background: #2d3748;
+            border-radius: 6px;
+            overflow: hidden;
+            margin: 4px 0;
+        }
+        .study-period-bar .bar .fill {
+            height: 100%;
+            border-radius: 6px;
+            background: linear-gradient(90deg, #667eea, #764ba2);
+            transition: width 0.6s ease;
+        }
+        .study-period-bar .speed-info {
+            font-size: 11px;
+            color: #ffd93d;
+            text-align: center;
+            margin-top: 2px;
+        }
+
         .image-upload-area {
             border: 2px dashed #4a5568;
             border-radius: 12px;
@@ -1361,7 +1396,6 @@
             background: #2d3748;
         }
 
-        /* Companion */
         .companion-container {
             position: fixed;
             bottom: 80px;
@@ -1480,7 +1514,6 @@
             }
         }
 
-        /* Companion modal */
         .companion-modal {
             position: fixed;
             top: 0;
@@ -1575,6 +1608,16 @@
             height: 100%;
             border-radius: 1px;
         }
+
+        .multiple-focus-badge {
+            display: inline-block;
+            padding: 2px 8px;
+            border-radius: 12px;
+            font-size: 8px;
+            font-weight: 700;
+            background: #667eea;
+            color: #fff;
+        }
     </style>
 </head>
 <body>
@@ -1633,6 +1676,19 @@
             <span>Preparation</span>
             <span id="actionScore">0% Action</span>
             <span>Action</span>
+        </div>
+
+        <!-- Study Period Bar -->
+        <div class="study-period-bar" id="studyPeriodBar">
+            <div class="labels">
+                <span id="studyPeriodStart">May 7, 2026</span>
+                <span id="studyPeriodProgress">0%</span>
+                <span id="studyPeriodEnd">Aug 15, 2026</span>
+            </div>
+            <div class="bar">
+                <div class="fill" id="studyPeriodFill" style="width:0%;"></div>
+            </div>
+            <div class="speed-info" id="studyPeriodSpeed">📊 Avg speed needed: 0h 0m / day</div>
         </div>
 
         <!-- Battery with Inspirational Icons -->
@@ -2134,6 +2190,23 @@
                         💡 "Success asks how much actual required work you did, not how passionate you were."
                     </div>
                 </div>
+
+                <!-- STUDY PERIOD SETTINGS -->
+                <div class="mt-12">
+                    <div class="card-title">📅 Study Period Settings</div>
+                    <div class="row">
+                        <div class="flex-1">
+                            <label class="text-muted" style="font-size:10px;">Start Date</label>
+                            <input type="date" id="studyPeriodStartInput" />
+                        </div>
+                        <div class="flex-1">
+                            <label class="text-muted" style="font-size:10px;">End Date</label>
+                            <input type="date" id="studyPeriodEndInput" />
+                        </div>
+                        <button class="btn btn-sm btn-primary" id="studyPeriodUpdate">Update</button>
+                    </div>
+                </div>
+
             </div>
         </div>
 
@@ -2145,7 +2218,7 @@
         // ================================================================
 
         // ---- STATE ----
-        const STORAGE_KEY = 'lecturePlannerPro_v7';
+        const STORAGE_KEY = 'lecturePlannerPro_v8';
         let state = {
             courses: {},
             settings: {},
@@ -2160,6 +2233,7 @@
             memos: [],
             focusSlogan: '',
             focusCourse: null,
+            activeFocusCourses: [],
             batteryView: 'date',
             dashboardDate: null,
             darkMode: true,
@@ -2186,7 +2260,9 @@
             currentImageIndex: 0,
             daydreamData: {},
             actionScore: 0,
-            wastedTimeToday: 0
+            wastedTimeToday: 0,
+            studyStartDate: null,
+            studyEndDate: null
         };
 
         let activeTab = 'focus';
@@ -2255,6 +2331,15 @@
             const names = getActiveCourseNames();
             if (state.focusCourse && names.includes(state.focusCourse)) return state.focusCourse;
             return names.length > 0 ? names[0] : null;
+        }
+
+        function getFocusCourses() {
+            const active = getActiveCourseNames();
+            if (state.activeFocusCourses && state.activeFocusCourses.length) {
+                return state.activeFocusCourses.filter(c => active.includes(c));
+            }
+            const focus = getFocus();
+            return focus ? [focus] : [];
         }
 
         function getLectures(course) { return state.courses[course] || []; }
@@ -2562,11 +2647,18 @@
                     if (!state.studyLevel) state.studyLevel = 1;
                     if (!state.companion) state.companion = 'tiger';
                     if (!state.inactiveCourses) state.inactiveCourses = {};
+                    if (!state.activeFocusCourses) state.activeFocusCourses = [];
                     if (!state.images) state.images = [];
                     if (!state.currentImageIndex) state.currentImageIndex = 0;
                     if (!state.daydreamData) state.daydreamData = {};
                     if (!state.actionScore) state.actionScore = 0;
                     if (!state.wastedTimeToday) state.wastedTimeToday = 0;
+                    if (!state.studyStartDate) state.studyStartDate = getDateStr(new Date());
+                    if (!state.studyEndDate) {
+                        const d = new Date();
+                        d.setDate(d.getDate() + 100);
+                        state.studyEndDate = getDateStr(d);
+                    }
                     return true;
                 }
             } catch (e) { console.warn('Load error', e); }
@@ -2583,6 +2675,10 @@
 
         function initDefaultState() {
             if (!loadState()) {
+                state.studyStartDate = getDateStr(new Date());
+                const d = new Date();
+                d.setDate(d.getDate() + 100);
+                state.studyEndDate = getDateStr(d);
                 saveState();
             }
             document.body.classList.add('dark');
@@ -2596,6 +2692,40 @@
                 if (state.habits[n].streak === undefined) state.habits[n].streak = calculateStreak(n);
             });
             saveState();
+        }
+
+        // ---- Study Period ----
+        function updateStudyPeriod() {
+            const startDate = state.studyStartDate ? parseDate(state.studyStartDate) : new Date();
+            const endDate = state.studyEndDate ? parseDate(state.studyEndDate) : addDays(startDate, 100);
+            const today = new Date();
+
+            const totalDays = Math.max(1, Math.ceil((endDate - startDate) / (1000 * 60 * 60 * 24)));
+            const passedDays = Math.max(0, Math.ceil((today - startDate) / (1000 * 60 * 60 * 24)));
+            const remainingDays = Math.max(0, totalDays - passedDays);
+            const progress = Math.min(100, Math.round((passedDays / totalDays) * 100));
+
+            // Total course hours remaining
+            const totalHours = getCombinedOverall().totalDur;
+            const doneHours = getCombinedOverall().doneDur;
+            const remainingHours = totalHours - doneHours;
+            const avgSpeedNeeded = remainingDays > 0 ? Math.ceil(remainingHours / remainingDays) : 0;
+
+            document.getElementById('studyPeriodStart').textContent = formatDateDisplay(startDate);
+            document.getElementById('studyPeriodEnd').textContent = formatDateDisplay(endDate);
+            document.getElementById('studyPeriodProgress').textContent = `${progress}%`;
+            document.getElementById('studyPeriodFill').style.width = progress + '%';
+            document.getElementById('studyPeriodSpeed').textContent =
+                `📊 ${passedDays} days passed · ${remainingDays} days left · Avg speed needed: ${formatDuration(avgSpeedNeeded)} / day`;
+
+            // Set input values
+            document.getElementById('studyPeriodStartInput').value = state.studyStartDate || getDateStr(startDate);
+            document.getElementById('studyPeriodEndInput').value = state.studyEndDate || getDateStr(endDate);
+        }
+
+        function formatDateDisplay(d) {
+            const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+            return `${months[d.getMonth()]} ${d.getDate()}, ${d.getFullYear()}`;
         }
 
         // ---- Celebration ----
@@ -2677,10 +2807,9 @@
                 }, 1500);
             }
 
-            // Update daydream tracker - add work time
             const today = getDateStr(new Date());
             if (!state.daydreamData[today]) state.daydreamData[today] = { daydream: 0, work: 0 };
-            state.daydreamData[today].work += completedCount * 30; // Assume 30 min per lecture
+            state.daydreamData[today].work += completedCount * 30;
             state.wastedTimeToday = state.daydreamData[today].daydream;
             saveState();
             updateDaydreamTracker();
@@ -3013,6 +3142,7 @@
                             }
                             trackDailyCapacity();
                             updateActionMeter();
+                            updateStudyPeriod();
                         } else {
                             state.results[course][key] = false;
                             toast('⏳ Lecture unchecked', 'info');
@@ -3031,6 +3161,7 @@
             updateUrgencyTimer();
             rotatePoster();
             rotateInspirationalIcons();
+            updateStudyPeriod();
         }
 
         function completeDependentLectures(course, dateStr, lectureKey) {
@@ -3168,6 +3299,7 @@
             updateDaydreamTracker();
             rotatePoster();
             rotateInspirationalIcons();
+            updateStudyPeriod();
         }
 
         function renderNavBadge() {
@@ -3190,6 +3322,7 @@
             if (!container) return;
             const names = getCourseNames();
             const focus = getFocus();
+            const focusCourses = getFocusCourses();
             if (!names.length) {
                 container.innerHTML = '<div class="text-muted">No courses saved yet. Go to Upload tab to add one.</div>';
                 return;
@@ -3199,7 +3332,7 @@
                 const isInactive = state.inactiveCourses && state.inactiveCourses[n];
                 const comp = getCourseCompletion(n);
                 const pctClass = comp.pct >= 70 ? 'badge-success' : comp.pct >= 40 ? 'badge-warning' : 'badge-danger';
-                const isFocus = n === focus;
+                const isFocus = focus === n || focusCourses.includes(n);
                 const totalHrs = formatDuration(comp.totalDuration);
                 const statusLabel = isInactive ? '⏸️ Inactive' : '✅ Active';
                 html += `
@@ -3212,6 +3345,7 @@
                                 <span class="badge badge-primary">${getLectures(n).length} lectures (${totalHrs})</span>
                                 <span class="badge ${pctClass}">${comp.pct}%</span>
                                 <button class="btn btn-sm btn-outline rename-btn" data-course="${n}" style="min-height:24px;padding:2px 8px;font-size:10px;">✏️</button>
+                                <button class="btn btn-sm btn-outline focus-toggle-btn" data-course="${n}" style="min-height:24px;padding:2px 8px;font-size:10px;${isFocus ? 'color:#667eea;' : ''}">${isFocus ? '⭐' : '☆'}</button>
                             </div>
                         `;
             });
@@ -3225,6 +3359,23 @@
                     saveState();
                     renderAll();
                     toast(this.checked ? `✅ "${course}" active again` : `⏸️ "${course}" hidden from calculations`);
+                });
+            });
+
+            container.querySelectorAll('.focus-toggle-btn').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const course = this.dataset.course;
+                    if (!state.activeFocusCourses) state.activeFocusCourses = [];
+                    const idx = state.activeFocusCourses.indexOf(course);
+                    if (idx > -1) {
+                        state.activeFocusCourses.splice(idx, 1);
+                        toast(`⭐ Removed "${course}" from focus`);
+                    } else {
+                        state.activeFocusCourses.push(course);
+                        toast(`⭐ Added "${course}" to focus courses`);
+                    }
+                    saveState();
+                    renderAll();
                 });
             });
 
@@ -3246,6 +3397,8 @@
                             state.inactiveCourses[trimmed] = state.inactiveCourses[oldName];
                             delete state.inactiveCourses[oldName];
                         }
+                        const idx = state.activeFocusCourses.indexOf(oldName);
+                        if (idx > -1) state.activeFocusCourses[idx] = trimmed;
                         saveState();
                         renderAll();
                         toast(`✅ Renamed to "${trimmed}"`);
@@ -3609,6 +3762,7 @@
                         state.xp = (state.xp || 0) + 10;
                         saveState();
                         updateActionMeter();
+                        updateStudyPeriod();
                     } else {
                         state.results[courseName][key] = false;
                     }
@@ -3637,6 +3791,7 @@
                         renderCalendar();
                         renderAll();
                         updateActionMeter();
+                        updateStudyPeriod();
                     }
                 });
             });
@@ -3913,6 +4068,7 @@
                     renderEdit();
                     renderAll();
                     updateActionMeter();
+                    updateStudyPeriod();
                 });
             });
             document.querySelectorAll('.edit-delete-lecture').forEach(btn => {
@@ -5263,6 +5419,21 @@
             document.getElementById('companionModal').classList.remove('active');
         });
 
+        // ---- Study Period Settings ----
+        document.getElementById('studyPeriodUpdate').addEventListener('click', function() {
+            const start = document.getElementById('studyPeriodStartInput').value;
+            const end = document.getElementById('studyPeriodEndInput').value;
+            if (start && end) {
+                state.studyStartDate = start;
+                state.studyEndDate = end;
+                saveState();
+                updateStudyPeriod();
+                toast('✅ Study period updated!');
+            } else {
+                toast('Please select both dates', 'warning');
+            }
+        });
+
         // ---- Event Setup ----
         function setupEvents() {
             // Navigation
@@ -5444,6 +5615,8 @@
                     delete state.copies[name];
                     delete state.moves[name];
                     if (state.focusCourse === name) state.focusCourse = null;
+                    const idx = state.activeFocusCourses.indexOf(name);
+                    if (idx > -1) state.activeFocusCourses.splice(idx, 1);
                 });
                 const focus = getFocus();
                 if (focus) state.focusCourse = focus;
@@ -5472,6 +5645,7 @@
                         date: '' } };
                 state.monthlyReports = {};
                 state.inactiveCourses = {};
+                state.activeFocusCourses = [];
                 state.images = [];
                 state.daydreamData = {};
                 state.focusCourse = null;
@@ -5548,6 +5722,8 @@
                 delete state.copies[course];
                 delete state.moves[course];
                 if (state.inactiveCourses && state.inactiveCourses[course]) delete state.inactiveCourses[course];
+                const idx = state.activeFocusCourses.indexOf(course);
+                if (idx > -1) state.activeFocusCourses.splice(idx, 1);
                 if (state.focusCourse === course) state.focusCourse = null;
                 const focus = getFocus();
                 if (focus) state.focusCourse = focus;
@@ -5757,8 +5933,15 @@
                             if (!state.studyLevel) state.studyLevel = 1;
                             if (!state.companion) state.companion = 'tiger';
                             if (!state.inactiveCourses) state.inactiveCourses = {};
+                            if (!state.activeFocusCourses) state.activeFocusCourses = [];
                             if (!state.images) state.images = [];
                             if (!state.daydreamData) state.daydreamData = {};
+                            if (!state.studyStartDate) state.studyStartDate = getDateStr(new Date());
+                            if (!state.studyEndDate) {
+                                const d = new Date();
+                                d.setDate(d.getDate() + 100);
+                                state.studyEndDate = getDateStr(d);
+                            }
                             saveState();
                             renderAll();
                             toast('📥 Data imported successfully');
@@ -5884,6 +6067,7 @@
                 toast('✅ All lectures ticked');
                 triggerCelebration('medium');
                 updateActionMeter();
+                updateStudyPeriod();
             });
             document.getElementById('ttUntickAll').addEventListener('click', function() {
                 const course = ttCourse;
@@ -5925,6 +6109,7 @@
                 renderAll();
                 toast(`📅 Done date set to ${newDate} for all`);
                 updateActionMeter();
+                updateStudyPeriod();
             });
 
             // Keyboard
