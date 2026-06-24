@@ -588,6 +588,15 @@
             display: flex;
             gap: 4px;
         }
+        .habit-status-select {
+            padding: 2px 4px;
+            font-size: 9px;
+            border-radius: 4px;
+            background: #4a5568;
+            color: #e2e8f0;
+            border: 1px solid #4a5568;
+            min-height: 22px;
+        }
         .link-row {
             display: flex;
             flex-wrap: wrap;
@@ -1009,22 +1018,6 @@
             width: 100%;
         }
 
-        .course-toggle {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-        .course-toggle input[type="checkbox"] {
-            width: 16px;
-            height: 16px;
-            accent-color: #667eea;
-            cursor: pointer;
-        }
-        .course-toggle .inactive-label {
-            color: #718096;
-            font-size: 10px;
-        }
-
         .study-period-bar {
             width: 100%;
             max-width: 500px;
@@ -1041,7 +1034,7 @@
             color: #a0aec0;
         }
         .study-period-bar .bar {
-            height: 10px;
+            height: 12px;
             background: #2d3748;
             border-radius: 6px;
             overflow: hidden;
@@ -1058,6 +1051,22 @@
             color: #ffd93d;
             text-align: center;
             margin-top: 2px;
+        }
+
+        .course-toggle {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .course-toggle input[type="checkbox"] {
+            width: 16px;
+            height: 16px;
+            accent-color: #667eea;
+            cursor: pointer;
+        }
+        .course-toggle .inactive-label {
+            color: #718096;
+            font-size: 10px;
         }
 
         .image-upload-area {
@@ -1161,7 +1170,7 @@
         .focus-progress {
             color: #e2e8f0;
             font-size: 13px;
-            margin: 4px 0;
+            margin: 8px 0 4px 0;
             text-align: center;
         }
         .focus-progress .pending {
@@ -1172,14 +1181,17 @@
         .focus-lectures {
             max-height: 35vh;
             overflow-y: auto;
-            padding: 4px;
+            padding: 8px 4px;
+            margin: 6px 0;
+            width: 100%;
+            max-width: 600px;
         }
         .focus-lectures .lecture-row {
             background: #1a202c;
             color: #e2e8f0;
             border-left-color: #4a5568;
-            padding: 5px 8px;
-            margin-bottom: 3px;
+            padding: 6px 10px;
+            margin-bottom: 4px;
         }
         .focus-lectures .lecture-row.done {
             background: #2d4a3a;
@@ -1191,11 +1203,13 @@
         }
 
         .focus-course-bar {
-            margin-top: 4px;
+            margin-top: 6px;
             padding: 6px 10px;
             background: #1a202c;
             border-radius: 8px;
             color: #e2e8f0;
+            width: 100%;
+            max-width: 600px;
         }
         .focus-course-bar .row {
             font-size: 12px;
@@ -1216,6 +1230,8 @@
             padding: 4px 10px;
             background: rgba(255, 217, 61, 0.1);
             border-radius: 8px;
+            width: 100%;
+            max-width: 600px;
         }
         .focus-finish-date {
             color: #51cf66;
@@ -1226,6 +1242,8 @@
             padding: 4px 10px;
             background: rgba(81, 207, 102, 0.1);
             border-radius: 8px;
+            width: 100%;
+            max-width: 600px;
         }
         .focus-actions {
             display: flex;
@@ -1233,6 +1251,8 @@
             gap: 6px;
             margin-top: 6px;
             justify-content: center;
+            width: 100%;
+            max-width: 600px;
         }
         .focus-actions .btn {
             min-height: 30px;
@@ -1512,6 +1532,9 @@
                 font-size: 12px;
                 padding: 6px 12px;
             }
+            .focus-lectures {
+                max-height: 30vh;
+            }
         }
 
         .companion-modal {
@@ -1608,16 +1631,6 @@
             height: 100%;
             border-radius: 1px;
         }
-
-        .multiple-focus-badge {
-            display: inline-block;
-            padding: 2px 8px;
-            border-radius: 12px;
-            font-size: 8px;
-            font-weight: 700;
-            background: #667eea;
-            color: #fff;
-        }
     </style>
 </head>
 <body>
@@ -1688,7 +1701,7 @@
             <div class="bar">
                 <div class="fill" id="studyPeriodFill" style="width:0%;"></div>
             </div>
-            <div class="speed-info" id="studyPeriodSpeed">📊 Avg speed needed: 0h 0m / day</div>
+            <div class="speed-info" id="studyPeriodSpeed">📊 Days passed: 0 | Remaining: 0 | Avg speed needed: 0h 0m / day</div>
         </div>
 
         <!-- Battery with Inspirational Icons -->
@@ -1704,7 +1717,10 @@
         </div>
 
         <div class="focus-progress" id="focusProgress">Today: 0h 0m / 0h 0m | <span class="pending">Pending: 0h 0m</span></div>
+
+        <!-- Lecture List -->
         <div class="focus-lectures" id="focusLectureList"></div>
+
         <div class="focus-course-bar" id="focusCourseBar">
             <div class="row">
                 <span id="focusCourseBarName">Course: None</span>
@@ -2197,11 +2213,11 @@
                     <div class="row">
                         <div class="flex-1">
                             <label class="text-muted" style="font-size:10px;">Start Date</label>
-                            <input type="date" id="studyPeriodStartInput" />
+                            <input type="date" id="studyPeriodStartInput" value="2026-05-07" />
                         </div>
                         <div class="flex-1">
                             <label class="text-muted" style="font-size:10px;">End Date</label>
-                            <input type="date" id="studyPeriodEndInput" />
+                            <input type="date" id="studyPeriodEndInput" value="2026-08-15" />
                         </div>
                         <button class="btn btn-sm btn-primary" id="studyPeriodUpdate">Update</button>
                     </div>
@@ -2218,7 +2234,7 @@
         // ================================================================
 
         // ---- STATE ----
-        const STORAGE_KEY = 'lecturePlannerPro_v8';
+        const STORAGE_KEY = 'lecturePlannerPro_v9';
         let state = {
             courses: {},
             settings: {},
@@ -2261,8 +2277,8 @@
             daydreamData: {},
             actionScore: 0,
             wastedTimeToday: 0,
-            studyStartDate: null,
-            studyEndDate: null
+            studyStartDate: '2026-05-07',
+            studyEndDate: '2026-08-15'
         };
 
         let activeTab = 'focus';
@@ -2547,7 +2563,7 @@
                 total = names.length;
             names.forEach(n => {
                 const h = state.habits[n];
-                if (shouldHabitAppear(h, today) && h.completed && h.completed[today]) done++;
+                if (shouldHabitAppear(h, today) && h.completed && h.completed[today] === 'done') done++;
                 if (!shouldHabitAppear(h, today)) total--;
             });
             return { done, total };
@@ -2579,7 +2595,7 @@
             while (true) {
                 const ds = getDateStr(d);
                 if (shouldHabitAppear(habit, ds)) {
-                    if (habit.completed && habit.completed[ds]) { streak++;
+                    if (habit.completed && habit.completed[ds] === 'done') { streak++;
                         d.setDate(d.getDate() - 1); } else break;
                 } else { d.setDate(d.getDate() - 1); }
             }
@@ -2653,12 +2669,8 @@
                     if (!state.daydreamData) state.daydreamData = {};
                     if (!state.actionScore) state.actionScore = 0;
                     if (!state.wastedTimeToday) state.wastedTimeToday = 0;
-                    if (!state.studyStartDate) state.studyStartDate = getDateStr(new Date());
-                    if (!state.studyEndDate) {
-                        const d = new Date();
-                        d.setDate(d.getDate() + 100);
-                        state.studyEndDate = getDateStr(d);
-                    }
+                    if (!state.studyStartDate) state.studyStartDate = '2026-05-07';
+                    if (!state.studyEndDate) state.studyEndDate = '2026-08-15';
                     return true;
                 }
             } catch (e) { console.warn('Load error', e); }
@@ -2675,10 +2687,8 @@
 
         function initDefaultState() {
             if (!loadState()) {
-                state.studyStartDate = getDateStr(new Date());
-                const d = new Date();
-                d.setDate(d.getDate() + 100);
-                state.studyEndDate = getDateStr(d);
+                state.studyStartDate = '2026-05-07';
+                state.studyEndDate = '2026-08-15';
                 saveState();
             }
             document.body.classList.add('dark');
@@ -2696,8 +2706,8 @@
 
         // ---- Study Period ----
         function updateStudyPeriod() {
-            const startDate = state.studyStartDate ? parseDate(state.studyStartDate) : new Date();
-            const endDate = state.studyEndDate ? parseDate(state.studyEndDate) : addDays(startDate, 100);
+            const startDate = state.studyStartDate ? parseDate(state.studyStartDate) : parseDate('2026-05-07');
+            const endDate = state.studyEndDate ? parseDate(state.studyEndDate) : parseDate('2026-08-15');
             const today = new Date();
 
             const totalDays = Math.max(1, Math.ceil((endDate - startDate) / (1000 * 60 * 60 * 24)));
@@ -2705,7 +2715,6 @@
             const remainingDays = Math.max(0, totalDays - passedDays);
             const progress = Math.min(100, Math.round((passedDays / totalDays) * 100));
 
-            // Total course hours remaining
             const totalHours = getCombinedOverall().totalDur;
             const doneHours = getCombinedOverall().doneDur;
             const remainingHours = totalHours - doneHours;
@@ -2716,11 +2725,10 @@
             document.getElementById('studyPeriodProgress').textContent = `${progress}%`;
             document.getElementById('studyPeriodFill').style.width = progress + '%';
             document.getElementById('studyPeriodSpeed').textContent =
-                `📊 ${passedDays} days passed · ${remainingDays} days left · Avg speed needed: ${formatDuration(avgSpeedNeeded)} / day`;
+                `📊 Days passed: ${passedDays} | Remaining: ${remainingDays} | Avg speed needed: ${formatDuration(avgSpeedNeeded)} / day`;
 
-            // Set input values
-            document.getElementById('studyPeriodStartInput').value = state.studyStartDate || getDateStr(startDate);
-            document.getElementById('studyPeriodEndInput').value = state.studyEndDate || getDateStr(endDate);
+            document.getElementById('studyPeriodStartInput').value = state.studyStartDate || '2026-05-07';
+            document.getElementById('studyPeriodEndInput').value = state.studyEndDate || '2026-08-15';
         }
 
         function formatDateDisplay(d) {
@@ -3044,7 +3052,7 @@
             if (!course) {
                 document.getElementById('focusCourseName').textContent = 'No course - Upload one!';
                 document.getElementById('focusLectureList').innerHTML =
-                    '<div style="color:#718096;text-align:center;">No course. Go to Upload tab.</div>';
+                    '<div style="color:#718096;text-align:center;padding:20px;">No course. Go to Upload tab.</div>';
                 return;
             }
 
@@ -3094,9 +3102,10 @@
             const finishDate = calculateFinishDate(course, dateStr);
             document.getElementById('focusFinishDate').textContent = `🎯 Project Completion: ${finishDate}`;
 
+            // Lecture List - properly visible with spacing
             const list = document.getElementById('focusLectureList');
             if (!lecs.length) {
-                list.innerHTML = '<div style="color:#718096;text-align:center;">No lectures scheduled today</div>';
+                list.innerHTML = '<div style="color:#718096;text-align:center;padding:12px;">No lectures scheduled today</div>';
             } else {
                 let html = '';
                 lecs.forEach(l => {
@@ -4328,7 +4337,8 @@
                 const h = state.habits[n];
                 const shouldAppear = shouldHabitAppear(h, today);
                 if (!shouldAppear) return;
-                const done = h.completed && h.completed[today] || false;
+                const status = h.completed && h.completed[today] || 'pending';
+                const done = status === 'done';
                 const streak = calculateStreak(n);
                 if (h.streak !== streak) { h.streak = streak;
                     saveState(); }
@@ -4336,16 +4346,22 @@
                 const customDisplay = h.customDays ? ` (${h.customDays.map(d => ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'][d]).join(', ')})` :
                     '';
                 const timeColor = getTimeColor(h.time);
+                const statusOptions = `
+                                    <select class="habit-status-select" data-name="${n}">
+                                        <option value="done" ${status === 'done' ? 'selected' : ''}>✅ Done</option>
+                                        <option value="pending" ${status === 'pending' ? 'selected' : ''}>⏳ Pending</option>
+                                        <option value="notdone" ${status === 'notdone' ? 'selected' : ''}>❌ Not Done</option>
+                                    </select>
+                                `;
                 html += `
                                     <div class="habit-row" style="border-left-color:${timeColor};">
-                                        <input type="checkbox" class="habit-check" data-name="${n}" ${done ? 'checked' : ''} />
                                         <span class="habit-name">${n}</span>
+                                        ${statusOptions}
                                         <span class="habit-meta">
                                             <span class="badge badge-primary">${patternMap[h.pattern] || h.pattern}${customDisplay}</span>
                                             <span>${formatTime12(parseInt(h.time || '09:00'), parseInt((h.time || '09:00').split(':')[1] || 0))}</span>
                                             <span class="habit-streak">🔥 ${streak} ${h.pattern === 'daily' ? 'd' : h.pattern === 'weekly' ? 'w' : 'm'}</span>
                                         </span>
-                                        <span class="badge ${done ? 'badge-success' : 'badge-danger'}">${done ? '✅ Done' : '⏳ Pending'}</span>
                                         <div class="habit-actions">
                                             <button class="btn btn-xs btn-outline habit-edit" data-name="${n}" style="min-height:20px;padding:1px 6px;">✏️</button>
                                             <button class="btn btn-xs btn-danger habit-delete" data-name="${n}" style="min-height:20px;padding:1px 6px;">✕</button>
@@ -4355,21 +4371,23 @@
             });
             container.innerHTML = html;
 
-            container.querySelectorAll('.habit-check').forEach(cb => {
-                cb.addEventListener('change', function() {
+            container.querySelectorAll('.habit-status-select').forEach(sel => {
+                sel.addEventListener('change', function() {
                     const name = this.dataset.name;
                     const today = getDateStr(new Date());
                     if (!state.habits[name].completed) state.habits[name].completed = {};
-                    state.habits[name].completed[today] = this.checked;
+                    state.habits[name].completed[today] = this.value;
                     state.habits[name].streak = calculateStreak(name);
                     saveState();
                     renderHabits();
                     renderAll();
-                    if (this.checked) {
+                    if (this.value === 'done') {
                         triggerCelebration('small');
                         toast(`✅ Habit "${name}" completed! +5 XP`, 'success');
                         state.xp = (state.xp || 0) + 5;
                         saveState();
+                    } else if (this.value === 'notdone') {
+                        toast(`❌ Marked "${name}" as not done`, 'info');
                     }
                 });
             });
@@ -4553,7 +4571,8 @@
                     hNames.forEach(n => {
                         const h = state.habits[n];
                         if (!shouldHabitAppear(h, today)) return;
-                        const done = h.completed && h.completed[today] || false;
+                        const status = h.completed && h.completed[today] || 'pending';
+                        const done = status === 'done';
                         hHtml +=
                             `<span class="badge ${done ? 'badge-success' : 'badge-danger'}">${n} ${done ? '✅' : '⏳'}</span>`;
                     });
@@ -5434,6 +5453,24 @@
             }
         });
 
+        // ---- Import/Export Validation ----
+        function validateImportData(data) {
+            // Check required top-level keys
+            const requiredKeys = ['courses', 'settings', 'results', 'doneDates', 'habits', 'links'];
+            for (const key of requiredKeys) {
+                if (!data.hasOwnProperty(key)) {
+                    return false;
+                }
+            }
+            // Check courses structure
+            if (typeof data.courses !== 'object' || data.courses === null) return false;
+            // Check habits structure
+            if (typeof data.habits !== 'object' || data.habits === null) return false;
+            // Check links structure
+            if (!Array.isArray(data.links)) return false;
+            return true;
+        }
+
         // ---- Event Setup ----
         function setupEvents() {
             // Navigation
@@ -5886,7 +5923,7 @@
             // Friends - already handled in setupFriends
             setupFriends();
 
-            // Header
+            // Header - Export with validation
             document.getElementById('exportBtn').addEventListener('click', function() {
                 const blob = new Blob([JSON.stringify(state, null, 2)], { type: 'application/json' });
                 const url = URL.createObjectURL(blob);
@@ -5895,9 +5932,10 @@
                 a.download = `lecture_planner_backup_${getDateStr(new Date())}.json`;
                 a.click();
                 URL.revokeObjectURL(url);
-                toast('📤 Data exported');
+                toast('📤 Data exported successfully');
             });
 
+            // Header - Import with validation
             document.getElementById('importBtn').addEventListener('click', function() {
                 document.getElementById('fileInput').click();
             });
@@ -5908,8 +5946,10 @@
                 reader.onload = function(ev) {
                     try {
                         const data = JSON.parse(ev.target.result);
-                        if (data.courses && typeof data.courses === 'object') {
+                        if (validateImportData(data)) {
+                            // Merge data carefully
                             state = data;
+                            // Ensure all fields exist
                             if (!state.dateSpeeds) state.dateSpeeds = {};
                             if (!state.copies) state.copies = {};
                             if (!state.moves) state.moves = {};
@@ -5936,17 +5976,17 @@
                             if (!state.activeFocusCourses) state.activeFocusCourses = [];
                             if (!state.images) state.images = [];
                             if (!state.daydreamData) state.daydreamData = {};
-                            if (!state.studyStartDate) state.studyStartDate = getDateStr(new Date());
-                            if (!state.studyEndDate) {
-                                const d = new Date();
-                                d.setDate(d.getDate() + 100);
-                                state.studyEndDate = getDateStr(d);
-                            }
+                            if (!state.studyStartDate) state.studyStartDate = '2026-05-07';
+                            if (!state.studyEndDate) state.studyEndDate = '2026-08-15';
                             saveState();
                             renderAll();
-                            toast('📥 Data imported successfully');
-                        } else { toast('Invalid data format', 'error'); }
-                    } catch (err) { toast('Error importing file', 'error'); }
+                            toast('📥 Data imported successfully!');
+                        } else {
+                            toast('❌ Invalid data format! Please check the file.', 'error');
+                        }
+                    } catch (err) {
+                        toast('❌ Error importing file: ' + err.message, 'error');
+                    }
                 };
                 reader.readAsText(file);
                 e.target.value = '';
