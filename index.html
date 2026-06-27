@@ -770,6 +770,10 @@
         .edit-custom-speed-col {
             font-size: 8px;
         }
+        .edit-lecture-id-col {
+            font-size: 7px;
+            color: var(--text-muted);
+        }
     </style>
 </head>
 <body>
@@ -841,7 +845,7 @@
 
 <script>
 // ============================================================
-// COMPLETE JAVASCRIPT IMPLEMENTATION - PER-DATE CUSTOM SPEEDS
+// COMPLETE JAVASCRIPT IMPLEMENTATION - PROPORTIONAL DISTRIBUTION
 // ============================================================
 
 const DEFAULT_DATA = {
@@ -1190,14 +1194,11 @@ function getCourseProgressHours(courseName) {
     return { done, total, percent: total > 0 ? Math.round((done / total) * 100) : 0 };
 }
 
-// getCourseSpeed - Checks custom speed for the specific date first, then default
 function getCourseSpeed(courseName, dateStr = null) {
     if (!dateStr) dateStr = getToday();
-    // Check if there's a custom speed for this specific date
     if (appData.dateSpeeds[courseName] && appData.dateSpeeds[courseName][dateStr] !== undefined) {
         return appData.dateSpeeds[courseName][dateStr];
     }
-    // Otherwise return the default speed for the course
     return appData.settings[courseName]?.speed || 120;
 }
 
@@ -1262,7 +1263,7 @@ function calculateEndDate(courseName) {
 }
 
 // ============================================================
-// CORRECTED LECTURE DISTRIBUTION ALGORITHM
+// PROPORTIONAL LECTURE DISTRIBUTION ALGORITHM
 // ============================================================
 
 function distributeLectures(courseName) {
@@ -1276,13 +1277,19 @@ function distributeLectures(courseName) {
     let lectureIndex = 0;
     let remainingMinutes = lectures[0]?.duration || 0;
     let partCounter = 1;
+    let totalParts = 0;
     
     if (!appData.lectureParts) appData.lectureParts = {};
     if (!appData.lectureParts[courseName]) appData.lectureParts[courseName] = {};
     
+    // Calculate total duration and total days needed
+    const totalDuration = lectures.reduce((sum, l) => sum + l.duration, 0);
+    const speed = getCourseSpeed(courseName, startDate);
+    const totalDaysNeeded = Math.ceil(totalDuration / speed);
+    
     while (lectureIndex < lectures.length) {
-        const speed = getCourseSpeed(courseName, currentDate);
-        const available = speed - usedMinutes;
+        const speedForDate = getCourseSpeed(courseName, currentDate);
+        const available = speedForDate - usedMinutes;
         
         if (available <= 0) {
             usedMinutes = 0;
@@ -1302,7 +1309,7 @@ function distributeLectures(courseName) {
                 appData.lectureParts[courseName][partKey] = { 
                     originalIndex: lectureIndex,
                     partNumber: partCounter,
-                    totalParts: Math.ceil(lectures[lectureIndex].duration / speed) + 1
+                    totalParts: Math.ceil(lectures[lectureIndex].duration / speedForDate) + 1
                 };
             }
             
@@ -1318,11 +1325,13 @@ function distributeLectures(courseName) {
                 partNumber: partCounter,
                 isPart: isPart,
                 allocatedDate: currentDate,
-                totalParts: Math.ceil(lectures[lectureIndex].duration / speed) + 1
+                totalParts: Math.ceil(lectures[lectureIndex].duration / speedForDate) + 1,
+                lectureId: lectureIndex + 1
             });
             
             usedMinutes += take;
             remainingMinutes -= take;
+            totalParts++;
             
             if (remainingMinutes <= 0) {
                 lectureIndex++;
@@ -1335,7 +1344,7 @@ function distributeLectures(courseName) {
             }
         }
         
-        if (usedMinutes >= speed) {
+        if (usedMinutes >= speedForDate) {
             usedMinutes = 0;
             currentDate = addDays(currentDate, 1);
         }
@@ -3143,7 +3152,7 @@ function clearAllCourses() {
 }
 
 // ============================================================
-// EDIT - COMPLETE WITH PER-DATE CUSTOM SPEEDS
+// EDIT - COMPLETE WITH PROPORTIONAL DISTRIBUTION
 // ============================================================
 
 function renderEdit() {
@@ -3206,33 +3215,27 @@ function renderEdit() {
         const customForDate = getCustomSpeed(selected, allocatedDate);
         const speedForDate = getCourseSpeed(selected, allocatedDate);
         
-        // Calculate metrics for this row
         const coveredMinutes = item.portion;
         const totalLectureMinutes = item.total;
         const pendingMinutes = totalLectureMinutes - coveredMinutes;
         const diff = coveredMinutes - speedForDate;
         const diffClass = diff > 0 ? 'positive' : diff < 0 ? 'negative' : 'zero';
         
-        // Reset cumulative sum when date changes
         if (currentDate !== allocatedDate && currentDate !== '') {
             cumulativeSum = 0;
         }
         
-        // Add to cumulative sum
         cumulativeSum += coveredMinutes;
         currentSpeed = speedForDate;
         
-        // Determine if cumulative sum has reached or exceeded speed
         const exceeded = cumulativeSum >= speedForDate;
         const cumulativeDisplay = exceeded ? `${formatDuration(cumulativeSum)} ✓` : formatDuration(cumulativeSum);
-        const cumulativeClass = exceeded ? 'edit-cumulative-col' : '';
         
         if (currentDate !== allocatedDate && currentDate !== '') {
             const totalForDay = dayTotals[currentDate] || 0;
             const speedForPrevDate = daySpeeds[currentDate] || 0;
             const remaining = speedForPrevDate - totalForDay;
             const dayDiff = totalForDay - speedForPrevDate;
-            const dayDiffClass = dayDiff > 0 ? 'positive' : dayDiff < 0 ? 'negative' : 'zero';
             lectureHTML += `
                 <tr class="day-total-row">
                     <td colspan="2" style="font-size:8px;color:var(--text-muted);">
@@ -3258,6 +3261,7 @@ function renderEdit() {
                         <span style="font-size:9px;">${displayName}</span>
                         ${isPart ? `<span class="part-label">${partLabel}</span>` : ''}
                         ${isContinuing ? '<span class="continuing" style="font-size:7px;">continuing</span>' : ''}
+                        <span class="edit-lecture-id-col">L${item.lectureId}</span>
                     </div>
                 </td>
                 <td><input type="number" value="${item.duration}" style="font-size:9px;padding:1px 2px;width:35px;" 
@@ -3283,7 +3287,6 @@ function renderEdit() {
         currentSr++;
         currentDate = allocatedDate;
         
-        // Reset cumulative sum if exceeded
         if (exceeded) {
             cumulativeSum = 0;
         }
@@ -3295,7 +3298,6 @@ function renderEdit() {
         const remaining = speedForLastDate - totalForDay;
         const dayDiff = totalForDay - speedForLastDate;
         const customForDate = getCustomSpeed(selected, currentDate);
-        const dayDiffClass = dayDiff > 0 ? 'positive' : dayDiff < 0 ? 'negative' : 'zero';
         lectureHTML += `
             <tr class="day-total-row">
                 <td colspan="2" style="font-size:8px;color:var(--text-muted);">
@@ -3341,7 +3343,7 @@ function renderEdit() {
 
         <div class="card" style="padding:4px 8px;">
             <div style="font-size:9px;font-weight:600;margin-bottom:3px;color:var(--text-muted);">
-                Lecture Parts (Distributed by Speed - ${allParts.length} parts across ${Object.keys(dayTotals).length} days)
+                Lecture Parts - Proportional Distribution (${allParts.length} parts across ${Object.keys(dayTotals).length} days)
             </div>
             <div class="table-wrap">
                 <table>
@@ -3351,7 +3353,7 @@ function renderEdit() {
                             <th>Lecture</th>
                             <th style="width:35px;">Min</th>
                             <th style="width:45px;">Default Speed</th>
-                            <th style="width:45px;">Custom Speed (per date)</th>
+                            <th style="width:45px;">Custom Speed</th>
                             <th style="width:65px;">Date</th>
                             <th style="width:40px;">Covered</th>
                             <th style="width:40px;">Pending</th>
@@ -3928,7 +3930,7 @@ function init() {
     setInterval(updateCompanion, 60000);
     setTimeout(updateCompanion, 1000);
     
-    console.log('📚 Lecture Planner Pro v25 - Complete with Per-Date Custom Speeds!');
+    console.log('📚 Lecture Planner Pro v26 - Complete with Proportional Distribution!');
 }
 
 document.addEventListener('DOMContentLoaded', init);
