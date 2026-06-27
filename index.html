@@ -1195,7 +1195,6 @@ function distributeLectures(courseName) {
     const allocated = {};
     let lectureIndex = 0;
     let lectureRemaining = lectures[0]?.duration || 0;
-    let originalLectureIndex = 0;
     let partCounter = 1;
     
     // Clear previous parts for this course
@@ -1210,7 +1209,8 @@ function distributeLectures(courseName) {
         if (take > 0) {
             if (!allocated[currentDate]) allocated[currentDate] = [];
             
-            const isPart = lectureRemaining > take || (lectureRemaining <= 0 && take < lectures[lectureIndex]?.duration);
+            // Determine if this is a part (split lecture)
+            const isPart = lectureRemaining > take;
             const partKey = isPart ? `${lectureIndex+1}_part${partCounter}` : `${lectureIndex+1}`;
             
             if (isPart && !appData.lectureParts[courseName][partKey]) {
@@ -1304,7 +1304,6 @@ function getActualHoursOnDate(courseName, dateStr) {
     let totalMinutes = 0;
     for (const [lectureKey, doneDate] of Object.entries(appData.doneDates[courseName])) {
         if (doneDate === dateStr) {
-            // Check if this is a part key
             const parts = lectureKey.split('_part');
             const idx = parseInt(parts[0]) - 1;
             if (idx >= 0 && idx < lectures.length) {
@@ -2634,7 +2633,6 @@ function tickAll(courseName) {
     saveData();
     renderAll();
     showToast(`✅ All parts marked done for ${courseName}`);
-    // Check if all lectures are complete
     const totalParts = getAllPartsCount(courseName);
     const doneParts = Object.values(appData.results[courseName] || {}).filter(v => v === true).length;
     if (doneParts === totalParts) {
@@ -2900,7 +2898,7 @@ function renderUpload() {
             <div class="flex" style="gap:3px;margin-bottom:4px;">
                 <input type="text" id="courseNameInput" placeholder="Course Name" style="flex:1;font-size:10px;">
                 <input type="number" id="coursePriorityInput" placeholder="Priority" value="1" style="width:50px;font-size:10px;">
-                <input type="number" id="courseSpeedInput" placeholder="Speed" value="120" style="width:60px;font-size:10px;">
+                <input type="number" id="courseSpeedInput" placeholder="Speed (min/day)" value="120" style="width:70px;font-size:10px;">
                 <input type="date" id="courseStartInput" value="${getToday()}" style="width:90px;font-size:10px;">
             </div>
             <div style="font-size:8px;color:var(--text-muted);margin-bottom:2px;">📝 Format: sr_no Lecture_name duration_in_mins</div>
@@ -3172,7 +3170,6 @@ function deleteLecture(courseName, sr) {
         if (appData.courses[courseName]) {
             appData.courses[courseName].splice(idx, 1);
             appData.courses[courseName].forEach((l, i) => l.sr = i + 1);
-            // Remove parts for this lecture
             if (appData.lectureParts[courseName]) {
                 const keysToRemove = Object.keys(appData.lectureParts[courseName]).filter(k => k.startsWith(`${sr}_part`));
                 keysToRemove.forEach(k => delete appData.lectureParts[courseName][k]);
@@ -3685,7 +3682,7 @@ function init() {
     setInterval(updateCompanion, 60000);
     setTimeout(updateCompanion, 1000);
     
-    console.log('📚 Lecture Planner Pro v17 - All Features Complete!');
+    console.log('📚 Lecture Planner Pro v18 - All Features Complete!');
 }
 
 document.addEventListener('DOMContentLoaded', init);
