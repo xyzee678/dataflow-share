@@ -722,6 +722,23 @@
             padding: 4px 5px;
             border-top: 2px solid var(--border);
         }
+        .day-total-row .day-label {
+            font-size: 8px;
+            color: var(--text-muted);
+        }
+        .day-total-row .day-speed {
+            font-size: 8px;
+            color: var(--primary);
+        }
+        .day-total-row .day-total {
+            font-size: 8px;
+            color: var(--text);
+            font-weight: 700;
+        }
+        .day-total-row .remaining {
+            font-size: 7px;
+            color: var(--warning);
+        }
     </style>
 </head>
 <body>
@@ -793,7 +810,7 @@
 
 <script>
 // ============================================================
-// COMPLETE JAVASCRIPT IMPLEMENTATION - ALL FEATURES
+// COMPLETE JAVASCRIPT IMPLEMENTATION - CORRECTED DISTRIBUTION
 // ============================================================
 
 const DEFAULT_DATA = {
@@ -1211,7 +1228,7 @@ function calculateEndDate(courseName) {
 }
 
 // ============================================================
-// LECTURE DISTRIBUTION ALGORITHM - UPDATED
+// CORRECTED LECTURE DISTRIBUTION ALGORITHM
 // ============================================================
 
 function distributeLectures(courseName) {
@@ -1219,41 +1236,41 @@ function distributeLectures(courseName) {
     if (lectures.length === 0) return {};
     
     const startDate = getCourseStartDate(courseName);
+    const allocated = {};
     let currentDate = startDate;
     let usedMinutes = 0;
-    const allocated = {};
     let lectureIndex = 0;
-    let lectureRemaining = lectures[0]?.duration || 0;
+    let remainingMinutes = lectures[0]?.duration || 0;
     let partCounter = 1;
-    let totalParts = 0;
     
     if (!appData.lectureParts) appData.lectureParts = {};
     if (!appData.lectureParts[courseName]) appData.lectureParts[courseName] = {};
     
-    // Calculate total parts needed for each lecture
-    const lecturePartsCount = {};
-    lectures.forEach((l, idx) => {
-        const speed = getCourseSpeed(courseName, startDate);
-        const parts = Math.ceil(l.duration / speed);
-        lecturePartsCount[idx] = parts;
-    });
-    
     while (lectureIndex < lectures.length) {
         const speed = getCourseSpeed(courseName, currentDate);
         const available = speed - usedMinutes;
-        const take = Math.min(lectureRemaining, available);
+        
+        // If no available time left on this date, move to next date
+        if (available <= 0) {
+            usedMinutes = 0;
+            currentDate = addDays(currentDate, 1);
+            continue;
+        }
+        
+        // Take as much as fits (or the whole remaining lecture)
+        const take = Math.min(remainingMinutes, available);
         
         if (take > 0) {
             if (!allocated[currentDate]) allocated[currentDate] = [];
             
-            const isPart = lectureRemaining > take;
+            const isPart = remainingMinutes > take;
             const partKey = isPart ? `${lectureIndex+1}_part${partCounter}` : `${lectureIndex+1}`;
             
             if (isPart && !appData.lectureParts[courseName][partKey]) {
                 appData.lectureParts[courseName][partKey] = { 
                     originalIndex: lectureIndex,
                     partNumber: partCounter,
-                    totalParts: lecturePartsCount[lectureIndex] || 1
+                    totalParts: Math.ceil(lectures[lectureIndex].duration / speed) + 1
                 };
             }
             
@@ -1264,34 +1281,36 @@ function distributeLectures(courseName) {
                 duration: lectures[lectureIndex].duration,
                 portion: take,
                 total: lectures[lectureIndex].duration,
-                isComplete: take >= lectureRemaining && available >= lectureRemaining,
+                isComplete: take >= remainingMinutes && available >= remainingMinutes,
                 partKey: partKey,
                 partNumber: partCounter,
                 isPart: isPart,
                 allocatedDate: currentDate,
-                totalParts: lecturePartsCount[lectureIndex] || 1
+                totalParts: Math.ceil(lectures[lectureIndex].duration / speed) + 1
             });
             
             usedMinutes += take;
-            lectureRemaining -= take;
-            totalParts++;
+            remainingMinutes -= take;
             
-            if (lectureRemaining <= 0) {
+            // If lecture is complete, move to next lecture
+            if (remainingMinutes <= 0) {
                 lectureIndex++;
                 partCounter = 1;
                 if (lectureIndex < lectures.length) {
-                    lectureRemaining = lectures[lectureIndex].duration;
+                    remainingMinutes = lectures[lectureIndex].duration;
                 }
             } else {
                 partCounter++;
             }
         }
         
+        // If day is full, move to next day
         if (usedMinutes >= speed) {
             usedMinutes = 0;
             currentDate = addDays(currentDate, 1);
         }
     }
+    
     saveData();
     return allocated;
 }
@@ -3111,13 +3130,12 @@ function renderEdit() {
     const defaultSpeed = appData.settings[selected]?.speed || 120;
     const startDate = getCourseStartDate(selected);
 
-    // Generate the complete lecture distribution with parts
     const distributed = distributeLectures(selected);
     
-    // Create a flat list of all lecture parts with their allocated dates
     let allParts = [];
     const sortedDates = Object.keys(distributed).sort();
     let dayTotals = {};
+    let daySpeeds = {};
     
     sortedDates.forEach(date => {
         let dayTotal = 0;
@@ -3129,6 +3147,7 @@ function renderEdit() {
             dayTotal += item.portion;
         });
         dayTotals[date] = dayTotal;
+        daySpeeds[date] = getCourseSpeed(selected, date);
     });
 
     let lectureHTML = '';
@@ -3143,20 +3162,23 @@ function renderEdit() {
         const displayName = isPart ? `${item.name} (${formatDuration(item.portion)}/${formatDuration(item.total)})` : item.name;
         const allocatedDate = item.allocatedDate || '—';
         const isContinuing = item.portion < item.total;
-        const speedForDate = getCourseSpeed(selected, allocatedDate);
         const customForDate = getCustomSpeed(selected, allocatedDate);
         
-        // Add day total row if date changes
         if (currentDate !== allocatedDate && currentDate !== '') {
             const totalForDay = dayTotals[currentDate] || 0;
-            const speedForPrevDate = getCourseSpeed(selected, currentDate);
+            const speedForPrevDate = daySpeeds[currentDate] || 0;
+            const remaining = speedForPrevDate - totalForDay;
             lectureHTML += `
                 <tr class="day-total-row">
-                    <td colspan="3" style="text-align:right;font-size:8px;color:var(--text-muted);">
-                        Day Total: ${formatDuration(totalForDay)}
+                    <td colspan="2" style="font-size:8px;color:var(--text-muted);">
+                        <span class="day-label">📅 ${formatDate(currentDate)}</span>
                     </td>
-                    <td colspan="5" style="font-size:8px;color:var(--primary);">
-                        Speed: ${speedForPrevDate} min/day ${getCustomSpeed(selected, currentDate) !== null ? '⚡' : ''}
+                    <td colspan="2" style="font-size:8px;">
+                        <span class="day-total">Total: ${formatDuration(totalForDay)}</span>
+                        ${remaining > 0 ? `<span class="remaining"> (${formatDuration(remaining)} remaining)</span>` : ''}
+                    </td>
+                    <td colspan="4" style="font-size:8px;color:var(--primary);">
+                        Speed: ${speedForPrevDate} min/day ${customForDate !== null ? '⚡' : ''}
                     </td>
                 </tr>
             `;
@@ -3192,17 +3214,22 @@ function renderEdit() {
         currentDate = allocatedDate;
     });
     
-    // Add final day total
     if (currentDate && dayTotals[currentDate]) {
         const totalForDay = dayTotals[currentDate] || 0;
-        const speedForLastDate = getCourseSpeed(selected, currentDate);
+        const speedForLastDate = daySpeeds[currentDate] || 0;
+        const remaining = speedForLastDate - totalForDay;
+        const customForDate = getCustomSpeed(selected, currentDate);
         lectureHTML += `
             <tr class="day-total-row">
-                <td colspan="3" style="text-align:right;font-size:8px;color:var(--text-muted);">
-                    Day Total: ${formatDuration(totalForDay)}
+                <td colspan="2" style="font-size:8px;color:var(--text-muted);">
+                    <span class="day-label">📅 ${formatDate(currentDate)}</span>
                 </td>
-                <td colspan="5" style="font-size:8px;color:var(--primary);">
-                    Speed: ${speedForLastDate} min/day ${getCustomSpeed(selected, currentDate) !== null ? '⚡' : ''}
+                <td colspan="2" style="font-size:8px;">
+                    <span class="day-total">Total: ${formatDuration(totalForDay)}</span>
+                    ${remaining > 0 ? `<span class="remaining"> (${formatDuration(remaining)} remaining)</span>` : ''}
+                </td>
+                <td colspan="4" style="font-size:8px;color:var(--primary);">
+                    Speed: ${speedForLastDate} min/day ${customForDate !== null ? '⚡' : ''}
                 </td>
             </tr>
         `;
@@ -3819,7 +3846,7 @@ function init() {
     setInterval(updateCompanion, 60000);
     setTimeout(updateCompanion, 1000);
     
-    console.log('📚 Lecture Planner Pro v20 - Complete!');
+    console.log('📚 Lecture Planner Pro v21 - Corrected Distribution Algorithm!');
 }
 
 document.addEventListener('DOMContentLoaded', init);
