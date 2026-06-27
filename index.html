@@ -74,26 +74,9 @@
             transition: var(--transition);
         }
 
-        .app-header.hidden {
-            transform: translateY(-100%);
-        }
-
-        .app-header .title {
-            font-size: 17px;
-            font-weight: 700;
-            color: #fff;
-            letter-spacing: 0.5px;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-
-        .header-actions {
-            display: flex;
-            align-items: center;
-            gap: 6px;
-        }
-
+        .app-header.hidden { transform: translateY(-100%); }
+        .app-header .title { font-size: 17px; font-weight: 700; color: #fff; display: flex; align-items: center; gap: 8px; }
+        .header-actions { display: flex; align-items: center; gap: 6px; }
         .header-actions button {
             background: rgba(255,255,255,0.15);
             border: none;
@@ -108,16 +91,8 @@
             align-items: center;
             justify-content: center;
         }
-
-        .header-actions button:hover {
-            background: rgba(255,255,255,0.25);
-            transform: scale(1.05);
-        }
-
-        .header-actions button.active-theme {
-            background: rgba(255,255,255,0.35);
-            box-shadow: 0 0 20px rgba(255,255,255,0.2);
-        }
+        .header-actions button:hover { background: rgba(255,255,255,0.25); transform: scale(1.05); }
+        .header-actions button.active-theme { background: rgba(255,255,255,0.35); box-shadow: 0 0 20px rgba(255,255,255,0.2); }
 
         /* ===== BOTTOM NAVIGATION ===== */
         .bottom-nav {
@@ -135,10 +110,7 @@
             padding: 0 4px;
             transition: var(--transition);
         }
-
-        .bottom-nav.hidden {
-            transform: translateY(100%);
-        }
+        .bottom-nav.hidden { transform: translateY(100%); }
 
         .nav-item {
             display: flex;
@@ -158,34 +130,18 @@
             flex: 1;
             max-width: 60px;
         }
-
         .nav-item .icon { font-size: 18px; line-height: 1; }
         .nav-item .label { font-size: 8px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.3px; }
-
-        .nav-item.active {
-            color: var(--primary);
-            background: rgba(102, 126, 234, 0.12);
-        }
+        .nav-item.active { color: var(--primary); background: rgba(102, 126, 234, 0.12); }
         .nav-item.active .icon { color: var(--primary); }
         .nav-item.active .label { color: var(--primary); }
-
         .nav-item.hidden-tab { display: none; }
         .nav-item.hidden-tab.visible { display: flex; }
 
         /* ===== TAB CONTENT ===== */
-        .tab-content {
-            display: none;
-            padding: 12px;
-            max-width: 800px;
-            margin: 0 auto;
-            animation: fadeIn 0.25s ease;
-        }
+        .tab-content { display: none; padding: 12px; max-width: 800px; margin: 0 auto; animation: fadeIn 0.25s ease; }
         .tab-content.active { display: block; }
-
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(8px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
 
         /* ===== FOCUS MODE FULLSCREEN ===== */
         .focus-fullscreen .app-header { transform: translateY(-100%); }
@@ -204,16 +160,7 @@
             transition: var(--transition);
         }
         .card:hover { border-color: var(--primary); }
-
-        .card-title {
-            font-size: 14px;
-            font-weight: 700;
-            margin-bottom: 8px;
-            color: var(--text);
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
+        .card-title { font-size: 14px; font-weight: 700; margin-bottom: 8px; color: var(--text); display: flex; align-items: center; gap: 8px; }
 
         /* ===== BUTTONS ===== */
         .btn {
@@ -253,19 +200,10 @@
             width: 100%;
             transition: var(--transition);
         }
-        input:focus, select:focus, textarea:focus {
-            outline: none;
-            border-color: var(--primary);
-        }
-        input[type="checkbox"] {
-            width: 16px;
-            height: 16px;
-            cursor: pointer;
-            accent-color: var(--primary);
-        }
+        input:focus, select:focus, textarea:focus { outline: none; border-color: var(--primary); }
+        input[type="checkbox"] { width: 16px; height: 16px; cursor: pointer; accent-color: var(--primary); }
         input[type="date"], input[type="time"] { color-scheme: dark; }
-        [data-theme="light"] input[type="date"],
-        [data-theme="light"] input[type="time"] { color-scheme: light; }
+        [data-theme="light"] input[type="date"], [data-theme="light"] input[type="time"] { color-scheme: light; }
 
         /* ===== GRID LAYOUTS ===== */
         .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
@@ -308,6 +246,65 @@
         .progress-bar .fill.warning { background: var(--warning); }
         .progress-bar .fill.danger { background: var(--danger); }
 
+        /* ===== VERTICAL BATTERY ===== */
+        .vertical-battery {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 4px;
+            background: var(--bg);
+            padding: 8px;
+            border-radius: 8px;
+            min-width: 60px;
+            position: relative;
+        }
+        .vertical-battery .icon { font-size: 24px; }
+        .vertical-battery .battery-container {
+            width: 32px;
+            height: 100px;
+            background: var(--bg-secondary);
+            border-radius: 6px;
+            overflow: hidden;
+            position: relative;
+            border: 2px solid var(--border);
+            box-shadow: inset 0 2px 4px rgba(0,0,0,0.2);
+        }
+        .vertical-battery .battery-fill {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            transition: height 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+            border-radius: 0 0 4px 4px;
+        }
+        .vertical-battery .battery-fill.charging {
+            animation: pulse 1.5s ease-in-out infinite;
+        }
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.7; }
+        }
+        .vertical-battery .battery-percent {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 12px;
+            font-weight: 700;
+            color: #fff;
+            text-shadow: 0 0 8px rgba(0,0,0,0.9);
+            z-index: 2;
+        }
+        .vertical-battery .battery-label {
+            font-size: 9px;
+            color: var(--text-muted);
+            text-align: center;
+            max-width: 60px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
         /* ===== LECTURE ITEMS ===== */
         .lecture-item {
             display: flex;
@@ -322,6 +319,7 @@
         .lecture-item .name { flex: 1; font-size: 12px; }
         .lecture-item .duration { font-size: 10px; color: var(--text-muted); min-width: 40px; text-align: right; }
         .lecture-item .status { font-size: 10px; min-width: 50px; text-align: right; }
+        .lecture-item .continuing { font-size: 9px; color: var(--warning); font-style: italic; }
         .lecture-item.completed .name { text-decoration: line-through; color: var(--text-muted); }
 
         /* ===== BATTERY DISPLAY ===== */
@@ -368,7 +366,6 @@
             transition: bottom 0.3s ease;
         }
         .companion-container.hidden { display: none; }
-
         .companion-speech {
             background: var(--card);
             border: 1px solid var(--border);
@@ -401,12 +398,7 @@
             gap: 2px;
             text-align: center;
         }
-        .calendar-grid .day-label {
-            font-size: 9px;
-            color: var(--text-muted);
-            padding: 4px 0;
-            font-weight: 600;
-        }
+        .calendar-grid .day-label { font-size: 9px; color: var(--text-muted); padding: 4px 0; font-weight: 600; }
         .calendar-grid .day {
             padding: 6px 2px;
             border-radius: 6px;
@@ -426,15 +418,16 @@
         .calendar-grid .day.today { background: var(--primary); color: #fff; font-weight: 700; }
         .calendar-grid .day.selected { border: 2px solid var(--primary); }
         .calendar-grid .day.sunday { color: var(--pink); }
-        .calendar-grid .day.has-lectures::after {
-            content: '';
+        .calendar-grid .day .perf-dot {
             position: absolute;
             bottom: 2px;
-            width: 4px;
-            height: 4px;
+            width: 6px;
+            height: 6px;
             border-radius: 50%;
-            background: var(--primary);
         }
+        .calendar-grid .day .perf-dot.all { background: var(--success); }
+        .calendar-grid .day .perf-dot.mixed { background: var(--warning); }
+        .calendar-grid .day .perf-dot.none { background: var(--danger); }
         .calendar-grid .day.has-custom-speed::before {
             content: '⚡';
             position: absolute;
@@ -455,15 +448,15 @@
             margin-bottom: 4px;
             transition: var(--transition);
         }
-        .habit-item .status-dot {
-            width: 8px;
-            height: 8px;
-            border-radius: 50%;
-            flex-shrink: 0;
-        }
+        .habit-item .status-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
         .habit-item .status-dot.done { background: var(--success); }
         .habit-item .status-dot.pending { background: var(--warning); }
         .habit-item .status-dot.notdone { background: var(--danger); }
+        .habit-item .streak-fire { display: inline-block; animation: fire 1s ease-in-out infinite alternate; }
+        @keyframes fire {
+            0% { transform: scale(1); opacity: 1; }
+            100% { transform: scale(1.2); opacity: 0.8; }
+        }
 
         /* ===== MODAL ===== */
         .modal-overlay {
@@ -532,6 +525,43 @@
         .efficiency-badge.verybad { background: rgba(255, 107, 107, 0.3); color: var(--danger); }
         .efficiency-badge.worse { background: rgba(160, 174, 192, 0.2); color: var(--text-muted); }
 
+        /* ===== BALLOON CELEBRATION ===== */
+        @keyframes floatUp {
+            0% { transform: translateY(0) rotate(0deg) scale(1); opacity: 1; }
+            100% { transform: translateY(-110vh) rotate(720deg) scale(0.3); opacity: 0; }
+        }
+        .balloon {
+            position: fixed;
+            z-index: 1000;
+            pointer-events: none;
+            border-radius: 50% 50% 50% 50% / 40% 40% 60% 60%;
+            animation: floatUp var(--duration, 4s) ease-out var(--delay, 0s) forwards;
+        }
+        .balloon::after {
+            content: '✦';
+            position: absolute;
+            bottom: -12px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 10px;
+            color: inherit;
+        }
+
+        /* ===== QUOTE ANIMATION ===== */
+        .quote-container {
+            position: relative;
+            min-height: 50px;
+        }
+        .quote-text {
+            animation: quoteFade 3s ease-in-out;
+        }
+        @keyframes quoteFade {
+            0% { opacity: 0; transform: translateY(10px); }
+            20% { opacity: 1; transform: translateY(0); }
+            80% { opacity: 1; transform: translateY(0); }
+            100% { opacity: 0; transform: translateY(-10px); }
+        }
+
         /* ===== RESPONSIVE ===== */
         @media (max-width: 640px) {
             .grid-4 { grid-template-columns: 1fr 1fr; }
@@ -540,6 +570,7 @@
             .companion-container { max-width: 200px; right: 8px; }
             .companion-speech { font-size: 11px; padding: 8px 12px; max-width: 180px; }
             .companion-avatar { font-size: 32px; }
+            .vertical-battery .battery-container { height: 70px; width: 26px; }
         }
         @media (max-width: 480px) {
             .battery-grid { grid-template-columns: repeat(3, 1fr); }
@@ -562,37 +593,33 @@
 
         .table-wrap { overflow-x: auto; -webkit-overflow-scrolling: touch; }
         table { width: 100%; border-collapse: collapse; font-size: 12px; }
-        th {
-            text-align: left;
-            padding: 6px 8px;
-            font-weight: 600;
-            color: var(--text-muted);
-            border-bottom: 1px solid var(--border);
-            font-size: 10px;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-        }
+        th { text-align: left; padding: 6px 8px; font-weight: 600; color: var(--text-muted); border-bottom: 1px solid var(--border); font-size: 10px; text-transform: uppercase; letter-spacing: 0.5px; }
         td { padding: 4px 8px; border-bottom: 1px solid var(--border); vertical-align: middle; }
 
-        .hidden-courses-section {
-            border-top: 2px solid var(--border);
-            margin-top: 12px;
-            padding-top: 12px;
+        .hidden-courses-section { border-top: 2px solid var(--border); margin-top: 12px; padding-top: 12px; }
+        .hidden-courses-section .section-title { font-size: 11px; font-weight: 600; color: var(--text-muted); margin-bottom: 8px; }
+
+        /* ===== CHECKLIST ===== */
+        .checklist-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 4px 8px;
+            border-radius: 4px;
+            transition: background 0.15s;
         }
-        .hidden-courses-section .section-title {
-            font-size: 11px;
-            font-weight: 600;
-            color: var(--text-muted);
-            margin-bottom: 8px;
-        }
+        .checklist-item:hover { background: rgba(102, 126, 234, 0.08); }
+        .checklist-item .check { font-size: 14px; }
+        .checklist-item .check.done { color: var(--success); }
+        .checklist-item .check.pending { color: var(--text-muted); }
+        .checklist-item .label { font-size: 12px; flex: 1; }
+        .checklist-item .label.done { text-decoration: line-through; color: var(--text-muted); }
     </style>
 </head>
 <body>
 
-<!-- ===== TOAST ===== -->
 <div id="toast" class="toast"></div>
 
-<!-- ===== HEADER ===== -->
 <header class="app-header" id="appHeader">
     <div class="title">📚 Lecture Planner</div>
     <div class="header-actions">
@@ -604,76 +631,40 @@
     </div>
 </header>
 
-<!-- ===== MAIN CONTENT ===== -->
 <main id="appContent">
-    <section id="tab-focus" class="tab-content active">
-        <div id="focusContainer"></div>
-    </section>
-    <section id="tab-dashboard" class="tab-content">
-        <div id="dashboardContainer"></div>
-    </section>
-    <section id="tab-timetable" class="tab-content">
-        <div id="timetableContainer"></div>
-    </section>
-    <section id="tab-overview" class="tab-content">
-        <div id="overviewContainer"></div>
-    </section>
-    <section id="tab-upload" class="tab-content">
-        <div id="uploadContainer"></div>
-    </section>
-    <section id="tab-edit" class="tab-content">
-        <div id="editContainer"></div>
-    </section>
-    <section id="tab-habits" class="tab-content">
-        <div id="habitsContainer"></div>
-    </section>
-    <section id="tab-links" class="tab-content">
-        <div id="linksContainer"></div>
-    </section>
+    <section id="tab-focus" class="tab-content active"><div id="focusContainer"></div></section>
+    <section id="tab-dashboard" class="tab-content"><div id="dashboardContainer"></div></section>
+    <section id="tab-timetable" class="tab-content"><div id="timetableContainer"></div></section>
+    <section id="tab-overview" class="tab-content"><div id="overviewContainer"></div></section>
+    <section id="tab-upload" class="tab-content"><div id="uploadContainer"></div></section>
+    <section id="tab-edit" class="tab-content"><div id="editContainer"></div></section>
+    <section id="tab-habits" class="tab-content"><div id="habitsContainer"></div></section>
+    <section id="tab-links" class="tab-content"><div id="linksContainer"></div></section>
 </main>
 
-<!-- ===== COMPANION ===== -->
 <div id="companionContainer" class="companion-container">
     <div id="companionSpeech" class="companion-speech">👋 Good morning! Ready to study?</div>
     <div id="companionAvatar" class="companion-avatar">👩‍🦰</div>
 </div>
 
-<!-- ===== BOTTOM NAVIGATION ===== -->
 <nav class="bottom-nav" id="bottomNav">
-    <button class="nav-item active" data-tab="focus" onclick="switchTab('focus')">
-        <span class="icon">🎯</span><span class="label">Focus</span>
-    </button>
-    <button class="nav-item" data-tab="dashboard" onclick="switchTab('dashboard')">
-        <span class="icon">🏠</span><span class="label">Dash</span>
-    </button>
-    <button class="nav-item" data-tab="timetable" onclick="switchTab('timetable')">
-        <span class="icon">📅</span><span class="label">Time</span>
-    </button>
-    <button class="nav-item" data-tab="overview" onclick="switchTab('overview')">
-        <span class="icon">📈</span><span class="label">Overview</span>
-    </button>
-    <button class="nav-item hidden-tab" data-tab="upload" onclick="switchTab('upload')">
-        <span class="icon">📤</span><span class="label">Upload</span>
-    </button>
-    <button class="nav-item hidden-tab" data-tab="edit" onclick="switchTab('edit')">
-        <span class="icon">✏️</span><span class="label">Edit</span>
-    </button>
-    <button class="nav-item hidden-tab" data-tab="habits" onclick="switchTab('habits')">
-        <span class="icon">✅</span><span class="label">Habits</span>
-    </button>
-    <button class="nav-item hidden-tab" data-tab="links" onclick="switchTab('links')">
-        <span class="icon">🔗</span><span class="label">Links</span>
-    </button>
+    <button class="nav-item active" data-tab="focus" onclick="switchTab('focus')"><span class="icon">🎯</span><span class="label">Focus</span></button>
+    <button class="nav-item" data-tab="dashboard" onclick="switchTab('dashboard')"><span class="icon">🏠</span><span class="label">Dash</span></button>
+    <button class="nav-item" data-tab="timetable" onclick="switchTab('timetable')"><span class="icon">📅</span><span class="label">Time</span></button>
+    <button class="nav-item" data-tab="overview" onclick="switchTab('overview')"><span class="icon">📈</span><span class="label">Overview</span></button>
+    <button class="nav-item hidden-tab" data-tab="upload" onclick="switchTab('upload')"><span class="icon">📤</span><span class="label">Upload</span></button>
+    <button class="nav-item hidden-tab" data-tab="edit" onclick="switchTab('edit')"><span class="icon">✏️</span><span class="label">Edit</span></button>
+    <button class="nav-item hidden-tab" data-tab="habits" onclick="switchTab('habits')"><span class="icon">✅</span><span class="label">Habits</span></button>
+    <button class="nav-item hidden-tab" data-tab="links" onclick="switchTab('links')"><span class="icon">🔗</span><span class="label">Links</span></button>
 </nav>
 
-<!-- ===== MODAL ===== -->
 <div class="modal-overlay" id="modalOverlay" onclick="if(event.target===this)closeModal()">
     <div class="modal-content" id="modalContent"></div>
 </div>
 
 <script>
 // ============================================================
-// COMPLETE JAVASCRIPT IMPLEMENTATION
+// COMPLETE JAVASCRIPT IMPLEMENTATION - ALL FEATURES RESTORED
 // ============================================================
 
 const DEFAULT_DATA = {
@@ -689,6 +680,8 @@ const DEFAULT_DATA = {
     links: [],
     dailyNotes: {},
     wakeTimes: {},
+    wastedTime: {},
+    dailyChecklist: {},
     focusSlogan: 'Stay focused!',
     focusCourse: '',
     activeFocusCourses: [],
@@ -714,11 +707,13 @@ const DEFAULT_DATA = {
     wastedTimeToday: 0,
     studyStartDate: '',
     studyEndDate: '',
-    wakeUpTime: '08:00',
-    bedTime: '01:00',
+    wakeUpTime: '04:00',
+    bedTime: '21:00',
     timetableShowLectures: false,
     lastActiveDate: '',
-    selectedDate: ''
+    selectedDate: '',
+    quoteIndex: 0,
+    lastQuoteUpdate: 0
 };
 
 let appData = null;
@@ -728,6 +723,7 @@ let companionVisible = true;
 let selectedCourse = '';
 let focusCourseIndex = 0;
 let isFocusFullscreen = false;
+let quoteInterval = null;
 
 // ============================================================
 // UTILITY FUNCTIONS
@@ -852,7 +848,10 @@ function loadData() {
             if (!appData.habits) appData.habits = {};
             if (!appData.memos) appData.memos = [];
             if (!appData.links) appData.links = [];
+            if (!appData.dailyNotes) appData.dailyNotes = {};
             if (!appData.wakeTimes) appData.wakeTimes = {};
+            if (!appData.wastedTime) appData.wastedTime = {};
+            if (!appData.dailyChecklist) appData.dailyChecklist = {};
             if (!appData.hiddenCourses) appData.hiddenCourses = [];
             if (!appData.inactiveCourses) appData.inactiveCourses = {};
             if (!appData.images) appData.images = [];
@@ -867,8 +866,8 @@ function loadData() {
                 d.setDate(d.getDate() + 90);
                 appData.studyEndDate = d.toISOString().split('T')[0];
             }
-            if (!appData.wakeUpTime) appData.wakeUpTime = '08:00';
-            if (!appData.bedTime) appData.bedTime = '01:00';
+            if (!appData.wakeUpTime) appData.wakeUpTime = '04:00';
+            if (!appData.bedTime) appData.bedTime = '21:00';
             if (!appData.focusSlogan) appData.focusSlogan = 'Stay focused!';
             if (!appData.focusCourse) {
                 const keys = Object.keys(appData.courses);
@@ -876,6 +875,8 @@ function loadData() {
             }
             if (!appData.dashboardDate) appData.dashboardDate = getToday();
             if (!appData.selectedDate) appData.selectedDate = getToday();
+            if (!appData.quoteIndex) appData.quoteIndex = 0;
+            if (!appData.lastQuoteUpdate) appData.lastQuoteUpdate = Date.now();
             saveData();
             return true;
         } else {
@@ -1073,6 +1074,17 @@ function getLecturesForDate(courseName, dateStr) {
     return allocated[dateStr] || [];
 }
 
+function getDatePerformance(courseName, dateStr) {
+    const lectures = getLecturesForDate(courseName, dateStr);
+    if (lectures.length === 0) return 'empty';
+    const results = appData.results[courseName] || {};
+    let done = 0;
+    lectures.forEach(l => { if (results[l.sr] === true) done++; });
+    if (done === 0) return 'none';
+    if (done === lectures.length) return 'all';
+    return 'mixed';
+}
+
 // ============================================================
 // EFFICIENCY CALCULATIONS
 // ============================================================
@@ -1092,13 +1104,9 @@ function getActualHoursOnDate(courseName, dateStr) {
     return totalMinutes;
 }
 
-function getTargetHoursForDate(courseName, dateStr) {
-    return getCourseSpeed(courseName, dateStr);
-}
-
 function calculateEfficiency(courseName, dateStr) {
     const actual = getActualHoursOnDate(courseName, dateStr);
-    const target = getTargetHoursForDate(courseName, dateStr);
+    const target = getCourseSpeed(courseName, dateStr);
     
     if (target === 0) return { actual, target, percent: 0, status: 'No Target', statusColor: 'var(--text-muted)', emoji: '❓', debt: 0, debtHours: '0m' };
     
@@ -1181,18 +1189,8 @@ function getWeeklyEfficiency(courseName, dateStr = null) {
     return calculateEfficiencyFromTotals(totalActual, totalTarget);
 }
 
-// ============================================================
-// HABIT HELPERS
-// ============================================================
-
-function getHabitStatus(habitName, dateStr) {
-    if (!appData.habits[habitName]) return 'pending';
-    const completed = appData.habits[habitName].completed || {};
-    return completed[dateStr] || 'pending';
-}
-
-function getHabitStreak(habitName) {
-    return appData.habits[habitName]?.streak || 0;
+function getTargetHoursForDate(courseName, dateStr) {
+    return getCourseSpeed(courseName, dateStr);
 }
 
 function getCompletedDurationForDate(courseName, dateStr) {
@@ -1211,8 +1209,8 @@ function getCompletedDurationForDate(courseName, dateStr) {
 }
 
 function calculateAvailableHours(dateStr) {
-    const bedTime = appData.bedTime || '01:00';
-    const wakeTime = appData.wakeUpTime || '08:00';
+    const bedTime = appData.bedTime || '21:00';
+    const wakeTime = appData.wakeUpTime || '04:00';
     const bedMinutes = parseTimeToMinutes(bedTime);
     const wakeMinutes = parseTimeToMinutes(wakeTime);
     let totalMinutes;
@@ -1240,7 +1238,109 @@ function updateStreak() {
 }
 
 // ============================================================
-// COMPANION
+// HABIT HELPERS
+// ============================================================
+
+function getHabitStatus(habitName, dateStr) {
+    if (!appData.habits[habitName]) return 'pending';
+    const completed = appData.habits[habitName].completed || {};
+    return completed[dateStr] || 'pending';
+}
+
+function getHabitStreak(habitName) {
+    return appData.habits[habitName]?.streak || 0;
+}
+
+// ============================================================
+// QUOTE SYSTEM
+// ============================================================
+
+const QUOTES = [
+    "The expert in anything was once a beginner.",
+    "Success is the sum of small efforts repeated daily.",
+    "The secret of getting ahead is getting started.",
+    "It does not matter how slowly you go as long as you do not stop.",
+    "The best time to plant a tree was 20 years ago. The second best time is now.",
+    "You don't have to be great to start, but you have to start to be great.",
+    "The only way to do great work is to love what you do.",
+    "Believe you can and you're halfway there.",
+    "The future belongs to those who believe in the beauty of their dreams.",
+    "Hard work beats talent when talent doesn't work hard.",
+    "The only impossible journey is the one you never begin.",
+    "Small daily improvements over time lead to stunning results.",
+    "Don't watch the clock; do what it does. Keep going.",
+    "Success is not final, failure is not fatal: it is the courage to continue that counts.",
+    "The way to get started is to quit talking and begin doing.",
+    "Your limitation—it's only your imagination.",
+    "Push yourself because no one else is going to do it for you.",
+    "Great things never come from comfort zones.",
+    "Dream it. Wish it. Do it.",
+    "Talent without working hard is nothing."
+];
+
+function getRandomQuote() {
+    const now = Date.now();
+    if (!appData.lastQuoteUpdate || (now - appData.lastQuoteUpdate) > 3600000) {
+        appData.quoteIndex = Math.floor(Math.random() * QUOTES.length);
+        appData.lastQuoteUpdate = now;
+        saveData();
+    }
+    return QUOTES[appData.quoteIndex % QUOTES.length];
+}
+
+// ============================================================
+// BALLOON CELEBRATION
+// ============================================================
+
+function triggerCelebration() {
+    const colors = ['#ff6b6b', '#ffd93d', '#51cf66', '#667eea', '#f472b6', '#ff9f43', '#a29bfe', '#fd79a8'];
+    const container = document.body;
+    const balloonCount = 30 + Math.floor(Math.random() * 20);
+    
+    for (let i = 0; i < balloonCount; i++) {
+        const balloon = document.createElement('div');
+        const size = 20 + Math.random() * 35;
+        const color = colors[Math.floor(Math.random() * colors.length)];
+        const left = Math.random() * 90 + 5;
+        const delay = Math.random() * 2;
+        const duration = 3 + Math.random() * 3;
+        
+        balloon.className = 'balloon';
+        balloon.style.cssText = `
+            bottom: -50px;
+            left: ${left}%;
+            width: ${size}px;
+            height: ${size * 1.2}px;
+            background: ${color};
+            border-radius: 50% 50% 50% 50% / 40% 40% 60% 60%;
+            --duration: ${duration}s;
+            --delay: ${delay}s;
+            box-shadow: 0 0 20px ${color}40;
+            border: 1px solid ${color}80;
+        `;
+        
+        // Add string
+        const string = document.createElement('div');
+        string.style.cssText = `
+            position: absolute;
+            bottom: -15px;
+            left: 50%;
+            width: 1px;
+            height: 20px;
+            background: rgba(255,255,255,0.3);
+            transform: translateX(-50%);
+        `;
+        balloon.appendChild(string);
+        
+        container.appendChild(balloon);
+        setTimeout(() => balloon.remove(), (duration + delay) * 1000 + 500);
+    }
+    
+    showToast('🎉🎈 Congratulations! Amazing work! 🎈🎉', 'success');
+}
+
+// ============================================================
+// COMPANION SYSTEM - COMPLETE DAILY ROUTINE
 // ============================================================
 
 function toggleCompanion() {
@@ -1253,6 +1353,7 @@ function updateCompanion() {
     const speech = document.getElementById('companionSpeech');
     const today = getToday();
     const hour = new Date().getHours();
+    const minutes = new Date().getMinutes();
     const courseNames = getCourseNames();
     const totalPending = courseNames.reduce((sum, n) => {
         const total = getTotalLectures(n);
@@ -1261,63 +1362,193 @@ function updateCompanion() {
     }, 0);
     const streak = appData.streak || 0;
     const wakeTime = appData.wakeTimes?.[today];
+    const wastedToday = appData.wastedTime?.[today] || {};
+    const totalWasted = Object.values(wastedToday).reduce((a, b) => a + b, 0);
+    const checklist = appData.dailyChecklist?.[today] || {};
 
     let messages = [];
-    
-    // Morning routine (6 AM - 8 AM)
-    if (hour >= 6 && hour < 8) {
-        if (!wakeTime) {
-            messages.push('🌅 Good morning! What time did you wake up today? (Tell me in HH:MM)');
-        } else {
-            messages.push(`🌅 You woke up at ${wakeTime}. Great! 🫧 Drink warm water first! 🧘 Do 5 min stretching! 📱 No mobile until 3 PM!`);
+
+    // ===== MORNING ROUTINE (4:00 AM - 9:00 AM) =====
+    if (hour >= 4 && hour < 9) {
+        if (hour === 4 && minutes < 5) {
+            messages.push('🌅 Good morning! Time to wake up at 4:00 AM! Rise and shine!');
+        } else if (hour === 4 && minutes < 10) {
+            messages.push('⌚ Wear your watch and DO NOT touch mobile! This is your first discipline of the day!');
+        } else if (hour === 4 && minutes < 15) {
+            messages.push('🧘 Do 5 minutes of stretching/exercise to energize your body!');
+        } else if (hour === 4 && minutes < 30) {
+            messages.push('📚 Start 15 minutes of study before anything else! This builds momentum!');
+        } else if (hour >= 4 && hour < 5) {
+            messages.push('🫧 Drink warm water! It kickstarts your metabolism and digestion.');
+        } else if (hour >= 5 && hour < 6) {
+            messages.push('💻 Turn on your computer - first task of the day! Your workspace is ready.');
+            // Morning Checklist
+            const items = [
+                { id: 'woke', label: 'Woke at 4:00 AM', emoji: '🌅' },
+                { id: 'exercised', label: 'Did morning exercise', emoji: '🧘' },
+                { id: 'studied', label: 'Studied 15 minutes', emoji: '📚' },
+                { id: 'woreWatch', label: 'Wore watch', emoji: '⌚' },
+                { id: 'drankWater', label: 'Drank warm water', emoji: '🫧' }
+            ];
+            let checklistHTML = items.map(item => {
+                const done = checklist[item.id] || false;
+                return `
+                    <div class="checklist-item" onclick="toggleChecklistItem('${item.id}')">
+                        <span class="check ${done ? 'done' : 'pending'}">${done ? '✅' : '⬜'}</span>
+                        <span class="label ${done ? 'done' : ''}">${item.emoji} ${item.label}</span>
+                    </div>
+                `;
+            }).join('');
+            messages.push(`📝 Morning Checklist:\n${checklistHTML}`);
+        } else if (hour >= 6 && hour < 7) {
+            messages.push('🌅 Morning sunlight is good for your eyes and mood! Open curtains!');
+        } else if (hour >= 7 && hour < 7.5) {
+            messages.push('🚶 Morning walk time! 20 minutes of walking is essential!');
+        } else if (hour >= 7.5 && hour < 8) {
+            messages.push('🚿 Get ready, brush, bath - prepare for the work day!');
+        } else if (hour >= 8.5 && hour < 9) {
+            messages.push('👔 Wear company dress - feel like you\'re at work! This creates professional mindset!');
+        } else if (hour >= 9 && hour < 9.5) {
+            if (!checklist.workStarted) {
+                messages.push('⏰ 9:00 AM! Start work immediately! If not started, send apology to Nitin sir NOW!');
+                messages.push('📱 Type: "Sorry Nitin sir, I am late starting work. Will make up for it!"');
+            } else {
+                messages.push('✅ Great! Work started on time! You\'re on track!');
+            }
         }
-    } else if (hour >= 8 && hour < 12) {
-        messages.push('☀️ Good morning! Time to focus on your studies!');
-    } else if (hour >= 12 && hour < 17) {
-        messages.push('📚 Afternoon session! Keep the momentum going!');
-    } else if (hour >= 17 && hour < 21) {
-        messages.push('🌆 Evening study time! One more push!');
-    } else {
-        messages.push('🌙 Good evening! Time to wind down and review!');
     }
 
+    // ===== WORK SCHEDULE (9:00 AM - 7:30 PM) =====
+    else if (hour >= 9 && hour < 19.5) {
+        if (hour >= 9 && hour < 12.5) {
+            messages.push('🔥 9:00 AM - 12:30 PM: STRICT DIFFICULT SUBJECT STUDY! No distractions!');
+        } else if (hour >= 12.5 && hour < 13.5) {
+            messages.push('🍽️ 12:30 PM - 1:30 PM: Break time! Eat lunch and rest your mind.');
+        } else if (hour >= 13.5 && hour < 16) {
+            messages.push('🔥 1:30 PM - 4:00 PM: STRICT STUDY continues! Power through!');
+        } else if (hour >= 16 && hour < 16.5) {
+            messages.push('☕ 4:00 PM - 4:30 PM: Tea break! Quick recharge!');
+        } else if (hour >= 16.5 && hour < 19.5) {
+            messages.push('🔥 4:30 PM - 7:30 PM: Final STRICT STUDY session! Finish strong!');
+        }
+        
+        // Every 2 hours - wasted time check
+        if (hour % 2 === 0 && minutes < 5) {
+            const lastCheck = appData.lastWasteCheck || '';
+            if (lastCheck !== `${hour}:00`) {
+                appData.lastWasteCheck = `${hour}:00`;
+                messages.push(`📱 How many minutes did you waste on mobile in the last 2 hours? (Enter number)`);
+                // Store the response in wastedTime
+                setTimeout(() => {
+                    const input = prompt('📱 Minutes wasted on mobile in last 2 hours:');
+                    if (input !== null) {
+                        const mins = parseInt(input) || 0;
+                        if (!appData.wastedTime[today]) appData.wastedTime[today] = {};
+                        appData.wastedTime[today][`${hour}:00`] = mins;
+                        saveData();
+                        if (mins < 5) {
+                            showToast('🏆 Amazing! Less than 5 minutes wasted! Bonus XP earned!', 'success');
+                            appData.xp = (appData.xp || 0) + 20;
+                            saveData();
+                        } else if (mins < 15) {
+                            showToast('💪 Not bad! Try to reduce mobile usage further.', 'warning');
+                            appData.xp = (appData.xp || 0) + 5;
+                            saveData();
+                        } else {
+                            showToast('📱 Too much phone time! Try to focus better!', 'error');
+                        }
+                        updateCompanion();
+                    }
+                }, 1000);
+            }
+        }
+    }
+
+    // ===== EVENING ROUTINE (7:30 PM - 9:00 PM) =====
+    else if (hour >= 19.5 && hour < 24) {
+        if (hour >= 19.5 && hour < 20) {
+            messages.push('🍽️ 7:30 PM - 8:30 PM: Dinner time! Eat well and relax.');
+        } else if (hour >= 20 && hour < 20.5) {
+            messages.push('🚶 Evening walk time! 20 minutes of walking in fresh air!');
+        } else if (hour >= 20.5 && hour < 21) {
+            messages.push('📖 8:30 PM - 9:00 PM: Write Diary/Journal. Plan tomorrow\'s tasks.');
+            // Night Checklist
+            const nightItems = [
+                { id: 'studiesDone', label: 'Completed all studies', emoji: '📚' },
+                { id: 'walked', label: 'Evening walk done', emoji: '🚶' },
+                { id: 'diaryDone', label: 'Wrote diary/journal', emoji: '📖' },
+                { id: 'plannedTomorrow', label: 'Planned tomorrow\'s tasks', emoji: '📋' }
+            ];
+            let nightChecklistHTML = nightItems.map(item => {
+                const done = checklist[item.id] || false;
+                return `
+                    <div class="checklist-item" onclick="toggleChecklistItem('${item.id}')">
+                        <span class="check ${done ? 'done' : 'pending'}">${done ? '✅' : '⬜'}</span>
+                        <span class="label ${done ? 'done' : ''}">${item.emoji} ${item.label}</span>
+                    </div>
+                `;
+            }).join('');
+            messages.push(`📝 Night Checklist:\n${nightChecklistHTML}`);
+        } else if (hour >= 21 && hour < 22) {
+            messages.push('😴 9:00 PM - Sleep time! Remember: Mobile at night ruins sleep! Put it away!');
+            messages.push('🌙 Wake up at 4:00 AM tomorrow! Your disciplined routine starts with good sleep!');
+            // Award for sleeping on time
+            if (!appData.sleepAwardGiven || appData.sleepAwardGiven !== today) {
+                appData.sleepAwardGiven = today;
+                appData.xp = (appData.xp || 0) + 15;
+                saveData();
+                showToast('🌙 Sleep award! +15 XP for sleeping on time!', 'success');
+            }
+        } else if (hour >= 22) {
+            messages.push('🌙 It\'s past 9:00 PM! You should be sleeping!');
+            messages.push('📱 The problems of using mobile at night:');
+            messages.push('🔹 Poor sleep quality 🔹 Eye strain 🔹 Brain fog 🔹 Reduced discipline');
+            messages.push('😴 Please sleep NOW! Wake up at 4:00 AM for best results!');
+        }
+    }
+
+    // ===== DEFAULT MESSAGES =====
+    if (messages.length === 0) {
+        messages.push('💪 Keep going! You\'re doing great!');
+        const tips = [
+            '💡 Break down large tasks into smaller steps.',
+            '🧠 Active recall beats passive reading every time.',
+            '⏰ Study in 25-minute focused sessions (Pomodoro).',
+            '📝 Write down what you learn to remember better.',
+            '🎯 Focus on understanding, not just memorizing.',
+            '🏆 Consistency beats intensity.',
+            '✨ Every lecture gets you closer to your goal.',
+            '🔄 Review yesterday\'s notes before starting new material.'
+        ];
+        messages.push(tips[Math.floor(Math.random() * tips.length)]);
+    }
+
+    // ===== STREAK AND PROGRESS =====
     if (streak > 0) {
         messages.push(`🔥 ${streak} day streak! Keep it up!`);
     }
-
     if (totalPending > 0) {
         messages.push(`📚 You have ${totalPending} lectures pending. Let's go!`);
     } else if (courseNames.length > 0) {
         messages.push('🎉 All lectures completed! Amazing work!');
     }
+    if (totalWasted > 0) {
+        messages.push(`📱 Today's wasted time: ${totalWasted} minutes. Let's reduce it tomorrow!`);
+    }
 
-    const tips = [
-        '💡 Break down large tasks into smaller steps.',
-        '🧠 Active recall beats passive reading every time.',
-        '⏰ Study in 25-minute focused sessions (Pomodoro).',
-        '📝 Write down what you learn to remember better.',
-        '🎯 Focus on understanding, not just memorizing.',
-        '🏆 Consistency beats intensity.',
-        '✨ Every lecture gets you closer to your goal.',
-        '🔄 Review yesterday\'s notes before starting new material.',
-        '📊 Track your time - it helps you improve!',
-        '💪 You\'re doing great! Keep going!'
-    ];
-    messages.push(tips[Math.floor(Math.random() * tips.length)]);
-
-    speech.textContent = messages[Math.floor(Math.random() * messages.length)];
+    speech.textContent = messages.join('\n');
     
     const avatars = ['👩‍🦰', '👩', '🧑‍🎓', '👩‍🏫', '🌟'];
     document.getElementById('companionAvatar').textContent = avatars[Math.floor(Date.now() / 60000) % avatars.length];
 }
 
-function setWakeTime(time) {
+function toggleChecklistItem(itemId) {
     const today = getToday();
-    if (!appData.wakeTimes) appData.wakeTimes = {};
-    appData.wakeTimes[today] = time;
+    if (!appData.dailyChecklist[today]) appData.dailyChecklist[today] = {};
+    appData.dailyChecklist[today][itemId] = !appData.dailyChecklist[today][itemId];
     saveData();
-    showToast(`🌅 Wake time set to ${time}`);
     updateCompanion();
+    renderAll();
 }
 
 // ============================================================
@@ -1342,7 +1573,6 @@ function renderFocus() {
         return;
     }
 
-    // Ensure focusCourseIndex is valid
     if (focusCourseIndex >= availableCourses.length) focusCourseIndex = 0;
     const courseName = availableCourses[focusCourseIndex] || availableCourses[0];
     const lectures = appData.courses[courseName] || [];
@@ -1355,25 +1585,10 @@ function renderFocus() {
         return sum;
     }, 0);
     const efficiency = calculateEfficiency(courseName, today);
-
-    const quotes = [
-        "The expert in anything was once a beginner.",
-        "Success is the sum of small efforts repeated daily.",
-        "The secret of getting ahead is getting started.",
-        "It does not matter how slowly you go as long as you do not stop.",
-        "The best time to plant a tree was 20 years ago. The second best time is now.",
-        "You don't have to be great to start, but you have to start to be great.",
-        "The only way to do great work is to love what you do.",
-        "Believe you can and you're halfway there.",
-        "The future belongs to those who believe in the beauty of their dreams.",
-        "Hard work beats talent when talent doesn't work hard."
-    ];
-    const quote = quotes[Math.floor(Math.random() * quotes.length)];
-
-    const icons = ['🎯', '🏆', '⭐', '🌟', '💫'];
-    const icon2 = ['🌈', '🔥', '⚡', '🚀', '💪'];
-    const leftIcon = icons[Math.floor(Date.now() / 3600000) % icons.length];
-    const rightIcon = icon2[Math.floor(Date.now() / 7200000) % icon2.length];
+    const quote = getRandomQuote();
+    const totalLectures = lectures.length;
+    const completedLectures = getCompletedLectures(courseName);
+    const batteryPercent = Math.min(100, Math.round((progress.done / Math.min(available, speed)) * 100));
 
     // Get lectures for today using distribution
     const todayLectures = getLecturesForDate(courseName, today);
@@ -1383,7 +1598,8 @@ function renderFocus() {
         lectureHTML = todayLectures.map((item, idx) => {
             const num = item.sr;
             const done = results[num] === true;
-            const displayName = item.portion < item.total ? `${item.name} (${formatDuration(item.portion)}/${formatDuration(item.total)})` : item.name;
+            const isContinuing = item.portion < item.total;
+            const displayName = isContinuing ? `${item.name} (${formatDuration(item.portion)}/${formatDuration(item.total)})` : item.name;
             return `
                 <div class="lecture-item ${done ? 'completed' : ''}" onclick="toggleLecture('${courseName}', ${num})">
                     <span class="sr">${num}</span>
@@ -1392,6 +1608,7 @@ function renderFocus() {
                            onclick="event.stopPropagation()">
                     <span class="name">${displayName}</span>
                     <span class="duration">${formatDuration(item.portion)}</span>
+                    ${isContinuing ? '<span class="continuing">continuing</span>' : ''}
                     <span class="status">${done ? '✅ Done' : '⏳ Pending'}</span>
                 </div>
             `;
@@ -1406,8 +1623,11 @@ function renderFocus() {
     const passedDays = getDaysBetween(startDate, today);
     const studyProgress = totalDays > 0 ? Math.min(100, Math.round((passedDays / totalDays) * 100)) : 0;
 
-    const totalLectures = lectures.length;
-    const completedLectures = getCompletedLectures(courseName);
+    // Battery icons rotation
+    const icons = ['🎯', '🏆', '⭐', '🌟', '💫'];
+    const icon2 = ['🌈', '🔥', '⚡', '🚀', '💪'];
+    const leftIcon = icons[Math.floor(Date.now() / 3600000) % icons.length];
+    const rightIcon = icon2[Math.floor(Date.now() / 7200000) % icon2.length];
 
     container.innerHTML = `
         <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">
@@ -1417,7 +1637,9 @@ function renderFocus() {
             </div>
             <div style="display:flex;gap:6px;align-items:center;">
                 <button class="btn btn-xs btn-outline" onclick="changeFocusCourse(-1)" ${availableCourses.length <= 1 ? 'disabled style="opacity:0.4;"' : ''}>◀</button>
-                <span style="font-size:11px;color:var(--text-muted);">${focusCourseIndex + 1}/${availableCourses.length}</span>
+                <select onchange="changeFocusCourseSelect(this.value)" style="width:80px;font-size:11px;padding:2px 4px;">
+                    ${availableCourses.map((c, i) => `<option value="${i}" ${i === focusCourseIndex ? 'selected' : ''}>${c}</option>`).join('')}
+                </select>
                 <button class="btn btn-xs btn-outline" onclick="changeFocusCourse(1)" ${availableCourses.length <= 1 ? 'disabled style="opacity:0.4;"' : ''}>▶</button>
             </div>
         </div>
@@ -1439,55 +1661,65 @@ function renderFocus() {
             </div>
         </div>
 
-        <div class="card" style="padding:8px 12px;">
-            <div class="flex" style="gap:12px;">
-                <div style="flex-shrink:0;font-size:28px;">${leftIcon}</div>
-                <div style="flex:1;">
-                    <div style="font-size:11px;font-weight:600;margin-bottom:2px;">${courseName}</div>
-                    <div class="progress-bar" style="height:10px;">
-                        <div class="fill primary" style="width:${progress.percent}%;"></div>
+        <!-- VERTICAL BATTERY + PROGRESS BOX -->
+        <div style="display:flex;gap:12px;align-items:stretch;margin-bottom:10px;">
+            <!-- Vertical Battery -->
+            <div class="vertical-battery">
+                <div class="icon">${leftIcon}</div>
+                <div class="battery-container">
+                    <div class="battery-fill ${batteryPercent >= 100 ? 'charging' : ''}" 
+                         style="height:${batteryPercent}%;background:${batteryPercent >= 80 ? 'var(--success)' : batteryPercent >= 50 ? 'var(--warning)' : 'var(--danger)'};">
                     </div>
-                    <div style="font-size:10px;color:var(--text-muted);margin-top:2px;">${progress.percent}% Complete (${completedLectures}/${totalLectures})</div>
+                    <div class="battery-percent">${batteryPercent}%</div>
                 </div>
-                <div style="flex-shrink:0;font-size:28px;">${rightIcon}</div>
+                <div class="battery-label">${courseName}</div>
             </div>
+
+            <!-- Progress Box -->
+            <div style="flex:1;display:flex;flex-direction:column;gap:4px;background:var(--card);border-radius:var(--radius);padding:10px;border:1px solid var(--border);">
+                <div style="display:flex;justify-content:space-between;font-size:12px;">
+                    <span style="color:var(--text-muted);">Today's Progress</span>
+                    <span style="font-weight:600;">${formatDuration(progress.done)} / ${formatDuration(Math.min(available, speed))}</span>
+                </div>
+                <div class="progress-bar" style="height:8px;">
+                    <div class="fill primary" style="width:${Math.min(100, (progress.done / Math.min(available, speed)) * 100)}%;"></div>
+                </div>
+                <div style="display:flex;justify-content:space-between;font-size:12px;margin-top:2px;">
+                    <span style="color:var(--text-muted);">Pending:</span>
+                    <span style="font-weight:600;color:var(--warning);">${formatDuration(pendingMinutes)}</span>
+                </div>
+                <div style="display:flex;justify-content:space-between;font-size:11px;margin-top:2px;">
+                    <span style="color:var(--text-muted);">Efficiency:</span>
+                    <span style="color:${efficiency.statusColor};font-weight:700;">${efficiency.emoji} ${efficiency.percent}%</span>
+                </div>
+            </div>
+
+            <div style="font-size:28px;display:flex;align-items:center;">${rightIcon}</div>
         </div>
 
-        <div class="card" style="padding:8px 12px;">
-            <div class="flex-between" style="font-size:11px;">
-                <span>📊 Efficiency</span>
-                <span style="color:${efficiency.statusColor};font-weight:700;">${efficiency.emoji} ${efficiency.percent}%</span>
-            </div>
-            <div style="font-size:10px;color:var(--text-muted);">
-                ${formatDuration(efficiency.actual)} of ${formatDuration(efficiency.target)} done
-                ${efficiency.debt !== 0 ? `· ${efficiency.debt > 0 ? '✅ Ahead' : '⚠️ Behind'} by ${efficiency.debtHours}` : '· ✅ On target!'}
-            </div>
-            <div class="progress-bar" style="height:4px;margin-top:2px;">
-                <div class="fill ${efficiency.percent >= 100 ? 'success' : efficiency.percent >= 60 ? 'warning' : 'danger'}" 
-                     style="width:${Math.min(100, efficiency.percent)}%;"></div>
-            </div>
-        </div>
-
-        <div class="card" style="max-height:300px;overflow-y:auto;padding:8px 12px;">
+        <!-- Lecture List -->
+        <div class="card" style="max-height:280px;overflow-y:auto;padding:8px 12px;">
             <div style="font-size:11px;font-weight:600;margin-bottom:6px;color:var(--text-muted);">
                 📋 Today's Lectures (${todayLectures.length})
             </div>
             ${lectureHTML}
         </div>
 
-        <div class="card" style="padding:8px 12px;">
-            <div class="flex-between" style="font-size:11px;">
-                <span style="font-weight:600;">Course Progress</span>
+        <!-- Course Progress Bar with Percentage INSIDE -->
+        <div class="card" style="padding:6px 12px;">
+            <div style="display:flex;justify-content:space-between;font-size:11px;margin-bottom:2px;">
+                <span style="font-weight:600;">${courseName}</span>
                 <span>${formatDuration(progress.done)} / ${formatDuration(progress.total)}</span>
             </div>
-            <div class="progress-bar" style="height:6px;margin-top:4px;">
-                <div class="fill primary" style="width:${progress.percent}%;"></div>
-            </div>
-            <div style="font-size:10px;color:var(--text-muted);margin-top:2px;">
-                ${progress.percent}% complete · ${completedLectures}/${totalLectures} lectures
+            <div style="position:relative;width:100%;height:24px;background:var(--bg);border-radius:12px;overflow:hidden;">
+                <div style="width:${progress.percent}%;height:100%;background:linear-gradient(90deg, var(--primary), var(--secondary));border-radius:12px;transition:width 0.5s ease;"></div>
+                <div style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);font-size:11px;font-weight:700;color:#fff;text-shadow:0 0 4px rgba(0,0,0,0.8);">
+                    ${progress.percent}% Complete (${completedLectures}/${totalLectures})
+                </div>
             </div>
         </div>
 
+        <!-- Slogan -->
         <div class="card" style="padding:8px 12px;">
             <div class="flex" style="gap:6px;">
                 <input type="text" id="focusSloganInput" value="${appData.focusSlogan || ''}" 
@@ -1496,14 +1728,23 @@ function renderFocus() {
             </div>
         </div>
 
+        <!-- Quote with Animation -->
         <div class="card" style="padding:8px 12px;text-align:center;">
-            <div style="font-size:12px;font-style:italic;color:var(--text-muted);">"${quote}"</div>
-            <div style="font-size:10px;color:var(--text-muted);margin-top:2px;">— Daily Reminder</div>
+            <div class="quote-container">
+                <div class="quote-text" style="font-size:12px;font-style:italic;color:var(--text-muted);">"${quote}"</div>
+                <div style="font-size:10px;color:var(--text-muted);margin-top:2px;">— Daily Reminder</div>
+            </div>
         </div>
 
-        <button class="btn btn-danger w-full" onclick="toggleFocusFullscreen()" style="margin-top:4px;">
-            ${isFocusFullscreen ? 'Exit Focus Mode' : '🔍 Enter Full Focus'}
-        </button>
+        <!-- Action Buttons -->
+        <div style="display:flex;gap:6px;margin-top:4px;">
+            <button class="btn btn-outline w-full" onclick="toggleFocusFullscreen()">
+                ${isFocusFullscreen ? '🔍 Exit Full Focus' : '🔍 Enter Full Focus'}
+            </button>
+            <button class="btn btn-danger w-full" onclick="switchTab('dashboard')">
+                Exit Focus Mode
+            </button>
+        </div>
     `;
 }
 
@@ -1511,6 +1752,11 @@ function changeFocusCourse(delta) {
     const focusedCourses = (appData.activeFocusCourses || []).filter(c => appData.courses[c] && !appData.hiddenCourses.includes(c) && !appData.inactiveCourses[c]);
     if (focusedCourses.length === 0) return;
     focusCourseIndex = (focusCourseIndex + delta + focusedCourses.length) % focusedCourses.length;
+    renderFocus();
+}
+
+function changeFocusCourseSelect(value) {
+    focusCourseIndex = parseInt(value);
     renderFocus();
 }
 
@@ -1539,6 +1785,13 @@ function toggleLecture(courseName, sr) {
         appData.doneDates[courseName][key] = getToday();
         appData.xp = (appData.xp || 0) + 10;
         updateStreak();
+        
+        // Check if course is complete for celebration
+        const total = getTotalLectures(courseName);
+        const done = getCompletedLectures(courseName);
+        if (done === total) {
+            setTimeout(triggerCelebration, 500);
+        }
     } else {
         delete appData.doneDates[courseName][key];
     }
@@ -1583,7 +1836,6 @@ function renderDashboard() {
     const availableCourses = activeCourses.length > 0 ? activeCourses : allCourses;
     const selected = selectedCourse || availableCourses[0];
     
-    // Find index for navigation
     const currentIndex = availableCourses.indexOf(selected);
     const totalCourses = availableCourses.length;
 
@@ -1622,6 +1874,52 @@ function renderDashboard() {
             </div>
         </div>
     `).join('');
+
+    // Daily Note
+    const dailyNote = appData.dailyNotes?.[date] || '';
+    const dailyNoteHTML = `
+        <div class="card" style="padding:8px 12px;">
+            <div style="font-size:11px;font-weight:600;margin-bottom:4px;color:var(--text-muted);">
+                📝 Today's Note - ${formatDate(date)}
+            </div>
+            <div class="flex" style="gap:6px;">
+                <input type="text" id="dailyNoteInput" value="${dailyNote}" 
+                       placeholder="What did you study today?" style="flex:1;font-size:12px;">
+                <button class="btn btn-primary btn-sm" onclick="saveDailyNote()">💾</button>
+            </div>
+        </div>
+    `;
+
+    const efficiencySummary = `
+        <div class="card" style="padding:8px 12px;">
+            <div style="font-size:11px;font-weight:600;margin-bottom:4px;color:var(--text-muted);">
+                📊 Efficiency Summary - ${formatDate(date)}
+            </div>
+            <div class="grid-3" style="font-size:12px;text-align:center;">
+                <div style="padding:4px;background:var(--bg);border-radius:4px;">
+                    <div style="font-size:18px;font-weight:700;color:${efficiency.statusColor};">${efficiency.percent}%</div>
+                    <div style="font-size:9px;color:var(--text-muted);">${efficiency.emoji} ${efficiency.status}</div>
+                </div>
+                <div style="padding:4px;background:var(--bg);border-radius:4px;">
+                    <div style="font-size:18px;font-weight:700;color:var(--success);">${formatDuration(efficiency.actual)}</div>
+                    <div style="font-size:9px;color:var(--text-muted);">Actual Done</div>
+                </div>
+                <div style="padding:4px;background:var(--bg);border-radius:4px;">
+                    <div style="font-size:18px;font-weight:700;color:var(--text-muted);">${formatDuration(efficiency.target)}</div>
+                    <div style="font-size:9px;color:var(--text-muted);">Target</div>
+                </div>
+            </div>
+            ${efficiency.debt !== 0 ? `
+                <div style="font-size:10px;text-align:center;margin-top:4px;color:${efficiency.debt > 0 ? 'var(--success)' : 'var(--danger)'};">
+                    ${efficiency.debt > 0 ? '✅ Ahead by' : '⚠️ Behind by'} ${efficiency.debtHours}
+                </div>
+            ` : `
+                <div style="font-size:10px;text-align:center;margin-top:4px;color:var(--success);">
+                    ✅ Exactly on target!
+                </div>
+            `}
+        </div>
+    `;
 
     // Active Courses List with editable fields
     let activeCourseHTML = activeCourses.map(name => {
@@ -1701,49 +1999,19 @@ function renderDashboard() {
         `;
     }
 
-    const efficiencySummary = `
-        <div class="card" style="padding:8px 12px;">
-            <div style="font-size:11px;font-weight:600;margin-bottom:4px;color:var(--text-muted);">
-                📊 Efficiency Summary - ${formatDate(date)}
-            </div>
-            <div class="grid-3" style="font-size:12px;text-align:center;">
-                <div style="padding:4px;background:var(--bg);border-radius:4px;">
-                    <div style="font-size:18px;font-weight:700;color:${efficiency.statusColor};">${efficiency.percent}%</div>
-                    <div style="font-size:9px;color:var(--text-muted);">${efficiency.emoji} ${efficiency.status}</div>
-                </div>
-                <div style="padding:4px;background:var(--bg);border-radius:4px;">
-                    <div style="font-size:18px;font-weight:700;color:var(--success);">${formatDuration(efficiency.actual)}</div>
-                    <div style="font-size:9px;color:var(--text-muted);">Actual Done</div>
-                </div>
-                <div style="padding:4px;background:var(--bg);border-radius:4px;">
-                    <div style="font-size:18px;font-weight:700;color:var(--text-muted);">${formatDuration(efficiency.target)}</div>
-                    <div style="font-size:9px;color:var(--text-muted);">Target</div>
-                </div>
-            </div>
-            ${efficiency.debt !== 0 ? `
-                <div style="font-size:10px;text-align:center;margin-top:4px;color:${efficiency.debt > 0 ? 'var(--success)' : 'var(--danger)'};">
-                    ${efficiency.debt > 0 ? '✅ Ahead by' : '⚠️ Behind by'} ${efficiency.debtHours}
-                </div>
-            ` : `
-                <div style="font-size:10px;text-align:center;margin-top:4px;color:var(--success);">
-                    ✅ Exactly on target!
-                </div>
-            `}
-        </div>
-    `;
-
     container.innerHTML = `
         <!-- Course Navigation -->
         <div class="card" style="padding:8px 12px;">
             <div class="flex-between">
                 <div class="flex" style="gap:6px;">
                     <button class="btn btn-xs btn-outline" onclick="changeDashboardCourse(-1)" ${totalCourses <= 1 ? 'disabled style="opacity:0.4;"' : ''}>◀</button>
-                    <span style="font-size:13px;font-weight:600;">${selected} ${appData.activeFocusCourses?.includes(selected) ? '⭐' : ''}</span>
+                    <select onchange="changeDashboardCourseSelect(this.value)" style="font-size:12px;padding:4px 8px;width:120px;">
+                        ${availableCourses.map(c => `<option value="${c}" ${c === selected ? 'selected' : ''}>${c}</option>`).join('')}
+                    </select>
                     <button class="btn btn-xs btn-outline" onclick="changeDashboardCourse(1)" ${totalCourses <= 1 ? 'disabled style="opacity:0.4;"' : ''}>▶</button>
                 </div>
                 <button class="btn btn-sm btn-outline" onclick="switchTab('focus')">🎯 Focus</button>
             </div>
-            <div style="font-size:10px;color:var(--text-muted);margin-top:2px;text-align:center;">${focusCourseIndex + 1}/${totalCourses}</div>
         </div>
 
         <!-- Date Navigation -->
@@ -1788,6 +2056,8 @@ function renderDashboard() {
             </div>
         </div>
 
+        ${dailyNoteHTML}
+
         <div class="card" style="padding:8px 12px;">
             <div style="font-size:11px;font-weight:600;margin-bottom:6px;color:var(--text-muted);">
                 📚 ${activeCourses.length} Active Courses
@@ -1796,6 +2066,17 @@ function renderDashboard() {
             ${hiddenCourseHTML}
         </div>
     `;
+}
+
+function saveDailyNote() {
+    const input = document.getElementById('dailyNoteInput');
+    const date = appData.dashboardDate || getToday();
+    if (input) {
+        if (!appData.dailyNotes) appData.dailyNotes = {};
+        appData.dailyNotes[date] = input.value;
+        saveData();
+        showToast('💾 Daily note saved!');
+    }
 }
 
 function changeDashboardCourse(delta) {
@@ -1808,6 +2089,11 @@ function changeDashboardCourse(delta) {
         const newIndex = (currentIndex + delta + activeCourses.length) % activeCourses.length;
         selectedCourse = activeCourses[newIndex];
     }
+    renderDashboard();
+}
+
+function changeDashboardCourseSelect(value) {
+    selectedCourse = value;
     renderDashboard();
 }
 
@@ -1848,7 +2134,6 @@ function toggleCourseHidden(name) {
         showToast(`▶️ "${name}" resumed`);
     } else {
         appData.hiddenCourses.push(name);
-        // Remove from active focus if present
         const focusIdx = appData.activeFocusCourses.indexOf(name);
         if (focusIdx >= 0) appData.activeFocusCourses.splice(focusIdx, 1);
         showToast(`⏸️ "${name}" paused/hidden`);
@@ -1945,14 +2230,19 @@ function renderTimetable() {
         const isToday = dateStr === today;
         const isSelected = dateStr === selectedDate;
         const isSunday = new Date(year, month - 1, d).getDay() === 0;
-        const hasLectures = appData.doneDates[selected] && 
-            Object.values(appData.doneDates[selected]).includes(dateStr);
+        const perf = getDatePerformance(selected, dateStr);
         const hasCustom = getCustomSpeed(selected, dateStr) !== null;
         
+        let perfDot = '';
+        if (perf === 'all') perfDot = '<span class="perf-dot all"></span>';
+        else if (perf === 'mixed') perfDot = '<span class="perf-dot mixed"></span>';
+        else if (perf === 'none') perfDot = '<span class="perf-dot none"></span>';
+        
         calendarHTML += `
-            <div class="day ${isToday ? 'today' : ''} ${isSelected ? 'selected' : ''} ${isSunday ? 'sunday' : ''} ${hasLectures ? 'has-lectures' : ''} ${hasCustom ? 'has-custom-speed' : ''}" 
+            <div class="day ${isToday ? 'today' : ''} ${isSelected ? 'selected' : ''} ${isSunday ? 'sunday' : ''} ${hasCustom ? 'has-custom-speed' : ''}" 
                  onclick="selectDate('${dateStr}')">
                 ${d}
+                ${perfDot}
             </div>
         `;
     }
@@ -2003,7 +2293,6 @@ function renderTimetableLectures(courseName, dateStr) {
     const customSpeed = getCustomSpeed(courseName, dateStr);
     const effectiveSpeed = customSpeed !== null ? customSpeed : defaultSpeed;
 
-    // Get lectures for this date using distribution
     const dateLectures = getLecturesForDate(courseName, dateStr);
 
     let lectureHTML = '';
@@ -2013,7 +2302,8 @@ function renderTimetableLectures(courseName, dateStr) {
             const done = results[num] === true;
             const doneDate = doneDates[num] || '';
             const allocated = doneDate || '—';
-            const displayName = item.portion < item.total ? `${item.name} (${formatDuration(item.portion)}/${formatDuration(item.total)})` : item.name;
+            const isContinuing = item.portion < item.total;
+            const displayName = isContinuing ? `${item.name} (${formatDuration(item.portion)}/${formatDuration(item.total)})` : item.name;
             return `
                 <div class="lecture-item ${done ? 'completed' : ''}">
                     <span class="sr">${num}</span>
@@ -2021,6 +2311,7 @@ function renderTimetableLectures(courseName, dateStr) {
                            onchange="toggleLecture('${courseName}', ${num})">
                     <span class="name">${displayName}</span>
                     <span class="duration">${formatDuration(item.portion)}</span>
+                    ${isContinuing ? '<span class="continuing">continuing</span>' : ''}
                     <span style="font-size:9px;color:var(--text-muted);">${allocated}</span>
                     <span class="status">${done ? '✅ Done' : '⏳ Pending'}</span>
                 </div>
@@ -2167,6 +2458,11 @@ function tickAll(courseName) {
     saveData();
     renderAll();
     showToast(`✅ All lectures marked done for ${courseName}`);
+    const done = getCompletedLectures(courseName);
+    const total = getTotalLectures(courseName);
+    if (done === total) {
+        setTimeout(triggerCelebration, 500);
+    }
 }
 
 function untickAll(courseName) {
@@ -2352,11 +2648,11 @@ function renderOverview() {
             <div class="flex" style="gap:6px;">
                 <div style="flex:1;">
                     <label style="font-size:9px;color:var(--text-muted);">Wake Up</label>
-                    <input type="time" value="${appData.wakeUpTime || '08:00'}" onchange="updateSchedule('wake', this.value)" style="font-size:12px;">
+                    <input type="time" value="${appData.wakeUpTime || '04:00'}" onchange="updateSchedule('wake', this.value)" style="font-size:12px;">
                 </div>
                 <div style="flex:1;">
                     <label style="font-size:9px;color:var(--text-muted);">Bed Time</label>
-                    <input type="time" value="${appData.bedTime || '01:00'}" onchange="updateSchedule('bed', this.value)" style="font-size:12px;">
+                    <input type="time" value="${appData.bedTime || '21:00'}" onchange="updateSchedule('bed', this.value)" style="font-size:12px;">
                 </div>
             </div>
         </div>
@@ -2627,6 +2923,15 @@ function renderEdit() {
             </select>
         </div>
 
+        <!-- BUTTONS MOVED TO TOP -->
+        <div class="card" style="padding:8px 12px;">
+            <div class="flex" style="gap:6px;flex-wrap:wrap;">
+                <button class="btn btn-sm btn-danger" onclick="deleteCourse('${selected}')">🗑️ Delete Course</button>
+                <button class="btn btn-sm btn-outline" onclick="resetCourse('${selected}')">🔄 Reset Course</button>
+                <button class="btn btn-sm btn-outline" onclick="exportCourse('${selected}')">📤 Export This</button>
+            </div>
+        </div>
+
         <div class="card" style="padding:8px 12px;">
             <button class="btn btn-sm btn-primary" onclick="insertLecture('${selected}')" style="margin-bottom:6px;">➕ Insert New Lecture</button>
             <div class="table-wrap">
@@ -2644,14 +2949,6 @@ function renderEdit() {
                         ${lectureHTML}
                     </tbody>
                 </table>
-            </div>
-        </div>
-
-        <div class="card" style="padding:8px 12px;">
-            <div class="flex" style="gap:6px;flex-wrap:wrap;">
-                <button class="btn btn-sm btn-danger" onclick="deleteCourse('${selected}')">🗑️ Delete Course</button>
-                <button class="btn btn-sm btn-outline" onclick="resetCourse('${selected}')">🔄 Reset Course</button>
-                <button class="btn btn-sm btn-outline" onclick="exportCourse('${selected}')">📤 Export This</button>
             </div>
         </div>
     `;
@@ -2790,7 +3087,7 @@ function renderHabits() {
                     <option value="notdone" ${status === 'notdone' ? 'selected' : ''}>❌ Not Done</option>
                 </select>
                 <span style="font-size:10px;color:var(--text-muted);">${h.pattern || 'daily'}</span>
-                <span style="font-size:10px;color:var(--warning);">🔥 ${streak}d</span>
+                <span style="font-size:10px;color:var(--warning);"><span class="streak-fire">🔥</span> ${streak}d</span>
                 <span style="font-size:10px;color:var(--text-muted);">${h.time || ''}</span>
                 <button class="btn btn-xs btn-outline" onclick="editHabit('${name}')">✏️</button>
                 <button class="btn btn-xs btn-danger" onclick="deleteHabit('${name}')">✕</button>
@@ -3102,7 +3399,9 @@ function exportSettings() {
         bedTime: appData.bedTime,
         projectSpeed: appData.projectSpeed,
         darkMode: appData.darkMode,
-        wakeTimes: appData.wakeTimes
+        wakeTimes: appData.wakeTimes,
+        wastedTime: appData.wastedTime,
+        dailyChecklist: appData.dailyChecklist
     };
     downloadJSON(data, 'settings_backup.json');
     showToast('📤 Settings exported');
@@ -3126,6 +3425,8 @@ function importSettings() {
                 if (data.projectSpeed) appData.projectSpeed = data.projectSpeed;
                 if (data.darkMode !== undefined) appData.darkMode = data.darkMode;
                 if (data.wakeTimes) appData.wakeTimes = data.wakeTimes;
+                if (data.wastedTime) appData.wastedTime = data.wastedTime;
+                if (data.dailyChecklist) appData.dailyChecklist = data.dailyChecklist;
                 saveData();
                 renderAll();
                 showToast('📥 Settings imported');
@@ -3201,7 +3502,7 @@ function init() {
     setInterval(updateCompanion, 60000);
     setTimeout(updateCompanion, 1000);
     
-    console.log('📚 Lecture Planner Pro v15 loaded!');
+    console.log('📚 Lecture Planner Pro v15 - All Features Restored!');
 }
 
 document.addEventListener('DOMContentLoaded', init);
