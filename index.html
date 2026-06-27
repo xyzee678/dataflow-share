@@ -774,6 +774,19 @@
             font-size: 7px;
             color: var(--text-muted);
         }
+        .edit-speed-status {
+            font-size: 7px;
+            padding: 1px 4px;
+            border-radius: 4px;
+        }
+        .edit-speed-status.custom {
+            background: rgba(102, 126, 234, 0.2);
+            color: var(--primary);
+        }
+        .edit-speed-status.default {
+            background: rgba(160, 174, 192, 0.1);
+            color: var(--text-muted);
+        }
     </style>
 </head>
 <body>
@@ -845,7 +858,7 @@
 
 <script>
 // ============================================================
-// COMPLETE JAVASCRIPT IMPLEMENTATION - PROPORTIONAL DISTRIBUTION
+// COMPLETE JAVASCRIPT IMPLEMENTATION - CORRECTED DISTRIBUTION
 // ============================================================
 
 const DEFAULT_DATA = {
@@ -1194,8 +1207,13 @@ function getCourseProgressHours(courseName) {
     return { done, total, percent: total > 0 ? Math.round((done / total) * 100) : 0 };
 }
 
+// ============================================================
+// CORRECTED DATE DISTRIBUTION - SPEED BASED
+// ============================================================
+
 function getCourseSpeed(courseName, dateStr = null) {
     if (!dateStr) dateStr = getToday();
+    // Check custom speed first
     if (appData.dateSpeeds[courseName] && appData.dateSpeeds[courseName][dateStr] !== undefined) {
         return appData.dateSpeeds[courseName][dateStr];
     }
@@ -1277,19 +1295,13 @@ function distributeLectures(courseName) {
     let lectureIndex = 0;
     let remainingMinutes = lectures[0]?.duration || 0;
     let partCounter = 1;
-    let totalParts = 0;
     
     if (!appData.lectureParts) appData.lectureParts = {};
     if (!appData.lectureParts[courseName]) appData.lectureParts[courseName] = {};
     
-    // Calculate total duration and total days needed
-    const totalDuration = lectures.reduce((sum, l) => sum + l.duration, 0);
-    const speed = getCourseSpeed(courseName, startDate);
-    const totalDaysNeeded = Math.ceil(totalDuration / speed);
-    
     while (lectureIndex < lectures.length) {
-        const speedForDate = getCourseSpeed(courseName, currentDate);
-        const available = speedForDate - usedMinutes;
+        const speed = getCourseSpeed(courseName, currentDate);
+        const available = speed - usedMinutes;
         
         if (available <= 0) {
             usedMinutes = 0;
@@ -1309,7 +1321,7 @@ function distributeLectures(courseName) {
                 appData.lectureParts[courseName][partKey] = { 
                     originalIndex: lectureIndex,
                     partNumber: partCounter,
-                    totalParts: Math.ceil(lectures[lectureIndex].duration / speedForDate) + 1
+                    totalParts: Math.ceil(lectures[lectureIndex].duration / speed) + 1
                 };
             }
             
@@ -1325,13 +1337,12 @@ function distributeLectures(courseName) {
                 partNumber: partCounter,
                 isPart: isPart,
                 allocatedDate: currentDate,
-                totalParts: Math.ceil(lectures[lectureIndex].duration / speedForDate) + 1,
+                totalParts: Math.ceil(lectures[lectureIndex].duration / speed) + 1,
                 lectureId: lectureIndex + 1
             });
             
             usedMinutes += take;
             remainingMinutes -= take;
-            totalParts++;
             
             if (remainingMinutes <= 0) {
                 lectureIndex++;
@@ -1344,7 +1355,7 @@ function distributeLectures(courseName) {
             }
         }
         
-        if (usedMinutes >= speedForDate) {
+        if (usedMinutes >= speed) {
             usedMinutes = 0;
             currentDate = addDays(currentDate, 1);
         }
@@ -3152,7 +3163,7 @@ function clearAllCourses() {
 }
 
 // ============================================================
-// EDIT - COMPLETE WITH PROPORTIONAL DISTRIBUTION
+// EDIT - COMPLETE WITH CORRECTED DISTRIBUTION
 // ============================================================
 
 function renderEdit() {
@@ -3930,7 +3941,7 @@ function init() {
     setInterval(updateCompanion, 60000);
     setTimeout(updateCompanion, 1000);
     
-    console.log('📚 Lecture Planner Pro v26 - Complete with Proportional Distribution!');
+    console.log('📚 Lecture Planner Pro v27 - Complete with Corrected Distribution!');
 }
 
 document.addEventListener('DOMContentLoaded', init);
