@@ -693,6 +693,27 @@
             font-size: 9px;
             padding: 4px 8px;
         }
+
+        .edit-lecture-part {
+            background: var(--bg-secondary);
+            border-left: 2px solid var(--primary);
+            padding-left: 8px;
+        }
+        .edit-lecture-part .part-label {
+            font-size: 7px;
+            color: var(--primary);
+            font-weight: 600;
+        }
+        .edit-speed-input {
+            width: 45px;
+            font-size: 8px;
+            padding: 1px 2px;
+        }
+        .edit-date-col {
+            font-size: 8px;
+            color: var(--text-muted);
+            white-space: nowrap;
+        }
     </style>
 </head>
 <body>
@@ -1182,7 +1203,7 @@ function calculateEndDate(courseName) {
 }
 
 // ============================================================
-// LECTURE DISTRIBUTION ALGORITHM - UPDATED
+// LECTURE DISTRIBUTION ALGORITHM
 // ============================================================
 
 function distributeLectures(courseName) {
@@ -1197,7 +1218,6 @@ function distributeLectures(courseName) {
     let lectureRemaining = lectures[0]?.duration || 0;
     let partCounter = 1;
     
-    // Clear previous parts for this course
     if (!appData.lectureParts) appData.lectureParts = {};
     if (!appData.lectureParts[courseName]) appData.lectureParts[courseName] = {};
     
@@ -1209,7 +1229,6 @@ function distributeLectures(courseName) {
         if (take > 0) {
             if (!allocated[currentDate]) allocated[currentDate] = [];
             
-            // Determine if this is a part (split lecture)
             const isPart = lectureRemaining > take;
             const partKey = isPart ? `${lectureIndex+1}_part${partCounter}` : `${lectureIndex+1}`;
             
@@ -1231,7 +1250,8 @@ function distributeLectures(courseName) {
                 isComplete: take >= lectureRemaining && available >= lectureRemaining,
                 partKey: partKey,
                 partNumber: partCounter,
-                isPart: isPart
+                isPart: isPart,
+                allocatedDate: currentDate
             });
             
             usedMinutes += take;
@@ -3046,7 +3066,7 @@ function clearAllCourses() {
 }
 
 // ============================================================
-// EDIT
+// EDIT - COMPLETE REWRITE WITH ALL FEATURES
 // ============================================================
 
 function renderEdit() {
@@ -3070,39 +3090,82 @@ function renderEdit() {
     const total = lectures.length;
     const completed = getCompletedLectures(selected);
     const defaultSpeed = appData.settings[selected]?.speed || 120;
+    const startDate = getCourseStartDate(selected);
+    const customSpeedForDate = getCustomSpeed(selected, startDate);
 
-    let lectureHTML = lectures.map((l, idx) => {
-        const num = idx + 1;
-        const done = results[num] === true;
-        const parts = appData.lectureParts?.[selected] || {};
-        const partKeys = Object.keys(parts).filter(k => k.startsWith(`${num}_part`));
-        const partInfo = partKeys.length > 0 ? ` (${partKeys.length} parts)` : '';
-        return `
-            <tr>
-                <td style="font-size:9px;">${num}</td>
-                <td><input type="text" value="${l.name}" style="font-size:9px;padding:1px 2px;width:100%;" 
-                           onchange="updateLectureName('${selected}', ${num}, this.value)"></td>
-                <td><input type="number" value="${l.duration}" style="font-size:9px;padding:1px 2px;width:35px;" 
-                           onchange="updateLectureDuration('${selected}', ${num}, this.value)"></td>
-                <td style="font-size:8px;color:var(--text-muted);">${defaultSpeed}min${partInfo}</td>
+    // Generate the complete lecture distribution with parts
+    const distributed = distributeLectures(selected);
+    
+    // Create a flat list of all lecture parts with their allocated dates
+    let allParts = [];
+    const sortedDates = Object.keys(distributed).sort();
+    sortedDates.forEach(date => {
+        distributed[date].forEach(item => {
+            allParts.push({
+                ...item,
+                allocatedDate: date
+            });
+        });
+    });
+
+    let lectureHTML = '';
+    let currentSr = 1;
+    
+    allParts.forEach((item, idx) => {
+        const key = item.partKey || item.sr.toString();
+        const done = results[key] === true;
+        const isPart = item.isPart;
+        const partLabel = isPart ? `Part ${item.partNumber}` : '';
+        const displayName = isPart ? `${item.name} (${formatDuration(item.portion)}/${formatDuration(item.total)})` : item.name;
+        const allocatedDate = item.allocatedDate || '—';
+        
+        // Check if this is a continuation
+        const isContinuing = item.portion < item.total;
+        
+        lectureHTML += `
+            <tr class="${isPart ? 'edit-lecture-part' : ''}">
+                <td style="font-size:9px;">${currentSr}</td>
+                <td>
+                    <div style="display:flex;flex-direction:column;">
+                        <span style="font-size:9px;">${displayName}</span>
+                        ${isPart ? `<span class="part-label">${partLabel}</span>` : ''}
+                        ${isContinuing ? '<span class="continuing" style="font-size:7px;">continuing</span>' : ''}
+                    </div>
+                </td>
+                <td><input type="number" value="${item.duration}" style="font-size:9px;padding:1px 2px;width:35px;" 
+                           onchange="updateLectureDuration('${selected}', ${item.sr}, this.value)"></td>
+                <td>
+                    <input type="number" value="${defaultSpeed}" class="edit-speed-input" 
+                           onchange="updateDefaultSpeed('${selected}', this.value)" title="Default Speed">
+                </td>
+                <td>
+                    <input type="number" value="${customSpeedForDate || ''}" class="edit-speed-input" 
+                           placeholder="Custom" onchange="updateCustomSpeedForDate('${selected}', '${allocatedDate}', this.value)" title="Custom Speed">
+                </td>
+                <td class="edit-date-col">${formatDate(allocatedDate)}</td>
                 <td><input type="checkbox" ${done ? 'checked' : ''} 
-                           onchange="toggleLecture('${selected}', ${num})"></td>
-                <td><button class="btn btn-xs btn-danger" onclick="deleteLecture('${selected}', ${num})" style="font-size:7px;padding:1px 4px;">✕</button></td>
+                           onchange="toggleLecturePart('${selected}', '${key}', ${item.sr})"></td>
+                <td><button class="btn btn-xs btn-danger" onclick="deleteLecturePart('${selected}', '${key}', ${item.sr})" style="font-size:7px;padding:1px 4px;">✕</button></td>
             </tr>
         `;
-    }).join('');
+        currentSr++;
+    });
 
     container.innerHTML = `
         <div class="card" style="padding:4px 8px;">
             <div class="flex-between" style="margin-bottom:3px;">
-                <span style="font-size:11px;font-weight:600;">✏️ Edit Course</span>
+                <span style="font-size:11px;font-weight:600;">✏️ Edit Course - ${selected}</span>
                 <span style="font-size:9px;color:var(--text-muted);">
-                    📊 ${formatDuration(progress.total)} · 📚 ${total} · ✅ ${completed}
+                    📊 ${formatDuration(progress.total)} · 📚 ${total} lectures · ✅ ${completed} done
                 </span>
             </div>
             <select id="editCourseSelect" onchange="editCourseChange(this.value)" style="font-size:10px;margin-bottom:3px;">
                 ${courseNames.map(n => `<option value="${n}" ${n === selected ? 'selected' : ''}>${n}</option>`).join('')}
             </select>
+            <div style="font-size:8px;color:var(--text-muted);margin-top:2px;">
+                Start Date: ${formatDate(startDate)} | Default Speed: ${defaultSpeed} min/day
+                ${customSpeedForDate ? `| Custom Speed: ${customSpeedForDate} min/day ⚡` : ''}
+            </div>
         </div>
 
         <div class="card" style="padding:4px 8px;">
@@ -3110,19 +3173,24 @@ function renderEdit() {
                 <button class="btn btn-sm btn-danger" onclick="deleteCourse('${selected}')" style="font-size:8px;padding:2px 6px;">🗑️ Delete Course</button>
                 <button class="btn btn-sm btn-outline" onclick="resetCourse('${selected}')" style="font-size:8px;padding:2px 6px;">🔄 Reset Course</button>
                 <button class="btn btn-sm btn-outline" onclick="exportCourse('${selected}')" style="font-size:8px;padding:2px 6px;">📤 Export This</button>
+                <button class="btn btn-sm btn-primary" onclick="insertLecture('${selected}')" style="font-size:8px;padding:2px 6px;">➕ Insert New Lecture</button>
             </div>
         </div>
 
         <div class="card" style="padding:4px 8px;">
-            <button class="btn btn-sm btn-primary" onclick="insertLecture('${selected}')" style="margin-bottom:3px;font-size:9px;padding:2px 8px;">➕ Insert New Lecture</button>
+            <div style="font-size:9px;font-weight:600;margin-bottom:3px;color:var(--text-muted);">
+                Lecture Parts (Distributed by Speed - ${allParts.length} parts)
+            </div>
             <div class="table-wrap">
                 <table>
                     <thead>
                         <tr>
                             <th style="width:22px;">#</th>
                             <th>Lecture</th>
-                            <th style="width:40px;">Min</th>
-                            <th style="width:60px;">Speed/Parts</th>
+                            <th style="width:35px;">Min</th>
+                            <th style="width:45px;">Default Speed</th>
+                            <th style="width:45px;">Custom Speed</th>
+                            <th style="width:65px;">Allocated Date</th>
                             <th style="width:30px;">Done</th>
                             <th style="width:22px;"></th>
                         </tr>
@@ -3141,15 +3209,6 @@ function editCourseChange(value) {
     renderEdit();
 }
 
-function updateLectureName(courseName, sr, value) {
-    const idx = sr - 1;
-    if (appData.courses[courseName] && appData.courses[courseName][idx]) {
-        appData.courses[courseName][idx].name = value.trim() || 'Lecture_' + sr;
-        saveData();
-        renderEdit();
-    }
-}
-
 function updateLectureDuration(courseName, sr, value) {
     const idx = sr - 1;
     if (appData.courses[courseName] && appData.courses[courseName][idx]) {
@@ -3164,20 +3223,44 @@ function updateLectureDuration(courseName, sr, value) {
     }
 }
 
-function deleteLecture(courseName, sr) {
-    if (confirm(`Delete lecture ${sr}?`)) {
-        const idx = sr - 1;
-        if (appData.courses[courseName]) {
-            appData.courses[courseName].splice(idx, 1);
-            appData.courses[courseName].forEach((l, i) => l.sr = i + 1);
-            if (appData.lectureParts[courseName]) {
-                const keysToRemove = Object.keys(appData.lectureParts[courseName]).filter(k => k.startsWith(`${sr}_part`));
-                keysToRemove.forEach(k => delete appData.lectureParts[courseName][k]);
-            }
-            saveData();
-            renderAll();
-            showToast(`🗑️ Lecture ${sr} deleted`);
+function updateDefaultSpeed(courseName, value) {
+    const speed = parseInt(value) || 120;
+    if (!appData.settings[courseName]) appData.settings[courseName] = {};
+    appData.settings[courseName].speed = speed;
+    saveData();
+    renderEdit();
+    showToast(`⚡ Default speed set to ${speed} min/day`);
+}
+
+function updateCustomSpeedForDate(courseName, dateStr, value) {
+    if (!dateStr || dateStr === '—') return;
+    const speed = parseInt(value);
+    if (isNaN(speed) || speed < 1) {
+        setCustomSpeed(courseName, dateStr, null);
+        showToast(`↺ Custom speed cleared for ${dateStr}`);
+    } else {
+        setCustomSpeed(courseName, dateStr, speed);
+        showToast(`⚡ Custom speed set to ${speed} min for ${dateStr}`);
+    }
+    renderEdit();
+}
+
+function deleteLecturePart(courseName, partKey, sr) {
+    if (confirm(`Delete this lecture part?`)) {
+        // Remove the part from results
+        if (appData.results[courseName]) {
+            delete appData.results[courseName][partKey];
         }
+        if (appData.doneDates[courseName]) {
+            delete appData.doneDates[courseName][partKey];
+        }
+        // Remove the part from lectureParts
+        if (appData.lectureParts[courseName]) {
+            delete appData.lectureParts[courseName][partKey];
+        }
+        saveData();
+        renderEdit();
+        showToast(`🗑️ Part deleted`);
     }
 }
 
@@ -3682,7 +3765,7 @@ function init() {
     setInterval(updateCompanion, 60000);
     setTimeout(updateCompanion, 1000);
     
-    console.log('📚 Lecture Planner Pro v18 - All Features Complete!');
+    console.log('📚 Lecture Planner Pro v19 - Complete!');
 }
 
 document.addEventListener('DOMContentLoaded', init);
