@@ -714,6 +714,14 @@
             color: var(--text-muted);
             white-space: nowrap;
         }
+        .day-total-row {
+            background: var(--bg);
+            font-weight: 600;
+        }
+        .day-total-row td {
+            padding: 4px 5px;
+            border-top: 2px solid var(--border);
+        }
     </style>
 </head>
 <body>
@@ -1203,7 +1211,7 @@ function calculateEndDate(courseName) {
 }
 
 // ============================================================
-// LECTURE DISTRIBUTION ALGORITHM
+// LECTURE DISTRIBUTION ALGORITHM - UPDATED
 // ============================================================
 
 function distributeLectures(courseName) {
@@ -1217,9 +1225,18 @@ function distributeLectures(courseName) {
     let lectureIndex = 0;
     let lectureRemaining = lectures[0]?.duration || 0;
     let partCounter = 1;
+    let totalParts = 0;
     
     if (!appData.lectureParts) appData.lectureParts = {};
     if (!appData.lectureParts[courseName]) appData.lectureParts[courseName] = {};
+    
+    // Calculate total parts needed for each lecture
+    const lecturePartsCount = {};
+    lectures.forEach((l, idx) => {
+        const speed = getCourseSpeed(courseName, startDate);
+        const parts = Math.ceil(l.duration / speed);
+        lecturePartsCount[idx] = parts;
+    });
     
     while (lectureIndex < lectures.length) {
         const speed = getCourseSpeed(courseName, currentDate);
@@ -1236,7 +1253,7 @@ function distributeLectures(courseName) {
                 appData.lectureParts[courseName][partKey] = { 
                     originalIndex: lectureIndex,
                     partNumber: partCounter,
-                    totalParts: Math.ceil(lectures[lectureIndex].duration / speed) + 1
+                    totalParts: lecturePartsCount[lectureIndex] || 1
                 };
             }
             
@@ -1251,11 +1268,13 @@ function distributeLectures(courseName) {
                 partKey: partKey,
                 partNumber: partCounter,
                 isPart: isPart,
-                allocatedDate: currentDate
+                allocatedDate: currentDate,
+                totalParts: lecturePartsCount[lectureIndex] || 1
             });
             
             usedMinutes += take;
             lectureRemaining -= take;
+            totalParts++;
             
             if (lectureRemaining <= 0) {
                 lectureIndex++;
@@ -1822,7 +1841,7 @@ function renderFocus() {
             const done = results[key] === true;
             const isContinuing = item.portion < item.total;
             const displayName = isContinuing ? `${item.name} (${formatDuration(item.portion)}/${formatDuration(item.total)})` : item.name;
-            const partLabel = item.isPart ? `Part ${item.partNumber}` : '';
+            const partLabel = item.isPart ? `Part ${item.partNumber}/${item.totalParts}` : '';
             return `
                 <div class="lecture-item ${done ? 'completed' : ''}" onclick="toggleLecturePart('${courseName}', '${key}', ${item.sr})">
                     <span class="sr">${item.sr}</span>
@@ -2496,7 +2515,7 @@ function renderTimetableLectures(courseName, dateStr) {
             const allocated = doneDate || '—';
             const isContinuing = item.portion < item.total;
             const displayName = isContinuing ? `${item.name} (${formatDuration(item.portion)}/${formatDuration(item.total)})` : item.name;
-            const partLabel = item.isPart ? `Part ${item.partNumber}` : '';
+            const partLabel = item.isPart ? `Part ${item.partNumber}/${item.totalParts}` : '';
             return `
                 <div class="lecture-item ${done ? 'completed' : ''}">
                     <span class="sr">${item.sr}</span>
@@ -3066,7 +3085,7 @@ function clearAllCourses() {
 }
 
 // ============================================================
-// EDIT - COMPLETE REWRITE WITH ALL FEATURES
+// EDIT - COMPLETE WITH DAY TOTALS
 // ============================================================
 
 function renderEdit() {
@@ -3091,7 +3110,6 @@ function renderEdit() {
     const completed = getCompletedLectures(selected);
     const defaultSpeed = appData.settings[selected]?.speed || 120;
     const startDate = getCourseStartDate(selected);
-    const customSpeedForDate = getCustomSpeed(selected, startDate);
 
     // Generate the complete lecture distribution with parts
     const distributed = distributeLectures(selected);
@@ -3099,28 +3117,50 @@ function renderEdit() {
     // Create a flat list of all lecture parts with their allocated dates
     let allParts = [];
     const sortedDates = Object.keys(distributed).sort();
+    let dayTotals = {};
+    
     sortedDates.forEach(date => {
+        let dayTotal = 0;
         distributed[date].forEach(item => {
             allParts.push({
                 ...item,
                 allocatedDate: date
             });
+            dayTotal += item.portion;
         });
+        dayTotals[date] = dayTotal;
     });
 
     let lectureHTML = '';
     let currentSr = 1;
+    let currentDate = '';
     
     allParts.forEach((item, idx) => {
         const key = item.partKey || item.sr.toString();
         const done = results[key] === true;
         const isPart = item.isPart;
-        const partLabel = isPart ? `Part ${item.partNumber}` : '';
+        const partLabel = isPart ? `Part ${item.partNumber}/${item.totalParts}` : '';
         const displayName = isPart ? `${item.name} (${formatDuration(item.portion)}/${formatDuration(item.total)})` : item.name;
         const allocatedDate = item.allocatedDate || '—';
-        
-        // Check if this is a continuation
         const isContinuing = item.portion < item.total;
+        const speedForDate = getCourseSpeed(selected, allocatedDate);
+        const customForDate = getCustomSpeed(selected, allocatedDate);
+        
+        // Add day total row if date changes
+        if (currentDate !== allocatedDate && currentDate !== '') {
+            const totalForDay = dayTotals[currentDate] || 0;
+            const speedForPrevDate = getCourseSpeed(selected, currentDate);
+            lectureHTML += `
+                <tr class="day-total-row">
+                    <td colspan="3" style="text-align:right;font-size:8px;color:var(--text-muted);">
+                        Day Total: ${formatDuration(totalForDay)}
+                    </td>
+                    <td colspan="5" style="font-size:8px;color:var(--primary);">
+                        Speed: ${speedForPrevDate} min/day ${getCustomSpeed(selected, currentDate) !== null ? '⚡' : ''}
+                    </td>
+                </tr>
+            `;
+        }
         
         lectureHTML += `
             <tr class="${isPart ? 'edit-lecture-part' : ''}">
@@ -3139,7 +3179,7 @@ function renderEdit() {
                            onchange="updateDefaultSpeed('${selected}', this.value)" title="Default Speed">
                 </td>
                 <td>
-                    <input type="number" value="${customSpeedForDate || ''}" class="edit-speed-input" 
+                    <input type="number" value="${customForDate || ''}" class="edit-speed-input" 
                            placeholder="Custom" onchange="updateCustomSpeedForDate('${selected}', '${allocatedDate}', this.value)" title="Custom Speed">
                 </td>
                 <td class="edit-date-col">${formatDate(allocatedDate)}</td>
@@ -3149,7 +3189,24 @@ function renderEdit() {
             </tr>
         `;
         currentSr++;
+        currentDate = allocatedDate;
     });
+    
+    // Add final day total
+    if (currentDate && dayTotals[currentDate]) {
+        const totalForDay = dayTotals[currentDate] || 0;
+        const speedForLastDate = getCourseSpeed(selected, currentDate);
+        lectureHTML += `
+            <tr class="day-total-row">
+                <td colspan="3" style="text-align:right;font-size:8px;color:var(--text-muted);">
+                    Day Total: ${formatDuration(totalForDay)}
+                </td>
+                <td colspan="5" style="font-size:8px;color:var(--primary);">
+                    Speed: ${speedForLastDate} min/day ${getCustomSpeed(selected, currentDate) !== null ? '⚡' : ''}
+                </td>
+            </tr>
+        `;
+    }
 
     container.innerHTML = `
         <div class="card" style="padding:4px 8px;">
@@ -3164,7 +3221,7 @@ function renderEdit() {
             </select>
             <div style="font-size:8px;color:var(--text-muted);margin-top:2px;">
                 Start Date: ${formatDate(startDate)} | Default Speed: ${defaultSpeed} min/day
-                ${customSpeedForDate ? `| Custom Speed: ${customSpeedForDate} min/day ⚡` : ''}
+                ${getCustomSpeed(selected, startDate) ? `| Custom Speed: ${getCustomSpeed(selected, startDate)} min/day ⚡` : ''}
             </div>
         </div>
 
@@ -3179,7 +3236,7 @@ function renderEdit() {
 
         <div class="card" style="padding:4px 8px;">
             <div style="font-size:9px;font-weight:600;margin-bottom:3px;color:var(--text-muted);">
-                Lecture Parts (Distributed by Speed - ${allParts.length} parts)
+                Lecture Parts (Distributed by Speed - ${allParts.length} parts across ${Object.keys(dayTotals).length} days)
             </div>
             <div class="table-wrap">
                 <table>
@@ -3213,7 +3270,6 @@ function updateLectureDuration(courseName, sr, value) {
     const idx = sr - 1;
     if (appData.courses[courseName] && appData.courses[courseName][idx]) {
         appData.courses[courseName][idx].duration = parseInt(value) || 30;
-        // Clear parts when duration changes
         if (appData.lectureParts[courseName]) {
             const keysToRemove = Object.keys(appData.lectureParts[courseName]).filter(k => k.startsWith(`${sr}_part`));
             keysToRemove.forEach(k => delete appData.lectureParts[courseName][k]);
@@ -3247,14 +3303,12 @@ function updateCustomSpeedForDate(courseName, dateStr, value) {
 
 function deleteLecturePart(courseName, partKey, sr) {
     if (confirm(`Delete this lecture part?`)) {
-        // Remove the part from results
         if (appData.results[courseName]) {
             delete appData.results[courseName][partKey];
         }
         if (appData.doneDates[courseName]) {
             delete appData.doneDates[courseName][partKey];
         }
-        // Remove the part from lectureParts
         if (appData.lectureParts[courseName]) {
             delete appData.lectureParts[courseName][partKey];
         }
@@ -3765,7 +3819,7 @@ function init() {
     setInterval(updateCompanion, 60000);
     setTimeout(updateCompanion, 1000);
     
-    console.log('📚 Lecture Planner Pro v19 - Complete!');
+    console.log('📚 Lecture Planner Pro v20 - Complete!');
 }
 
 document.addEventListener('DOMContentLoaded', init);
