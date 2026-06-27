@@ -739,6 +739,29 @@
             font-size: 7px;
             color: var(--warning);
         }
+
+        /* Edit page new columns */
+        .edit-covered-col {
+            font-size: 8px;
+            color: var(--success);
+        }
+        .edit-pending-col {
+            font-size: 8px;
+            color: var(--warning);
+        }
+        .edit-diff-col {
+            font-size: 8px;
+            font-weight: 600;
+        }
+        .edit-diff-col.positive {
+            color: var(--success);
+        }
+        .edit-diff-col.negative {
+            color: var(--danger);
+        }
+        .edit-diff-col.zero {
+            color: var(--text-muted);
+        }
     </style>
 </head>
 <body>
@@ -1250,14 +1273,12 @@ function distributeLectures(courseName) {
         const speed = getCourseSpeed(courseName, currentDate);
         const available = speed - usedMinutes;
         
-        // If no available time on this date, move to next date
         if (available <= 0) {
             usedMinutes = 0;
             currentDate = addDays(currentDate, 1);
             continue;
         }
         
-        // Take as much as fits (or the whole remaining lecture)
         const take = Math.min(remainingMinutes, available);
         
         if (take > 0) {
@@ -1292,7 +1313,6 @@ function distributeLectures(courseName) {
             usedMinutes += take;
             remainingMinutes -= take;
             
-            // If lecture is complete, move to next lecture
             if (remainingMinutes <= 0) {
                 lectureIndex++;
                 partCounter = 1;
@@ -1304,7 +1324,6 @@ function distributeLectures(courseName) {
             }
         }
         
-        // If day is full, move to next day
         if (usedMinutes >= speed) {
             usedMinutes = 0;
             currentDate = addDays(currentDate, 1);
@@ -1353,7 +1372,7 @@ function toggleLecturePart(courseName, partKey, sr) {
 }
 
 // ============================================================
-// CORRECTED: Get completed duration for a specific date
+// GET COMPLETED DURATION FOR A SPECIFIC DATE
 // ============================================================
 
 function getCompletedDurationForDate(courseName, dateStr) {
@@ -1366,7 +1385,6 @@ function getCompletedDurationForDate(courseName, dateStr) {
             const parts = key.split('_part');
             const idx = parseInt(parts[0]) - 1;
             if (idx >= 0 && idx < lectures.length) {
-                // Check if this is a part - get the portion from allocation
                 const allocated = distributeLectures(courseName);
                 let found = false;
                 if (allocated[dateStr]) {
@@ -1857,7 +1875,6 @@ function renderFocus() {
     const totalLectures = lectures.length;
     const completedLectures = getCompletedLectures(courseName);
     
-    // CORRECTED: Battery percentage based on today's completion ONLY
     const todayDone = getCompletedDurationForDate(courseName, today);
     const todaySpeed = getCourseSpeed(courseName, today);
     const batteryPercent = todaySpeed > 0 ? Math.min(100, Math.round((todayDone / todaySpeed) * 100)) : 0;
@@ -3115,7 +3132,7 @@ function clearAllCourses() {
 }
 
 // ============================================================
-// EDIT - COMPLETE WITH DAY TOTALS
+// EDIT - COMPLETE WITH NEW COLUMNS
 // ============================================================
 
 function renderEdit() {
@@ -3174,11 +3191,21 @@ function renderEdit() {
         const allocatedDate = item.allocatedDate || '—';
         const isContinuing = item.portion < item.total;
         const customForDate = getCustomSpeed(selected, allocatedDate);
+        const speedForDate = getCourseSpeed(selected, allocatedDate);
+        
+        // Calculate metrics for this row
+        const coveredMinutes = item.portion;
+        const totalLectureMinutes = item.total;
+        const pendingMinutes = totalLectureMinutes - coveredMinutes;
+        const diff = coveredMinutes - speedForDate;
+        const diffClass = diff > 0 ? 'positive' : diff < 0 ? 'negative' : 'zero';
         
         if (currentDate !== allocatedDate && currentDate !== '') {
             const totalForDay = dayTotals[currentDate] || 0;
             const speedForPrevDate = daySpeeds[currentDate] || 0;
             const remaining = speedForPrevDate - totalForDay;
+            const dayDiff = totalForDay - speedForPrevDate;
+            const dayDiffClass = dayDiff > 0 ? 'positive' : dayDiff < 0 ? 'negative' : 'zero';
             lectureHTML += `
                 <tr class="day-total-row">
                     <td colspan="2" style="font-size:8px;color:var(--text-muted);">
@@ -3188,8 +3215,9 @@ function renderEdit() {
                         <span class="day-total">Total: ${formatDuration(totalForDay)}</span>
                         ${remaining > 0 ? `<span class="remaining"> (${formatDuration(remaining)} remaining)</span>` : ''}
                     </td>
-                    <td colspan="4" style="font-size:8px;color:var(--primary);">
+                    <td colspan="6" style="font-size:8px;color:var(--primary);">
                         Speed: ${speedForPrevDate} min/day ${customForDate !== null ? '⚡' : ''}
+                        ${dayDiff !== 0 ? ` | Diff: ${dayDiff > 0 ? '+' : ''}${formatDuration(dayDiff)}` : ''}
                     </td>
                 </tr>
             `;
@@ -3216,6 +3244,9 @@ function renderEdit() {
                            placeholder="Custom" onchange="updateCustomSpeedForDate('${selected}', '${allocatedDate}', this.value)" title="Custom Speed">
                 </td>
                 <td class="edit-date-col">${formatDate(allocatedDate)}</td>
+                <td class="edit-covered-col" title="Covered on this day">${formatDuration(coveredMinutes)}</td>
+                <td class="edit-pending-col" title="Pending for this lecture">${formatDuration(pendingMinutes)}</td>
+                <td class="edit-diff-col ${diffClass}" title="Covered - Speed">${diff > 0 ? '+' : ''}${formatDuration(diff)}</td>
                 <td><input type="checkbox" ${done ? 'checked' : ''} 
                            onchange="toggleLecturePart('${selected}', '${key}', ${item.sr})"></td>
                 <td><button class="btn btn-xs btn-danger" onclick="deleteLecturePart('${selected}', '${key}', ${item.sr})" style="font-size:7px;padding:1px 4px;">✕</button></td>
@@ -3229,7 +3260,9 @@ function renderEdit() {
         const totalForDay = dayTotals[currentDate] || 0;
         const speedForLastDate = daySpeeds[currentDate] || 0;
         const remaining = speedForLastDate - totalForDay;
+        const dayDiff = totalForDay - speedForLastDate;
         const customForDate = getCustomSpeed(selected, currentDate);
+        const dayDiffClass = dayDiff > 0 ? 'positive' : dayDiff < 0 ? 'negative' : 'zero';
         lectureHTML += `
             <tr class="day-total-row">
                 <td colspan="2" style="font-size:8px;color:var(--text-muted);">
@@ -3239,8 +3272,9 @@ function renderEdit() {
                     <span class="day-total">Total: ${formatDuration(totalForDay)}</span>
                     ${remaining > 0 ? `<span class="remaining"> (${formatDuration(remaining)} remaining)</span>` : ''}
                 </td>
-                <td colspan="4" style="font-size:8px;color:var(--primary);">
+                <td colspan="6" style="font-size:8px;color:var(--primary);">
                     Speed: ${speedForLastDate} min/day ${customForDate !== null ? '⚡' : ''}
+                    ${dayDiff !== 0 ? ` | Diff: ${dayDiff > 0 ? '+' : ''}${formatDuration(dayDiff)}` : ''}
                 </td>
             </tr>
         `;
@@ -3285,7 +3319,10 @@ function renderEdit() {
                             <th style="width:35px;">Min</th>
                             <th style="width:45px;">Default Speed</th>
                             <th style="width:45px;">Custom Speed</th>
-                            <th style="width:65px;">Allocated Date</th>
+                            <th style="width:65px;">Date</th>
+                            <th style="width:40px;">Covered</th>
+                            <th style="width:40px;">Pending</th>
+                            <th style="width:40px;">Diff</th>
                             <th style="width:30px;">Done</th>
                             <th style="width:22px;"></th>
                         </tr>
@@ -3857,7 +3894,7 @@ function init() {
     setInterval(updateCompanion, 60000);
     setTimeout(updateCompanion, 1000);
     
-    console.log('📚 Lecture Planner Pro v22 - Fully Corrected!');
+    console.log('📚 Lecture Planner Pro v23 - Complete!');
 }
 
 document.addEventListener('DOMContentLoaded', init);
