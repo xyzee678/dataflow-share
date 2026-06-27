@@ -767,6 +767,9 @@
             font-weight: 600;
             color: var(--primary);
         }
+        .edit-custom-speed-col {
+            font-size: 8px;
+        }
     </style>
 </head>
 <body>
@@ -838,7 +841,7 @@
 
 <script>
 // ============================================================
-// COMPLETE JAVASCRIPT IMPLEMENTATION - WITH CUMULATIVE SPEED
+// COMPLETE JAVASCRIPT IMPLEMENTATION - PER-DATE CUSTOM SPEEDS
 // ============================================================
 
 const DEFAULT_DATA = {
@@ -1187,11 +1190,14 @@ function getCourseProgressHours(courseName) {
     return { done, total, percent: total > 0 ? Math.round((done / total) * 100) : 0 };
 }
 
+// getCourseSpeed - Checks custom speed for the specific date first, then default
 function getCourseSpeed(courseName, dateStr = null) {
     if (!dateStr) dateStr = getToday();
+    // Check if there's a custom speed for this specific date
     if (appData.dateSpeeds[courseName] && appData.dateSpeeds[courseName][dateStr] !== undefined) {
         return appData.dateSpeeds[courseName][dateStr];
     }
+    // Otherwise return the default speed for the course
     return appData.settings[courseName]?.speed || 120;
 }
 
@@ -3137,7 +3143,7 @@ function clearAllCourses() {
 }
 
 // ============================================================
-// EDIT - COMPLETE WITH CUMULATIVE SPEED COLUMN
+// EDIT - COMPLETE WITH PER-DATE CUSTOM SPEEDS
 // ============================================================
 
 function renderEdit() {
@@ -3188,7 +3194,6 @@ function renderEdit() {
     let currentDate = '';
     let cumulativeSum = 0;
     let currentSpeed = 0;
-    let dateCounter = 0;
     
     allParts.forEach((item, idx) => {
         const key = item.partKey || item.sr.toString();
@@ -3262,8 +3267,8 @@ function renderEdit() {
                            onchange="updateDefaultSpeed('${selected}', this.value)" title="Default Speed">
                 </td>
                 <td>
-                    <input type="number" value="${customForDate || ''}" class="edit-speed-input" 
-                           placeholder="Custom" onchange="updateCustomSpeedForDate('${selected}', '${allocatedDate}', this.value)" title="Custom Speed">
+                    <input type="number" value="${customForDate || ''}" class="edit-speed-input edit-custom-speed-col" 
+                           placeholder="Custom" onchange="updateCustomSpeedForDate('${selected}', '${allocatedDate}', this.value)" title="Custom Speed for this date">
                 </td>
                 <td class="edit-date-col">${formatDate(allocatedDate)}</td>
                 <td class="edit-covered-col" title="Covered on this day">${formatDuration(coveredMinutes)}</td>
@@ -3321,7 +3326,7 @@ function renderEdit() {
             </select>
             <div style="font-size:8px;color:var(--text-muted);margin-top:2px;">
                 Start Date: ${formatDate(startDate)} | Default Speed: ${defaultSpeed} min/day
-                ${getCustomSpeed(selected, startDate) ? `| Custom Speed: ${getCustomSpeed(selected, startDate)} min/day ⚡` : ''}
+                ${getCustomSpeed(selected, startDate) ? `| Custom Speed for start date: ${getCustomSpeed(selected, startDate)} min/day ⚡` : ''}
             </div>
         </div>
 
@@ -3346,7 +3351,7 @@ function renderEdit() {
                             <th>Lecture</th>
                             <th style="width:35px;">Min</th>
                             <th style="width:45px;">Default Speed</th>
-                            <th style="width:45px;">Custom Speed</th>
+                            <th style="width:45px;">Custom Speed (per date)</th>
                             <th style="width:65px;">Date</th>
                             <th style="width:40px;">Covered</th>
                             <th style="width:40px;">Pending</th>
@@ -3923,7 +3928,7 @@ function init() {
     setInterval(updateCompanion, 60000);
     setTimeout(updateCompanion, 1000);
     
-    console.log('📚 Lecture Planner Pro v24 - Complete with Cumulative Speed!');
+    console.log('📚 Lecture Planner Pro v25 - Complete with Per-Date Custom Speeds!');
 }
 
 document.addEventListener('DOMContentLoaded', init);
