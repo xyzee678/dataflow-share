@@ -762,6 +762,11 @@
         .edit-diff-col.zero {
             color: var(--text-muted);
         }
+        .edit-cumulative-col {
+            font-size: 8px;
+            font-weight: 600;
+            color: var(--primary);
+        }
     </style>
 </head>
 <body>
@@ -833,7 +838,7 @@
 
 <script>
 // ============================================================
-// COMPLETE JAVASCRIPT IMPLEMENTATION - CORRECTED DISTRIBUTION
+// COMPLETE JAVASCRIPT IMPLEMENTATION - WITH CUMULATIVE SPEED
 // ============================================================
 
 const DEFAULT_DATA = {
@@ -3132,7 +3137,7 @@ function clearAllCourses() {
 }
 
 // ============================================================
-// EDIT - COMPLETE WITH NEW COLUMNS
+// EDIT - COMPLETE WITH CUMULATIVE SPEED COLUMN
 // ============================================================
 
 function renderEdit() {
@@ -3181,6 +3186,9 @@ function renderEdit() {
     let lectureHTML = '';
     let currentSr = 1;
     let currentDate = '';
+    let cumulativeSum = 0;
+    let currentSpeed = 0;
+    let dateCounter = 0;
     
     allParts.forEach((item, idx) => {
         const key = item.partKey || item.sr.toString();
@@ -3200,6 +3208,20 @@ function renderEdit() {
         const diff = coveredMinutes - speedForDate;
         const diffClass = diff > 0 ? 'positive' : diff < 0 ? 'negative' : 'zero';
         
+        // Reset cumulative sum when date changes
+        if (currentDate !== allocatedDate && currentDate !== '') {
+            cumulativeSum = 0;
+        }
+        
+        // Add to cumulative sum
+        cumulativeSum += coveredMinutes;
+        currentSpeed = speedForDate;
+        
+        // Determine if cumulative sum has reached or exceeded speed
+        const exceeded = cumulativeSum >= speedForDate;
+        const cumulativeDisplay = exceeded ? `${formatDuration(cumulativeSum)} ✓` : formatDuration(cumulativeSum);
+        const cumulativeClass = exceeded ? 'edit-cumulative-col' : '';
+        
         if (currentDate !== allocatedDate && currentDate !== '') {
             const totalForDay = dayTotals[currentDate] || 0;
             const speedForPrevDate = daySpeeds[currentDate] || 0;
@@ -3215,7 +3237,7 @@ function renderEdit() {
                         <span class="day-total">Total: ${formatDuration(totalForDay)}</span>
                         ${remaining > 0 ? `<span class="remaining"> (${formatDuration(remaining)} remaining)</span>` : ''}
                     </td>
-                    <td colspan="6" style="font-size:8px;color:var(--primary);">
+                    <td colspan="7" style="font-size:8px;color:var(--primary);">
                         Speed: ${speedForPrevDate} min/day ${customForDate !== null ? '⚡' : ''}
                         ${dayDiff !== 0 ? ` | Diff: ${dayDiff > 0 ? '+' : ''}${formatDuration(dayDiff)}` : ''}
                     </td>
@@ -3247,6 +3269,7 @@ function renderEdit() {
                 <td class="edit-covered-col" title="Covered on this day">${formatDuration(coveredMinutes)}</td>
                 <td class="edit-pending-col" title="Pending for this lecture">${formatDuration(pendingMinutes)}</td>
                 <td class="edit-diff-col ${diffClass}" title="Covered - Speed">${diff > 0 ? '+' : ''}${formatDuration(diff)}</td>
+                <td class="edit-cumulative-col" title="Cumulative sum of covered minutes for this day">${cumulativeDisplay}</td>
                 <td><input type="checkbox" ${done ? 'checked' : ''} 
                            onchange="toggleLecturePart('${selected}', '${key}', ${item.sr})"></td>
                 <td><button class="btn btn-xs btn-danger" onclick="deleteLecturePart('${selected}', '${key}', ${item.sr})" style="font-size:7px;padding:1px 4px;">✕</button></td>
@@ -3254,6 +3277,11 @@ function renderEdit() {
         `;
         currentSr++;
         currentDate = allocatedDate;
+        
+        // Reset cumulative sum if exceeded
+        if (exceeded) {
+            cumulativeSum = 0;
+        }
     });
     
     if (currentDate && dayTotals[currentDate]) {
@@ -3272,7 +3300,7 @@ function renderEdit() {
                     <span class="day-total">Total: ${formatDuration(totalForDay)}</span>
                     ${remaining > 0 ? `<span class="remaining"> (${formatDuration(remaining)} remaining)</span>` : ''}
                 </td>
-                <td colspan="6" style="font-size:8px;color:var(--primary);">
+                <td colspan="7" style="font-size:8px;color:var(--primary);">
                     Speed: ${speedForLastDate} min/day ${customForDate !== null ? '⚡' : ''}
                     ${dayDiff !== 0 ? ` | Diff: ${dayDiff > 0 ? '+' : ''}${formatDuration(dayDiff)}` : ''}
                 </td>
@@ -3323,6 +3351,7 @@ function renderEdit() {
                             <th style="width:40px;">Covered</th>
                             <th style="width:40px;">Pending</th>
                             <th style="width:40px;">Diff</th>
+                            <th style="width:45px;">Cumulative</th>
                             <th style="width:30px;">Done</th>
                             <th style="width:22px;"></th>
                         </tr>
@@ -3894,7 +3923,7 @@ function init() {
     setInterval(updateCompanion, 60000);
     setTimeout(updateCompanion, 1000);
     
-    console.log('📚 Lecture Planner Pro v23 - Complete!');
+    console.log('📚 Lecture Planner Pro v24 - Complete with Cumulative Speed!');
 }
 
 document.addEventListener('DOMContentLoaded', init);
