@@ -376,6 +376,7 @@
         .lecture-item .duration { font-size: 8px; color: var(--text-muted); min-width: 30px; text-align: right; }
         .lecture-item .status { font-size: 8px; min-width: 40px; text-align: right; }
         .lecture-item .continuing { font-size: 7px; color: var(--warning); font-style: italic; }
+        .lecture-item .part-label { font-size: 7px; color: var(--text-muted); background: var(--bg); padding: 0 4px; border-radius: 3px; }
         .lecture-item.completed .name { text-decoration: line-through; color: var(--text-muted); }
 
         /* ===== BATTERY DISPLAY ===== */
@@ -706,7 +707,6 @@
         <div class="title">📚 Lecture Planner</div>
     </div>
     <div class="header-actions">
-        <button onclick="toggleDarkMode()" id="themeToggle" title="Toggle Dark/Light Mode">🌙</button>
         <button onclick="toggleCompanion()" title="Toggle Companion">🧑‍🤝‍🧑</button>
         <button onclick="exportAll()" title="Export">📤</button>
         <button onclick="document.getElementById('importInput').click()" title="Import">📥</button>
@@ -814,7 +814,8 @@ const DEFAULT_DATA = {
     selectedDate: '',
     quoteIndex: 0,
     lastQuoteUpdate: 0,
-    showHiddenTabs: false
+    showHiddenTabs: false,
+    lectureParts: {}
 };
 
 let appData = null;
@@ -931,7 +932,7 @@ function toggleTabSets() {
 }
 
 // ============================================================
-// DARK MODE
+// DARK MODE (Moved to Overview)
 // ============================================================
 
 function toggleDarkMode() {
@@ -946,6 +947,7 @@ function toggleDarkMode() {
 
 function updateThemeButton() {
     const btn = document.getElementById('themeToggle');
+    if (!btn) return;
     const isDark = document.documentElement.getAttribute('data-theme') !== 'light';
     btn.textContent = isDark ? '🌙' : '☀️';
     btn.classList.toggle('active-theme', !isDark);
@@ -1010,6 +1012,7 @@ function loadData() {
             if (!appData.selectedDate) appData.selectedDate = getToday();
             if (!appData.quoteIndex) appData.quoteIndex = 0;
             if (!appData.lastQuoteUpdate) appData.lastQuoteUpdate = Date.now();
+            if (!appData.lectureParts) appData.lectureParts = {};
             saveData();
             return true;
         } else {
@@ -1179,7 +1182,7 @@ function calculateEndDate(courseName) {
 }
 
 // ============================================================
-// LECTURE DISTRIBUTION ALGORITHM
+// LECTURE DISTRIBUTION ALGORITHM - UPDATED
 // ============================================================
 
 function distributeLectures(courseName) {
@@ -1192,30 +1195,56 @@ function distributeLectures(courseName) {
     const allocated = {};
     let lectureIndex = 0;
     let lectureRemaining = lectures[0]?.duration || 0;
+    let originalLectureIndex = 0;
+    let partCounter = 1;
+    
+    // Clear previous parts for this course
+    if (!appData.lectureParts) appData.lectureParts = {};
+    if (!appData.lectureParts[courseName]) appData.lectureParts[courseName] = {};
     
     while (lectureIndex < lectures.length) {
         const speed = getCourseSpeed(courseName, currentDate);
         const available = speed - usedMinutes;
         const take = Math.min(lectureRemaining, available);
         
-        if (!allocated[currentDate]) allocated[currentDate] = [];
-        allocated[currentDate].push({
-            index: lectureIndex,
-            sr: lectures[lectureIndex].sr,
-            name: lectures[lectureIndex].name,
-            duration: lectures[lectureIndex].duration,
-            portion: take,
-            total: lectures[lectureIndex].duration,
-            isComplete: take >= lectureRemaining && available >= lectureRemaining
-        });
-        
-        usedMinutes += take;
-        lectureRemaining -= take;
-        
-        if (lectureRemaining <= 0) {
-            lectureIndex++;
-            if (lectureIndex < lectures.length) {
-                lectureRemaining = lectures[lectureIndex].duration;
+        if (take > 0) {
+            if (!allocated[currentDate]) allocated[currentDate] = [];
+            
+            const isPart = lectureRemaining > take || (lectureRemaining <= 0 && take < lectures[lectureIndex]?.duration);
+            const partKey = isPart ? `${lectureIndex+1}_part${partCounter}` : `${lectureIndex+1}`;
+            
+            if (isPart && !appData.lectureParts[courseName][partKey]) {
+                appData.lectureParts[courseName][partKey] = { 
+                    originalIndex: lectureIndex,
+                    partNumber: partCounter,
+                    totalParts: Math.ceil(lectures[lectureIndex].duration / speed) + 1
+                };
+            }
+            
+            allocated[currentDate].push({
+                index: lectureIndex,
+                sr: lectures[lectureIndex].sr,
+                name: lectures[lectureIndex].name,
+                duration: lectures[lectureIndex].duration,
+                portion: take,
+                total: lectures[lectureIndex].duration,
+                isComplete: take >= lectureRemaining && available >= lectureRemaining,
+                partKey: partKey,
+                partNumber: partCounter,
+                isPart: isPart
+            });
+            
+            usedMinutes += take;
+            lectureRemaining -= take;
+            
+            if (lectureRemaining <= 0) {
+                lectureIndex++;
+                partCounter = 1;
+                if (lectureIndex < lectures.length) {
+                    lectureRemaining = lectures[lectureIndex].duration;
+                }
+            } else {
+                partCounter++;
             }
         }
         
@@ -1224,6 +1253,7 @@ function distributeLectures(courseName) {
             currentDate = addDays(currentDate, 1);
         }
     }
+    saveData();
     return allocated;
 }
 
@@ -1237,10 +1267,31 @@ function getDatePerformance(courseName, dateStr) {
     if (lectures.length === 0) return 'empty';
     const results = appData.results[courseName] || {};
     let done = 0;
-    lectures.forEach(l => { if (results[l.sr] === true) done++; });
+    lectures.forEach(l => { 
+        const key = l.partKey || l.sr.toString();
+        if (results[key] === true) done++; 
+    });
     if (done === 0) return 'none';
     if (done === lectures.length) return 'all';
     return 'mixed';
+}
+
+function toggleLecturePart(courseName, partKey, sr) {
+    if (!appData.results[courseName]) appData.results[courseName] = {};
+    const current = appData.results[courseName][partKey] || false;
+    appData.results[courseName][partKey] = !current;
+    
+    if (appData.results[courseName][partKey]) {
+        appData.doneDates[courseName][partKey] = getToday();
+        appData.xp = (appData.xp || 0) + 5;
+        updateStreak();
+    } else {
+        delete appData.doneDates[courseName][partKey];
+    }
+    
+    saveData();
+    renderAll();
+    updateCompanion();
 }
 
 // ============================================================
@@ -1253,7 +1304,9 @@ function getActualHoursOnDate(courseName, dateStr) {
     let totalMinutes = 0;
     for (const [lectureKey, doneDate] of Object.entries(appData.doneDates[courseName])) {
         if (doneDate === dateStr) {
-            const idx = parseInt(lectureKey) - 1;
+            // Check if this is a part key
+            const parts = lectureKey.split('_part');
+            const idx = parseInt(parts[0]) - 1;
             if (idx >= 0 && idx < lectures.length) {
                 totalMinutes += lectures[idx].duration || 0;
             }
@@ -1357,7 +1410,8 @@ function getCompletedDurationForDate(courseName, dateStr) {
     let total = 0;
     for (const [key, doneDate] of Object.entries(appData.doneDates[courseName])) {
         if (doneDate === dateStr) {
-            const idx = parseInt(key) - 1;
+            const parts = key.split('_part');
+            const idx = parseInt(parts[0]) - 1;
             if (idx >= 0 && idx < lectures.length) {
                 total += lectures[idx].duration || 0;
             }
@@ -1745,19 +1799,21 @@ function renderFocus() {
     let lectureHTML = '';
     if (todayLectures.length > 0) {
         lectureHTML = todayLectures.map((item, idx) => {
-            const num = item.sr;
-            const done = results[num] === true;
+            const key = item.partKey || item.sr.toString();
+            const done = results[key] === true;
             const isContinuing = item.portion < item.total;
             const displayName = isContinuing ? `${item.name} (${formatDuration(item.portion)}/${formatDuration(item.total)})` : item.name;
+            const partLabel = item.isPart ? `Part ${item.partNumber}` : '';
             return `
-                <div class="lecture-item ${done ? 'completed' : ''}" onclick="toggleLecture('${courseName}', ${num})">
-                    <span class="sr">${num}</span>
+                <div class="lecture-item ${done ? 'completed' : ''}" onclick="toggleLecturePart('${courseName}', '${key}', ${item.sr})">
+                    <span class="sr">${item.sr}</span>
                     <input type="checkbox" ${done ? 'checked' : ''} 
-                           onchange="toggleLecture('${courseName}', ${num})" 
+                           onchange="toggleLecturePart('${courseName}', '${key}', ${item.sr})" 
                            onclick="event.stopPropagation()">
                     <span class="name">${displayName}</span>
                     <span class="duration">${formatDuration(item.portion)}</span>
                     ${isContinuing ? '<span class="continuing">continuing</span>' : ''}
+                    ${partLabel ? `<span class="part-label">${partLabel}</span>` : ''}
                     <span class="status">${done ? '✅ Done' : '⏳ Pending'}</span>
                 </div>
             `;
@@ -1778,7 +1834,6 @@ function renderFocus() {
     const rightIcon = icon2[Math.floor(Date.now() / 7200000) % icon2.length];
 
     container.innerHTML = `
-        <!-- FOCUS TOP BUTTONS - EXIT AND FULL FOCUS AT TOP -->
         <div class="focus-top-buttons">
             <button class="btn btn-outline" onclick="toggleFocusFullscreen()" style="font-size:9px;">
                 ${isFocusFullscreen ? '🔍 Exit Full Focus' : '🔍 Enter Full Focus'}
@@ -1907,40 +1962,6 @@ function toggleFocusFullscreen() {
     renderFocus();
 }
 
-function toggleLecture(courseName, sr) {
-    if (!appData.results[courseName]) appData.results[courseName] = {};
-    const key = sr.toString();
-    const current = appData.results[courseName][key] || false;
-    appData.results[courseName][key] = !current;
-    
-    const lectures = appData.courses[courseName] || [];
-    for (let i = 0; i < sr - 1; i++) {
-        const prevKey = (i + 1).toString();
-        if (!appData.results[courseName][prevKey]) {
-            appData.results[courseName][prevKey] = true;
-        }
-    }
-    
-    if (!appData.doneDates[courseName]) appData.doneDates[courseName] = {};
-    if (appData.results[courseName][key]) {
-        appData.doneDates[courseName][key] = getToday();
-        appData.xp = (appData.xp || 0) + 10;
-        updateStreak();
-        
-        const total = getTotalLectures(courseName);
-        const done = getCompletedLectures(courseName);
-        if (done === total) {
-            setTimeout(triggerCelebration, 500);
-        }
-    } else {
-        delete appData.doneDates[courseName][key];
-    }
-    
-    saveData();
-    renderAll();
-    updateCompanion();
-}
-
 function saveSlogan() {
     const input = document.getElementById('focusSloganInput');
     if (input) {
@@ -1988,6 +2009,7 @@ function renderDashboard() {
     const priority = getCoursePriority(selected);
     const startDate = getCourseStartDate(selected);
     const endDate = calculateEndDate(selected);
+    const totalDuration = getCourseDuration(selected);
 
     const days = [];
     for (let i = 4; i >= 0; i--) {
@@ -2081,6 +2103,7 @@ function renderDashboard() {
         const end = calculateEndDate(name);
         const daysUntilEnd = getDaysBetween(getToday(), end);
         const endClass = daysUntilEnd < 0 ? 'overdue' : daysUntilEnd < 7 ? 'soon' : '';
+        const totalDur = getCourseDuration(name);
         
         return `
             <div style="padding:4px 6px;background:var(--bg);border-radius:6px;margin-bottom:3px;border-left:3px solid ${isFocused ? 'var(--primary)' : 'transparent'};">
@@ -2090,6 +2113,7 @@ function renderDashboard() {
                             ${name} ${isFocused ? '⭐' : ''}
                         </span>
                         <span style="font-size:8px;color:var(--text-muted);">${t} lec</span>
+                        <span style="font-size:8px;color:var(--text-muted);">${formatDuration(totalDur)}</span>
                         <span class="efficiency-badge ${courseEfficiency.status.toLowerCase()}" style="font-size:6px;padding:1px 4px;">
                             ${courseEfficiency.emoji} ${courseEfficiency.percent}%
                         </span>
@@ -2133,11 +2157,13 @@ function renderDashboard() {
                 ${hiddenCourses.map(name => {
                     const p = getCourseProgressHours(name);
                     const t = getTotalLectures(name);
+                    const totalDur = getCourseDuration(name);
                     return `
                         <div class="flex-between" style="padding:4px 6px;background:var(--bg);border-radius:6px;margin-bottom:2px;opacity:0.7;">
                             <div class="flex" style="gap:3px;">
                                 <span style="font-size:10px;">${name}</span>
                                 <span style="font-size:8px;color:var(--text-muted);">${t} lec</span>
+                                <span style="font-size:8px;color:var(--text-muted);">${formatDuration(totalDur)}</span>
                                 <span style="font-size:8px;color:var(--text-muted);">${p.percent}%</span>
                             </div>
                             <button class="btn btn-xs btn-success" onclick="resumeCourse('${name}')" style="font-size:7px;padding:1px 6px;">▶️ Resume</button>
@@ -2445,20 +2471,22 @@ function renderTimetableLectures(courseName, dateStr) {
     let lectureHTML = '';
     if (dateLectures.length > 0) {
         lectureHTML = dateLectures.map((item) => {
-            const num = item.sr;
-            const done = results[num] === true;
-            const doneDate = doneDates[num] || '';
+            const key = item.partKey || item.sr.toString();
+            const done = results[key] === true;
+            const doneDate = doneDates[key] || '';
             const allocated = doneDate || '—';
             const isContinuing = item.portion < item.total;
             const displayName = isContinuing ? `${item.name} (${formatDuration(item.portion)}/${formatDuration(item.total)})` : item.name;
+            const partLabel = item.isPart ? `Part ${item.partNumber}` : '';
             return `
                 <div class="lecture-item ${done ? 'completed' : ''}">
-                    <span class="sr">${num}</span>
+                    <span class="sr">${item.sr}</span>
                     <input type="checkbox" ${done ? 'checked' : ''} 
-                           onchange="toggleLecture('${courseName}', ${num})">
+                           onchange="toggleLecturePart('${courseName}', '${key}', ${item.sr})">
                     <span class="name">${displayName}</span>
                     <span class="duration">${formatDuration(item.portion)}</span>
                     ${isContinuing ? '<span class="continuing">continuing</span>' : ''}
+                    ${partLabel ? `<span class="part-label">${partLabel}</span>` : ''}
                     <span style="font-size:7px;color:var(--text-muted);">${allocated}</span>
                     <span class="status">${done ? '✅ Done' : '⏳ Pending'}</span>
                 </div>
@@ -2597,46 +2625,60 @@ function tickAll(courseName) {
     const lectures = appData.courses[courseName] || [];
     if (!appData.results[courseName]) appData.results[courseName] = {};
     if (!appData.doneDates[courseName]) appData.doneDates[courseName] = {};
-    lectures.forEach((l, idx) => {
-        const num = idx + 1;
-        appData.results[courseName][num] = true;
-        appData.doneDates[courseName][num] = getToday();
+    const allParts = getLecturesForDate(courseName, appData.selectedDate || getToday());
+    allParts.forEach(item => {
+        const key = item.partKey || item.sr.toString();
+        appData.results[courseName][key] = true;
+        appData.doneDates[courseName][key] = getToday();
     });
     saveData();
     renderAll();
-    showToast(`✅ All lectures marked done for ${courseName}`);
-    const done = getCompletedLectures(courseName);
-    const total = getTotalLectures(courseName);
-    if (done === total) {
+    showToast(`✅ All parts marked done for ${courseName}`);
+    // Check if all lectures are complete
+    const totalParts = getAllPartsCount(courseName);
+    const doneParts = Object.values(appData.results[courseName] || {}).filter(v => v === true).length;
+    if (doneParts === totalParts) {
         setTimeout(triggerCelebration, 500);
     }
 }
 
+function getAllPartsCount(courseName) {
+    const lectures = appData.courses[courseName] || [];
+    let count = 0;
+    lectures.forEach(l => {
+        const parts = Object.keys(appData.lectureParts?.[courseName] || {}).filter(k => k.startsWith(`${l.sr}_part`));
+        count += parts.length > 0 ? parts.length : 1;
+    });
+    return count || lectures.length;
+}
+
 function untickAll(courseName) {
     if (!appData.results[courseName]) return;
-    const lectures = appData.courses[courseName] || [];
-    lectures.forEach((l, idx) => {
-        const num = idx + 1;
-        appData.results[courseName][num] = false;
+    const date = appData.selectedDate || getToday();
+    const parts = getLecturesForDate(courseName, date);
+    parts.forEach(item => {
+        const key = item.partKey || item.sr.toString();
+        appData.results[courseName][key] = false;
         if (appData.doneDates[courseName]) {
-            delete appData.doneDates[courseName][num];
+            delete appData.doneDates[courseName][key];
         }
     });
     saveData();
     renderAll();
-    showToast(`⭕ All lectures unticked for ${courseName}`);
+    showToast(`⭕ All parts unticked for ${courseName}`);
 }
 
 function setDoneDateAll(courseName) {
     const date = prompt('Enter date (YYYY-MM-DD) or press OK for today:', getToday());
     if (date === null) return;
     const targetDate = date.trim() || getToday();
-    const lectures = appData.courses[courseName] || [];
+    const currentDate = appData.selectedDate || getToday();
+    const parts = getLecturesForDate(courseName, currentDate);
     if (!appData.doneDates[courseName]) appData.doneDates[courseName] = {};
-    lectures.forEach((l, idx) => {
-        const num = idx + 1;
-        if (appData.results[courseName]?.[num]) {
-            appData.doneDates[courseName][num] = targetDate;
+    parts.forEach(item => {
+        const key = item.partKey || item.sr.toString();
+        if (appData.results[courseName]?.[key]) {
+            appData.doneDates[courseName][key] = targetDate;
         }
     });
     saveData();
@@ -2686,6 +2728,9 @@ function renderOverview() {
     container.innerHTML = `
         <div class="card" style="padding:4px 8px;">
             <div class="flex" style="gap:3px;justify-content:center;">
+                <button class="btn btn-sm btn-primary" onclick="toggleDarkMode()" style="font-size:9px;padding:2px 8px;">
+                    ${document.documentElement.getAttribute('data-theme') === 'light' ? '🌙 Dark Mode' : '☀️ Light Mode'}
+                </button>
                 <button class="btn btn-sm btn-danger" onclick="resetApp()" style="font-size:9px;padding:2px 8px;">🔄 Reset App</button>
                 <button class="btn btn-sm btn-primary" onclick="toggleTabSets()" style="font-size:9px;padding:2px 8px;">🔀 Toggle Tabs</button>
             </div>
@@ -2921,6 +2966,7 @@ function uploadCourse() {
     appData.settings[name] = { speed, startDate, priority };
     appData.results[name] = {};
     appData.doneDates[name] = {};
+    appData.lectureParts[name] = {};
     
     if (!appData.focusCourse) appData.focusCourse = name;
     if (!appData.activeFocusCourses.includes(name)) appData.activeFocusCourses.push(name);
@@ -2952,6 +2998,7 @@ function loadDummyCourse() {
     appData.settings[name] = { speed: 120, startDate: getToday(), priority: 1 };
     appData.results[name] = {};
     appData.doneDates[name] = {};
+    appData.lectureParts[name] = {};
     if (!appData.focusCourse) appData.focusCourse = name;
     if (!appData.activeFocusCourses.includes(name)) appData.activeFocusCourses.push(name);
     saveData();
@@ -2966,6 +3013,7 @@ function removeDummyCourse() {
         delete appData.settings[name];
         delete appData.results[name];
         delete appData.doneDates[name];
+        delete appData.lectureParts[name];
         if (appData.focusCourse === name) appData.focusCourse = getCourseNames()[0] || '';
         const idx = appData.activeFocusCourses.indexOf(name);
         if (idx >= 0) appData.activeFocusCourses.splice(idx, 1);
@@ -2992,6 +3040,7 @@ function clearAllCourses() {
         appData.focusCourse = '';
         appData.inactiveCourses = {};
         appData.hiddenCourses = [];
+        appData.lectureParts = {};
         saveData();
         renderAll();
         showToast('🗑️ All courses cleared');
@@ -3022,10 +3071,14 @@ function renderEdit() {
     const progress = getCourseProgressHours(selected);
     const total = lectures.length;
     const completed = getCompletedLectures(selected);
+    const defaultSpeed = appData.settings[selected]?.speed || 120;
 
     let lectureHTML = lectures.map((l, idx) => {
         const num = idx + 1;
         const done = results[num] === true;
+        const parts = appData.lectureParts?.[selected] || {};
+        const partKeys = Object.keys(parts).filter(k => k.startsWith(`${num}_part`));
+        const partInfo = partKeys.length > 0 ? ` (${partKeys.length} parts)` : '';
         return `
             <tr>
                 <td style="font-size:9px;">${num}</td>
@@ -3033,6 +3086,7 @@ function renderEdit() {
                            onchange="updateLectureName('${selected}', ${num}, this.value)"></td>
                 <td><input type="number" value="${l.duration}" style="font-size:9px;padding:1px 2px;width:35px;" 
                            onchange="updateLectureDuration('${selected}', ${num}, this.value)"></td>
+                <td style="font-size:8px;color:var(--text-muted);">${defaultSpeed}min${partInfo}</td>
                 <td><input type="checkbox" ${done ? 'checked' : ''} 
                            onchange="toggleLecture('${selected}', ${num})"></td>
                 <td><button class="btn btn-xs btn-danger" onclick="deleteLecture('${selected}', ${num})" style="font-size:7px;padding:1px 4px;">✕</button></td>
@@ -3070,6 +3124,7 @@ function renderEdit() {
                             <th style="width:22px;">#</th>
                             <th>Lecture</th>
                             <th style="width:40px;">Min</th>
+                            <th style="width:60px;">Speed/Parts</th>
                             <th style="width:30px;">Done</th>
                             <th style="width:22px;"></th>
                         </tr>
@@ -3101,6 +3156,11 @@ function updateLectureDuration(courseName, sr, value) {
     const idx = sr - 1;
     if (appData.courses[courseName] && appData.courses[courseName][idx]) {
         appData.courses[courseName][idx].duration = parseInt(value) || 30;
+        // Clear parts when duration changes
+        if (appData.lectureParts[courseName]) {
+            const keysToRemove = Object.keys(appData.lectureParts[courseName]).filter(k => k.startsWith(`${sr}_part`));
+            keysToRemove.forEach(k => delete appData.lectureParts[courseName][k]);
+        }
         saveData();
         renderEdit();
     }
@@ -3112,22 +3172,11 @@ function deleteLecture(courseName, sr) {
         if (appData.courses[courseName]) {
             appData.courses[courseName].splice(idx, 1);
             appData.courses[courseName].forEach((l, i) => l.sr = i + 1);
-            const oldResults = appData.results[courseName] || {};
-            const newResults = {};
-            const oldDoneDates = appData.doneDates[courseName] || {};
-            const newDoneDates = {};
-            appData.courses[courseName].forEach((l, i) => {
-                const newKey = (i + 1).toString();
-                const oldKey = (i + 1).toString();
-                if (oldResults[oldKey] !== undefined) {
-                    newResults[newKey] = oldResults[oldKey];
-                }
-                if (oldDoneDates[oldKey]) {
-                    newDoneDates[newKey] = oldDoneDates[oldKey];
-                }
-            });
-            appData.results[courseName] = newResults;
-            appData.doneDates[courseName] = newDoneDates;
+            // Remove parts for this lecture
+            if (appData.lectureParts[courseName]) {
+                const keysToRemove = Object.keys(appData.lectureParts[courseName]).filter(k => k.startsWith(`${sr}_part`));
+                keysToRemove.forEach(k => delete appData.lectureParts[courseName][k]);
+            }
             saveData();
             renderAll();
             showToast(`🗑️ Lecture ${sr} deleted`);
@@ -3157,6 +3206,7 @@ function deleteCourse(courseName) {
         delete appData.dateSpeeds[courseName];
         delete appData.copies[courseName];
         delete appData.moves[courseName];
+        delete appData.lectureParts[courseName];
         if (appData.focusCourse === courseName) appData.focusCourse = getCourseNames()[0] || '';
         const idx = appData.activeFocusCourses.indexOf(courseName);
         if (idx >= 0) appData.activeFocusCourses.splice(idx, 1);
@@ -3175,6 +3225,7 @@ function resetCourse(courseName) {
         appData.dateSpeeds[courseName] = {};
         appData.copies[courseName] = {};
         appData.moves[courseName] = {};
+        appData.lectureParts[courseName] = {};
         saveData();
         renderAll();
         showToast(`🔄 Course "${courseName}" reset`);
@@ -3186,7 +3237,8 @@ function exportCourse(courseName) {
         course: appData.courses[courseName] || [],
         settings: appData.settings[courseName] || {},
         results: appData.results[courseName] || {},
-        doneDates: appData.doneDates[courseName] || {}
+        doneDates: appData.doneDates[courseName] || {},
+        lectureParts: appData.lectureParts[courseName] || {}
     };
     downloadJSON(data, `${courseName}_backup.json`);
     showToast(`📤 Course "${courseName}" exported`);
@@ -3486,7 +3538,8 @@ function exportCourses() {
         settings: appData.settings,
         results: appData.results,
         doneDates: appData.doneDates,
-        dateSpeeds: appData.dateSpeeds
+        dateSpeeds: appData.dateSpeeds,
+        lectureParts: appData.lectureParts
     };
     downloadJSON(data, 'courses_backup.json');
     showToast('📤 Courses exported');
@@ -3508,6 +3561,7 @@ function importCourses() {
                 if (data.results) appData.results = data.results;
                 if (data.doneDates) appData.doneDates = data.doneDates;
                 if (data.dateSpeeds) appData.dateSpeeds = data.dateSpeeds;
+                if (data.lectureParts) appData.lectureParts = data.lectureParts;
                 saveData();
                 renderAll();
                 showToast('📥 Courses imported');
@@ -3631,7 +3685,7 @@ function init() {
     setInterval(updateCompanion, 60000);
     setTimeout(updateCompanion, 1000);
     
-    console.log('📚 Lecture Planner Pro v16 - All Features Complete!');
+    console.log('📚 Lecture Planner Pro v17 - All Features Complete!');
 }
 
 document.addEventListener('DOMContentLoaded', init);
