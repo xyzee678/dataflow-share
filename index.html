@@ -1250,7 +1250,7 @@ function distributeLectures(courseName) {
         const speed = getCourseSpeed(courseName, currentDate);
         const available = speed - usedMinutes;
         
-        // If no available time left on this date, move to next date
+        // If no available time on this date, move to next date
         if (available <= 0) {
             usedMinutes = 0;
             currentDate = addDays(currentDate, 1);
@@ -1353,23 +1353,46 @@ function toggleLecturePart(courseName, partKey, sr) {
 }
 
 // ============================================================
-// EFFICIENCY CALCULATIONS
+// CORRECTED: Get completed duration for a specific date
 // ============================================================
 
-function getActualHoursOnDate(courseName, dateStr) {
+function getCompletedDurationForDate(courseName, dateStr) {
     if (!appData.doneDates[courseName]) return 0;
-    const lectures = appData.courses[courseName] || [];
     let totalMinutes = 0;
-    for (const [lectureKey, doneDate] of Object.entries(appData.doneDates[courseName])) {
+    const lectures = appData.courses[courseName] || [];
+    
+    for (const [key, doneDate] of Object.entries(appData.doneDates[courseName])) {
         if (doneDate === dateStr) {
-            const parts = lectureKey.split('_part');
+            const parts = key.split('_part');
             const idx = parseInt(parts[0]) - 1;
             if (idx >= 0 && idx < lectures.length) {
-                totalMinutes += lectures[idx].duration || 0;
+                // Check if this is a part - get the portion from allocation
+                const allocated = distributeLectures(courseName);
+                let found = false;
+                if (allocated[dateStr]) {
+                    for (const item of allocated[dateStr]) {
+                        if (item.partKey === key) {
+                            totalMinutes += item.portion;
+                            found = true;
+                            break;
+                        }
+                    }
+                }
+                if (!found) {
+                    totalMinutes += lectures[idx].duration || 0;
+                }
             }
         }
     }
     return totalMinutes;
+}
+
+// ============================================================
+// EFFICIENCY CALCULATIONS
+// ============================================================
+
+function getActualHoursOnDate(courseName, dateStr) {
+    return getCompletedDurationForDate(courseName, dateStr);
 }
 
 function calculateEfficiency(courseName, dateStr) {
@@ -1459,22 +1482,6 @@ function getWeeklyEfficiency(courseName, dateStr = null) {
 
 function getTargetHoursForDate(courseName, dateStr) {
     return getCourseSpeed(courseName, dateStr);
-}
-
-function getCompletedDurationForDate(courseName, dateStr) {
-    if (!appData.doneDates[courseName]) return 0;
-    const lectures = appData.courses[courseName] || [];
-    let total = 0;
-    for (const [key, doneDate] of Object.entries(appData.doneDates[courseName])) {
-        if (doneDate === dateStr) {
-            const parts = key.split('_part');
-            const idx = parseInt(parts[0]) - 1;
-            if (idx >= 0 && idx < lectures.length) {
-                total += lectures[idx].duration || 0;
-            }
-        }
-    }
-    return total;
 }
 
 function calculateAvailableHours(dateStr) {
@@ -1849,7 +1856,11 @@ function renderFocus() {
     const quote = getRandomQuote();
     const totalLectures = lectures.length;
     const completedLectures = getCompletedLectures(courseName);
-    const batteryPercent = Math.min(100, Math.round((progress.done / Math.min(available, speed)) * 100));
+    
+    // CORRECTED: Battery percentage based on today's completion ONLY
+    const todayDone = getCompletedDurationForDate(courseName, today);
+    const todaySpeed = getCourseSpeed(courseName, today);
+    const batteryPercent = todaySpeed > 0 ? Math.min(100, Math.round((todayDone / todaySpeed) * 100)) : 0;
 
     const todayLectures = getLecturesForDate(courseName, today);
     
@@ -1940,19 +1951,19 @@ function renderFocus() {
                     </div>
                     <div class="battery-percent">${batteryPercent}%</div>
                 </div>
-                <div class="battery-label">${courseName}</div>
+                <div class="battery-label">Today's Progress</div>
             </div>
 
             <div style="flex:1;display:flex;flex-direction:column;gap:2px;background:var(--card);border-radius:var(--radius);padding:6px;border:1px solid var(--border);">
                 <div style="display:flex;justify-content:space-between;font-size:10px;">
                     <span style="color:var(--text-muted);">Today's Progress</span>
-                    <span style="font-weight:600;">${formatDuration(progress.done)} / ${formatDuration(Math.min(available, speed))}</span>
+                    <span style="font-weight:600;">${formatDuration(todayDone)} / ${formatDuration(todaySpeed)}</span>
                 </div>
                 <div class="progress-bar" style="height:5px;">
-                    <div class="fill primary" style="width:${Math.min(100, (progress.done / Math.min(available, speed)) * 100)}%;"></div>
+                    <div class="fill primary" style="width:${batteryPercent}%;"></div>
                 </div>
                 <div style="display:flex;justify-content:space-between;font-size:10px;margin-top:1px;">
-                    <span style="color:var(--text-muted);">Pending:</span>
+                    <span style="color:var(--text-muted);">Total Pending:</span>
                     <span style="font-weight:600;color:var(--warning);">${formatDuration(pendingMinutes)}</span>
                 </div>
                 <div style="display:flex;justify-content:space-between;font-size:9px;margin-top:1px;">
@@ -3846,7 +3857,7 @@ function init() {
     setInterval(updateCompanion, 60000);
     setTimeout(updateCompanion, 1000);
     
-    console.log('📚 Lecture Planner Pro v21 - Corrected Distribution Algorithm!');
+    console.log('📚 Lecture Planner Pro v22 - Fully Corrected!');
 }
 
 document.addEventListener('DOMContentLoaded', init);
